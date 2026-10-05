@@ -2785,7 +2785,11 @@ Object.assign(HINTSX,{
 
 /* one course per school year, lessons in teaching order */
 const COURSES={4:["pv4","round","placevalue","sub","mul","div","fractions","dec","len","time","area","shapes","triangle","stats","alg"],
- 5:["big5","neg","colmul","shortdiv","fraceq","fracof","dec2","percent","units5","time5","area5","angles","coord","mean","chance","expr"]};
+ 5:["big5","neg","colmul","shortdiv","fraceq","fracof","dec2","percent","units5","time5","area5","angles","coord","mean","chance","expr"],
+ 6:["prime6","order6","negcalc6","decmd6","fracadd6","mixed6","pct6","ratio6","scale6","tri6","circle6","vol6","eq6","pattern6","median6","prog6"],
+ 7:["int7","pow7","sci7","round7","frac7","pct7","alg7","eq7","ang7","circ7","units7","comp7","prop7","stat7","prob7","prog7"],
+ 8:["pow8","root8","sci8","speed8","pct8","interest8","paren8","eq8","pyth8","vol8","sim8","poly8","lin8","seq8","spread8","tree8"],
+ 9:["quad9","qeq9","formula9","sys9","line9","nonlin9","exp9","pct9","cone9","surf9","scale9","pythapp9","comb9","prob9","crit9","prog9"]};
 const ORD4=COURSES[4];
 LESSONS.forEach(l=>{for(const y in COURSES){const k=COURSES[y].indexOf(l.id);if(k>=0){l.ord=k+1;l.year=+y}}});
 
@@ -2966,7 +2970,9 @@ const BADGES=[
  {id:"fixer",icon:"🛠️",name:t3("Felfixare","Mistake fixer","مُصلح الأخطاء"),how:t3("Rätta fem uppgifter i misstagsboken.","Fix five problems from your mistake notebook.","صحّح خمس مسائل من دفتر الأخطاء."),ok:()=>S.fixed>=5},
  {id:"hundred",icon:"💯",name:t3("100 rätt","100 right","100 إجابة صحيحة"),how:t3("Svara rätt på 100 frågor.","Answer 100 questions right.","أجب عن 100 سؤال إجابة صحيحة."),ok:()=>S.tot.ok>=100},
  {id:"year4",icon:"🏆",name:t3("Årskurs 4 klar","Year 4 done","أنهيت الصف الرابع"),how:t3("Klara alla 15 lektionerna.","Finish all 15 lessons.","أنهِ الدروس الخمسة عشر كلها."),ok:()=>courseOf(4).length>0&&courseOf(4).every(l=>(S.lessons[l.id]||{}).stars)},
- {id:"year5",icon:"🥇",name:t3("Årskurs 5 klar","Year 5 done","أنهيت الصف الخامس"),how:t3("Klara alla 16 lektionerna i årskurs 5.","Finish all 16 Year 5 lessons.","أنهِ دروس الصف الخامس الستة عشر كلها."),ok:()=>courseOf(5).length>0&&courseOf(5).every(l=>(S.lessons[l.id]||{}).stars)}];
+ {id:"year5",icon:"🥇",name:t3("Årskurs 5 klar","Year 5 done","أنهيت الصف الخامس"),how:t3("Klara alla 16 lektionerna i årskurs 5.","Finish all 16 Year 5 lessons.","أنهِ دروس الصف الخامس الستة عشر كلها."),ok:()=>courseOf(5).length>0&&courseOf(5).every(l=>(S.lessons[l.id]||{}).stars)},
+ ...[[6,"🎖️","السادس"],[7,"🚀","السابع"],[8,"💎","الثامن"],[9,"👑","التاسع"]].map(([y,icon,ar])=>({id:"year"+y,icon,name:t3(`Årskurs ${y} klar`,`Year ${y} done`,"أنهيت الصف "+ar),
+   how:t3(`Klara alla lektionerna i årskurs ${y}.`,`Finish all Year ${y} lessons.`,`أنهِ كل دروس الصف ${ar}.`),ok:()=>courseOf(y).length>0&&courseOf(y).every(l=>(S.lessons[l.id]||{}).stars)}))];
 const bq=[];
 function checkBadges(){let n=0;BADGES.forEach(b=>{if(!S.badges[b.id]&&b.ok()){S.badges[b.id]=today();bq.push(b);n++}});if(n){save();showBadge()}}
 function showBadge(){const el=$("#bpop");if(!el||!el.hidden||!bq.length)return;const b=bq.shift();
@@ -3017,7 +3023,7 @@ function poseProblem(ctx,g,o,done){
   const skip=o.skip?`<button class="btn ghost" id="skip">${T("dunno")}</button>`:"";
   ctrl.innerHTML=g.kind==="choice"?`<span class="answer">${g.opts.map((x,j)=>`<button class="btn ghost ch" data-j="${j}">${esc(L(x))}</button>`).join("")}${skip}</span>`
    :`<span class="answer">${g.kind==="frac"?`<span class="fracin">${inp("an","numerator")}<i></i>${inp("ad","denominator")}</span>`
-    :g.kind==="pair"?`<span class="pairin">${g.labels?`<label>${esc(L(g.labels[0]))}</label>`:""}${inp("an",L(g.labels?g.labels[0]:""))}<b>${g.sep||""}</b>${g.labels?`<label>${esc(L(g.labels[1]))}</label>`:""}${inp("ad",L(g.labels?g.labels[1]:""))}</span>`
+    :g.kind==="pair"?`<span class="pairin">${g.labels?`<label>${esc(L(g.labels[0]))}</label>`:""}${inp("an",L(g.labels?g.labels[0]:""))}<b>${g.sep||""}</b>${g.labels?`<label>${esc(L(g.labels[1]))}</label>`:""}${inp("ad",L(g.labels?g.labels[1]:""))}</span>${g.signed?`<button class="btn ghost" id="sgn" aria-label="minus">±</button>`:""}`
     :inp("an")+(g.signed?`<button class="btn ghost" id="sgn" aria-label="minus">±</button>`:"")}<button class="btn" id="chk">${T("check")}</button>${skip}</span>`;
   quiz.innerHTML="";const an=$("#an");if(an)setTimeout(()=>an.focus({preventScroll:true}),50);
   ctrl.onkeydown=e=>{if(e.key==="Enter"&&$("#chk"))$("#chk").click()};
@@ -3032,7 +3038,8 @@ function poseProblem(ctx,g,o,done){
     else{talk(T("wrongSol")(answerText(g)));quiz.innerHTML=`<div class="row">${nextBtn}</div>`;wb.run(g.sol)}
     $("#nx").onclick=()=>{wb.cancel();o.onNext()}}
   const sk=$("#skip");if(sk)sk.onclick=()=>judge(false,T("dunno"));
-  const sg=$("#sgn");if(sg)sg.onclick=()=>{const a=$("#an");a.value=/^\s*[-−]/.test(a.value)?a.value.replace(/^\s*[-−]/,""):"-"+a.value;a.focus()};
+  let lastIn=null;ctrl.addEventListener("focusin",e=>{if(e.target.tagName==="INPUT")lastIn=e.target});
+  const sg=$("#sgn");if(sg){sg.onpointerdown=e=>e.preventDefault();sg.onclick=()=>{const a=lastIn||$("#an");a.value=/^\s*[-−]/.test(a.value)?a.value.replace(/^\s*[-−]/,""):"-"+a.value;a.focus()};}
   if(g.kind==="choice"){ctrl.querySelectorAll(".ch").forEach(b=>b.onclick=()=>judge(+b.dataset.j===g.ans,L(g.opts[+b.dataset.j])));return}
   $("#chk").onclick=()=>{
     const v=numIn(an.value),d=g.kind==="num"?0:numIn($("#ad").value);

@@ -1,10 +1,20 @@
-# Brief: Year 5 maths lessons for Lärlabbet
+# Brief: writing maths lessons for Lärlabbet
 
-Lärlabbet is a single-file HTML learning app for Swedish school children (grades 4–9). Grade 4 maths is finished. You are writing some of the **Year 5 maths lessons**, following the Swedish curriculum **Lgr22, Matematik, centralt innehåll årskurs 4–6** at the Year 5 level. Make them a step harder than Year 4.
+Lärlabbet is a single-file HTML learning app for Swedish school children (grades 4–9). Maths for Years 4 and 5 is finished: 31 lessons in `src/app.src.html`. The lessons follow the Swedish curriculum **Lgr22, Matematik**:
+- **Year 6:** *centralt innehåll årskurs 4–6*, at the end-of-stage level.
+- **Years 7, 8 and 9:** *centralt innehåll årskurs 7–9*. Each year is a clear step up from the one before.
+
+Lessons already in the app, so don't repeat them:
+- **Year 4:** place value, rounding, addition and subtraction, multiplication, division, fractions with pizza, tenths, length, time, area and perimeter, shapes, triangles, statistics, patterns and algebra.
+- **Year 5:** big numbers, negative numbers on a thermometer, column multiplication, short division, equivalent fractions, fraction of an amount, hundredths, percent basics, unit conversion, time intervals, area of rectangles, angles, coordinates, mean, chance, expressions.
 
 Run every command from the repo root.
 
-**Do not edit** `src/`, `build.sh` or `tools/`. Other workers are writing other lessons at the same time, each in their own file. Write only your own lesson file and your own output folder.
+**Do not edit** `src/`, `build.sh`, `tools/`, `tests/` or `docs/`, and do not run git. Other workers are writing other lessons at the same time, each in their own file in `wip/`. Write only your own lesson file and your own output folder in `build/`.
+
+**Wrap your whole file in one block `{ ... }`.** All the lesson files end up inlined into the same script, one after another. A local helper `const` or `function` inside your block can then never clash with another worker's.
+
+**Years 7–9 are teenagers, aged 13–15.** Keep Olle, but use examples that fit their age and are not childish: mobile data and phone plans, gaming and streaming, sport results, saving for something, sales and discounts, travel, cooking for a party, building and DIY, music, and science facts.
 
 ## The product (what the owner wants)
 
@@ -67,10 +77,10 @@ LESSONS.push({id:"xyz",subject:"math",grades:"5",kind:"wb",
 **`gen(level)`** makes a fresh random practice problem with new numbers each time. It returns:
 - `q`: the question drawn on the board, starting with `A.wipe()`.
 - `sol`: the worked solution, drawn on top of `q` after the pupil answers, step by step with the answer in green.
-- Answer kinds, exactly as in Year 4:
-  - `kind:"num"`: `ans` is a number. Add `dec:true` if decimals are allowed. Negative numbers are fine for the negative-numbers lesson; check how `numIn` parses them in `poseProblem` in `app.src.html`.
+- Answer kinds:
+  - `kind:"num"`: `ans` is a number. Add `dec:true` if decimals are allowed. If the answer can be negative, also add `signed:true`: this gives a ± key, because phone keypads often lack a minus.
   - `kind:"frac"`: `ans:[n,d]`. Any equivalent fraction is accepted.
-  - `kind:"pair"`: `ans:[a,b]`, with `sep` and/or `labels`, and optionally `check:(a,b)=>bool`.
+  - `kind:"pair"`: `ans:[a,b]`, with `sep` and/or `labels`, and optionally `check:(a,b)=>bool`. Use `check` when the order doesn't matter, such as two solutions x₁ and x₂. `signed:true` on a pair adds a ± key that flips the sign of the box the pupil is in.
   - `kind:"choice"`: `opts:[t3(...),...]` (2–4 options) and `ans` as the index of the right option. Shuffle the options so the right answer isn't always first.
 - `show`: how the right answer is written for the pupil, for example `dfmt(...)` or a `t3(...)`.
 
@@ -90,14 +100,16 @@ Object.assign(HINTSX,{xyz:[ {say:t3(...),cut:g=>g.sol.slice(0,2)}, {...level1}, 
 
 ## Building and checking your work (required)
 
-Your file is inserted at the `/*NEW-LESSONS*/` marker in a copy of the app:
+Your file is inserted at the `/*NEW-LESSONS*/` marker in a copy of the app. `YEAR` is your school year, so the shots open that year's lesson page:
 
 ```bash
-bash tools/lesson-build.sh my5x.js build/w5x          # -> build/w5x/test.html, syntax-checked
-PW=<path to playwright> node tools/lesson-shots.js build/w5x sv id1,id2,id3,id4
+bash tools/lesson-build.sh wip/y6a.js build/y6a          # -> build/y6a/test.html, syntax-checked
+YEAR=6 PW=/opt/node-tools/node_modules/playwright node tools/lesson-shots.js build/y6a sv id1,id2,id3,id4
 ```
 
-`lesson-shots.js` saves these screenshots to `build/w5x/shots/`:
+Your ids are already in `COURSES` in `src/app.src.html`. A card shows up as soon as a lesson with that id exists. Use `grades:"6"` (or "7", "8", "9") in the lesson object.
+
+`lesson-shots.js` saves these screenshots to `build/y6a/shots/`:
 - every scene
 - the HELP scenes
 - for each level, two question boards, two solution boards and one hint board
@@ -107,7 +119,7 @@ It also prints the texts, the answers and `errors [...]`.
 To view many screenshots at once, build a contact sheet and open it with the Read tool:
 
 ```bash
-DIR=build/w5x/shots PW=<path to playwright> node tools/sheet.js '^sv-id1' build/w5x/sheet-id1.png
+DIR=build/y6a/shots PW=/opt/node-tools/node_modules/playwright node tools/sheet.js '^sv-id1' build/y6a/sheet-id1.png
 ```
 
 Then:

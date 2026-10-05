@@ -24,7 +24,9 @@ Each lesson is a whiteboard animation. A hand draws every step in marker, and Ol
 | `dist/larlabbet.html` | The built app. Open it in a browser, or publish it as an artifact. |
 | `tests/` | Browser tests (Playwright). |
 | `tools/` | Helpers for writing new lessons. |
-| `docs/lesson-brief-year5.md` | How a lesson is written: style, helpers, lesson object, checks. |
+| `docs/lesson-brief.md` | How a lesson is written: style, helpers, lesson object, checks. |
+| `docs/plan-years-6-9.md` | The lesson plan for Years 6–9. |
+| `src/lessons/` | Lesson files for Years 6–9; `build.sh` inlines them at `/*NEW-LESSONS*/`. |
 
 ## Build and test
 
@@ -42,7 +44,7 @@ The tests serve fonts and d3 from `tests/fonts` and `tests/vendor`, so they run 
 
 ## Adding lessons
 
-Write the lessons in a separate file, following `docs/lesson-brief-year5.md`. Then check it:
+Write the lessons in a separate file, following `docs/lesson-brief.md`. Then check it:
 
 ```bash
 bash tools/lesson-build.sh my-lessons.js build/new        # inserts the file at /*NEW-LESSONS*/
@@ -50,4 +52,4 @@ node tools/lesson-shots.js build/new sv id1,id2           # screenshots of every
 DIR=build/new/shots node tools/sheet.js '^sv-id1' build/new/sheet.png
 ```
 
-When the lessons look right, paste them into `src/app.src.html` just above `/*NEW-LESSONS*/`, and add their ids to `COURSES`.
+When the lessons look right, move the file into `src/lessons/` and make sure their ids are in `COURSES`.

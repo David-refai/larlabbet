@@ -1,15 +1,15 @@
 // usage: PW=... node r5.js <dir> <lang> <id,id,...>   -> screenshots in <dir>/shots/, console summary
 const {chromium}=require(process.env.PW);const fs=require('fs');
 const fmap=Object.fromEntries(fs.readFileSync('tests/fonts/fontmap.txt','utf8').trim().split('\n').map(l=>l.split(' ')));
-const [DIR,LANG,IDL]=process.argv.slice(2),IDS=IDL.split(','),OUT=DIR+'/shots';fs.mkdirSync(OUT,{recursive:true});
+const YEAR=+(process.env.YEAR||5);const [DIR,LANG,IDL]=process.argv.slice(2),IDS=IDL.split(','),OUT=DIR+'/shots';fs.mkdirSync(OUT,{recursive:true});
 (async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:900,height:1100},reducedMotion:'reduce'});
 const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>m.type()==='error'&&errs.push(m.text()));
 await p.route(/jsdelivr.*d3/,r=>r.fulfill({body:fs.readFileSync('tests/vendor/d3.min.js','utf8'),contentType:'application/javascript'}));
 await p.route(/fonts\.googleapis/,r=>r.fulfill({body:fs.readFileSync('tests/fonts/fonts.css','utf8'),contentType:'text/css'}));
 await p.route(/fonts\.gstatic/,r=>{const f=fmap[r.request().url()];f?r.fulfill({body:fs.readFileSync(f),contentType:'font/woff2'}):r.abort()});
 await p.goto('file://'+process.cwd()+'/'+DIR+'/test.html');await p.waitForTimeout(800);
-await p.click(`#langs button[data-l="${LANG}"]`);await p.click('#gr button[data-g="5"]');await p.click('#go');await p.waitForTimeout(300);
-await p.evaluate(()=>{S.places={5:{skipped:true}};save();map()});await p.screenshot({path:`${OUT}/${LANG}-map.png`,fullPage:true});
+await p.click(`#langs button[data-l="${LANG}"]`);await p.click(`#gr button[data-g="${YEAR}"]`);await p.click('#go');await p.waitForTimeout(300);
+await p.evaluate(y=>{S.places={[y]:{skipped:true}};save();map()},YEAR);await p.screenshot({path:`${OUT}/${LANG}-map.png`,fullPage:true});
 for(const id of IDS){if(!(await p.$(`.card[data-l="${id}"]`))){console.log('MISSING card',id);continue}
  await p.click(`.card[data-l="${id}"]`);await p.waitForTimeout(300);const n=await p.$$eval('#prog i',x=>x.length)-1;
  for(let k=0;k<n;k++){await p.waitForFunction(()=>!document.querySelector('#next').disabled,{timeout:20000});await p.waitForTimeout(120);

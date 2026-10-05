@@ -2,3 +2,4 @@ build/
 node_modules/
 *.png
 .DS_Store
+wip/
