@@ -24,6 +24,7 @@ Each lesson is a whiteboard animation. A hand draws every step in marker, and Ol
 | `src/land.json` | World map outline used by one lesson. `build.sh` inlines it. |
 | `build.sh` | Builds `dist/larlabbet.html`, plus `build/test.html` for the tests. |
 | `dist/larlabbet.html` | The built app. Open it in a browser, or publish it as an artifact. |
+| `index.html` | The same app for GitHub Pages (built by `build.sh`). |
 | `tests/` | Browser tests (Playwright). |
 | `tools/` | Helpers for writing new lessons. |
 | `docs/lesson-brief.md` | How a lesson is written: style, helpers, lesson object, checks. |
