@@ -1,12 +1,12 @@
 # Lärlabbet
 
-A learning app for school years 4–9, in Swedish, English and Arabic. Maths comes first: Year 4 and Year 5 are done, following the Swedish curriculum Lgr22. Science, English and Swedish are planned on the same base.
+A learning app for school years 4–9, in Swedish, English and Arabic. Maths comes first: Years 4 to 9 are done, following the Swedish curriculum Lgr22. Science, English and Swedish are planned on the same base.
 
 Each lesson is a whiteboard animation. A hand draws every step in marker, and Olle the owl explains in a line or two underneath. After the lesson the pupil practises on fresh problems at three levels, with hints that show the method but never the answer.
 
 ## What is in the app
 
-- 31 maths lessons: 15 for Year 4 and 16 for Year 5. Each one has a "🤔 Jag förstår inte" help mode and per-level hints.
+- 95 maths lessons: 15 for Year 4 and 16 each for Years 5 to 9. Each one has a "🤔 Jag förstår inte" help mode and per-level hints.
 - A placement test for each year, which marks lessons the pupil already knows.
 - A mistakes notebook: wrong answers come back until they are fixed.
 - "Dagens 5 minuter", five mixed questions a day that keep a streak.
@@ -33,6 +33,7 @@ Each lesson is a whiteboard animation. A hand draws every step in marker, and Ol
 ```bash
 bash build.sh                          # -> dist/larlabbet.html, build/test.html
 export PW=/path/to/node_modules/playwright
+node tests/t14.js                      # Years 6-9: placement, lessons, mobile
 node tests/t13.js                      # Year 5 flow
 node tests/t10.js                      # placement, notebook, daily, badges, parents page
 node tests/t11.js                      # sync between two devices (mock db)
