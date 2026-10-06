@@ -51,6 +51,7 @@ button.chip{border:0;cursor:pointer;color:var(--ink)}button.chip:hover{box-shado
 .grades{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
 .grades button{border:0;box-shadow:0 0 0 1.5px var(--line) inset;border-radius:12px;padding:8px 0;background:var(--bg);font-family:var(--display);font-weight:700;font-size:1.15rem}
 .grades button[aria-pressed=true]{background:var(--ink);color:var(--bg);box-shadow:none}
+input[type=text].bad{box-shadow:0 0 0 2.5px var(--bad) inset;animation:shake .35s}@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 input[type=text]{font:inherit;width:100%;border:0;box-shadow:0 0 0 1.5px var(--line) inset;border-radius:12px;padding:10px 14px;background:var(--bg);color:var(--ink)}
 .tabs{display:flex;gap:6px;flex-wrap:wrap}
 .tab{border:0;background:transparent;border-radius:999px;padding:5px 16px;font-weight:700;color:var(--muted)}
@@ -205,7 +206,7 @@ let toastT;function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;
 /* ---------- language ---------- */
 const UI={
  sv:{help:"🤔 Jag förstår inte",helpEasy:"enklare förklaring",helpMore:"Visa mer →",backToLesson:"Tillbaka till lektionen →",prev:"← Förra",keyNext:"eller tryck på piltangenten →",keyPrev:"eller tryck på piltangenten ←",course:"Matematik för årskurs 4",courseY:y=>`Matematik för årskurs ${y}`,courseDone:(a,b)=>`${a} av ${b} lektioner klara`,courseNote:"Gör lektionerna i ordning. Varje lektion slutar med egna övningar.",hello:"Hej! Jag är Olle.",intro:"Här läser vi inte bara. Vi ser saker röra sig, rör vid dem och testar själva. Berätta lite om dig, så väljer jag frågor som passar dig.",
-  name:"Ditt namn",ph:"till exempel Sara",grade:"Vilken årskurs går du i?",start:"Nu kör vi!",pickGrade:"Välj din årskurs först",
+  name:"Ditt namn",ph:"till exempel Sara",grade:"Vilken årskurs går du i?",start:"Nu kör vi!",needName:"Skriv ditt namn först ✏️",pickGrade:"Välj din årskurs först",
   greet:n=>n?`Hej ${n}! Välj en lektion`:"Hej! Välj en lektion",soon:"snart",scenes:n=>`${n} interaktiva scener`,forGrades:g=>`Åk ${g}`,gradeChip:g=>`Åk ${g}`,
   back:"← Lektioner",next:"Nästa →",replay:"↻ Igen",toChallenge:"Till utmaningen →",toPractice:"Öva själv →",yourTurn:"Skriv svaret under tavlan och tryck på Kolla.",check:"Kolla",needAnswer:"Skriv ett svar först",nextProblem:"Nästa uppgift →",finish:"Klar →",showSol:"Visa lösningen",wrongSol:a=>`Inte riktigt. Svaret är ${a}. Titta hur vi löser det på tavlan!`,practiceMore:"Öva mer",teacher:"Olle",voice:"Uppläsning",sound:"Skrivljud på/av",profile:"Byt namn eller årskurs",great:"Bra jobbat!",
   qOf:(i,n)=>`Fråga ${i} av ${n}: `,right:["Rätt!","Snyggt, det stämmer!","Precis, bra tänkt!"],wrong:"Nästan! Ledtråd: ",
@@ -213,7 +214,7 @@ const UI={
   another:"Ny lektion",redo:"Gör om",empty:"Lektionerna förbereds. Samma spelare används, med dialoger och ord du kan höra och röra vid.",
   subj:{science:"NO",math:"Matte",english:"Engelska",swedish:"Svenska"},tapToSkip:"Tryck för att visa hela meningen"},
  en:{help:"🤔 I don't get it",helpEasy:"simpler explanation",helpMore:"Show more →",backToLesson:"Back to the lesson →",prev:"← Back",keyNext:"or press the → arrow key",keyPrev:"or press the ← arrow key",course:"Maths for Year 4",courseY:y=>`Maths for Year ${y}`,courseDone:(a,b)=>`${a} of ${b} lessons done`,courseNote:"Take the lessons in order. Each one ends with your own practice.",hello:"Hi! I'm Ollie.",intro:"Here we don't just read. We watch things move, touch them and try them ourselves. Tell me a little about you, and I'll pick questions that fit you.",
-  name:"Your name",ph:"for example Sara",grade:"Which year are you in?",start:"Let's go!",pickGrade:"Choose your year first",
+  name:"Your name",ph:"for example Sara",grade:"Which year are you in?",start:"Let's go!",needName:"Write your name first ✏️",pickGrade:"Choose your year first",
   greet:n=>n?`Hi ${n}! Pick a lesson`:"Hi! Pick a lesson",soon:"soon",scenes:n=>`${n} interactive scenes`,forGrades:g=>`Years ${g}`,gradeChip:g=>`Year ${g}`,
   back:"← Lessons",next:"Next →",replay:"↻ Again",toChallenge:"To the challenge →",toPractice:"Practise →",yourTurn:"Type the answer below the board and press Check.",check:"Check",needAnswer:"Type an answer first",nextProblem:"Next problem →",finish:"Done →",showSol:"Show the solution",wrongSol:a=>`Not quite. The answer is ${a}. Watch how we solve it on the board!`,practiceMore:"Practise more",teacher:"Ollie",voice:"Read aloud",sound:"Writing sound on/off",profile:"Change name or year",great:"Well done!",
   qOf:(i,n)=>`Question ${i} of ${n}: `,right:["Correct!","Nice, that's right!","Exactly, good thinking!"],wrong:"Almost! Hint: ",
@@ -221,7 +222,7 @@ const UI={
   another:"New lesson",redo:"Try again",empty:"These lessons are being prepared. The same player will show dialogues and words you can hear and touch.",
   subj:{science:"Science",math:"Maths",english:"English",swedish:"Swedish"},tapToSkip:"Tap to show the whole sentence"},
  ar:{help:"🤔 لم أفهم",helpEasy:"شرح أبسط",helpMore:"المزيد ←",backToLesson:"العودة إلى الدرس ←",prev:"→ السابق",keyNext:"أو اضغط مفتاح السهم ←",keyPrev:"أو اضغط مفتاح السهم →",course:"رياضيات الصف الرابع",courseY:y=>({4:"رياضيات الصف الرابع",5:"رياضيات الصف الخامس",6:"رياضيات الصف السادس",7:"رياضيات الصف السابع",8:"رياضيات الصف الثامن",9:"رياضيات الصف التاسع"})[y],courseDone:(a,b)=>`أنهيت ${a} من ${b} دروس`,courseNote:"خذ الدروس بالترتيب. كل درس ينتهي بتمارين خاصة بك.",hello:"مرحبًا! أنا أولي.",intro:"هنا لا نقرأ فقط. نشاهد الأشياء تتحرك، ونلمسها، ونجرّبها بأنفسنا. أخبرني عنك لأختار لك أسئلة على مقاسك.",
-  name:"اسمك",ph:"مثلًا: سارة",grade:"في أي صف أنت؟",start:"لنبدأ!",pickGrade:"اختر صفّك أولًا",
+  name:"اسمك",ph:"مثلًا: سارة",grade:"في أي صف أنت؟",start:"لنبدأ!",needName:"اكتب اسمك أولًا ✏️",pickGrade:"اختر صفّك أولًا",
   greet:n=>n?`مرحبًا ${n}! اختر درسًا`:"مرحبًا! اختر درسًا",soon:"قريبًا",scenes:n=>`${n} مشاهد تفاعلية`,forGrades:g=>`للصفوف ${g}`,gradeChip:g=>`الصف ${g}`,
   back:"→ الدروس",next:"التالي ←",replay:"↻ أعِد",toChallenge:"إلى التحدّي ←",toPractice:"تمرّن بنفسك ←",yourTurn:"اكتب الجواب تحت السبورة واضغط تحقّق.",check:"تحقّق",needAnswer:"اكتب جوابًا أولًا",nextProblem:"المسألة التالية ←",finish:"انتهيت ←",showSol:"اعرض الحل",wrongSol:a=>`ليس تمامًا. الجواب ${a}. شاهد كيف نحلّها على السبورة!`,practiceMore:"تمرّن أكثر",teacher:"أولي",voice:"القراءة بصوت",sound:"صوت الكتابة",profile:"غيّر الاسم أو الصف",great:"أحسنت!",
   qOf:(i,n)=>`سؤال ${i} من ${n}: `,right:["صحيح!","رائع، هذا صحيح!","بالضبط، تفكير جيد!"],wrong:"قريب! تلميح: ",
@@ -3107,6 +3108,7 @@ function planDrill(mode){
   let k=0;while(out.length<5){const id=pool[k++%pool.length];out.push({id,lv:revLv(id)})}
   return out}
 function drill(mode){
+  if(!S.name||!S.grade){welcome();return}
   const items=planDrill(mode);if(!items.length){map();return}
   screen=()=>drill(mode);leave();
   const title={place:T("placeTitle"),daily:T("dailyT"),notes:T("notesT")}[mode];
@@ -3339,11 +3341,16 @@ function welcome(){
      <div class="row"><button class="btn" id="go">${T("start")}</button></div>
    </section></div>`;
   app.querySelectorAll("#gr button").forEach(b=>b.onclick=()=>{S.grade=+b.dataset.g;app.querySelectorAll("#gr button").forEach(x=>x.setAttribute("aria-pressed",x===b))});
-  $("#go").onclick=()=>{viewYear=null;S.name=$("#nm").value.trim();if(!S.grade){toast(T("pickGrade"));return}save();hud();map()};
+  /* no lessons until the student has written a name (at least two letters) */
+  const nm=$("#nm");nm.oninput=()=>nm.classList.remove("bad");
+  $("#go").onclick=()=>{viewYear=null;const n=nm.value.trim();
+    if(n.length<2){nm.classList.add("bad");nm.focus();toast(T("needName"));return}
+    S.name=n;if(!S.grade){toast(T("pickGrade"));return}save();hud();map()};
 }
 
 let tabNow="math";
 function map(){
+  if(!S.name||!S.grade){welcome();return}
   screen=map;leave();revFill();hud();
   const Y=yearNow(),list=tabNow==="math"?courseOf(Y):LESSONS.filter(l=>l.subject===tabNow).sort((a,b)=>(a.ord||99)-(b.ord||99));
   const course=list.filter(l=>l.ord),done=course.filter(l=>isDone(l.id)).length,nx=course.length?nextLesson():null;
@@ -3376,6 +3383,7 @@ function map(){
 }
 
 function lesson(id){
+  if(!S.name||!S.grade){welcome();return}
   screen=()=>lesson(id);leave();
   const Ls=LESSONS.find(l=>l.id===id);if(!(S.lessons[id]||{}).seen){S.lessons[id]=Object.assign({stars:0},S.lessons[id],{seen:true});saveLocal()}
   app.innerHTML=`<div class="stack" style="gap:12px">

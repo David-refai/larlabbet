@@ -13,7 +13,7 @@ const R2={steps:[{say:"Pizza!",board:[{k:"frac",n:3,d:4},{k:"bar",parts:4,shade:
  await p.addInitScript(([r1,r2])=>{let n=0;const s=async()=>({text:""});s.json=async(t,o)=>{window.__prompt(t,JSON.stringify(o));await new Promise(r=>setTimeout(r,300));return n++%2?r2:r1};
    window.claude={use:async k=>k==="sample"?s:null}},[R1,R2]);
  await p.goto('file://'+process.cwd()+'/build/test.html');await p.waitForTimeout(800);
- await p.click('#langs button[data-l="sv"]');await p.click('#gr button[data-g="4"]');await p.click('#go');await p.waitForTimeout(200);
+ await p.click('#langs button[data-l="sv"]');await p.fill('#nm','Test');await p.click('#gr button[data-g="4"]');await p.click('#go');await p.waitForTimeout(200);
  await p.evaluate(()=>{S.place={skipped:true};save()});await p.click('#home');
  await p.click('.card[data-l="div"]');await p.waitForTimeout(300);
  console.log('ai button visible in scene:',await p.isVisible('#ai'));
