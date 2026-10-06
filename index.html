@@ -48,6 +48,7 @@ button.chip{border:0;cursor:pointer;color:var(--ink)}button.chip:hover{box-shado
 .langs button{border:0;background:none;border-radius:999px;padding:2px 10px;font-weight:700;font-size:.85rem;color:var(--muted)}
 .langs button[aria-pressed=true]{background:var(--ink);color:var(--bg)}
 
+.kids{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}.kid{display:flex;flex-direction:column;align-items:center;gap:6px;padding:20px 12px;border:0;border-radius:20px;background:var(--surface);box-shadow:var(--shadow);cursor:pointer;color:var(--ink);font:inherit;transition:transform .15s}.kid:hover{transform:translateY(-3px)}.kid.on{box-shadow:0 0 0 3px var(--teal),var(--shadow)}.kid b{font-size:1.15rem;max-width:100%;overflow:hidden;text-overflow:ellipsis}.kav{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:1.8rem;font-weight:800}.kid.add{background:none;box-shadow:0 0 0 2px var(--line) inset}.kid.add .kav{background:var(--bg);color:var(--muted)}
 .hello{display:grid;grid-template-columns:140px 1fr;gap:24px;align-items:center;background:var(--surface);border-radius:24px;padding:24px;box-shadow:var(--shadow)}
 .panel{background:var(--surface);border-radius:24px;padding:24px;box-shadow:var(--shadow)}
 .grades{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
@@ -238,18 +239,29 @@ const L=o=>o&&typeof o==="object"&&!Array.isArray(o)?(o[lang]??o.en):o;
 const FONT=(w,s)=>`${w} ${s}px Figtree, "IBM Plex Sans Arabic", sans-serif`;
 
 
-/* ---------- state (this browser only) ---------- */
-const KEY="larlabbet-v3";
+/* ---------- state: one profile per child, kept in this browser (and in the account when signed in) ---------- */
+const KEY="larlabbet-v3",PKEY="larlabbet-kids";
 const fresh=()=>({places:{},name:"",grade:null,xp:0,lang:"sv",lessons:{},mist:{},days:{},tot:{q:0,ok:0,okNoHint:0,hints:0},badges:{},daily:{last:"",streak:0,n:0},fixed:0,place:null,upd:0,rev:{}});
-let S=fresh();
-try{const r=JSON.parse(localStorage.getItem(KEY)||"null");if(r&&r.lessons){S=Object.assign(fresh(),r);S.tot=Object.assign(fresh().tot,r.tot);S.daily=Object.assign(fresh().daily,r.daily)}}catch(e){}
-lang=S.lang||"sv";
+const clean=r=>{const s=Object.assign(fresh(),r);s.tot=Object.assign(fresh().tot,r.tot);s.daily=Object.assign(fresh().daily,r.daily);return s};
+const newId=()=>"k"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+/* PROF.kids holds every child's state; S is the active child's (the same object as PROF.kids[S.id] once saved).
+   PROF.gone remembers deleted children so another device cannot bring them back. */
+let PROF={cur:null,kids:{},gone:{}};
+try{const p=JSON.parse(localStorage.getItem(PKEY)||"null");if(p&&p.kids){PROF.cur=p.cur||null;PROF.gone=p.gone||{};for(const id in p.kids)PROF.kids[id]=Object.assign(clean(p.kids[id]),{id})}}catch(e){}
+/* the single-child save of earlier versions becomes the first child, "k0" (the same id on every device, so copies merge) */
+try{const r=JSON.parse(localStorage.getItem(KEY)||"null");if(r&&r.lessons&&(r.name||r.grade)&&!PROF.kids.k0&&!PROF.gone.k0){PROF.kids.k0=Object.assign(clean(r),{id:"k0"});if(!PROF.cur)PROF.cur="k0"}localStorage.removeItem(KEY)}catch(e){}
+const kidList=()=>Object.values(PROF.kids).filter(k=>k.name&&k.grade).sort((a,b)=>a.name.localeCompare(b.name));
+let S=PROF.kids[PROF.cur]||Object.assign(fresh(),{id:newId()});
+lang=S.lang||(kidList()[0]||{}).lang||"sv";
 /* saveLocal keeps this browser's copy; save also marks a real change and sends it to the account copy when signed in */
-const saveLocal=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const saveLocal=()=>{if(S.name&&S.grade){PROF.kids[S.id]=S;PROF.cur=S.id}try{localStorage.setItem(PKEY,JSON.stringify(PROF))}catch(e){}};
 function save(){S.upd=Date.now();saveLocal();pushCloud()}
+function useKid(id){leave();S=PROF.kids[id]||Object.assign(fresh(),{id:newId(),lang});PROF.cur=PROF.kids[id]?id:PROF.cur;saveLocal();viewYear=null;tabNow="math";
+  lang=S.lang||lang;S.lang=lang;$("#wrap").dir=lang==="ar"?"rtl":"ltr";document.documentElement.lang=lang;document.querySelectorAll("#langs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===lang));hud()}
+function dropKid(id){if(S.id===id)S=Object.assign(fresh(),{id:newId(),lang});delete PROF.kids[id];PROF.gone[id]=Date.now();if(PROF.cur===id)PROF.cur=null;saveLocal();goneCloud(id)}
 function hud(){SFX.on=S.sound!==false;
-  $("#hud").innerHTML=(CLOUD.on?`<span class="chip" title="${T("cloud")}">☁️</span>`:"")+`<button class="chip" id="snd" aria-pressed="${SFX.on}" title="${T("sound")}">${SFX.on?"🔊":"🔇"}</button>`+(S.grade?`<span class="chip">★ ${S.xp}</span><button class="chip" id="prof" title="${T("profile")}">${T("gradeChip")(S.grade)} ✎</button>`:"");
-  $("#snd").onclick=()=>{S.sound=!SFX.on;save();hud();if(!S.sound)SFX.level(0)};const pr=$("#prof");if(pr)pr.onclick=welcome}
+  $("#hud").innerHTML=(CLOUD.on?`<span class="chip" title="${T("cloud")}">☁️</span>`:"")+`<button class="chip" id="snd" aria-pressed="${SFX.on}" title="${T("sound")}">${SFX.on?"🔊":"🔇"}</button>`+(S.grade?`<span class="chip">★ ${S.xp}</span><button class="chip" id="who" title="${T("whoSwitch")}">👤 ${esc(S.name)}</button><button class="chip" id="prof" title="${T("profile")}">${T("gradeChip")(S.grade)} ✎</button>`:"");
+  $("#snd").onclick=()=>{S.sound=!SFX.on;save();hud();if(!S.sound)SFX.level(0)};const pr=$("#prof");if(pr)pr.onclick=()=>{picked=true;welcome()};const wh=$("#who");if(wh)wh.onclick=who}
 function addXP(n){S.xp+=n;save();hud()}
 
 /* ---------- owl teacher ---------- */
@@ -10316,7 +10328,7 @@ Object.assign(UI.sv,{placeTitle:"Nivåtest",placeHero:"Ett kort test först?",pl
   dailyT:"Dagens 5 minuter",dailyS:"5 blandade frågor från det du har gjort",dailyDone:"Klar för idag ✓",dailyNeed:"Gör en lektion först",dailyIntro:"Fem snabba frågor från det du redan kan.",
   streakN:n=>`🔥 ${n} ${n===1?"dag":"dagar"} i rad`,notesT:"Mina misstag",notesS:n=>n?`${n} ${n===1?"uppgift":"uppgifter"} att öva igen`:"Inga misstag just nu 🎉",notesIntro:"De här var svåra förra gången. Nu med nya siffror!",
   fixed:"Fixat! Den försvinner ur misstagsboken.",badgesT:"Märken",badgesS:(k,n)=>`${k} av ${n}`,newBadge:"Nytt märke!",locked:"Inte ännu",
-  drillEnd:(r,n)=>`Du fick ${r} av ${n} rätt.`,parentsT:"För föräldrar och lärare",parentsS:"Se hur det går",
+  drillEnd:(r,n)=>`Du fick ${r} av ${n} rätt.`,parentsT:"För föräldrar och lärare",whoT:"Vem är du?",whoS:"Tryck på ditt namn.",newKid:"Nytt barn",whoSwitch:"Byt barn",delKid:"Ta bort profilen",delSure:"Tryck igen för att ta bort allt för",parentsS:"Se hur det går",
   pDone:"Lektioner klara",pTime:"Tid senaste 7 dagarna",pRight:"Rätt svar senaste 7 dagarna",pStreak:"Dagar i rad",pChart:"Minuter per dag",pNeeds:"Behöver öva",pNeedsNone:"Inget just nu. Bra jobbat!",
   pAll:"Alla lektioner",pStatus:{done:"Klar",known:"Kunde redan",started:"Påbörjad",none:"Inte påbörjad"},pLevel:["Lätt","Mellan","Svår"],pLvl:"Nivå",pStars:"Stjärnor",pHints:"Ledtrådar använda",pQs:"frågor",
   pMistakes:"i misstagsboken",fromBefore:t=>`🔁 Från en tidigare lektion: ${t}. `,remindBtn:"🔁 Påminn mig",tryLike:"Prova en liknande →",tryLikeH:"En liknande uppgift. ",sits:t=>`🧠 ”${t}” sitter nu!`,mem:{sits:"🧠 Sitter",due:"🔁 Dags att repetera",fading:"🔁 Börjar glömmas"},dueN:n=>n===1?"1 lektion att repetera i dag":`${n} lektioner att repetera i dag`,pSits:"sitter i minnet",pReview:"behöver repeteras",pFading:"börjar glömmas",pLow:"bara 1 stjärna",min:"min",savedCloud:"Framstegen sparas i ditt konto och syns på alla enheter där du är inloggad.",savedLocal:"Framstegen sparas bara i den här webbläsaren.",cloud:"Sparas i ditt konto"});
@@ -10327,7 +10339,7 @@ Object.assign(UI.en,{placeTitle:"Placement test",placeHero:"A short test first?"
   dailyT:"Today's 5 minutes",dailyS:"5 mixed questions from what you've done",dailyDone:"Done for today ✓",dailyNeed:"Do a lesson first",dailyIntro:"Five quick questions from what you already know.",
   streakN:n=>`🔥 ${n} ${n===1?"day":"days"} in a row`,notesT:"My mistakes",notesS:n=>n?`${n} ${n===1?"problem":"problems"} to try again`:"No mistakes right now 🎉",notesIntro:"These were tricky last time. Now with new numbers!",
   fixed:"Fixed! It leaves your mistake notebook.",badgesT:"Badges",badgesS:(k,n)=>`${k} of ${n}`,newBadge:"New badge!",locked:"Not yet",
-  drillEnd:(r,n)=>`You got ${r} of ${n} right.`,parentsT:"For parents and teachers",parentsS:"See how it's going",
+  drillEnd:(r,n)=>`You got ${r} of ${n} right.`,parentsT:"For parents and teachers",whoT:"Who are you?",whoS:"Tap your name.",newKid:"New child",whoSwitch:"Switch child",delKid:"Delete profile",delSure:"Tap again to delete everything for",parentsS:"See how it's going",
   pDone:"Lessons done",pTime:"Time in the last 7 days",pRight:"Right answers, last 7 days",pStreak:"Days in a row",pChart:"Minutes per day",pNeeds:"Needs practice",pNeedsNone:"Nothing right now. Well done!",
   pAll:"All lessons",pStatus:{done:"Done",known:"Already knew",started:"Started",none:"Not started"},pLevel:["Easy","Medium","Hard"],pLvl:"Level",pStars:"Stars",pHints:"Hints used",pQs:"questions",
   pMistakes:"in the mistake notebook",fromBefore:t=>`🔁 From an earlier lesson: ${t}. `,remindBtn:"🔁 Remind me",tryLike:"Try a similar one →",tryLikeH:"A similar problem. ",sits:t=>`🧠 "${t}" has stuck!`,mem:{sits:"🧠 Stuck",due:"🔁 Time to review",fading:"🔁 Starting to fade"},dueN:n=>n===1?"1 lesson to review today":`${n} lessons to review today`,pSits:"stuck in memory",pReview:"needs review",pFading:"starting to fade",pLow:"only 1 star",min:"min",savedCloud:"Progress is saved in your account and shows on every device where you're signed in.",savedLocal:"Progress is saved only in this browser.",cloud:"Saved in your account"});
@@ -10338,7 +10350,7 @@ Object.assign(UI.ar,{placeTitle:"اختبار تحديد المستوى",placeHe
   dailyT:"دقائق اليوم الخمس",dailyS:"5 أسئلة منوّعة مما درسته",dailyDone:"أنجزتها اليوم ✓",dailyNeed:"أنهِ درسًا أولًا",dailyIntro:"خمسة أسئلة سريعة مما تعرفه.",
   streakN:n=>`🔥 ${n} ${n===1?"يوم":"أيام"} متتالية`,notesT:"دفتر أخطائي",notesS:n=>n?`${n} مسائل لتعيد حلها`:"لا أخطاء الآن 🎉",notesIntro:"هذه كانت صعبة في المرة السابقة. الآن بأرقام جديدة!",
   fixed:"أحسنت! خرجت من دفتر الأخطاء.",badgesT:"الشارات",badgesS:(k,n)=>`${k} من ${n}`,newBadge:"شارة جديدة!",locked:"ليس بعد",
-  drillEnd:(r,n)=>`أجبت ${r} من ${n} إجابات صحيحة.`,parentsT:"لأولياء الأمور والمعلمين",parentsS:"تابع التقدم",
+  drillEnd:(r,n)=>`أجبت ${r} من ${n} إجابات صحيحة.`,parentsT:"لأولياء الأمور والمعلمين",whoT:"من أنت؟",whoS:"اضغط على اسمك.",newKid:"طفل جديد",whoSwitch:"تبديل الطفل",delKid:"حذف الملف",delSure:"اضغط مرة أخرى لحذف كل شيء لـ",parentsS:"تابع التقدم",
   pDone:"دروس منتهية",pTime:"الوقت في آخر 7 أيام",pRight:"إجابات صحيحة في آخر 7 أيام",pStreak:"أيام متتالية",pChart:"دقائق كل يوم",pNeeds:"يحتاج تمرينًا",pNeedsNone:"لا شيء الآن. عمل رائع!",
   pAll:"كل الدروس",pStatus:{done:"منتهٍ",known:"يعرفه مسبقًا",started:"بدأه",none:"لم يبدأ"},pLevel:["سهل","متوسط","صعب"],pLvl:"المستوى",pStars:"النجوم",pHints:"تلميحات مستخدمة",pQs:"أسئلة",
   pMistakes:"في دفتر الأخطاء",fromBefore:t=>`🔁 من درس سابق: ${t}. `,remindBtn:"🔁 ذكّرني",tryLike:"جرّب سؤالًا مشابهًا ←",tryLikeH:"سؤال مشابه. ",sits:t=>`🧠 «${t}» ثبت في ذاكرتك!`,mem:{sits:"🧠 ثابت",due:"🔁 حان وقت المراجعة",fading:"🔁 بدأ يُنسى"},dueN:n=>n===1?"درس واحد للمراجعة اليوم":n===2?"درسان للمراجعة اليوم":n<=10?`${n} دروس للمراجعة اليوم`:`${n} درسًا للمراجعة اليوم`,pSits:"ثابتة في الذاكرة",pReview:"يحتاج إلى مراجعة",pFading:"بدأ يُنسى",pLow:"نجمة واحدة فقط",min:"د",savedCloud:"يُحفظ التقدم في حسابك ويظهر على كل جهاز تسجّل الدخول فيه.",savedLocal:"يُحفظ التقدم في هذا المتصفح فقط.",cloud:"محفوظ في حسابك"});
@@ -10423,31 +10435,54 @@ function showBadge(){const el=$("#bpop");if(!el||!el.hidden||!bq.length)return;c
 let lastAct=Date.now();["pointerdown","keydown"].forEach(ev=>document.addEventListener(ev,()=>{lastAct=Date.now()},{capture:true}));
 setInterval(()=>{if(!active||!S.grade||document.visibilityState!=="visible"||Date.now()-lastAct>120000)return;dayRec().sec+=15;saveLocal()},15000);
 
-/* ---- cloud sync: one private document per signed-in viewer, merged with this browser's copy ---- */
-const CLOUD={on:false,ref:null,t:0,busy:false,again:false};
-function pushCloud(){if(!CLOUD.on)return;clearTimeout(CLOUD.t);CLOUD.t=setTimeout(async()=>{
+/* ---- cloud sync: one private document per child ("kid-<id>") in the signed-in viewer's own folder, merged with this browser's copy ---- */
+const CLOUD={on:false,col:null,t:0,busy:false,again:false,dirty:new Set()};
+function flushCloud(){clearTimeout(CLOUD.t);CLOUD.t=setTimeout(async()=>{
   if(CLOUD.busy){CLOUD.again=true;return}CLOUD.busy=true;
-  try{await CLOUD.ref.set({s:JSON.parse(JSON.stringify(S)),upd:S.upd||0})}catch(e){if(e&&(e.code==="invalid_argument"||e.code==="revoked"||e.code==="not_granted")){CLOUD.on=false;hud()}}
-  CLOUD.busy=false;if(CLOUD.again){CLOUD.again=false;pushCloud()}},1500)}
+  const ids=[...CLOUD.dirty];CLOUD.dirty.clear();
+  for(const id of ids){const k=PROF.kids[id];
+    try{await CLOUD.col.doc("kid-"+id).set(PROF.gone[id]?{gone:PROF.gone[id]}:{s:JSON.parse(JSON.stringify(k)),upd:k.upd||0})}
+    catch(e){if(e&&(e.code==="invalid_argument"||e.code==="revoked"||e.code==="not_granted")){CLOUD.on=false;hud();break}}}
+  CLOUD.busy=false;if(CLOUD.again){CLOUD.again=false;flushCloud()}},1500)}
+function pushCloud(){if(!CLOUD.on||!S.name||!S.grade)return;CLOUD.dirty.add(S.id);flushCloud()}
+function goneCloud(id){if(!CLOUD.on)return;CLOUD.dirty.add(id);flushCloud()}
 function mergeState(a,b){
   const bNew=!a.grade||(b.upd||0)>(a.upd||0),n=bNew?b:a,o=bNew?a:b,r=Object.assign(fresh(),o,n),keys=(x,y)=>[...new Set([...Object.keys(x||{}),...Object.keys(y||{})])];
-  r.name=n.name||o.name||"";r.grade=n.grade||o.grade||null;r.lang=a.grade?a.lang:(b.lang||a.lang);r.sound=a.sound;
+  r.id=a.id||b.id;r.name=n.name||o.name||"";r.grade=n.grade||o.grade||null;r.lang=a.grade?a.lang:(b.lang||a.lang);r.sound=a.sound;
   r.lessons={};keys(a.lessons,b.lessons).forEach(k=>{const x=(a.lessons||{})[k]||{},y=(b.lessons||{})[k]||{},m=(n.lessons||{})[k]||x;r.lessons[k]=Object.assign({},m,{stars:Math.max(x.stars||0,y.stars||0),known:!!(x.known||y.known)})});
   r.days={};keys(a.days,b.days).forEach(k=>{const x=(a.days||{})[k]||{},y=(b.days||{})[k]||{};r.days[k]={sec:Math.max(x.sec||0,y.sec||0),q:Math.max(x.q||0,y.q||0),ok:Math.max(x.ok||0,y.ok||0)}});
   r.tot={};["q","ok","okNoHint","hints"].forEach(k=>r.tot[k]=Math.max((a.tot||{})[k]||0,(b.tot||{})[k]||0));
   r.xp=Math.max(a.xp||0,b.xp||0);r.fixed=Math.max(a.fixed||0,b.fixed||0);r.badges=Object.assign({},o.badges,n.badges);r.mist=Object.assign({},n.mist);r.places=Object.assign({},o.places,n.places);r.rev=Object.assign({},o.rev,n.rev);
   r.daily=((a.daily||{}).last||"")>=((b.daily||{}).last||"")?Object.assign({},b.daily,a.daily):Object.assign({},a.daily,b.daily);
   r.upd=Math.max(a.upd||0,b.upd||0);return r}
+/* the active child's copy changed elsewhere: merge it in and redraw the screen unless a lesson is running */
 function adopt(R){const before=JSON.stringify(S);S=mergeState(S,R);if(JSON.stringify(S)===before)return;saveLocal();
   if(S.lang!==lang)lang=S.lang;hud();if(!active){$("#wrap").dir=lang==="ar"?"rtl":"ltr";document.querySelectorAll("#langs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===lang));S.grade?(screen===welcome?map():screen()):welcome()}}
+/* one child's document arrived from the account: returns true when something changed */
+function takeKid(id,d){if(!d)return false;
+  if(d.gone){if(!PROF.kids[id]&&PROF.gone[id])return false;PROF.gone[id]=d.gone;delete PROF.kids[id];if(PROF.cur===id)PROF.cur=null;
+    if(S.id===id){S=Object.assign(fresh(),{id:newId(),lang});saveLocal();if(!active)route()}else saveLocal();return true}
+  const R=d.s;if(!R||!R.grade||PROF.gone[id])return false;R.id=id;
+  if(S.id===id){adopt(R);return true}
+  const k=PROF.kids[id],m=k?mergeState(k,R):Object.assign(clean(R),{id});if(k&&JSON.stringify(m)===JSON.stringify(k))return false;
+  PROF.kids[id]=m;try{localStorage.setItem(PKEY,JSON.stringify(PROF))}catch(e){}return true}
 (async()=>{try{
   if(!window.claude||typeof window.claude.use!=="function")return;
   const [db,user]=await Promise.all([window.claude.use("db"),window.claude.use("user")]);if(!db||!user)return;
   const uid=await user.id();if(!uid)return;
-  const ref=db.doc("data/users/"+uid+"/progress"),snap=await ref.get();
-  CLOUD.ref=ref;CLOUD.on=true;if(snap.exists&&snap.data().s)adopt(snap.data().s);
-  hud();pushCloud();
-  ref.onSnapshot(s=>{if(!s.exists||s.metadata.hasPendingWrites)return;const R=s.data().s;if(R&&(R.upd||0)>(S.upd||0))adopt(R)},()=>{});
+  const col=db.collection("data/users/"+uid),qs=await col.get(),seen={};
+  CLOUD.col=col;CLOUD.on=true;
+  for(const d of qs.docs){const b=d.data()||{};
+    if(d.id==="progress"){if(b.s&&b.s.grade&&!PROF.gone.k0)takeKid("k0",{s:b.s})}  /* the account copy of earlier versions */
+    else if(d.id.startsWith("kid-")){const id=d.id.slice(4);seen[id]=b.gone?Infinity:(b.upd||0);takeKid(id,b)}}
+  /* children made or changed in this browser that the account does not have yet */
+  for(const id in PROF.kids)if(PROF.kids[id].grade&&(seen[id]==null||seen[id]<(PROF.kids[id].upd||0)))CLOUD.dirty.add(id);
+  for(const id in PROF.gone)if(seen[id]!==Infinity)CLOUD.dirty.add(id);
+  if(CLOUD.dirty.size)flushCloud();
+  hud();if(!active)(picked?(screen===who||screen===parents?screen():null):route());
+  col.onSnapshot(s=>{if(s.metadata.hasPendingWrites)return;let ch=false;
+    s.docChanges().forEach(c=>{if(c.type!=="removed"&&c.doc.id.startsWith("kid-"))ch=takeKid(c.doc.id.slice(4),c.doc.data())||ch});
+    if(ch&&!active&&(screen===who||screen===parents))screen()},()=>{});
 }catch(e){CLOUD.on=false}})();
 
 /* ---- one problem on the board, shared by practice, placement and the reviews ----
@@ -10596,6 +10631,7 @@ function parents(){
       ${m?`<text x="${x+bw/2}" y="${y0-h-8}" text-anchor="middle" class="cv">${m}</text>`:""}<text x="${x+bw/2}" y="${H-6}" text-anchor="middle" class="cx">${esc(wd(last7[j]))}</text></g>`}).join("");
   app.innerHTML=`<div class="stack">
    <div class="lhead"><button class="btn ghost" id="back" style="padding:5px 16px">${T("back")}</button><h2 style="flex:1">${T("parentsT")}</h2></div>
+   ${kidList().length>1?`<div class="seg yseg" id="pkids" role="group">${kidList().map(k=>`<button data-k="${k.id}" aria-pressed="${k.id===S.id}">👤 ${esc(k.name)}</button>`).join("")}</div>`:""}
    <div class="course"><div><h2>${esc(S.name||"…")}</h2><p class="muted">${T("gradeChip")(S.grade)} · ${T("courseY")(yearNow())}</p>${yearSeg()}</div><p class="muted" style="max-width:360px;font-size:.9rem">${CLOUD.on?"☁️ "+T("savedCloud"):T("savedLocal")}</p></div>
    <div class="tiles">
     <div class="tile"><span class="label">${T("pDone")}</span><b>${done} / ${c.length}</b><span class="muted">🧠 ${c.filter(l=>(S.lessons[l.id]||{}).mastered).length} ${T("pSits")}</span></div>
@@ -10610,7 +10646,7 @@ function parents(){
    </tbody></table></div></section>
    <section class="panel stack" style="gap:8px"><h3>${T("badgesT")} · ${T("badgesS")(Object.keys(S.badges).length,BADGES.length)}</h3><p style="font-size:1.8rem;letter-spacing:6px">${BADGES.filter(b=>S.badges[b.id]).map(b=>`<span title="${esc(L(b.name))}">${b.icon}</span>`).join("")||"–"}</p></section>
   </div>`;
-  $("#back").onclick=map;wireYears(parents)}
+  $("#back").onclick=map;wireYears(parents);app.querySelectorAll("#pkids button").forEach(b=>b.onclick=()=>{picked=true;useKid(b.dataset.k);parents()})}
 
 /* =================== v9: "Explain it to me" - Claude explains the current scene or problem and draws on the board =================== */
 Object.assign(UI.sv,{aiBtn:"✨ Förklara för mig",aiWho:"Olle förklarar",aiThinking:"Olle tänker ut ett enklare sätt att visa det …",aiMore:"Visa mer →",aiAsk:"✏️ Fråga något mer",aiAskPh:"Skriv vad som är svårt",aiSend:"Fråga",aiBack:"Tillbaka →",aiAgain:"↻ På ett annat sätt",
@@ -10747,16 +10783,32 @@ function welcome(){
      <label class="label" for="nm">${T("name")}</label><input type="text" id="nm" maxlength="30" placeholder="${T("ph")}" value="${esc(S.name)}">
      <span class="label">${T("grade")}</span>
      <div class="grades" id="gr">${[4,5,6,7,8,9].map(g=>`<button data-g="${g}" aria-pressed="${S.grade===g}">${g}</button>`).join("")}</div>
-     <div class="row"><button class="btn" id="go">${T("start")}</button></div>
+     <div class="row"><button class="btn" id="go">${T("start")}</button>${kidList().some(k=>k.id!==S.id)?`<button class="btn ghost" id="wwho">👥 ${T("whoSwitch")}</button>`:""}${PROF.kids[S.id]?`<button class="btn ghost" id="wdel" style="margin-inline-start:auto">🗑 ${T("delKid")}</button>`:""}</div>
    </section></div>`;
+  const ww=$("#wwho");if(ww)ww.onclick=()=>{if(!PROF.kids[S.id])S=PROF.kids[PROF.cur]||S;who()};
+  /* deleting asks for a second tap that names the child */
+  const wd=$("#wdel");if(wd)wd.onclick=()=>{if(!wd.dataset.sure){wd.dataset.sure=1;wd.textContent=`🗑 ${T("delSure")} ${S.name}`;wd.classList.add("bad");return}dropKid(S.id);useKid(null);route()};
   app.querySelectorAll("#gr button").forEach(b=>b.onclick=()=>{S.grade=+b.dataset.g;app.querySelectorAll("#gr button").forEach(x=>x.setAttribute("aria-pressed",x===b))});
   /* no lessons until the student has written a name (at least two letters) */
   const nm=$("#nm");nm.oninput=()=>nm.classList.remove("bad");
   $("#go").onclick=()=>{viewYear=null;const n=nm.value.trim();
     if(n.length<2){nm.classList.add("bad");nm.focus();toast(T("needName"));return}
-    S.name=n;if(!S.grade){toast(T("pickGrade"));return}save();hud();map()};
+    S.name=n;if(!S.grade){toast(T("pickGrade"));return}picked=true;save();hud();map()};
 }
 
+/* "who are you?": every child on this account; tapping a name opens that child's own lessons */
+let picked=false;
+function who(){
+  screen=who;leave();const ks=kidList();
+  app.innerHTML=`<div class="stack">
+   <section class="hello">${OWL}<div class="stack" style="gap:10px"><h1>${T("whoT")}</h1><p class="muted">${T("whoS")}</p></div></section>
+   <div class="kids">${ks.map(k=>`<button class="kid${k.id===S.id?" on":""}" data-k="${k.id}"><span class="kav" style="background:hsl(${[...k.id].reduce((a,c)=>a+c.charCodeAt(0)*7,0)%360} 55% 45%)">${esc([...k.name][0].toUpperCase())}</span><b>${esc(k.name)}</b><span class="muted">${T("gradeChip")(k.grade)} · ★ ${k.xp}</span></button>`).join("")}
+    <button class="kid add" id="knew"><span class="kav">+</span><b>${T("newKid")}</b></button></div></div>`;
+  app.querySelectorAll(".kid[data-k]").forEach(b=>b.onclick=()=>{picked=true;useKid(b.dataset.k);map()});
+  $("#knew").onclick=()=>{picked=true;useKid(null);welcome()};
+  hud()}
+/* opening the app: several children ask who is here, one goes straight in, none starts with the name screen */
+function route(){const ks=kidList();if(ks.length>1){if(!PROF.kids[S.id])S=PROF.kids[PROF.cur]||S;who()}else if(ks.length===1){if(S.id!==ks[0].id)useKid(ks[0].id);map()}else{if(PROF.kids[S.id]||S.grade&&!S.name)useKid(null);welcome()}}
 let tabNow="math";
 function map(){
   if(!S.name||!S.grade){welcome();return}
@@ -10909,7 +10961,7 @@ function lesson(id){
 
 $("#home").onclick=()=>S.grade?map():welcome();
 setLang(lang);
-if(S.grade)map();
+route();
 setTimeout(checkBadges,700);
 </script>
 

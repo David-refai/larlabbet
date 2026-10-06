@@ -13,7 +13,8 @@ Each lesson is a whiteboard animation. A hand draws every step in marker, and Ol
 - Practice mixes in one question from an earlier lesson. If the pupil gets it wrong, "🔁 Påminn mig" replays that lesson's short explanation and then gives a similar problem.
 - "Dagens 5 minuter", five mixed questions a day that keep a streak.
 - Badges, and a page for parents and teachers with time spent, accuracy and the lessons that need practice.
-- Progress syncs across devices when the app runs as a claude.ai artifact (it uses the artifact `db` and `user` capabilities). Otherwise progress stays in the browser's localStorage.
+- One profile per child: a "Who are you?" screen when there are several, each child with their own progress, reviews and stars. The parents page can switch between children.
+- Progress syncs across devices when the app runs as a claude.ai artifact (it uses the artifact `db` and `user` capabilities, one private document per child). Otherwise progress stays in the browser's localStorage.
 - "✨ Förklara för mig": Claude explains the current problem on the whiteboard, using the artifact `sample` capability. The viewer's own Claude account is used, so no API key is needed. Limited to 30 explanations a day.
 
 ## Files
@@ -38,6 +39,7 @@ bash build.sh                          # -> dist/larlabbet.html, build/test.html
 export PW=/path/to/node_modules/playwright
 node tests/t14.js                      # Years 6-9: placement, lessons, mobile
 node tests/t15.js                      # spaced review, mixing, remind me, "sits"
+node tests/t16.js                      # child profiles, migration, sync, delete
 node tests/t13.js                      # Year 5 flow
 node tests/t10.js                      # placement, notebook, daily, badges, parents page
 node tests/t11.js                      # sync between two devices (mock db)

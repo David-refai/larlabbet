@@ -5,13 +5,13 @@ const mk=async(seedLocal)=>{const c=await b.newContext({viewport:{width:900,heig
  await p.route(/jsdelivr.*d3/,r=>r.fulfill({body:fs.readFileSync('tests/vendor/d3.min.js','utf8'),contentType:'application/javascript'}));
  await p.route(/fonts\.googleapis/,r=>r.fulfill({body:fs.readFileSync('tests/fonts/fonts.css','utf8'),contentType:'text/css'}));
  await p.route(/fonts\.gstatic/,r=>{const f=fmap[r.request().url()];f?r.fulfill({body:fs.readFileSync(f),contentType:'font/woff2'}):r.abort()});
- await p.exposeFunction('__write',(path,body)=>{writes.push(path);cloud=body});await p.exposeFunction('__read',()=>cloud);
+ await p.exposeFunction('__write',(id,body)=>{writes.push(id);cloud=Object.assign({},cloud,{[id]:body})});await p.exposeFunction('__all',()=>cloud||{});
  await p.addInitScript(seed=>{if(seed)localStorage.setItem("larlabbet-v3",seed);
-  const doc=path=>({get:async()=>{const d=await window.__read();return{exists:!!d,data:()=>d,metadata:{}}},set:async body=>window.__write(path,body),onSnapshot:()=>()=>{}});
-  window.claude={use:async n=>n==="db"?{doc}:n==="user"?{id:async()=>"user123"}:null}},seedLocal);
+  const collection=path=>({get:async()=>{const all=await window.__all();return{docs:Object.keys(all).map(id=>({id,exists:true,data:()=>all[id],metadata:{}}))}},doc:id=>({set:async body=>window.__write(id,body)}),onSnapshot:()=>()=>{}});
+  window.claude={use:async n=>n==="db"?{collection}:n==="user"?{id:async()=>"user123"}:null}},seedLocal);
  await p.goto('file://'+process.cwd()+'/build/test.html');await p.waitForTimeout(2500);return p};
 const A=await mk(JSON.stringify({name:"Sara",grade:4,xp:120,lang:"sv",lessons:{pv4:{stars:3,level:2},round:{stars:2,level:1}},upd:1000}));
-console.log('A writes',writes,'cloud name',cloud&&cloud.s.name,'hud cloud chip',await A.$eval('#hud',e=>e.textContent.includes('☁')));
+console.log('A writes',writes,'cloud name',cloud&&cloud['kid-k0']&&cloud['kid-k0'].s.name,'hud cloud chip',await A.$eval('#hud',e=>e.textContent.includes('☁')));
 const B=await mk(null);
 console.log('B screen h1:',await B.textContent('h1'),'| B stars pv4',await B.evaluate(()=>S.lessons.pv4&&S.lessons.pv4.stars),'| errors',A.errs,B.errs);
 await B.screenshot({path:'build/shots3/18-device-B.png'});await b.close()})();
