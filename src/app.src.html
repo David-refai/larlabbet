@@ -148,7 +148,7 @@ input[type=text]{font:inherit;width:100%;border:0;box-shadow:0 0 0 1.5px var(--l
 .tool .muted{font-size:.86rem;line-height:1.35}.tool.dim{opacity:.62}.ti{font-size:1.9rem;line-height:1}
 .streak{font-weight:800;font-size:.86rem;color:#c2410c}.cnt{display:inline-block;min-width:1.5em;text-align:center;border-radius:999px;background:var(--accent);color:#fff;font-size:.8rem;padding:0 6px;vertical-align:2px}
 .bmini{font-size:1.05rem;letter-spacing:2px}
-.ord.kn{background:var(--teal)}.kntag{color:var(--teal);font-weight:800;font-size:.9rem;line-height:1.7}
+.ord.kn{background:var(--teal)}.mem{align-self:flex-start;font-size:.8rem;font-weight:800;border-radius:999px;padding:1px 10px}.mem.sits{background:#ece8ff;color:#4b2bb5}.mem.due{background:#fff1c7;color:#7a4d00}.mem.fading{background:#ffe1d6;color:#a63b12}.kntag{color:var(--teal);font-weight:800;font-size:.9rem;line-height:1.7}
 .card.here{box-shadow:0 0 0 3px var(--accent),var(--shadow)}
 .ribbon{position:absolute;top:10px;inset-inline-end:10px;background:var(--accent);color:#fff;border-radius:999px;padding:2px 12px;font-family:var(--display);font-weight:800;font-size:.85rem}
 .bpop{position:fixed;inset:0;display:grid;place-items:center;background:rgba(13,20,36,.35);z-index:10;cursor:pointer}
@@ -237,7 +237,7 @@ const FONT=(w,s)=>`${w} ${s}px Figtree, "IBM Plex Sans Arabic", sans-serif`;
 
 /* ---------- state (this browser only) ---------- */
 const KEY="larlabbet-v3";
-const fresh=()=>({places:{},name:"",grade:null,xp:0,lang:"sv",lessons:{},mist:{},days:{},tot:{q:0,ok:0,okNoHint:0,hints:0},badges:{},daily:{last:"",streak:0,n:0},fixed:0,place:null,upd:0});
+const fresh=()=>({places:{},name:"",grade:null,xp:0,lang:"sv",lessons:{},mist:{},days:{},tot:{q:0,ok:0,okNoHint:0,hints:0},badges:{},daily:{last:"",streak:0,n:0},fixed:0,place:null,upd:0,rev:{}});
 let S=fresh();
 try{const r=JSON.parse(localStorage.getItem(KEY)||"null");if(r&&r.lessons){S=Object.assign(fresh(),r);S.tot=Object.assign(fresh().tot,r.tot);S.daily=Object.assign(fresh().daily,r.daily)}}catch(e){}
 lang=S.lang||"sv";
@@ -2909,7 +2909,7 @@ Object.assign(UI.sv,{placeTitle:"Nivåtest",placeHero:"Ett kort test först?",pl
   drillEnd:(r,n)=>`Du fick ${r} av ${n} rätt.`,parentsT:"För föräldrar och lärare",parentsS:"Se hur det går",
   pDone:"Lektioner klara",pTime:"Tid senaste 7 dagarna",pRight:"Rätt svar senaste 7 dagarna",pStreak:"Dagar i rad",pChart:"Minuter per dag",pNeeds:"Behöver öva",pNeedsNone:"Inget just nu. Bra jobbat!",
   pAll:"Alla lektioner",pStatus:{done:"Klar",known:"Kunde redan",started:"Påbörjad",none:"Inte påbörjad"},pLevel:["Lätt","Mellan","Svår"],pLvl:"Nivå",pStars:"Stjärnor",pHints:"Ledtrådar använda",pQs:"frågor",
-  pMistakes:"i misstagsboken",pLow:"bara 1 stjärna",min:"min",savedCloud:"Framstegen sparas i ditt konto och syns på alla enheter där du är inloggad.",savedLocal:"Framstegen sparas bara i den här webbläsaren.",cloud:"Sparas i ditt konto"});
+  pMistakes:"i misstagsboken",fromBefore:t=>`🔁 Från en tidigare lektion: ${t}. `,remindBtn:"🔁 Påminn mig",tryLike:"Prova en liknande →",tryLikeH:"En liknande uppgift. ",sits:t=>`🧠 ”${t}” sitter nu!`,mem:{sits:"🧠 Sitter",due:"🔁 Dags att repetera",fading:"🔁 Börjar glömmas"},dueN:n=>n===1?"1 lektion att repetera i dag":`${n} lektioner att repetera i dag`,pSits:"sitter i minnet",pReview:"behöver repeteras",pFading:"börjar glömmas",pLow:"bara 1 stjärna",min:"min",savedCloud:"Framstegen sparas i ditt konto och syns på alla enheter där du är inloggad.",savedLocal:"Framstegen sparas bara i den här webbläsaren.",cloud:"Sparas i ditt konto"});
 Object.assign(UI.en,{placeTitle:"Placement test",placeHero:"A short test first?",placeText:"A few quick questions, about 5 minutes, so I know which lesson you should start with. It's fine if you don't know an answer.",
   placeGo:"Start the test",placeSkip:"Skip",placeRedo:"Retake the placement test",placeIntro:"Answer as well as you can. If you don't know, press I don't know. That's totally fine!",dunno:"I don't know",
   placeNo:"Okay, we'll learn that soon.",placeDone:(k,n,t)=>`Done! You already know ${k} lessons. We'll start with lesson ${n}: ${t}.`,placeAll:y=>`Wow, you already know all of Year ${y}! Do today's 5 minutes so you don't forget.`,
@@ -2920,7 +2920,7 @@ Object.assign(UI.en,{placeTitle:"Placement test",placeHero:"A short test first?"
   drillEnd:(r,n)=>`You got ${r} of ${n} right.`,parentsT:"For parents and teachers",parentsS:"See how it's going",
   pDone:"Lessons done",pTime:"Time in the last 7 days",pRight:"Right answers, last 7 days",pStreak:"Days in a row",pChart:"Minutes per day",pNeeds:"Needs practice",pNeedsNone:"Nothing right now. Well done!",
   pAll:"All lessons",pStatus:{done:"Done",known:"Already knew",started:"Started",none:"Not started"},pLevel:["Easy","Medium","Hard"],pLvl:"Level",pStars:"Stars",pHints:"Hints used",pQs:"questions",
-  pMistakes:"in the mistake notebook",pLow:"only 1 star",min:"min",savedCloud:"Progress is saved in your account and shows on every device where you're signed in.",savedLocal:"Progress is saved only in this browser.",cloud:"Saved in your account"});
+  pMistakes:"in the mistake notebook",fromBefore:t=>`🔁 From an earlier lesson: ${t}. `,remindBtn:"🔁 Remind me",tryLike:"Try a similar one →",tryLikeH:"A similar problem. ",sits:t=>`🧠 "${t}" has stuck!`,mem:{sits:"🧠 Stuck",due:"🔁 Time to review",fading:"🔁 Starting to fade"},dueN:n=>n===1?"1 lesson to review today":`${n} lessons to review today`,pSits:"stuck in memory",pReview:"needs review",pFading:"starting to fade",pLow:"only 1 star",min:"min",savedCloud:"Progress is saved in your account and shows on every device where you're signed in.",savedLocal:"Progress is saved only in this browser.",cloud:"Saved in your account"});
 Object.assign(UI.ar,{placeTitle:"اختبار تحديد المستوى",placeHero:"اختبار قصير أولًا؟",placeText:"بضعة أسئلة سريعة، حوالي 5 دقائق، لأعرف من أي درس تبدأ. لا بأس إن لم تعرف الجواب.",
   placeGo:"ابدأ الاختبار",placeSkip:"تخطَّ",placeRedo:"أعِد اختبار المستوى",placeIntro:"أجب قدر ما تستطيع. إن لم تعرف، اضغط لا أعرف. هذا عادي تمامًا!",dunno:"لا أعرف",
   placeNo:"حسنًا، سنتعلم هذا قريبًا.",placeDone:(k,n,t)=>`انتهينا! أنت تعرف ${k} دروس. سنبدأ بالدرس ${n}: ${t}.`,placeAll:y=>`رائع، أنت تعرف كل ${UI.ar.courseY(y)}! قم بدقائق اليوم الخمس حتى لا تنسى.`,
@@ -2931,7 +2931,7 @@ Object.assign(UI.ar,{placeTitle:"اختبار تحديد المستوى",placeHe
   drillEnd:(r,n)=>`أجبت ${r} من ${n} إجابات صحيحة.`,parentsT:"لأولياء الأمور والمعلمين",parentsS:"تابع التقدم",
   pDone:"دروس منتهية",pTime:"الوقت في آخر 7 أيام",pRight:"إجابات صحيحة في آخر 7 أيام",pStreak:"أيام متتالية",pChart:"دقائق كل يوم",pNeeds:"يحتاج تمرينًا",pNeedsNone:"لا شيء الآن. عمل رائع!",
   pAll:"كل الدروس",pStatus:{done:"منتهٍ",known:"يعرفه مسبقًا",started:"بدأه",none:"لم يبدأ"},pLevel:["سهل","متوسط","صعب"],pLvl:"المستوى",pStars:"النجوم",pHints:"تلميحات مستخدمة",pQs:"أسئلة",
-  pMistakes:"في دفتر الأخطاء",pLow:"نجمة واحدة فقط",min:"د",savedCloud:"يُحفظ التقدم في حسابك ويظهر على كل جهاز تسجّل الدخول فيه.",savedLocal:"يُحفظ التقدم في هذا المتصفح فقط.",cloud:"محفوظ في حسابك"});
+  pMistakes:"في دفتر الأخطاء",fromBefore:t=>`🔁 من درس سابق: ${t}. `,remindBtn:"🔁 ذكّرني",tryLike:"جرّب سؤالًا مشابهًا ←",tryLikeH:"سؤال مشابه. ",sits:t=>`🧠 «${t}» ثبت في ذاكرتك!`,mem:{sits:"🧠 ثابت",due:"🔁 حان وقت المراجعة",fading:"🔁 بدأ يُنسى"},dueN:n=>n===1?"درس واحد للمراجعة اليوم":n===2?"درسان للمراجعة اليوم":n<=10?`${n} دروس للمراجعة اليوم`:`${n} درسًا للمراجعة اليوم`,pSits:"ثابتة في الذاكرة",pReview:"يحتاج إلى مراجعة",pFading:"بدأ يُنسى",pLow:"نجمة واحدة فقط",min:"د",savedCloud:"يُحفظ التقدم في حسابك ويظهر على كل جهاز تسجّل الدخول فيه.",savedLocal:"يُحفظ التقدم في هذا المتصفح فقط.",cloud:"محفوظ في حسابك"});
 
 /* ---- dates and simple counters ---- */
 const dkey=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
@@ -2959,6 +2959,35 @@ function track(id,lv,ok,hinted,mode){
     else if(S.mist[id]&&mode!=="practice"){delete S.mist[id];S.fixed++;toast(T("fixed"))}}
   save();checkBadges()}
 
+/* ---- memory: spaced review. A finished lesson comes back after 1, 3, 7, 21 and 60 days. A right answer moves it to the
+   next gap, a wrong one starts it again from 1 day. A lesson "sits" when it is answered right at least a week after it was first finished. ---- */
+const GAPS=[1,3,7,21,60];
+const dayDiff=(a,b)=>{const u=k=>{const [y,m,d]=k.split("-").map(Number);return Date.UTC(y,m-1,d)};return Math.round((u(b)-u(a))/864e5)};
+const inDays=n=>daysAgo(-n);
+function revStart(id,box,due){S.rev=S.rev||{};if(S.rev[id])return;const b=box||0;S.rev[id]={box:b,due:due||inDays(GAPS[b]),first:today(),last:""}}
+/* lessons finished before reviews existed (or marked known by the placement test) join the schedule, spread over the next days */
+function revFill(){let k=0;allCourse().forEach(l=>{if(l.gen&&isDone(l.id)&&!(S.rev||{})[l.id]){const kn=!(S.lessons[l.id]||{}).stars;revStart(l.id,kn?1:0,inDays((kn?3:1)+(k++%4)))}})}
+function revAnswer(id,ok){const r=(S.rev=S.rev||{})[id];if(!r)return;const t=today(),p=S.lessons[id]||{};
+  if(ok){if(r.last!==t){r.box=Math.min(r.box+1,GAPS.length-1);r.due=inDays(GAPS[r.box]);r.last=t}else if(r.due<=t)r.due=inDays(GAPS[r.box]);
+    if(!p.mastered&&dayDiff(r.first,t)>=7){S.lessons[id]=Object.assign({},p,{mastered:t});const l=LESSONS.find(x=>x.id===id);if(l)setTimeout(()=>toast(T("sits")(L(l.title))),900)}}
+  else{r.box=0;r.due=inDays(1);r.last=t;if(p.mastered)S.lessons[id]=Object.assign({},p,{mastered:""})}}
+const revDue=()=>allCourse().filter(l=>l.gen&&(S.rev||{})[l.id]&&S.rev[l.id].due<=today()).sort((a,b)=>S.rev[a.id].due<S.rev[b.id].due?-1:1);
+const memState=id=>{const p=S.lessons[id]||{},r=(S.rev||{})[id];return p.mastered?"sits":r&&r.due<=today()?(dayDiff(r.due,today())>3?"fading":"due"):""};
+/* a level at or just below the student's level, so a review doesn't look like last time */
+const revLv=id=>{const p=S.lessons[id]||{},l=p.level!=null?p.level:1;return Math.max(0,l-(Math.random()<.5?1:0))};
+/* one earlier lesson to mix into practice: one that is due for review if there is one */
+function mixPick(id){const me=LESSONS.find(l=>l.id===id);if(!me||!me.year)return null;
+  const c=LESSONS.filter(l=>l.gen&&l.id!==id&&l.year&&isDone(l.id)&&(l.year<me.year||(l.year===me.year&&l.ord<me.ord)));if(!c.length)return null;
+  const due=c.filter(l=>(S.rev||{})[l.id]&&S.rev[l.id].due<=today());return pick(due.length?due:c)}
+/* "Remind me": the old lesson's short explanation on the board, then a similar problem */
+function remind(ctx,id,then){const l=LESSONS.find(x=>x.id===id),H=(l&&l.help)||[],quiz=$("#quiz");let h=0;ctx.helpBtn.hidden=true;
+  const show=()=>{if(!H.length){then();return}const s=H[h];ctx.wb.cancel();ctx.wb.run([A.wipe(),...(s.draw?s.draw():[])]);ctx.talk((h?"":L(l.title)+": ")+L(s.say));
+    quiz.innerHTML=`<div class="row" style="justify-content:flex-end">${h<H.length-1?`<button class="btn ghost" id="rmore">${T("helpMore")}</button>`:""}<button class="btn" id="rtry">${T("tryLike")}</button></div>`;
+    const m=$("#rmore");if(m)m.onclick=()=>{h++;show()};$("#rtry").onclick=()=>{ctx.wb.cancel();then()}};
+  show()}
+const addRemind=(ctx,id,then)=>{const row=$("#quiz .row");if(!row||!(LESSONS.find(l=>l.id===id)||{}).help)return;
+  row.insertAdjacentHTML("afterbegin",`<button class="btn helpb" id="rem">${T("remindBtn")}</button>`);$("#rem").onclick=()=>remind(ctx,id,then)};
+
 /* ---- badges ---- */
 const BADGES=[
  {id:"first",icon:"🌱",name:t3("Första lektionen","First lesson","الدرس الأول"),how:t3("Klara en lektion.","Finish a lesson.","أنهِ درسًا."),ok:()=>allCourse().some(l=>(S.lessons[l.id]||{}).stars)},
@@ -2968,6 +2997,7 @@ const BADGES=[
  {id:"nohint",icon:"🧠",name:t3("10 utan ledtråd","10 without a hint","10 بدون تلميح"),how:t3("Svara rätt 10 gånger utan ledtråd.","Answer right 10 times without a hint.","أجب إجابة صحيحة 10 مرات دون تلميح."),ok:()=>S.tot.okNoHint>=10},
  {id:"stars",icon:"⭐",name:t3("Stjärnsamlare","Star collector","جامع النجوم"),how:t3("Få tre stjärnor i fem lektioner.","Get three stars in five lessons.","احصل على ثلاث نجوم في خمسة دروس."),ok:()=>Object.values(S.lessons).filter(p=>p.stars>=3).length>=5},
  {id:"fixer",icon:"🛠️",name:t3("Felfixare","Mistake fixer","مُصلح الأخطاء"),how:t3("Rätta fem uppgifter i misstagsboken.","Fix five problems from your mistake notebook.","صحّح خمس مسائل من دفتر الأخطاء."),ok:()=>S.fixed>=5},
+ {id:"memory",icon:"📌",name:t3("Bra minne","Good memory","ذاكرة قوية"),how:t3("Fem lektioner sitter i minnet.","Five lessons have stuck.","خمسة دروس ثبتت في ذاكرتك."),ok:()=>Object.values(S.lessons).filter(p=>p.mastered).length>=5},
  {id:"hundred",icon:"💯",name:t3("100 rätt","100 right","100 إجابة صحيحة"),how:t3("Svara rätt på 100 frågor.","Answer 100 questions right.","أجب عن 100 سؤال إجابة صحيحة."),ok:()=>S.tot.ok>=100},
  {id:"year4",icon:"🏆",name:t3("Årskurs 4 klar","Year 4 done","أنهيت الصف الرابع"),how:t3("Klara alla 15 lektionerna.","Finish all 15 lessons.","أنهِ الدروس الخمسة عشر كلها."),ok:()=>courseOf(4).length>0&&courseOf(4).every(l=>(S.lessons[l.id]||{}).stars)},
  {id:"year5",icon:"🥇",name:t3("Årskurs 5 klar","Year 5 done","أنهيت الصف الخامس"),how:t3("Klara alla 16 lektionerna i årskurs 5.","Finish all 16 Year 5 lessons.","أنهِ دروس الصف الخامس الستة عشر كلها."),ok:()=>courseOf(5).length>0&&courseOf(5).every(l=>(S.lessons[l.id]||{}).stars)},
@@ -2995,7 +3025,7 @@ function mergeState(a,b){
   r.lessons={};keys(a.lessons,b.lessons).forEach(k=>{const x=(a.lessons||{})[k]||{},y=(b.lessons||{})[k]||{},m=(n.lessons||{})[k]||x;r.lessons[k]=Object.assign({},m,{stars:Math.max(x.stars||0,y.stars||0),known:!!(x.known||y.known)})});
   r.days={};keys(a.days,b.days).forEach(k=>{const x=(a.days||{})[k]||{},y=(b.days||{})[k]||{};r.days[k]={sec:Math.max(x.sec||0,y.sec||0),q:Math.max(x.q||0,y.q||0),ok:Math.max(x.ok||0,y.ok||0)}});
   r.tot={};["q","ok","okNoHint","hints"].forEach(k=>r.tot[k]=Math.max((a.tot||{})[k]||0,(b.tot||{})[k]||0));
-  r.xp=Math.max(a.xp||0,b.xp||0);r.fixed=Math.max(a.fixed||0,b.fixed||0);r.badges=Object.assign({},o.badges,n.badges);r.mist=Object.assign({},n.mist);r.places=Object.assign({},o.places,n.places);
+  r.xp=Math.max(a.xp||0,b.xp||0);r.fixed=Math.max(a.fixed||0,b.fixed||0);r.badges=Object.assign({},o.badges,n.badges);r.mist=Object.assign({},n.mist);r.places=Object.assign({},o.places,n.places);r.rev=Object.assign({},o.rev,n.rev);
   r.daily=((a.daily||{}).last||"")>=((b.daily||{}).last||"")?Object.assign({},b.daily,a.daily):Object.assign({},a.daily,b.daily);
   r.upd=Math.max(a.upd||0,b.upd||0);return r}
 function adopt(R){const before=JSON.stringify(S);S=mergeState(S,R);if(JSON.stringify(S)===before)return;saveLocal();
@@ -3036,7 +3066,7 @@ function poseProblem(ctx,g,o,done){
       const sb=$("#sol");if(sb)sb.onclick=()=>{sb.remove();wb.run(g.sol)}}
     else if(o.sol===false){talk(T("placeNo"));quiz.innerHTML=`<div class="row">${nextBtn}</div>`}
     else{talk(T("wrongSol")(answerText(g)));quiz.innerHTML=`<div class="row">${nextBtn}</div>`;wb.run(g.sol)}
-    $("#nx").onclick=()=>{wb.cancel();o.onNext()}}
+    $("#nx").onclick=()=>{wb.cancel();o.onNext()};if(o.after)o.after(ok)}
   const sk=$("#skip");if(sk)sk.onclick=()=>judge(false,T("dunno"));
   let lastIn=null;ctrl.addEventListener("focusin",e=>{if(e.target.tagName==="INPUT")lastIn=e.target});
   const sg=$("#sgn");if(sg){sg.onpointerdown=e=>e.preventDefault();sg.onclick=()=>{const a=lastIn||$("#an");a.value=/^\s*[-−]/.test(a.value)?a.value.replace(/^\s*[-−]/,""):"-"+a.value;a.focus()};}
@@ -3073,7 +3103,8 @@ function planDrill(mode){
   const mist=Object.entries(S.mist).sort((a,b)=>a[1].at-b[1].at).map(([id,m])=>({id,lv:m.lv}));
   if(mode==="notes")return mist.slice(0,5);
   const pool=shuffle(allCourse().filter(l=>l.gen&&isDone(l.id)).map(l=>l.id));if(!pool.length)return[];
-  const out=mist.slice(0,2);let k=0;while(out.length<5){const id=pool[k++%pool.length];const p=S.lessons[id]||{};out.push({id,lv:p.level!=null?p.level:1})}
+  const out=revDue().slice(0,4).map(l=>({id:l.id,lv:revLv(l.id)}));mist.forEach(m=>{if(out.length<5&&!out.some(o=>o.id===m.id))out.push(m)});
+  let k=0;while(out.length<5){const id=pool[k++%pool.length];out.push({id,lv:revLv(id)})}
   return out}
 function drill(mode){
   const items=planDrill(mode);if(!items.length){map();return}
@@ -3102,9 +3133,10 @@ function drill(mode){
   const stopNow=()=>k>=items.length||(mode==="place"&&wrongRun>=2);
   const prog=()=>{$("#prog").innerHTML=items.map((_,j)=>`<i class="${j<k?"done":j===k?"now":""}"></i>`).join("")};
   function ask(){prog();const it=items[k],g=LESSONS.find(l=>l.id===it.id).gen(it.lv);
-    poseProblem(ctx,g,{head:(k===0?intro+" ":"")+T("qOf")(k+1,items.length),hint:mode!=="place",sol:mode!=="place",skip:mode==="place",
-      next:()=>stopNow()?T("finish"):T("nextProblem"),onNext:()=>stopNow()?end():ask()},
-     (ok,h)=>{k++;res.push({id:it.id,ok});wrongRun=ok?0:wrongRun+1;if(ok){right++;addXP(mode==="place"?5:10+5*it.lv)}track(it.id,it.lv,ok,h,mode)});ctx.cur.item=it}
+    poseProblem(ctx,g,{head:(it.retry?T("tryLikeH"):k===0?intro+" ":"")+T("qOf")(k+1,items.length),hint:mode!=="place",sol:mode!=="place",skip:mode==="place",
+      next:()=>stopNow()?T("finish"):T("nextProblem"),onNext:()=>stopNow()?end():ask(),
+      after:ok=>{if(!ok&&mode!=="place"&&!it.retry)addRemind(ctx,it.id,()=>{items.splice(k,0,{id:it.id,lv:0,retry:true});ask()})}},
+     (ok,h)=>{k++;res.push({id:it.id,ok});wrongRun=ok?0:wrongRun+1;if(ok){right++;addXP(mode==="place"?5:10+5*it.lv)}if(mode!=="place"&&!it.retry)revAnswer(it.id,ok);track(it.id,it.lv,ok,h,mode)});ctx.cur.item=it}
   function end(){
     k=items.length;prog();if(aiBtn){aiBtn.dataset.idle="1";aiShow()}if(mode!=="place")wb.run([A.wipe(),A.tx(`${right} / ${res.length}`,400,280,140,right===res.length?"g":"b")]);$("#ctrl").innerHTML="";helpBtn.hidden=true;av.classList.add("happy");
     if(mode==="place"){
@@ -3112,7 +3144,7 @@ function drill(mode){
       const start=ids.find(id=>probed[id]===false)||null,si=start?ids.indexOf(start):ids.length;let known=0;
       ids.forEach((id,ix)=>{const p=Object.assign({stars:0},S.lessons[id]);
         if(probed[id]===true){p.known=true;p.level=2}else if(probed[id]===false){p.level=0;p.known=false}else if(ix<si){p.known=true;if(p.level==null)p.level=1}
-        S.lessons[id]=p;if(p.known)known++});
+        S.lessons[id]=p;if(p.known)known++});revFill();
       S.place={at:today(),start};S.places=Object.assign({},S.places,{[y]:{at:today(),start}});save();checkBadges();
       const st=start&&LESSONS.find(l=>l.id===start);wb.run(placeBoard(ids,start));
       talk2(st?T("placeDone")(known,st.ord,L(st.title)):T("placeAll")(y));
@@ -3145,7 +3177,7 @@ function parents(){
   const c=course4(),done=c.filter(l=>isDone(l.id)).length,last7=[...Array(7)].map((_,j)=>daysAgo(6-j)),recs=last7.map(k=>S.days[k]||{sec:0,q:0,ok:0});
   const mins=recs.map(r=>Math.round(r.sec/60)),q7=recs.reduce((a,r)=>a+r.q,0),ok7=recs.reduce((a,r)=>a+r.ok,0),maxM=Math.max(10,...mins);
   const wd=k=>{const [y,m,d]=k.split("-").map(Number);return new Intl.DateTimeFormat(lang==="ar"?"ar":lang==="sv"?"sv-SE":"en-GB",{weekday:"short"}).format(new Date(y,m-1,d))};
-  const needs=[...Object.keys(S.mist).map(id=>({id,why:T("pMistakes")})),...c.filter(l=>(S.lessons[l.id]||{}).stars===1&&!S.mist[l.id]).map(l=>({id:l.id,why:T("pLow")}))];
+  const needs=[...revDue().filter(l=>c.includes(l)).map(l=>({id:l.id,why:memState(l.id)==="fading"?T("pFading"):T("pReview")})),...Object.keys(S.mist).filter(id=>!revDue().some(l=>l.id===id)).map(id=>({id,why:T("pMistakes")})),...c.filter(l=>(S.lessons[l.id]||{}).stars===1&&!S.mist[l.id]).map(l=>({id:l.id,why:T("pLow")}))];
   const status=l=>{const p=S.lessons[l.id]||{};return p.stars?"done":p.known?"known":p.seen?"started":"none"};
   const W=560,H=200,bw=44,gap=(W-40-7*bw)/6,y0=H-28,sc=v=>v/maxM*(H-60);
   const bars=mins.map((m,j)=>{const x=20+(lang==="ar"?6-j:j)*(bw+gap),h=Math.max(m?4:0,sc(m)),lbl=`${wd(last7[j])}: ${m} ${T("min")}, ${recs[j].q} ${T("pQs")}`;
@@ -3155,7 +3187,7 @@ function parents(){
    <div class="lhead"><button class="btn ghost" id="back" style="padding:5px 16px">${T("back")}</button><h2 style="flex:1">${T("parentsT")}</h2></div>
    <div class="course"><div><h2>${esc(S.name||"…")}</h2><p class="muted">${T("gradeChip")(S.grade)} · ${T("courseY")(yearNow())}</p>${yearSeg()}</div><p class="muted" style="max-width:360px;font-size:.9rem">${CLOUD.on?"☁️ "+T("savedCloud"):T("savedLocal")}</p></div>
    <div class="tiles">
-    <div class="tile"><span class="label">${T("pDone")}</span><b>${done} / ${c.length}</b></div>
+    <div class="tile"><span class="label">${T("pDone")}</span><b>${done} / ${c.length}</b><span class="muted">🧠 ${c.filter(l=>(S.lessons[l.id]||{}).mastered).length} ${T("pSits")}</span></div>
     <div class="tile"><span class="label">${T("pTime")}</span><b>${mins.reduce((a,b)=>a+b,0)} ${T("min")}</b></div>
     <div class="tile"><span class="label">${T("pRight")}</span><b>${q7?Math.round(100*ok7/q7)+" %":"–"}</b><span class="muted">${ok7} / ${q7} ${T("pQs")}</span></div>
     <div class="tile"><span class="label">${T("pStreak")}</span><b>🔥 ${streakNow()}</b><span class="muted">${T("pHints")}: ${S.tot.hints}</span></div>
@@ -3163,7 +3195,7 @@ function parents(){
    <section class="panel stack" style="gap:8px"><h3>${T("pChart")}</h3><svg class="pchart" viewBox="0 0 ${W} ${H}" role="img" aria-label="${T("pChart")}"><path d="M10,${y0}H${W-10}" stroke="var(--line)" stroke-width="1.5"/>${bars}</svg></section>
    <section class="panel stack" style="gap:8px"><h3>${T("pNeeds")}</h3>${needs.length?`<ul class="plist">${needs.map(n=>{const l=LESSONS.find(x=>x.id===n.id);return l?`<li><b>${l.ord||""}. ${esc(L(l.title))}</b> <span class="muted">· ${n.why}</span></li>`:""}).join("")}</ul>`:`<p class="muted">${T("pNeedsNone")}</p>`}</section>
    <section class="panel stack" style="gap:8px"><h3>${T("pAll")}</h3><div class="ptable"><table><thead><tr><th>#</th><th></th><th>${T("pStars")}</th><th>${T("pLvl")}</th></tr></thead><tbody>
-    ${c.map(l=>{const p=S.lessons[l.id]||{},s=status(l);return`<tr><td>${l.ord}</td><td>${esc(L(l.title))}<br><span class="st ${s}">${T("pStatus")[s]}</span></td><td class="stars">${[0,1,2].map(j=>`<span class="${j<(p.stars||0)?"":"off"}">★</span>`).join("")}</td><td>${p.level!=null&&s!=="none"?T("pLevel")[p.level]:"–"}</td></tr>`}).join("")}
+    ${c.map(l=>{const p=S.lessons[l.id]||{},s=status(l);return`<tr><td>${l.ord}</td><td>${esc(L(l.title))}<br><span class="st ${s}">${T("pStatus")[s]}</span>${memState(l.id)?` <span class="mem ${memState(l.id)}">${T("mem")[memState(l.id)]}</span>`:""}</td><td class="stars">${[0,1,2].map(j=>`<span class="${j<(p.stars||0)?"":"off"}">★</span>`).join("")}</td><td>${p.level!=null&&s!=="none"?T("pLevel")[p.level]:"–"}</td></tr>`}).join("")}
    </tbody></table></div></section>
    <section class="panel stack" style="gap:8px"><h3>${T("badgesT")} · ${T("badgesS")(Object.keys(S.badges).length,BADGES.length)}</h3><p style="font-size:1.8rem;letter-spacing:6px">${BADGES.filter(b=>S.badges[b.id]).map(b=>`<span title="${esc(L(b.name))}">${b.icon}</span>`).join("")||"–"}</p></section>
   </div>`;
@@ -3312,7 +3344,7 @@ function welcome(){
 
 let tabNow="math";
 function map(){
-  screen=map;leave();hud();
+  screen=map;leave();revFill();hud();
   const Y=yearNow(),list=tabNow==="math"?courseOf(Y):LESSONS.filter(l=>l.subject===tabNow).sort((a,b)=>(a.ord||99)-(b.ord||99));
   const course=list.filter(l=>l.ord),done=course.filter(l=>isDone(l.id)).length,nx=course.length?nextLesson():null;
   const math=tabNow==="math",anyDone=course4().some(l=>{const p=S.lessons[l.id];return p&&(p.stars||p.known||p.seen)}),nMist=Object.keys(S.mist).length,canDaily=allCourse().some(l=>l.gen&&isDone(l.id)),dailyToday=S.daily.last===today(),nB=Object.keys(S.badges).length;
@@ -3322,7 +3354,7 @@ function map(){
    ${math&&!placeOf(Y)&&!anyDone?`<section class="hero">${OWL}<div class="stack" style="gap:8px"><h2>${T("placeHero")}</h2><p>${T("placeText")}</p>
      <div class="row"><button class="btn" id="pgo">🧭 ${T("placeGo")}</button><button class="btn ghost" id="pskip">${T("placeSkip")}</button></div></div></section>`:""}
    ${math?`<div class="tools3">
-     <button class="tool${canDaily?"":" dim"}" id="tdaily"><span class="ti">☀️</span><span><b>${T("dailyT")}</b><span class="muted">${dailyToday?T("dailyDone"):canDaily?T("dailyS"):T("dailyNeed")}</span>${streakNow()?`<span class="streak">${T("streakN")(streakNow())}</span>`:""}</span></button>
+     <button class="tool${canDaily?"":" dim"}" id="tdaily"><span class="ti">☀️</span><span><b>${T("dailyT")}</b><span class="muted">${revDue().length?T("dueN")(revDue().length):dailyToday?T("dailyDone"):canDaily?T("dailyS"):T("dailyNeed")}</span>${streakNow()?`<span class="streak">${T("streakN")(streakNow())}</span>`:""}</span></button>
      <button class="tool${nMist?"":" dim"}" id="tnotes"><span class="ti">📒</span><span><b>${T("notesT")}${nMist?` <span class="cnt">${nMist}</span>`:""}</b><span class="muted">${T("notesS")(nMist)}</span></span></button>
      <button class="tool" id="tbadges"><span class="ti">🏅</span><span><b>${T("badgesT")}</b><span class="muted">${T("badgesS")(nB,BADGES.length)}</span><span class="bmini">${BADGES.filter(b=>S.badges[b.id]).map(b=>b.icon).join("")}</span></span></button>
    </div>`:""}
@@ -3330,7 +3362,7 @@ function map(){
    ${list.length?`<div class="cards">${list.map(l=>{const p=S.lessons[l.id]||{},st=p.stars||0,kn=!st&&p.known,here=nx&&nx.id===l.id;return`
      <button class="card${here?" here":""}" data-l="${l.id}"><div class="art">${l.ord?`<span class="ord${st?" ok":kn?" kn":""}">${st||kn?"✓":l.ord}</span>`:""}${here?`<span class="ribbon">${T("startHere")}</span>`:""}${l.icon}</div><div class="meta">
       <h3>${L(l.title)}</h3><span class="muted" style="font-size:.88rem">${T("forGrades")(l.grades)} · ${T("scenes")(l.steps.length)}</span>
-      ${kn?`<span class="kntag">✓ ${T("known")}</span>`:`<span class="stars">${[0,1,2].map(i=>`<span class="${i<st?"":"off"}">★</span>`).join("")}</span>`}</div></button>`}).join("")}</div>`
+      ${kn?`<span class="kntag">✓ ${T("known")}</span>`:`<span class="stars">${[0,1,2].map(i=>`<span class="${i<st?"":"off"}">★</span>`).join("")}</span>`}${memState(l.id)?`<span class="mem ${memState(l.id)}">${T("mem")[memState(l.id)]}</span>`:""}</div></button>`}).join("")}</div>`
    :`<div class="empty">${T("empty")}</div>`}
    ${math?`<div class="row" style="justify-content:center"><button class="btn ghost" id="tpar">👪 ${T("parentsT")}</button>${placeOf(Y)||anyDone?`<button class="btn ghost" id="tplace">🧭 ${T("placeRedo")}</button>`:""}</div>`:""}
   </div>`;
@@ -3371,7 +3403,7 @@ function lesson(id){
   active=Ls.mount($("#stage"),$("#ctrl"),api);const ctx={wb:active.wb,talk:(t,c)=>talk(t,c),helpBtn,av,cur:null};
   /* "Explain it to me": Claude gets the scene or the problem on screen by itself; the student may add a question */
   const aiBtn=$("#ai"),inScene=()=>i<Ls.steps.length;aiShow();
-  const aiEnv={ctx,btn:aiBtn,info:()=>inScene()?sceneInfo(Ls,i):probInfo(Ls,ctx.cur),
+  const aiEnv={ctx,btn:aiBtn,info:()=>inScene()?sceneInfo(Ls,i):probInfo(ctx.curL||Ls,ctx.cur),
     enter(){helpOn=true;next.hidden=prev.hidden=again.hidden=helpBtn.hidden=aiBtn.hidden=true;taskEl.hidden=true;who.textContent="✨ "+T("aiWho")},
     exit(){helpOn=false;who.textContent=T("teacher");aiShow();
       if(inScene()){next.hidden=prev.hidden=again.hidden=helpBtn.hidden=false;go(i)}
@@ -3406,17 +3438,25 @@ function lesson(id){
 
   /* practice on the board: the student answers, then the solution is drawn by hand. Right answers raise the level, wrong ones lower it. */
   function practice(){
-    const p=S.lessons[id]||{};let lvl=p.level!=null?p.level:(S.grade<=4?0:S.grade<=5?1:2),n=0,right=0;const N=3;
+    const p=S.lessons[id]||{};let lvl=p.level!=null?p.level:(S.grade<=4?0:S.grade<=5?1:2),n=0,right=0;
+    /* the third of four questions comes from an earlier lesson, so old ideas keep coming back */
+    const mixL=mixPick(id),plan=mixL?["o","o","m","o"]:["o","o","o"],N=plan.length,O=3;
     i=Ls.steps.length;prog();taskEl.hidden=true;again.hidden=true;next.hidden=true;prev.hidden=true;delete aiBtn.dataset.idle;aiShow();
+    const nxt={next:()=>n<N?T("nextProblem"):T("finish"),onNext:()=>n<N?ask():end()};
     function ask(){busy=true;
-      poseProblem(ctx,Ls.gen(lvl),{head:T("qOf")(n+1,N),hint:true,next:()=>n<N?T("nextProblem"):T("finish"),onNext:()=>n<N?ask():end()},
+      if(plan[n]==="m"){const lv=revLv(mixL.id);ctx.curL=mixL;
+        poseProblem(ctx,mixL.gen(lv),Object.assign({head:T("fromBefore")(L(mixL.title))+T("qOf")(n+1,N),hint:true,
+          after:ok=>{if(!ok)addRemind(ctx,mixL.id,()=>poseProblem(ctx,mixL.gen(0),Object.assign({head:T("tryLikeH"),hint:true},nxt),(ok2,h2)=>{track(mixL.id,0,ok2,h2,"review");if(ok2)addXP(10)}))}},nxt),
+         (ok,h)=>{n++;revAnswer(mixL.id,ok);track(mixL.id,lv,ok,h,"review");if(ok){addXP(15+5*lv);toast(T("great")+" +"+(15+5*lv))}});return}
+      ctx.curL=null;
+      poseProblem(ctx,Ls.gen(lvl),Object.assign({head:T("qOf")(n+1,N),hint:true},nxt),
        (ok,h)=>{n++;track(id,lvl,ok,h,"practice");if(ok){right++;addXP(20+5*lvl);toast(T("great")+" +"+(20+5*lvl));lvl=Math.min(2,lvl+1)}else lvl=Math.max(0,lvl-1)})}
     function end(){
-      helpBtn.hidden=true;ctx.cur=null;aiBtn.dataset.idle="1";aiShow();ctx.wb.run([A.wipe()]);$("#ctrl").innerHTML="";
-      const prev=S.lessons[id]||{};S.lessons[id]=Object.assign({},prev,{stars:Math.max(prev.stars||0,right),level:lvl});save();hud();checkBadges();
+      helpBtn.hidden=true;ctx.cur=null;ctx.curL=null;aiBtn.dataset.idle="1";aiShow();ctx.wb.run([A.wipe()]);$("#ctrl").innerHTML="";
+      const prev=S.lessons[id]||{};S.lessons[id]=Object.assign({},prev,{stars:Math.max(prev.stars||0,right),level:lvl});if(right)revStart(id);save();hud();checkBadges();
       $("#quiz").innerHTML=`<div class="row"><span class="stars" style="font-size:1.6rem">${[0,1,2].map(j=>`<span class="${j<right?"":"off"}">★</span>`).join("")}</span>
         <button class="btn" id="mapb">${T("another")}</button><button class="btn ghost" id="rep">${T("practiceMore")}</button></div>`;
-      av.classList.add("happy");talk(right===N?T("end3"):right?T("endSome")(right,N):T("end0"));
+      av.classList.add("happy");talk(right===O?T("end3"):right?T("endSome")(right,O):T("end0"));
       $("#mapb").onclick=map;$("#rep").onclick=()=>{S.lessons[id].level=lvl;practice()};
     }
     ask();

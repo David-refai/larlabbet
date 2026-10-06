@@ -9,6 +9,8 @@ Each lesson is a whiteboard animation. A hand draws every step in marker, and Ol
 - 95 maths lessons: 15 for Year 4 and 16 each for Years 5 to 9. Each one has a "🤔 Jag förstår inte" help mode and per-level hints.
 - A placement test for each year, which marks lessons the pupil already knows.
 - A mistakes notebook: wrong answers come back until they are fixed.
+- Spaced review: a finished lesson comes back after 1, 3, 7, 21 and 60 days, inside "Dagens 5 minuter". A right answer moves it to the next gap, a wrong one starts again from 1 day. A lesson is marked "🧠 Sitter" (stuck) when it is answered right at least a week after it was first finished.
+- Practice mixes in one question from an earlier lesson. If the pupil gets it wrong, "🔁 Påminn mig" replays that lesson's short explanation and then gives a similar problem.
 - "Dagens 5 minuter", five mixed questions a day that keep a streak.
 - Badges, and a page for parents and teachers with time spent, accuracy and the lessons that need practice.
 - Progress syncs across devices when the app runs as a claude.ai artifact (it uses the artifact `db` and `user` capabilities). Otherwise progress stays in the browser's localStorage.
@@ -34,6 +36,7 @@ Each lesson is a whiteboard animation. A hand draws every step in marker, and Ol
 bash build.sh                          # -> dist/larlabbet.html, build/test.html
 export PW=/path/to/node_modules/playwright
 node tests/t14.js                      # Years 6-9: placement, lessons, mobile
+node tests/t15.js                      # spaced review, mixing, remind me, "sits"
 node tests/t13.js                      # Year 5 flow
 node tests/t10.js                      # placement, notebook, daily, badges, parents page
 node tests/t11.js                      # sync between two devices (mock db)

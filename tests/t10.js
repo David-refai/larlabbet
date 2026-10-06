@@ -32,7 +32,9 @@ await closePop(p);await p.click('#mapb');await p.waitForTimeout(300);await shot(
 await p.click('.card[data-l="div"]');await p.waitForTimeout(200);
 for(let k=0;k<12&&!(await p.$('#chk')||await p.$('.ch'));k++){await p.keyboard.press('ArrowRight');await p.waitForTimeout(120)}
 await answer(p,false);await p.click('#nx');await p.waitForTimeout(150);await answer(p,true);await p.click('#nx');await p.waitForTimeout(150);
-await p.click('#help');await p.waitForTimeout(200);await answer(p,true);await p.click('#nx');await p.waitForTimeout(300);await closePop(p);
+await p.click('#help');await p.waitForTimeout(200);await answer(p,true);await p.click('#nx');await p.waitForTimeout(300);
+// practice now mixes in one question from an earlier lesson
+while(!(await p.$('#mapb'))&&(await p.$('#chk, .ch'))){await answer(p,true);await p.click('#nx');await p.waitForTimeout(300)}await closePop(p);
 s=await st(p);console.log('after div practice: mist',JSON.stringify(s.mist),'tot',JSON.stringify(s.tot),'div',JSON.stringify(s.lessons.div),'badges',Object.keys(s.badges));
 await p.click('#mapb');await p.waitForTimeout(300);await shot(p,'6-map-mist');
 await p.click('#tnotes');await p.waitForTimeout(300);await shot(p,'7-notes-q');await answer(p,true);await p.waitForTimeout(200);await shot(p,'8-notes-fixed');await p.click('#nx');await p.waitForTimeout(300);
