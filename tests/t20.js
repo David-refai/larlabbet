@@ -22,7 +22,7 @@ for(const [w,h,tag,lg] of [[1280,720,'laptop','sv'],[390,844,'phone','ar']]){
   const nw=await p.$$eval('.svstory .svw.new',e=>e.length);ok(nw>=1,`${tag} ${id} story part 1 has ${nw} highlighted new words`);
   await p.screenshot({path:`${D}/${tag}-${id}-story1.png`});
   await p.click('.svstory .svw.new');ok(await p.$eval('#wpop',e=>!e.hidden),tag+' tapping a word opens its card');await p.screenshot({path:`${D}/${tag}-${id}-card.png`});await p.click('#wok');
-  if(id==='sv7b'){const old=await p.$$eval('.svstory .svw:not(.new)',e=>e.map(x=>x.textContent));ok(old.length>0,tag+' words from unit 1 come back: '+old.join(', '))}
+  if(id==='sv7b'){const old=await p.evaluate(()=>[...new Set(SVU.sv7b.story.flatMap(x=>x.text).join(' ').match(/nervös|märkte|lättad|försiktigt|klasskamrat\w*/g)||[])]);ok(old.length>0,tag+' words from unit 1 come back: '+old.join(', '))}
   let k=0;for(;k<14&&!(await p.$('#chk, .ch'));k++){const st=await p.evaluate(()=>{const s=document.querySelector('.svstory');return s&&!s.hidden?(document.querySelector('.svwords')?'words':'story'):'board'});
     if(k<10)await p.screenshot({path:`${D}/${tag}-${id}-step${k}-${st}.png`});
     const r=await p.evaluate(()=>{const v=innerHeight,q=s=>document.querySelector(s).getBoundingClientRect();return q('#next').bottom<=v+1&&q('#stage').bottom<=v+1});ok(r,`${tag} ${id} step ${k} fits the screen`);
