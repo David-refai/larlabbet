@@ -1,6 +1,6 @@
 # Svenska årskurs 7: the 12 units
 
-Every unit follows sv7a/sv7b in `src/lessons/sv7.js`. Each has:
+Every unit follows sv7a/sv7b in `app/src/lessons/sv7.js`. Each has:
 - a story of 7 parts and 300–400 words;
 - 8 new words;
 - one grammar point drawn on the whiteboard in about 3 scenes;
@@ -24,4 +24,4 @@ Amir and Sara (and their class 7B, teacher Lena, coach, mum) run through all uni
 | 11 | sv7k | Talangshowen | story | pronouns (jag/mig/min, han/honom/hans, sin vs hans) | scen: scen, publik: publik, repetera: repetera, rampfeber: rampfeber, sjalvfortroende: självförtroende, uppträda: uppträda, imponera: imponera, glomma: glömma bort |
 | 12 | sv7l | Sista dagen | diary or letter | prepositions of place and time (i, på, till, vid, om, för … sedan) | minne: minne, sakna: sakna, termin: termin, betyg: betyg, tacksam: tacksam, framtid: framtid, utvecklas: utvecklas, farval: ta farväl |
 
-Files: units 3–5 in `src/lessons/sv7c.js`, 6–8 in `sv7f.js`, 9–10 in `sv7i.js`, and 11–12 in `sv7k.js`.
+Files: units 3–5 in `app/src/lessons/sv7c.js`, 6–8 in `sv7f.js`, 9–10 in `sv7i.js`, and 11–12 in `sv7k.js`.

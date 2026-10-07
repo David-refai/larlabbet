@@ -1,6 +1,6 @@
 # Lärlabbet
 
-A learning app for school years 4–9, in Swedish, English and Arabic. Maths comes first: Years 4 to 9 are done, following the Swedish curriculum Lgr22. Svenska has two pilot units for Year 7 (plan in `docs/plan-swedish.md`). Science and English are planned on the same base.
+A learning app for school years 4–9, in Swedish, English and Arabic. Maths comes first: Years 4 to 9 are done, following the Swedish curriculum Lgr22. Svenska Year 7 is complete with 12 units (plan in `docs/plan-swedish-g7.md`). Science and English are planned on the same base.
 
 Each lesson is a whiteboard animation. A hand draws every step in marker, and Olle the owl explains in a line or two underneath. After the lesson the pupil practises on fresh problems at three levels, with hints that show the method but never the answer.
 
@@ -17,31 +17,33 @@ Each lesson is a whiteboard animation. A hand draws every step in marker, and Ol
 - Badges, and a page for parents and teachers with time spent, accuracy and the lessons that need practice.
 - One profile per child: a "Who are you?" screen when there are several, each child with their own progress, reviews and stars. The parents page can switch between children.
 - Progress syncs across devices when the app runs as a claude.ai artifact (it uses the artifact `db` and `user` capabilities, one private document per child).
-- On the public site (GitHub Pages) a parent creates an account and adds children; a child logs in with the family code, their name and a 4-digit PIN. Data lives in Supabase (`supabase/schema.sql`, client `src/account.js`). "Prova utan konto" keeps progress in the browser only.
+- On the public site (GitHub Pages) a parent creates an account and adds children; a child logs in with the family code, their name and a 4-digit PIN. Data lives in Supabase (`supabase/schema.sql`; the client is the accounts part of `app/src/legacy/core.js`). "Prova utan konto" keeps progress in the browser only.
 - "✨ Förklara för mig": Claude explains the current problem on the whiteboard, using the artifact `sample` capability. The viewer's own Claude account is used, so no API key is needed. Limited to 30 explanations a day.
 
 ## Files
 
 | Path | What it is |
 |---|---|
-| `src/app.src.html` | The whole app source: HTML, CSS and JS in one file. |
-| `src/lessons/` | Years 6–9 maths, the words files (`terms-*.js`) and Svenska (`sv-*.js`, `sv7.js`). Inlined by `build.sh`. |
-| `src/account.js` | Parent and child accounts on the public site (Supabase). |
+| `app/index.html` | The page shell: fonts, d3 and the header markup. Vite entry. |
+| `app/src/main.tsx` | Entry: loads the engine, then every lesson module, then starts the app. |
+| `app/src/legacy/core.js` | The original app as one ES module: whiteboard engine, Years 4–5 lessons, screens, progress, cloud sync and accounts. Screens move from here to React one at a time. |
+| `app/src/styles.css` | All styles. |
+| `app/src/lessons/` | Years 6–9 maths, the words files (`terms-*.js`), and Svenska (`sv-0engine.js` plus the unit files `sv7*.js`). Each file imports the engine names it uses. |
+| `app/src/legacy/land.json` | World map outline used by one lesson. |
+| `tools/fix-imports.mjs` | Writes each lesson file's `import` line and the engines' `export` lists. `build.sh` runs it. |
 | `supabase/schema.sql` | The database: tables, access rules and the child login functions. |
-| `src/land.json` | World map outline used by one lesson. `build.sh` inlines it. |
-| `build.sh` | Builds `dist/larlabbet.html`, plus `build/test.html` for the tests. |
-| `dist/larlabbet.html` | The built app. Open it in a browser, or publish it as an artifact. |
-| `index.html` | The same app for GitHub Pages (built by `build.sh`). |
+| `build.sh` | Runs Vite and writes `dist/larlabbet.html` (artifact), `index.html` (GitHub Pages) and `build/test.html` (tests). |
 | `tests/` | Browser tests (Playwright). |
 | `tools/` | Helpers for writing new lessons. |
 | `docs/lesson-brief.md` | How a lesson is written: style, helpers, lesson object, checks. |
-| `docs/plan-years-6-9.md` | The lesson plan for Years 6–9. |
-| `src/lessons/` | Lesson files for Years 6–9; `build.sh` inlines them at `/*NEW-LESSONS*/`. |
+| `docs/plan-years-6-9.md`, `docs/plan-swedish*.md` | Lesson plans. |
 
 ## Build and test
 
 ```bash
-bash build.sh                          # -> dist/larlabbet.html, build/test.html
+npm install                            # once
+bash build.sh                          # -> dist/larlabbet.html, index.html, build/test.html
+npm run dev                            # live dev server with reload
 export PW=/path/to/node_modules/playwright
 node tests/t14.js                      # Years 6-9: placement, lessons, mobile
 node tests/t15.js                      # spaced review, mixing, remind me, "sits"
@@ -49,7 +51,7 @@ node tests/t16.js                      # child profiles, migration, sync, delete
 node tests/t17.js                      # a lesson fits one screen (laptop, tablet, phone)
 node tests/t18.js                      # words to know: chips, word cards, word check
 node tests/t19.js                      # accounts against a fake Supabase
-node tests/t20.js                      # Svenska pilot units
+node tests/t20.js                      # Svenska units (SV_IDS=sv7c,sv7d to test only some)
 node tests/t13.js                      # Year 5 flow
 node tests/t10.js                      # placement, notebook, daily, badges, parents page
 node tests/t11.js                      # sync between two devices (mock db)
@@ -61,12 +63,12 @@ The tests serve fonts and d3 from `tests/fonts` and `tests/vendor`, so they run 
 
 ## Adding lessons
 
-Write the lessons in a separate file, following `docs/lesson-brief.md`. Then check it:
+Write the lessons in a new file in `app/src/lessons/`, following `docs/lesson-brief.md`. Files load in name order after the engine, and `build.sh` adds the `import` line for the engine names the file uses. Then check it:
 
 ```bash
-bash tools/lesson-build.sh my-lessons.js build/new        # inserts the file at /*NEW-LESSONS*/
-node tools/lesson-shots.js build/new sv id1,id2           # screenshots of every scene, question, solution and hint
-DIR=build/new/shots node tools/sheet.js '^sv-id1' build/new/sheet.png
+bash build.sh
+node tools/lesson-shots.js build sv id1,id2               # screenshots of every scene, question, solution and hint
+DIR=build/shots node tools/sheet.js '^sv-id1' build/sheet.png
 ```
 
-When the lessons look right, move the file into `src/lessons/` and make sure their ids are in `COURSES`.
+Make sure the new lesson ids are in `COURSES`.

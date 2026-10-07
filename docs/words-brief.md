@@ -12,10 +12,10 @@ The owner also said the practice is too thin and "does not cover all the topics"
 
 ## What already exists (do not change it)
 
-- **The words engine** is in `src/app.src.html`; search for `words to know`.
+- **The words engine** is in `app/src/legacy/core.js`; search for `words to know`.
   - `TERM(key,{sv,m,d,ex,tr})` registers a word.
   - `WORDS[lessonId]=[keys]` lists a lesson's words.
-- **Core words** are already registered in `src/lessons/terms-0core.js`: tiondel, hundradel, avrunda, decimal, heltal, tiotal, hundratal, vardesiffra, overslag, ungefar. Read that file, copy its style exactly, and don't re-register those keys.
+- **Core words** are already registered in `app/src/lessons/terms-0core.js`: tiondel, hundradel, avrunda, decimal, heltal, tiotal, hundratal, vardesiffra, overslag, ungefar. Read that file, copy its style exactly, and don't re-register those keys.
 - **Chips appear by themselves.**
   - Any registered word found in a scene's Swedish text gets a 📖 chip that opens a card with the explanation and the English and Arabic translations.
   - The same happens for a word in a practice question's board text or choice options.
@@ -23,7 +23,7 @@ The owner also said the practice is too thin and "does not cover all the topics"
 
 ## Your job, for each lesson in your grades
 
-1. **Words** (in your own file `src/lessons/terms-<yours>.js`, wrapped in `{ … }`):
+1. **Words** (in your own file `app/src/lessons/terms-<yours>.js`, wrapped in `{ … }`):
    - Register 4–10 TERMs for the lesson: the Swedish words a test about this topic would use. Include instruction verbs only where they matter for the topic, such as "beräkna", "förenkla", "lös ekvationen", "bestäm", "uppskatta" and "jämför".
    - Set `WORDS.<lessonId>=[…]`; it may reuse keys from any file.
    - Each TERM has:
@@ -32,7 +32,7 @@ The owner also said the practice is too thin and "does not cover all the topics"
      - `d`: `t3(sv,en,ar)`, ONE short simple sentence of at most 70 characters per language, written for a 10–13-year-old. No circular definitions.
      - `ex`: a tiny example of at most 28 characters, Swedish notation (decimal comma, ·), e.g. `"3/4: nämnaren är 4"`.
      - `tr`: `{en:"…",ar:"…"}`, the normal school word in English and in Arabic (Modern Standard Arabic).
-   - Keys are lowercase ascii with no å, ä or ö (`namnare`, `taljare`, `overslag`). Before adding a key, grep all `src/lessons/terms-*.js` files and reuse the key if the word already exists. First registration wins.
+   - Keys are lowercase ascii with no å, ä or ö (`namnare`, `taljare`, `overslag`). Before adding a key, grep all `app/src/lessons/terms-*.js` files and reuse the key if the word already exists. First registration wins.
 2. **Test-style wording in the questions.** Edit the lesson's `gen`. Where the question text is plain, make it sometimes (randomly, with `pick`) use the wording real Swedish tests use, in all three languages.
    - Examples: "Avrunda till en decimal" sometimes becomes "Avrunda till tiondelar" or "Avrunda till närmaste tiondel". "Hur mycket blir…" sometimes becomes "Beräkna…". Add a "Svara i hela kronor" type of instruction where it fits.
    - Keep the text short enough to fit the 800-wide board at its size. Measure with the existing helpers or keep the length close to the original.
@@ -47,8 +47,8 @@ The owner also said the practice is too thin and "does not cover all the topics"
 ## Your grades and files
 
 - **Your lessons:** given in your task message.
-- **Words file:** write only `src/lessons/terms-<yours>.js`.
-- **Lesson code:** edit only the `LESSONS.push({...})` blocks of your own lessons. Use the Edit tool with exact, unique strings, never by reading and rewriting a whole file: another worker and the lead edit other parts of the same files at the same time. Grades 4–5 live in `src/app.src.html`; grades 6–9 live in `src/lessons/y<grade><a-d>.js`.
+- **Words file:** write only `app/src/lessons/terms-<yours>.js`.
+- **Lesson code:** edit only the `LESSONS.push({...})` blocks of your own lessons. Use the Edit tool with exact, unique strings, never by reading and rewriting a whole file: another worker and the lead edit other parts of the same files at the same time. Grades 4–5 live in `app/src/legacy/core.js`; grades 6–9 live in `app/src/lessons/y<grade><a-d>.js`.
 - **Do not edit** `build.sh`, `tests/` or `docs/`, and do not run git.
 
 ## Check your work

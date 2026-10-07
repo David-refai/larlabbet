@@ -1,6 +1,6 @@
 # Maths plan for Years 6–9 (Lgr22)
 
-The lessons are listed in teaching order, and the ids match `COURSES` in `src/app.src.html`. Each group of four is written by one worker into `wip/y<year><letter>.js`.
+The lessons are listed in teaching order, and the ids match `COURSES` in `app/src/legacy/core.js`. Each group of four is written by one worker into `wip/y<year><letter>.js`.
 
 ## Year 6 (centralt innehåll 4–6, end of stage)
 - **y6a**

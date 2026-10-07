@@ -1,6 +1,6 @@
 # Brief: writing maths lessons for Lärlabbet
 
-Lärlabbet is a single-file HTML learning app for Swedish school children (grades 4–9). Maths for Years 4 and 5 is finished: 31 lessons in `src/app.src.html`. The lessons follow the Swedish curriculum **Lgr22, Matematik**:
+Lärlabbet is a single-file HTML learning app for Swedish school children (grades 4–9). Maths for Years 4 and 5 is finished: 31 lessons in `app/src/legacy/core.js`. The lessons follow the Swedish curriculum **Lgr22, Matematik**:
 - **Year 6:** *centralt innehåll årskurs 4–6*, at the end-of-stage level.
 - **Years 7, 8 and 9:** *centralt innehåll årskurs 7–9*. Each year is a clear step up from the one before.
 
@@ -38,10 +38,10 @@ Run every command from the repo root.
 ## How a lesson is written
 
 Study these before writing:
-- The Year 4 and Year 5 lessons in `src/app.src.html` (search for `LESSONS.push`).
-- The `HELP`/`HINTS` objects in `src/app.src.html`.
+- The Year 4 and Year 5 lessons in `app/src/legacy/core.js` (search for `LESSONS.push`).
+- The `HELP`/`HINTS` objects in `app/src/legacy/core.js`.
 
-Helpers are defined in `src/app.src.html`. Search for each one to read its signature. The main ones are:
+Helpers are defined in `app/src/legacy/core.js`. Search for each one to read its signature. The main ones are:
 
 - **Basic drawing:**
   - `R.line/rect/circ/arrow/dashed/bar/barPart/wedge/loop` return SVG path strings with a hand-drawn wobble.
@@ -100,16 +100,16 @@ Object.assign(HINTSX,{xyz:[ {say:t3(...),cut:g=>g.sol.slice(0,2)}, {...level1}, 
 
 ## Building and checking your work (required)
 
-Your file is inserted at the `/*NEW-LESSONS*/` marker in a copy of the app. `YEAR` is your school year, so the shots open that year's lesson page:
+Put your file in `app/src/lessons/` (wrap its code in `{ … }`). `build.sh` adds the `import` line for the engine names it uses. `YEAR` is your school year, so the shots open that year's lesson page:
 
 ```bash
-bash tools/lesson-build.sh wip/y6a.js build/y6a          # -> build/y6a/test.html, syntax-checked
-YEAR=6 PW=/opt/node-tools/node_modules/playwright node tools/lesson-shots.js build/y6a sv id1,id2,id3,id4
+bash build.sh                                              # -> build/test.html
+YEAR=6 PW=/opt/node-tools/node_modules/playwright node tools/lesson-shots.js build sv id1,id2,id3,id4
 ```
 
-Your ids are already in `COURSES` in `src/app.src.html`. A card shows up as soon as a lesson with that id exists. Use `grades:"6"` (or "7", "8", "9") in the lesson object.
+Your ids are already in `COURSES` in `app/src/legacy/core.js`. A card shows up as soon as a lesson with that id exists. Use `grades:"6"` (or "7", "8", "9") in the lesson object.
 
-`lesson-shots.js` saves these screenshots to `build/y6a/shots/`:
+`lesson-shots.js` saves these screenshots to `build/shots/`:
 - every scene
 - the HELP scenes
 - for each level, two question boards, two solution boards and one hint board

@@ -1,23 +1,16 @@
 #!/bin/bash
-# Builds dist/larlabbet.html (the single-file app), index.html (the GitHub Pages site) and build/test.html (for the browser tests).
-# usage: bash build.sh            run from the repo root
+# Builds the app into one self-contained HTML file with Vite (sources in app/):
+#   dist/larlabbet.html  publish as the claude.ai artifact
+#   index.html           the GitHub Pages site
+#   build/test.html      what the browser tests open
+# usage: bash build.sh            run from the repo root (npm install once first)
 set -e
 cd "$(dirname "$0")"
+[ -d node_modules ] || npm install
+node tools/fix-imports.mjs
+npx vite build --logLevel warn
 mkdir -p dist build
-python3 - <<'P'
-import re
-s=open('src/app.src.html').read()
-assert s.count('/*LAND*/null')==1
-s=s.replace('/*LAND*/null',open('src/land.json').read().strip())
-import glob
-les=''.join(open(f).read()+'\n' for f in sorted(glob.glob('src/lessons/*.js')))
-assert s.count('/*NEW-LESSONS*/')==1
-s=s.replace('/*NEW-LESSONS*/',les+'/*NEW-LESSONS*/')
-assert s.count('/*ACCOUNT*/')==1
-s=s.replace('/*ACCOUNT*/',open('src/account.js').read())
-open('dist/larlabbet.html','w').write(s)
-open('index.html','w').write('<!doctype html>\n<html lang="sv"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>\n'+s+'\n</body></html>\n')  # GitHub Pages
-open('build/test.html','w').write('<!doctype html>\n'+s)
-open('build/a.js','w').write(re.findall(r'<script>(.*?)</script>',s,re.S)[0])
-P
-node --check build/a.js && echo BUILD OK
+cp dist/app/index.html dist/larlabbet.html
+cp dist/app/index.html index.html
+cp dist/app/index.html build/test.html
+echo BUILD OK

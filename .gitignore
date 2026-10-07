@@ -1,5 +1,6 @@
-build/
-node_modules/
 *.png
 .DS_Store
+build/
+dist/app/
+node_modules/
 wip/
