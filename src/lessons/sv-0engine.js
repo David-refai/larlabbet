@@ -52,7 +52,7 @@ const SVK={
    q:svQ(svLines(L(w.d),200,36),L(t3("Vilket ord betyder:","Which word means:","أي كلمة تعني:"))),sol:[...svLines(w.ex||"",420,34,"g")]}},
  /* synonym or opposite from the word's own list */
  syn(U){const ks=U.words.filter(k=>TERMS[k].syn&&TERMS[k].syn.length);if(!ks.length)return null;const k=pick(ks),w=TERMS[k],[right,...wrong]=w.syn,opp=w.opp;
-  const kind=opp&&Math.random()<.4?"opp":"syn",ans=kind==="opp"?opp[0]:right,pool=shuffle([...(w.wrong||[]),...U.words.filter(x=>x!==k).map(x=>TERMS[x].sv.split(" (")[0])]).filter(x=>x!==ans).slice(0,2),opts=shuffle([ans,...pool]);
+  const kind=opp&&Math.random()<.4?"opp":"syn",ans=kind==="opp"?opp[0]:right,pool=shuffle([...new Set([...(w.wrong||[]),...U.words.filter(x=>x!==k).map(x=>TERMS[x].sv.split(" (")[0])])]).filter(x=>x!==ans).slice(0,2),opts=shuffle([ans,...pool]);
   return{kind:"choice",opts,ans:opts.indexOf(ans),show:ans,
    q:svQ([A.tx(w.sv.split(" (")[0],400,230,76)],L(kind==="opp"?t3("Vilket ord är en motsats till:","Which word is an opposite of:","أي كلمة عكس:"):t3("Vilket ord är en synonym till:","Which word is a synonym of:","أي كلمة مرادفة لـ:"))),
    sol:[A.tx(`${w.sv.split(" (")[0]} ${kind==="opp"?"↔":"≈"} ${ans}`,400,420,40,"g")]}},

@@ -2979,7 +2979,8 @@ function termsIn(texts,sv=lang==="sv"){const out=[];texts.filter(Boolean).forEac
       ?new RegExp("(?<![\\p{L}\\p{M}])(?:وال|بال|فال|كال|لل|ال|و|ب|ل|ف)?"+String(tr).split(/[،,(/]/)[0].trim().replace(/^ال/,"").replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"(?:ة|ات|ان|ين|ون)?(?![\\p{L}\\p{M}])","u")
       :new RegExp("(?<![\\p{L}\\p{M}])"+String(tr).split(/[,(/]/)[0].trim().replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"(e?s)?(?![\\p{L}\\p{M}])","iu"));
     if(re.test(t))out.push(k)}});return out.slice(0,4)}
-function showWords(keys){const el=$("#words");if(!el)return;keys=(keys||[]).filter(k=>TERMS[k]);
+let wordsSvOnly=false;   /* in a Svenska unit only its own language words become chips, not maths terms that look alike */
+function showWords(keys){const el=$("#words");if(!el)return;keys=(keys||[]).filter(k=>TERMS[k]&&(!wordsSvOnly||TERMS[k].sw));
   el.innerHTML=keys.map(k=>`<button class="wchip" data-w="${k}">📖 ${esc(TERMS[k].sv)}</button>`).join("");el.hidden=!keys.length;
   el.querySelectorAll(".wchip").forEach(b=>b.onclick=()=>wordCard([b.dataset.w]))}
 function wordCard(keys,title){const p=$("#wpop");
@@ -3355,7 +3356,7 @@ function planDrill(mode){
 function drill(mode){
   if(!S.name||!S.grade){welcome();return}
   const items=planDrill(mode);if(!items.length){map();return}
-  screen=()=>drill(mode);leave();
+  screen=()=>drill(mode);leave();wordsSvOnly=false;
   const title={place:T("placeTitle"),daily:T("dailyT"),notes:T("notesT")}[mode];
   app.innerHTML=`<div class="lesson">
    <div class="lhead"><button class="btn ghost" id="back" style="padding:5px 16px">${T("back")}</button><h2>${title}</h2><div class="progress" id="prog"></div></div>
@@ -3657,7 +3658,7 @@ function map(){
 function lesson(id){
   if(!S.name||!S.grade){welcome();return}
   screen=()=>lesson(id);leave();
-  const Ls=LESSONS.find(l=>l.id===id);if(!(S.lessons[id]||{}).seen){S.lessons[id]=Object.assign({stars:0},S.lessons[id],{seen:true});saveLocal()}
+  const Ls=LESSONS.find(l=>l.id===id);wordsSvOnly=!!Ls&&Ls.subject==="swedish";if(!(S.lessons[id]||{}).seen){S.lessons[id]=Object.assign({stars:0},S.lessons[id],{seen:true});saveLocal()}
   app.innerHTML=`<div class="lesson">
    <div class="lhead"><button class="btn ghost" id="back" style="padding:5px 16px">${T("back")}</button><h2>${L(Ls.title)}</h2><div class="progress" id="prog"></div></div>
    <div class="lmain"><div class="lboard"><div class="stage" id="stage"></div><div class="ctrl" id="ctrl"></div></div>
