@@ -4,6 +4,16 @@
    (words, grammar, understanding, one earlier unit). Words are TERMs, so the
    📖 chips, word cards and word checks of maths work here too.
    ====================================================================== */
+/* shared helpers for unit files: const {rx,boxes,pic,kid,W,sent,cap}=SVH;
+   rx: whole-word regex; boxes: coloured sentence parts on the board; pic/kid: SVG story pictures; W: a word (TERM) that comes back in later stories */
+const SVH=(()=>{const B="(?<![a-zåäöé])",E="(?![a-zåäöé])",rx=s=>new RegExp(B+s+E,"i");
+const boxes=(parts,y,size=40)=>{const w=parts.map(([s])=>Math.max(60,s.length*size*.46+28)),gap=16,tot=w.reduce((a,b)=>a+b,0)+gap*(parts.length-1);let x=400-tot/2;const out=[];
+  parts.forEach(([s,c,lab],i)=>{const cx=x+w[i]/2;if(c)out.push(A.p(R.rect(x,y-size*.95,w[i],size*1.35,.6),c,3.5));out.push(A.tx(s,cx,y,size,c||"k"));if(lab)out.push(qt(lab,cx,y+size*.95,22,c||"k"));x+=w[i]+gap});return out};
+const pic=(body,bg="#eef4fb")=>`<svg viewBox="0 0 300 300" aria-hidden="true"><rect width="300" height="300" rx="18" fill="${bg}"/>${body}</svg>`;
+const kid=(x,y,shirt,hair,s=1)=>`<g transform="translate(${x} ${y}) scale(${s})"><rect x="-22" y="20" width="44" height="62" rx="18" fill="${shirt}"/><circle cy="0" r="22" fill="#f1c7a3"/><path d="M-23 -4 Q-20 -28 0 -26 Q22 -28 23 -4 Q14 -16 0 -15 Q-14 -16 -23 -4Z" fill="${hair}"/><circle cx="-7" cy="2" r="2.4" fill="#1d2433"/><circle cx="7" cy="2" r="2.4" fill="#1d2433"/><path d="M-6 11 Q0 15 6 11" stroke="#1d2433" stroke-width="2" fill="none" stroke-linecap="round"/><rect x="-18" y="80" width="14" height="34" rx="6" fill="#33415c"/><rect x="4" y="80" width="14" height="34" rx="6" fill="#33415c"/></g>`;
+const W=(k,o)=>TERM(k,Object.assign({sw:true},o));
+const sent=a=>a.filter(Boolean).join(" ")+".",cap=s=>s[0].toUpperCase()+s.slice(1);
+return{rx,boxes,pic,kid,W,sent,cap}})();
 const SVU={};   /* unit id -> definition, for the practice generators */
 /* the story layer sits over the whiteboard; whiteboard steps (grammar, practice) hide it */
 function svMount(U){return function(stage,ctrl){

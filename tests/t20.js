@@ -12,17 +12,22 @@ for(const [w,h,tag,lg] of [[1280,720,'laptop','sv'],[390,844,'phone','ar']]){
  await p.goto('file://'+process.cwd()+'/build/test.html');await p.waitForTimeout(500);
  await p.click(`#langs button[data-l="${lg}"]`);await p.fill('#nm','Test');await p.click('#gr button[data-g="7"]');await p.click('#go');await p.waitForTimeout(300);
  /* every generator gives sane questions */
- const bad=await p.evaluate(()=>{const out=[];['sv7a','sv7b'].forEach(id=>{const l=LESSONS.find(x=>x.id===id);for(let lv=0;lv<3;lv++)for(let k=0;k<60;k++){const g=l.gen(lv);
+ const ids=await p.evaluate(()=>LESSONS.filter(l=>l.subject==='swedish'&&l.year===7).sort((a,b)=>a.ord-b.ord).map(l=>l.id));
+ const only=process.env.SV_IDS?process.env.SV_IDS.split(','):ids;
+ const bad=await p.evaluate(ids=>{const out=[];ids.forEach(id=>{const l=LESSONS.find(x=>x.id===id);for(let lv=0;lv<3;lv++)for(let k=0;k<60;k++){const g=l.gen(lv);
    if(!g||!g.q||!g.show)out.push(id+lv+' empty');else if(g.kind==='choice'&&(g.ans<0||new Set(g.opts).size!==g.opts.length))out.push(id+lv+' opts '+g.opts.join('/'));
-   else if(g.kind==='text'&&!g.ans.length)out.push(id+' text')}});return out.slice(0,6)});
+   else if(g.kind==='text'&&!g.ans.length)out.push(id+' text')}});return out.slice(0,6)},ids);
  ok(!bad.length,tag+' generators sane '+bad.join(' | '));
- await p.click('.tab[data-t="swedish"]');await p.waitForTimeout(300);ok((await p.$$('.card')).length===2,tag+' two Swedish units on the map');await p.screenshot({path:`${D}/${tag}-map.png`});
- for(const id of ['sv7a','sv7b']){
+ await p.click('.tab[data-t="swedish"]');await p.waitForTimeout(300);ok((await p.$$('.card')).length===ids.length,tag+' '+ids.length+' Swedish units on the map');await p.screenshot({path:`${D}/${tag}-map.png`});
+ /* every unit after the first brings back words from earlier units */
+ const back=await p.evaluate(ids=>ids.slice(1).map((id,i)=>{const txt=SVU[id].story.flatMap(x=>x.text).join(' '),old=ids.slice(0,i+1).flatMap(u=>SVU[u].words);
+   return[id,old.filter(k=>{const m=TERMS[k].m;return m&&new RegExp(m.source,'i').test(txt)}).length]}),ids);
+ back.forEach(([id,n])=>ok(n>=(id==='sv7b'?3:4),`${tag} ${id} story reuses ${n} earlier words`));
+ for(const id of only){
   await p.click(`.card[data-l="${id}"]`);await p.waitForTimeout(500);
   const nw=await p.$$eval('.svstory .svw.new',e=>e.length);ok(nw>=1,`${tag} ${id} story part 1 has ${nw} highlighted new words`);
   await p.screenshot({path:`${D}/${tag}-${id}-story1.png`});
   await p.click('.svstory .svw.new');ok(await p.$eval('#wpop',e=>!e.hidden),tag+' tapping a word opens its card');await p.screenshot({path:`${D}/${tag}-${id}-card.png`});await p.click('#wok');
-  if(id==='sv7b'){const old=await p.evaluate(()=>[...new Set(SVU.sv7b.story.flatMap(x=>x.text).join(' ').match(/nervös|märkte|lättad|försiktigt|klasskamrat\w*/g)||[])]);ok(old.length>0,tag+' words from unit 1 come back: '+old.join(', '))}
   let k=0;for(;k<14&&!(await p.$('#chk, .ch'));k++){const st=await p.evaluate(()=>{const s=document.querySelector('.svstory');return s&&!s.hidden?(document.querySelector('.svwords')?'words':'story'):'board'});
     if(k<10)await p.screenshot({path:`${D}/${tag}-${id}-step${k}-${st}.png`});
     const r=await p.evaluate(()=>{const v=innerHeight,q=s=>document.querySelector(s).getBoundingClientRect();return q('#next').bottom<=v+1&&q('#stage').bottom<=v+1});ok(r,`${tag} ${id} step ${k} fits the screen`);
