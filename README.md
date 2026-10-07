@@ -26,7 +26,8 @@ Each lesson is a whiteboard animation. A hand draws every step in marker, and Ol
 |---|---|
 | `app/index.html` | The page shell: fonts, d3 and the header markup. Vite entry. |
 | `app/src/main.tsx` | Entry: loads the engine, then every lesson module, then starts the app. |
-| `app/src/legacy/core.js` | The original app as one ES module: whiteboard engine, Years 4–5 lessons, screens, progress, cloud sync and accounts. Screens move from here to React one at a time. |
+| `app/src/legacy/core.js` | The original app as one ES module: whiteboard engine, Years 4–5 lessons, screens, progress, cloud sync and accounts. The lesson player, practice and reviews still render here; the other screens are in `app/src/ui/`. |
+| `app/src/ui/` | Screens in React: profiles and name/grade (`Profiles.tsx`), the lesson map (`LessonMap.tsx`), badges and the parents page (`Progress.tsx`), and accounts (`Account.tsx`). `mount.tsx` shows a React screen in `#app`; navigation (`screen`, `leave()`) stays in core. |
 | `app/src/styles.css` | All styles. |
 | `app/src/lessons/` | Years 6–9 maths, the words files (`terms-*.js`), and Svenska (`sv-0engine.js` plus the unit files `sv7*.js`). Each file imports the engine names it uses. |
 | `app/src/legacy/land.json` | World map outline used by one lesson. |

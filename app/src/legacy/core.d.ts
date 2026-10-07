@@ -217,6 +217,7 @@ export declare const KEYS: any;
 export declare const leaveHooks: any;
 export declare const leave: any;
 export declare const setScreen: any;
+export declare const testHook: any;
 export declare const setPicked: any;
 export declare const setViewYear: any;
 export declare const setTab: any;
