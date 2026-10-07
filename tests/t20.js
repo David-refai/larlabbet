@@ -1,7 +1,8 @@
-// Svenska pilot (åk 7): story with tappable words, word cards, grammar on the board, practice with choice and written answers
+// Svenska units of one year (SV_YEAR, default 7): story with tappable words, word cards, grammar on the board, practice with choice and written answers
 const {chromium}=require(process.env.PW);const fs=require('fs');
 const fmap=Object.fromEntries(fs.readFileSync('tests/fonts/fontmap.txt','utf8').trim().split('\n').map(l=>l.split(' ')));
 const D='build/sv';fs.mkdirSync(D,{recursive:true});
+const Y=+(process.env.SV_YEAR||7);
 const ok=(c,m)=>{console.log((c?'PASS ':'FAIL ')+m);if(!c)process.exitCode=1};
 (async()=>{const b=await chromium.launch();
 for(const [w,h,tag,lg] of [[1280,720,'laptop','sv'],[390,844,'phone','ar']]){
@@ -10,9 +11,9 @@ for(const [w,h,tag,lg] of [[1280,720,'laptop','sv'],[390,844,'phone','ar']]){
  await p.route(/fonts\.googleapis/,r=>r.fulfill({body:fs.readFileSync('tests/fonts/fonts.css','utf8'),contentType:'text/css'}));
  await p.route(/fonts\.gstatic/,r=>{const f=fmap[r.request().url()];f?r.fulfill({body:fs.readFileSync(f),contentType:'font/woff2'}):r.abort()});
  await p.goto('file://'+process.cwd()+'/build/test.html');await p.waitForTimeout(500);
- await p.click(`#langs button[data-l="${lg}"]`);await p.fill('#nm','Test');await p.click('#gr button[data-g="7"]');await p.click('#go');await p.waitForTimeout(300);
+ await p.click(`#langs button[data-l="${lg}"]`);await p.fill('#nm','Test');await p.click(`#gr button[data-g="${Y}"]`);await p.click('#go');await p.waitForTimeout(300);
  /* every generator gives sane questions */
- const ids=await p.evaluate(()=>LESSONS.filter(l=>l.subject==='swedish'&&l.year===7).sort((a,b)=>a.ord-b.ord).map(l=>l.id));
+ const ids=await p.evaluate(Y=>LESSONS.filter(l=>l.subject==='swedish'&&l.year===Y).sort((a,b)=>a.ord-b.ord).map(l=>l.id),Y);
  const only=process.env.SV_IDS?process.env.SV_IDS.split(','):ids;
  const bad=await p.evaluate(ids=>{const out=[];ids.forEach(id=>{const l=LESSONS.find(x=>x.id===id);for(let lv=0;lv<3;lv++)for(let k=0;k<60;k++){const g=l.gen(lv);
    if(!g||!g.q||!g.show)out.push(id+lv+' empty');else if(g.kind==='choice'&&(g.ans<0||new Set(g.opts).size!==g.opts.length))out.push(id+lv+' opts '+g.opts.join('/'));
@@ -22,7 +23,7 @@ for(const [w,h,tag,lg] of [[1280,720,'laptop','sv'],[390,844,'phone','ar']]){
  /* every unit after the first brings back words from earlier units */
  const back=await p.evaluate(ids=>ids.slice(1).map((id,i)=>{const txt=SVU[id].story.flatMap(x=>x.text).join(' '),old=ids.slice(0,i+1).flatMap(u=>SVU[u].words);
    return[id,old.filter(k=>{const m=TERMS[k].m;return m&&new RegExp(m.source,'i').test(txt)}).length]}),ids);
- back.forEach(([id,n])=>ok(n>=(id==='sv7b'?3:4),`${tag} ${id} story reuses ${n} earlier words`));
+ back.forEach(([id,n])=>ok(n>=(ids.indexOf(id)===1?3:4),`${tag} ${id} story reuses ${n} earlier words`));
  for(const id of only){
   await p.click(`.card[data-l="${id}"]`);await p.waitForTimeout(500);
   const nw=await p.$$eval('.svstory .svw.new',e=>e.length);ok(nw>=1,`${tag} ${id} story part 1 has ${nw} highlighted new words`);
