@@ -325,7 +325,7 @@ LESSONS.push({id:"round7",subject:"math",grades:"7",kind:"wb",
  gen(level){const M=MUL(),D=DIVS();
   if(level===0){const [u,a,b]=pick([["kr",12,999],["km",2,99],["s",10,59]]);let d;do{d=non10(1,99)}while(d<8||d>92);const h=rint(a,b)*100+d,to=rint(0,1);
    const lo=to?Math.floor(h/10)*10:Math.floor(h/100)*100,hi=lo+(to?10:100),Z=zoom(lo,hi,h,to,330),res=Z.up?hi:lo,ans=res/100,fin=`${dfmt(h/100,2)} ≈ ${dfmt(ans,to)} ${u}`;
-   const ttl=to?t3("Avrunda till en decimal","Round to one decimal place","قرّب إلى منزلة عشرية واحدة"):u==="kr"?t3("Avrunda till hela kronor","Round to whole kronor","قرّب إلى أقرب كرونة"):t3("Avrunda till heltal","Round to a whole number","قرّب إلى أقرب عدد صحيح");
+   const ttl=to?pick([t3("Avrunda till en decimal","Round to one decimal place","قرّب إلى منزلة عشرية واحدة"),t3("Avrunda till tiondelar","Round to tenths","قرّب إلى الأعشار"),t3("Avrunda till närmaste tiondel","Round to the nearest tenth","قرّب إلى أقرب عُشر")]):u==="kr"?t3("Avrunda till hela kronor","Round to whole kronor","قرّب إلى أقرب كرونة"):t3("Avrunda till heltal","Round to a whole number","قرّب إلى أقرب عدد صحيح");
    return{kind:"num",dec:true,ans,show:`${dfmt(ans,to)} ${u}`,q:[A.wipe(),A.tx(L(ttl),400,76,40,"b"),A.tx(`${dfmt(h/100,2)} ${u}`,400,206,96)],
     sol:[...Z.line,mark(Z.pt[0],"ans"),Z.pt[1],Z.arr,hlc(400,mxw(fin,50),456,50),...mx(fin,400,456,50,"g")]}}
   if(level===1){let str,res,resS,k,isDec=Math.random()<.4;
