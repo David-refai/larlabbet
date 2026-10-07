@@ -104,21 +104,33 @@ LESSONS.push({id:"fracadd6",subject:"math",grades:"6",kind:"wb",
  steps:FA.steps,mount:wbMount(FA),
  gen(level){
   const head=(a,b,c,d,op,c1="k",c2="k")=>row([["f",a,b,c1],["t",op],["f",c,d,c2],["t","="],["t","?"]],400,42,36).flat();
-  const ask=(a,b,c,d,op)=>[A.wipe(),A.tx(L(t3("Räkna ut:","Work it out:","احسب:")),400,100,42),...row([["f",a,b],["t",op],["f",c,d],["t","="],["t","?"]],400,280,84).flat()];
+  const ask=(a,b,c,d,op,simp)=>[A.wipe(),A.tx(L(pick([t3("Räkna ut:","Work it out:","احسب:"),t3("Beräkna:","Calculate:","احسب:"),op==="+"?t3("Beräkna summan:","Work out the sum:","احسب المجموع:"):t3("Beräkna differensen:","Work out the difference:","احسب الفرق:")])),400,100,42),
+   ...row([["f",a,b],["t",op],["f",c,d],["t","="],["t","?"]],400,280,84).flat(),...(simp?[A.tx(L(t3("Svara i enklaste form.","Answer in simplest form.","أجب بأبسط صورة.")),400,440,34,"b")]:[])];
+  /* simplest form only when the answer can be simplified */
+  const canS=S=>gcd(S.ans[0],S.ans[1])>1&&Math.random()<.6;
+  if(level===1&&Math.random()<.3){/* lowest common denominator: list the times tables */
+   let a,b,c,d;do{[b,d]=shuffle(pick([[4,6],[4,10],[6,8],[6,9],[8,12],[3,4],[2,5],[3,5],[4,5],[2,3]]));a=rint(1,b-1);c=rint(1,d-1)}while(gcd(a,b)>1||gcd(c,d)>1);
+   const Lc=lcm(b,d),X=v=>170+v/Lc*530,o=[A.wipe(),...row([["f",a,b,"b"],["t",L(t3("och","and","و"))],["f",c,d,"g"]],400,70,40,true).flat()];
+   o.push(A.tx(`${b}:`,110,220,40,"b"),A.tx(`${d}:`,110,330,40,"g"));const hk=o.length;
+   for(let v=b;v<=Lc;v+=b)o.push(qt(v,X(v),220,40,"b"));
+   for(let v=d;v<=Lc;v+=d)o.push(qt(v,X(v),330,40,"g"));
+   o.push(A.loop(X(Lc),262,40,96,"r"),A.hl(150,402,500,62),A.tx(L(t3(`minsta gemensamma nämnare: ${Lc}`,`lowest common denominator: ${Lc}`,`أصغر مقام مشترك: ${Lc}`)),400,446,36,"g"));
+   return{kind:"num",ans:Lc,show:String(Lc),hk,nt:"lcd",hsay:t3("Skriv upp nämnarnas tabeller. Vilket tal kommer först i båda?","Write out the denominators' times tables. Which number comes first in both?","اكتب جدولَي ضرب المقامين. ما أول عدد يظهر في الجدولين؟"),
+    q:[A.wipe(),A.tx(L(t3("Vilken är minsta gemensamma nämnare?","What is the lowest common denominator?","ما أصغر مقام مشترك؟")),400,100,40),...row([["f",a,b],["t",L(t3("och","and","و"))],["f",c,d]],400,280,84,true).flat()],sol:o}}
   if(level<2){let a,b,c,d,op;
    if(level===0){do{b=rint(2,6);d=b*rint(2,4);a=rint(1,b-1);c=rint(1,d-1);op=rint(0,1)?"+":"−"}while(d>12||!okFA(a,b,c,d,op));
     if(op==="+"&&rint(0,1))[a,b,c,d]=[c,d,a,b]}
    else{do{[b,d]=shuffle(pick([[2,3],[2,5],[3,4],[3,5],[4,5]]));a=rint(1,b-1);c=rint(1,d-1);op=rint(0,1)?"+":"−"}while(!okFA(a,b,c,d,op))}
-   const S=faSol(a,b,c,d,op,head(a,b,c,d,op));
-   return{kind:"frac",ans:S.ans,show:S.show,hk:S.hk,q:ask(a,b,c,d,op),sol:S.o}}
+   const S=faSol(a,b,c,d,op,head(a,b,c,d,op)),simp=canS(S);
+   return{kind:"frac",ans:S.ans,show:S.show,hk:S.hk,simplest:simp||undefined,q:ask(a,b,c,d,op,simp),sol:S.o}}
   let a,b,c,d,op;do{[b,d]=shuffle(pick([[4,6],[4,10],[6,8],[6,9],[8,12]]));a=rint(1,b-1);c=rint(1,d-1);op=rint(0,1)?"+":"−"}while(!okFA(a,b,c,d,op));
-  const xs=lang==="ar"?[560,240]:[240,560],S=faSol(a,b,c,d,op,head(a,b,c,d,op,"b","g"));
-  const qq=op==="+"?t3("Hur stor del av pizzan äter de tillsammans?","What part of the pizza do they eat altogether?","ما الجزء الذي يأكلانه معًا؟")
-   :t3("Hur mycket mer äter Ella än Omar?","How much more does Ella eat than Omar?","كم تأكل إيلا أكثر من عمر؟");
-  return{kind:"frac",ans:S.ans,show:S.show,hk:S.hk,sol:S.o,
+  const xs=lang==="ar"?[560,240]:[240,560],S=faSol(a,b,c,d,op,head(a,b,c,d,op,"b","g")),simp=canS(S);
+  const qq=op==="+"?pick([t3("Hur stor del av pizzan äter de tillsammans?","What part of the pizza do they eat altogether?","ما الجزء الذي يأكلانه معًا؟"),t3("Hur stor andel av pizzan äter de sammanlagt?","What share of the pizza do they eat in total?","ما نسبة البيتزا التي يأكلانها معًا؟")])
+   :pick([t3("Hur mycket mer äter Ella än Omar?","How much more does Ella eat than Omar?","كم تأكل إيلا أكثر من عمر؟"),t3("Beräkna differensen. Hur mycket mer äter Ella?","Work out the difference. How much more does Ella eat?","احسب الفرق. كم تأكل إيلا أكثر؟")]);
+  return{kind:"frac",ans:S.ans,show:S.show,hk:S.hk,sol:S.o,simplest:simp||undefined,
    q:[A.wipe(),...para(L(t3("Ella och Omar delar på en pizza.","Ella and Omar share a pizza.","إيلا وعمر يتقاسمان بيتزا.")),78,40,50),
     A.tx(L(t3("Ella","Ella","إيلا")),xs[0],168,44,"b"),A.tx(L(t3("Omar","Omar","عمر")),xs[1],168,44,"g"),...A.frac(a,b,xs[0],262,62,"b"),...A.frac(c,d,xs[1],262,62,"g"),
-    ...para(L(qq),412,38,48)]}}
+    ...para(L(qq)+(simp?" "+L(t3("Svara i enklaste form.","Answer in simplest form.","أجب بأبسط صورة.")):""),384,36,44)]}}
 });
 
 /* =================== 2. Mixed numbers and fraction × whole number =================== */
@@ -168,7 +180,18 @@ LESSONS.push({id:"mixed6",subject:"math",grades:"6",kind:"wb",
    const it=[["t",n],["t",M],["f",a,b],["t","="],["f",N,b,"g"]],W=Math.floor(N/b),r=N%b;
    if(N>b){const g=gcd(r,b);it.push(["t","="],r?["m",W,r/g,b/g,"g"]:["t",W,"g"])}else if(gcd(N,b)>1){const g=gcd(N,b);it.push(["t","="],["f",N/g,b/g,"g"])}
    o.push(...eqRow(it,400,432,46,4));
-   return{kind:"frac",ans:[N,b],show:`${N}/${b}`,hk,q:[A.wipe(),A.tx(L(t3("Räkna ut:","Work it out:","احسب:")),400,100,42),...row([["t",n],["t",M],["f",a,b],["t","="],["t","?"]],400,280,84).flat()],sol:o}}
+   return{kind:"frac",ans:[N,b],show:`${N}/${b}`,hk,q:[A.wipe(),A.tx(L(pick([t3("Räkna ut:","Work it out:","احسب:"),t3("Beräkna:","Calculate:","احسب:"),t3("Beräkna produkten:","Work out the product:","احسب ناتج الضرب:")])),400,100,42),...row([["t",n],["t",M],["f",a,b],["t","="],["t","?"]],400,280,84).flat()],sol:o}}
+  if(level===1&&Math.random()<.3){/* fraction form -> mixed number */
+   let N,b;do{b=pick([2,3,4,5,6,8]);N=rint(b+1,4*b-1)}while(N%b===0||gcd(N%b,b)>1);
+   const W=Math.floor(N/b),r=N%b,P=W+1,bw=Math.min(170,(720-(P-1)*24)/P),cx=i=>400+(i-(P-1)/2)*(bw+24),y=128,h=56;
+   const o=[A.wipe(),...row([["f",N,b,"b"],["t","="],["t","?"]],400,48,40).flat()],hk=o.length;
+   for(let i=0;i<P;i++){o.push(A.p(R.bar(cx(i)-bw/2,y,bw,h,b),"k",3.5),A.hatch(prt(cx(i)-bw/2,y,bw,h,b,0,i<W?b:r),i<W?"b":"o"));
+    o.push(...(i<W?[A.tx("1",cx(i),y+h+52,42)]:A.frac(r,b,cx(i),y+h+40,30,"o")))}
+   o.push(...row([["t",`${N} ${D} ${b} = ${W}`],["t",L(REST)],["t",r]],400,330,38,true).flat(),...eqRow([["f",N,b],["t","="],["m",W,r,b,"g"]],400,428,54,2));
+   const tt=L(pick([t3("Skriv i blandad form:","Write as a mixed number:","اكتبه عددًا كسريًا:"),t3("Skriv bråket i blandad form:","Write the fraction as a mixed number:","اكتب الكسر في صورة عدد كسري:")]));
+   return{kind:"pair",ans:[W,r],labels:[t3("hela","wholes","الصحيح"),t3("täljare","numerator","البسط")],check:(x,z)=>x===W&&z===r,show:`${W} ${r}/${b}`,hk,nt:"tomixed",
+    hsay:t3("Hur många hela ryms i bråket? Dela täljaren med nämnaren. Resten blir den nya täljaren.","How many wholes fit in the fraction? Divide the numerator by the denominator. The remainder is the new numerator.","كم واحدًا صحيحًا في الكسر؟ اقسم البسط على المقام، والباقي هو البسط الجديد."),
+    q:[A.wipe(),A.tx(tt,400,100,40),...row([["f",N,b],["t","="],["q",b]],400,280,84).flat()],sol:o}}
   if(level===1){let n,a,b,N;do{n=rint(3,6);b=pick([2,3,4,5,6,8]);a=rint(1,b-1);N=n*a}while(gcd(a,b)>1||N<=b||N%b===0||N>4*b||gcd(N%b,b)>1);
    const W=Math.floor(N/b),r=N%b,k=rint(0,2),pz=k===2;
    const txt=[t3(`Moa springer ${a}/${b} km varje dag. Hur långt springer hon på ${n} dagar?`,`Moa runs ${a}/${b} km every day. How far does she run in ${n} days?`,`تجري موا ${a}/${b} كيلومتر كل يوم. كم كيلومترًا تجري في ${n} أيام؟`),
@@ -192,7 +215,7 @@ LESSONS.push({id:"mixed6",subject:"math",grades:"6",kind:"wb",
   lines.slice(1).forEach((l,i)=>o.push(...row(l,0,Ys[i+1],s,false,X0).flat()));
   o.push(...eqRow(fin,0,lines.length===3?438:410,s+6,1,false,X0));
   return{kind:"pair",ans:[W,r],labels:[t3("hela","wholes","الصحيح"),t3("täljare","numerator","البسط")],check:(x,z)=>x===W&&z===r,show:`${W} ${r}/${b}`,hk,
-   q:[A.wipe(),A.tx(L(t3("Räkna ut och svara i blandad form:","Work it out and answer as a mixed number:","احسب وأجب بعدد كسري:")),400,100,38),...row([["t",n],["t",M],["m",w,a,b],["t","="],["q",b]],400,280,70).flat()],sol:o}}
+   q:[A.wipe(),A.tx(L(pick([t3("Räkna ut och svara i blandad form:","Work it out and answer as a mixed number:","احسب وأجب بعدد كسري:"),t3("Beräkna produkten. Svara i blandad form.","Work out the product. Answer as a mixed number.","احسب ناتج الضرب، وأجب بعدد كسري.")])),400,100,38),...row([["t",n],["t",M],["m",w,a,b],["t","="],["q",b]],400,280,70).flat()],sol:o}}
 });
 
 /* =================== 3. Percent, fractions and decimals =================== */
@@ -202,6 +225,9 @@ const three=(k,hi=-1)=>{const dec=dfmt(k/100,k%10?2:1),C=(i,c)=>hi===i?"g":c,o=[
  o.push(...A.frac(k,100,560,120,46,C(0,"b")),A.tx(L(LB.fr),715,128,26,GRY),A.tx("=",470,262,50));
  if(hi===1)o.push(A.hl(480,214,160,64));o.push(A.tx(dec,560,262,56,C(1,"o")),A.tx(L(LB.dec),715,254,26,GRY),A.tx("=",470,392,50));
  if(hi===2)o.push(A.hl(480,344,160,64));o.push(A.tx(pct(k),560,392,56,C(2,"g")),A.tx(L(LB.pc),715,384,26,GRY));return o};
+const PCTX=[{b:[20,25],t:(a,b)=>[t3(`I en klass med ${b} elever har ${a} en hund.`,`In a class of ${b} pupils, ${a} have a dog.`,`في صف عدد تلاميذه ${b}، يملك ${a} منهم كلبًا.`),t3("Hur stor andel har en hund? Svara i procent.","What share have a dog? Answer in percent.","ما نسبة من يملكون كلبًا؟ أجب بالنسبة المئوية.")]},
+ {b:[4,5,10,20],t:(a,b)=>[t3(`Ali sköt ${b} straffar och gjorde mål på ${a}.`,`Ali took ${b} penalties and scored ${a}.`,`سدّد علي ركلات جزاء عددها ${b}، وسجّل منها ${a}.`),t3("Hur stor andel blev mål? Svara i procent.","What share were goals? Answer in percent.","ما نسبة الركلات التي سجّلها؟ أجب بالنسبة المئوية.")]},
+ {b:[20,25,50],t:(a,b)=>[t3(`Mobilen har ${b} appar. ${a} av dem är spel.`,`The phone has ${b} apps. ${a} of them are games.`,`في الهاتف تطبيقات عددها ${b}، منها ${a} ألعاب.`),t3("Hur stor andel är spel? Svara i procent.","What share are games? Answer in percent.","ما نسبة الألعاب منها؟ أجب بالنسبة المئوية.")]}];
 const PC6={steps:[
  {say:t3("Samma andel kan skrivas på tre sätt. 35 av 100 rutor är målade: 35/100 = 0,35 = 35 %.","The same share can be written in three ways. 35 of the 100 squares are shaded: 35/100 = 0.35 = 35%.",`يمكن كتابة الجزء نفسه بثلاث طرق. 35 مربعًا من 100 ملوّنة: ${LRI("35/100 = 0.35 = 35%")}.`),
   draw:()=>[A.wipe(),...grid(60,60,36,35,"b"),...three(35)]},
@@ -225,19 +251,27 @@ LESSONS.push({id:"pct6",subject:"math",grades:"6",kind:"wb",
  steps:PC6.steps,mount:wbMount(PC6),
  gen(level){
   if(level===0){let k;do{k=rint(3,97)}while(k%10===0&&rint(0,2));const dir=rint(0,1),dec=dfmt(k/100,k%10?2:1),C=Math.floor(k/10),r=k%10;
-   const ask=dir?t3("Skriv som decimaltal:","Write as a decimal:","اكتبها عددًا عشريًا:"):t3("Skriv i procent:","Write as a percent:","اكتبه نسبة مئوية:");
+   const ask=dir?pick([t3("Skriv som decimaltal:","Write as a decimal:","اكتبها عددًا عشريًا:"),t3("Skriv i decimalform:","Write in decimal form:","اكتبها في صورة عدد عشري:")])
+    :pick([t3("Skriv i procent:","Write as a percent:","اكتبه نسبة مئوية:"),t3("Skriv i procentform:","Write in percent form:","اكتبه في صورة نسبة مئوية:")]);
    const o=[A.wipe(),...grid(60,60,36,k,"b")];if(C)o.push(A.p(R.rect(55,55,C*36+10,370,.3),"b",4.5));if(r)o.push(A.p(R.rect(60+C*36+5,65,26,r*36-10,.2),"r",4.5));
    const hk=o.length;o.push(...three(k,dir?1:2));
    return{kind:"num",ans:dir?k/100:k,dec:!!dir,show:dir?dec:pct(k),hk,q:[A.wipe(),...grid(60,60,36,k,"b"),A.tx(L(ask),610,150,32),A.tx(dir?`${pct(k)} = ?`:`${dec} = ${pct("?")}`,610,280,56)],sol:o}}
   if(level===1){const b=pick([2,4,5,10,20,25,50]);let a;do{a=rint(1,b-1)}while(gcd(a,b)>1);const f=100/b,P=a*f,E=eqArrows(a,b,P,100,f,MUL(),590,215,50,"b","g");
    const o=[A.wipe(),...row([["f",a,b],["t","="],["t",pct("?")]],400,42,36).flat(),...gridL(50,96,32),...E.L],hk=o.length;
    o.push(...shade(50,96,32,P,"b"),...E.AR,...E.R,...eqRow([["t","="],["t",pct(P),"g"]],590,412,56));
-   return{kind:"num",ans:P,show:pct(P),hk,q:[A.wipe(),A.tx(L(t3("Skriv i procent:","Write as a percent:","اكتبه نسبة مئوية:")),400,110,42),...row([["f",a,b],["t","="],["t",pct("?")]],400,290,90).flat()],sol:o}}
+   return{kind:"num",ans:P,show:pct(P),hk,q:[A.wipe(),A.tx(L(pick([t3("Skriv i procent:","Write as a percent:","اكتبه نسبة مئوية:"),t3("Skriv i procentform:","Write in percent form:","اكتبه في صورة نسبة مئوية:"),t3("Hur många procent är det?","How many percent is that?","كم نسبته المئوية؟")])),400,110,42),...row([["f",a,b],["t","="],["t",pct("?")]],400,290,90).flat()],sol:o}}
+  if(Math.random()<.35){/* NP style: how big a share? answer in percent */
+   const C=pick(PCTX),b=pick(C.b),a=rint(2,b-1),f=100/b,P=a*f,E=eqArrows(a,b,P,100,f,MUL(),590,215,50,"b","g"),T=C.t(a,b);
+   const o=[A.wipe(),...row([["f",a,b],["t","="],["t",pct("?")]],400,42,36).flat(),...gridL(50,96,32),...E.L],hk=o.length;
+   o.push(...shade(50,96,32,P,"b"),...E.AR,...E.R,...eqRow([["t","="],["t",pct(P),"g"]],590,412,56));
+   return{kind:"num",ans:P,show:pct(P),hk,nt:"share",hsay:t3("Andelen är delen delat med det hela. Skriv den som ett bråk och förläng så att nämnaren blir 100.","The share is the part divided by the whole. Write it as a fraction and expand it so the denominator is 100.","النسبة هي الجزء مقسومًا على الكل. اكتبها كسرًا ووسّعه حتى يصبح المقام 100."),
+    q:[A.wipe(),...para(L(T[0]),90,38,50),...para(L(T[1]),220,36,48,"b"),A.tx(`${pct("?")}`,400,400,80,"b")],sol:o}}
   let b,a,p1,p2,p3;do{b=pick([2,4,5,10,20,25]);a=rint(1,b-1);p1=a*100/b;p2=p1+rint(-9,9);p3=p1+rint(-9,9)}while(gcd(a,b)>1||p1<10||p1>90||new Set([p1,p2,p3]).size<3);
   const big=rint(0,1),vals=[p1,p2,p3],target=big?Math.max(...vals):Math.min(...vals),perm=shuffle([0,1,2]),X=[180,400,620];
   const lab=i=>i===0?`${a}/${b}`:i===1?dfmt(p2/100,p2%10?2:1):pct(p3);
   const show=(i,x,y,s)=>i===0?A.frac(a,b,x,y-s*.3,s*.88):[A.tx(lab(i),x,y,s)];
-  const Q=big?t3("Vilket är störst?","Which is the biggest?","أيها الأكبر؟"):t3("Vilket är minst?","Which is the smallest?","أيها الأصغر؟");
+  const Q=rint(0,1)?(big?t3("Vilket är störst?","Which is the biggest?","أيها الأكبر؟"):t3("Vilket är minst?","Which is the smallest?","أيها الأصغر؟"))
+   :(big?t3("Jämför talen. Vilket är störst?","Compare the numbers. Which is the biggest?","قارن بين الأعداد. أيها الأكبر؟"):t3("Jämför talen. Vilket är minst?","Compare the numbers. Which is the smallest?","قارن بين الأعداد. أيها الأصغر؟"));
   const o=[A.wipe(),A.tx(L(Q),400,50,36),...perm.flatMap((i,j)=>show(i,X[j],170,62)),...X.map(x=>A.arrow(x,212,x,266,"k"))],hk=o.length;
   perm.forEach((i,j)=>{if(vals[i]===target)o.push(A.loop(X[j],314,78,42,"g"));o.push(A.tx(pct(vals[i]),X[j],330,50,vals[i]===target?"g":"k"))});
   const srt=vals.slice().sort((x,y)=>x-y);o.push(A.hl(200,405,400,64),A.tx(srt.map(pct).join(" < "),400,450,46));
@@ -253,6 +287,9 @@ const bottleP=(cx,bot,w,h)=>{const s=bot-h*.62,n=bot-h*.8,nw=w*.2;return R.line(
 const boxP=(cx,bot,w,h)=>R.rect(cx-w/2,bot-h,w,h,.3)+R.line(cx-w/2,bot-h+18,cx+w/2,bot-h+18,.2);
 const coneP=(cx,top)=>({s:R.circ(cx,top+28,28),c:`M${cx-27},${top+38}L${cx},${top+120}L${cx+27},${top+38}Z`+R.line(cx-18,top+58,cx+8,top+86,.1)+R.line(cx+18,top+58,cx-8,top+86,.1)});
 const ITM=[{p:bunP,c:"o",pl:t3("kanelbullar","cinnamon buns","كعكات بالقرفة"),u:[8,16,1]},{p:penP,c:"b",pl:t3("pennor","pens","أقلام"),u:[4,12,1]},{p:tickP,c:"g",pl:t3("biobiljetter","cinema tickets","تذاكر سينما"),u:[70,130,5]}];
+const RPK=[{l:false,s:[2,3,.5],lo:8,hi:25,t:(S,P)=>t3(`En påse med ${S} kg potatis kostar ${P} kr.`,`A bag of ${S} kg of potatoes costs ${P} kr.`,`كيس بطاطا وزنه ${S} كغ ثمنه ${P} كرونة.`)},
+ {l:true,s:[2,3,.5],lo:12,hi:30,t:(S,P)=>t3(`En flaska med ${S} liter juice kostar ${P} kr.`,`A ${S} litre bottle of juice costs ${P} kr.`,`زجاجة عصير سعتها ${S} لتر ثمنها ${P} كرونة.`)},
+ {l:false,s:[.5,2],lo:90,hi:160,t:(S,P)=>t3(`Ett paket med ${S} kg kaffe kostar ${P} kr.`,`A ${S} kg pack of coffee costs ${P} kr.`,`علبة قهوة وزنها ${S} كغ ثمنها ${P} كرونة.`)}];
 const ING=[t3("vetemjöl","flour","دقيق"),t3("mjölk","milk","حليب"),t3("ägg","eggs","بيض")],RY=[230,310,390];
 /* a "via 1" table: header, three rows and the two steps on both sides */
 const MXr=x=>lang==="ar"?800-x:x,SG=()=>lang==="ar"?-1:1;
@@ -298,7 +335,16 @@ LESSONS.push({id:"ratio6",subject:"math",grades:"6",kind:"wb",
    return{kind:"num",ans,show:`${fmt(ans)} kr`,hk:Lr.hk+1,sol:[A.wipe(),...Lr.o],
     q:[A.wipe(),A.tx(L(t3(`${n} ${pl.sv} kostar ${fmt(P)} kr.`,`${n} ${pl.en} cost ${fmt(P)} kr.`,`ثمن ${n} ${pl.ar} ${fmt(P)} كرونة.`)),400,72,40),
      ...roof(X(0)-r-14,X(n-1)-X(0)+2*r+28,160,`${fmt(P)} kr`,34),A.p([...Array(n)].map((_,i)=>it.p(X(i),232,r)).join(""),it.c,4),
-     A.tx(L(t3(`Vad kostar ${m} ${pl.sv}?`,`How much do ${m} ${pl.en} cost?`,`كم ثمن ${m} ${pl.ar}؟`)),400,385,42)]}}
+     A.tx(L(pick([t3(`Vad kostar ${m} ${pl.sv}?`,`How much do ${m} ${pl.en} cost?`,`كم ثمن ${m} ${pl.ar}؟`),t3(`Beräkna priset för ${m} ${pl.sv}.`,`Work out the price of ${m} ${pl.en}.`,`احسب ثمن ${m} ${pl.ar}.`)])),400,385,42)]}}
+  if(level===1&&Math.random()<.35){/* work out the unit price (jämförpris) of one pack */
+   const K=pick(RPK),s=pick(K.s),u=s===.5?2*rint(K.lo/2,K.hi/2):rint(K.lo,K.hi),P=s*u,U1=K.l?LIT():"kg",S=Number.isInteger(s)?String(s):dfmt(s,1),x=230;
+   const pic=K.l?[A.p(bottleP(x,360,70+15*s,90+25*s),"o",4)]:[A.p(boxP(x,360,90+30*s,70+40*s),"b",4)];
+   const ask=L(pick([t3(`Beräkna jämförpriset i kr per ${K.l?"liter":"kg"}.`,`Work out the unit price in kr per ${K.l?"litre":"kg"}.`,`احسب سعر الوحدة بالكرونة لكل ${K.l?"لتر":"كيلوغرام"}.`),t3("Vad är jämförpriset?","What is the unit price?","ما سعر الوحدة؟")]));
+   const base=[A.tx(L(K.t(S,P)),400,56,36),A.tx(ask,400,108,34,"b"),...pic,A.tx(`${S} ${U1}`,x,402,34),A.tx(`${P} kr`,x,456,44)];
+   const o=[A.wipe(),...base],hk=o.length,ex=s===.5?`${P} ${M} 2 = ${u} kr`:`${P} ${D} ${S} = ${u} kr`;
+   o.push(A.tx(L(t3(`pris för 1 ${U1}:`,`price for 1 ${U1}:`,`سعر 1 ${U1}:`)),580,230,32,"b"),A.hl(430,272,300,62),A.tx(ex,580,316,40,"g"),A.tx(`${u} kr/${U1}`,580,390,40,"g"));
+   return{kind:"num",ans:u,show:`${u} kr/${U1}`,hk:1,nt:"unit",hsay:t3("Jämförpriset är priset för 1 kg eller 1 liter. Dela priset med antalet kg eller liter.","The unit price is the price for 1 kg or 1 litre. Divide the price by the number of kg or litres.","سعر الوحدة هو سعر 1 كغ أو 1 لتر. اقسم الثمن على عدد الكيلوغرامات أو اللترات."),
+    q:[A.wipe(),...base],sol:o.slice(hk)}}
   if(level===1){const K=pick([{u:"l",lo:12,hi:30,sz:[.5,1,2,3],bottle:true,w:t3("liter","litre","لتر")},{u:"kg",lo:30,hi:80,sz:[.5,1,2],bottle:false,w:t3("kilo","kilo","كيلوغرام")}]);
    let sA,sB,uA,uB;do{[sA,sB]=shuffle(K.sz);uA=rint(K.lo,K.hi);uB=rint(K.lo,K.hi)}while(Math.abs(uA-uB)<2||Math.abs(uA-uB)>Math.max(4,uA*.25)||(sA*uA)%1||(sB*uB)%1||(sA-sB)*(sA*uA-sB*uB)<=0);
    const S=[sA,sB],U=[uA,uB],P=[sA*uA,sB*uB],ch=uA<uB?0:1,X=[220,580],nmS=s=>Number.isInteger(s)?String(s):dfmt(s,1),LT=["A","B"],U1=K.bottle?LIT():"kg",US=()=>U1;
@@ -310,7 +356,7 @@ LESSONS.push({id:"ratio6",subject:"math",grades:"6",kind:"wb",
    o.push(A.tx(per(0),X[0],394,30,ch===0?"g":"r"),A.tx(per(1),X[1],394,30,ch===1?"g":"r"),A.loop(X[ch],384,172,32,"g"),
     A.tx(L(t3(`${LT[ch]} är billigare per ${K.w.sv}.`,`${LT[ch]} is cheaper per ${K.w.en}.`,`${LT[ch]} أرخص لكل ${K.w.ar}.`)),400,458,34,"g"));
    return{kind:"choice",opts:LT,ans:ch,show:`${LT[ch]} (${U[ch]} kr/${U1})`,hk,sol:o,
-    q:[A.wipe(),...base,A.tx(L(t3(`Vilken är billigare per ${K.w.sv}?`,`Which is cheaper per ${K.w.en}?`,`أيهما أرخص لكل ${K.w.ar}؟`)),400,420,40)]}}
+    q:[A.wipe(),...base,A.tx(L(pick([t3(`Vilken är billigare per ${K.w.sv}?`,`Which is cheaper per ${K.w.en}?`,`أيهما أرخص لكل ${K.w.ar}؟`),t3("Vilken har lägst jämförpris?","Which has the lowest unit price?","أيهما سعر وحدته أقل؟")])),400,420,40)]}}
   const IN=pick([{n:t3("mjölk","milk","حليب"),d:t3("mjölk","milk","الحليب"),u:"dl",v:[1.5,2,2.5]},{n:t3("vetemjöl","flour","دقيق"),d:t3("vetemjöl","flour","الدقيق"),u:"dl",v:[.5,1.5]},
    {n:t3("smör","butter","زبدة"),d:t3("smör","butter","الزبدة"),u:"g",v:[10,15,20,25]},{n:t3("riven ost","grated cheese","جبن مبشور"),d:t3("riven ost","grated cheese","الجبن المبشور"),u:"g",v:[20,25,30,40]}]);
   const v=pick(IN.v);let p,q;do{p=pick([3,4,5,6,8]);q=rint(3,12)}while(q===p);const a=v*p,ans=v*q;
@@ -318,7 +364,7 @@ LESSONS.push({id:"ratio6",subject:"math",grades:"6",kind:"wb",
   return{kind:"num",ans,dec:true,show:`${nm(ans)} ${IN.u}`,hk:Lr.hk+1,sol:[A.wipe(),...Lr.o],
    q:[A.wipe(),A.p(R.rect(150,36,500,200,.3),"k",3.5),A.tx(L(t3(`Recept för ${p} personer`,`Recipe for ${p} people`,`وصفة تكفي ${arP(p)}`)),400,94,36,"o"),
     A.p(R.line(170,118,630,118,.2),"k",2.5),...row([["t",`${nm(a)} ${IN.u}`],["t",L(IN.n)]],400,176,46,true).flat(),
-    ...para(L(t3(`Hur mycket ${IN.d.sv} behövs till ${q} personer?`,`How much ${IN.d.en} is needed for ${q} people?`,`ما كمية ${IN.d.ar} اللازمة لـ ${arP(q)}؟`)),318,38,48),
+    ...para(L(rint(0,1)?t3(`Beräkna hur mycket ${IN.d.sv} som behövs till ${q} personer.`,`Work out how much ${IN.d.en} is needed for ${q} people.`,`احسب كمية ${IN.d.ar} اللازمة لـ ${arP(q)}.`):t3(`Hur mycket ${IN.d.sv} behövs till ${q} personer?`,`How much ${IN.d.en} is needed for ${q} people?`,`ما كمية ${IN.d.ar} اللازمة لـ ${arP(q)}؟`)),318,38,48),
     A.tx(`? ${IN.u}`,400,440,52,"b")]}}
 });
 
@@ -352,4 +398,7 @@ Object.assign(HINTSX,{
   {say:t3("Räkna ut priset för 1 liter eller 1 kilo för båda. Det kallas jämförpris.","Work out the price of 1 litre or 1 kilo for both. That is called the unit price.","احسب سعر اللتر الواحد أو الكيلوغرام الواحد لكليهما. هذا هو سعر الوحدة."),cut:g=>g.sol.slice(0,g.hk)},
   {say:t3("Hur mycket behövs till 1 person? Gångra sedan med antalet personer.","How much is needed for 1 person? Then multiply by the number of people.","كم نحتاج لشخص واحد؟ ثم اضرب في عدد الأشخاص."),cut:g=>g.sol.slice(0,g.hk)}]
 });
+/* a question type can bring its own hint text (g.hsay) and cut (g.hcut); the app calls cut(g) just before it reads say */
+for(const id of ["fracadd6","mixed6","pct6","ratio6"]){const H=HINTSX[id];if(H)HINTSX[id]=H.map(h=>{let cur=null;
+ return{cut:g=>{cur=g;return g.hcut?g.hcut(g):h.cut(g)},get say(){return cur&&cur.hsay||h.say}}})}
 }

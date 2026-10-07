@@ -111,6 +111,17 @@ LESSONS.push({id:"comb9",subject:"math",grades:"9",kind:"wb",
   +`<text x="272" y="80" ${CV} font-size="34" fill="#2257c9">3·2</text><text x="272" y="118" ${CV} font-size="34" fill="#1e9e5a">= 6</text>`),
  steps:COMB.steps,mount:wbMount(COMB),
  gen(level){const W=L(CLO);
+  /* level 0: a three-course menu */
+  if(level===0&&Math.random()<.25){const v=[rint(2,4),rint(3,5),rint(2,4)],ans=v[0]*v[1]*v[2],lb=[t3("förrätt","starter","مقبلات"),t3("varmrätt","main course","طبق رئيسي"),t3("efterrätt","dessert","حلوى")].map(L);
+   const S=slots(lb,230,null),sv=slots(lb,230,v);
+   return{kind:"num",ans,show:String(ans),q:[...head([t3(`En restaurang har ${v[0]} förrätter, ${v[1]} varmrätter och ${v[2]} efterrätter.`,`A restaurant has ${v[0]} starters, ${v[1]} main courses and ${v[2]} desserts.`,`في مطعم ${v[0]} أنواع من المقبلات و${v[1]} أطباق رئيسية و${v[2]} أنواع من الحلوى.`),
+     pick([t3("Hur många olika menyer med tre rätter finns det?","How many different three-course menus are there?","كم قائمة مختلفة من ثلاثة أطباق توجد؟"),t3("Beräkna antalet möjliga menyer.","Work out the number of possible menus.","احسب عدد القوائم الممكنة.")])]),...S.box],
+    sol:[...sv.val,...sv.tim,...prod(v,ans,430,46)]}}
+  /* level 1: factorial */
+  if(level===1&&Math.random()<.25){const n=rint(4,7),vals=Array.from({length:n},(_,i)=>n-i),ans=vals.reduce((a,b)=>a*b,1),lb=vals.map((_,i)=>String(i+1)),S=slots(lb,230,null),sv=slots(lb,230,vals);
+   return{kind:"num",ans,show:fmt(ans),q:[...head([t3(`${n} personer ska stå i kö. Antalet ordningar skrivs ${n}! (${n}-fakultet).`,`${n} people stand in a queue. The number of orders is written ${n}! (${n} factorial).`,`يقف ${n} أشخاص في طابور. عدد الترتيبات يُكتب ${LRI(n+"!")} (مضروب ${n}).`),
+     pick([t3(`Beräkna ${n}!`,`Work out ${n}!`,`احسب ${LRI(n+"!")}`),t3("På hur många sätt kan de ställa sig?","In how many ways can they line up?","بكم طريقة يمكنهم الوقوف؟")])]),...S.box],
+    sol:[...sv.val,...sv.tim,...prod(vals,ans,430,n>6?40:46)]}}
   if(level===0){const three=Math.random()<.5,cnt=[rint(2,5),rint(2,4)];if(three)cnt.push(rint(2,3));const ans=cnt.reduce((a,b)=>a*b,1);
    const keys=[["tops",SHIRT,62],["pantsP",PANTS,56],["caps",CAP,64]].slice(0,cnt.length),COLS=["r","b","g","o","k"];
    const Y=three?[175,275,375]:[200,320];
@@ -131,7 +142,7 @@ LESSONS.push({id:"comb9",subject:"math",grades:"9",kind:"wb",
     line1=t3(`Du slår en tärning ${n} gånger och skriver resultaten i ordning.`,`You roll a dice ${n} times and write the results in order.`,`ترمي حجر نرد ${arN(n,"مرتين","مرات")} وتكتب النتائج بالترتيب.`)}
    else{let n,k;do{k=rint(2,4);n=rint(3,6)}while(k**n>4096);labels=Array.from({length:n},(_,i)=>L(t3(`fråga ${i+1}`,`Q${i+1}`,`سؤال ${i+1}`)));vals=Array(n).fill(k);
     line1=t3(`Ett quiz har ${n} frågor med ${k} svarsalternativ var.`,`A quiz has ${n} questions with ${k} options each.`,`في مسابقة ${n} أسئلة، لكل سؤال ${arN(k,"خياران","خيارات")}.`)}
-   const ans=vals.reduce((a,b)=>a*b,1),S=slots(labels,230,null),q2=T===3?t3("På hur många sätt kan man svara?","In how many ways can you answer?","بكم طريقة يمكن الإجابة؟"):t3("Hur många olika följder finns det?","How many different sequences are there?","كم تسلسلًا مختلفًا يوجد؟");
+   const ans=vals.reduce((a,b)=>a*b,1),S=slots(labels,230,null),q2=T===3?t3("På hur många sätt kan man svara?","In how many ways can you answer?","بكم طريقة يمكن الإجابة؟"):pick([t3("Hur många olika följder finns det?","How many different sequences are there?","كم تسلسلًا مختلفًا يوجد؟"),t3("Beräkna antalet möjliga följder.","Work out the number of possible sequences.","احسب عدد التسلسلات الممكنة.")]);
    const sv=slots(labels,230,vals);
    return{kind:"num",ans,show:fmt(ans),q:[...head([line1,q2]),...S.box],sol:[...sv.val,...sv.tim,...prod(vals,ans,430,44)]}}
   /* level 2: order matters, nobody/nothing can be chosen twice */
@@ -248,7 +259,15 @@ LESSONS.push({id:"prob9",subject:"math",grades:"9",kind:"wb",
  steps:PRB.steps,mount:wbMount(PRB),
  gen(level){const K=pick(["candy","socks"]),C=PCX[K];let a,b;do{a=rint(2,6);b=rint(2,6)}while(a+b<5||a+b>10);const n=a+b;
   const T=ptree({x0:50,yc:315,dx:150,h1:80,h2:30,c:C.c}),bag=BAGS[K](692,K==="candy"?205:212,K==="candy"?.85:1,a,b);
-  const ask=t3("Svara med ett bråk.","Answer with a fraction.","أجب بكسر.");
+  const ask=pick([t3("Svara med ett bråk.","Answer with a fraction.","أجب بكسر."),t3("Svara i bråkform.","Write it as a fraction.","اكتب الجواب على صورة كسر.")]);
+  /* level 0: one is taken away, what is the chance for the next one? */
+  if(level===0&&Math.random()<.25){const t=rint(0,1),x=t?b:a,col=C.c[t],nm=K==="candy"?[t3("röd","red","حمراء"),t3("grön","green","خضراء")][t]:[t3("blå","blue","أزرق"),t3("svart","black","أسود")][t];
+   const first=K==="candy"?t3(`Du tar en ${L(nm)} bit och äter upp den.`,`You take a ${L(nm)} sweet and eat it.`,`تأخذ قطعة ${L(nm)} وتأكلها.`):t3(`Du tar en ${L(nm)} strumpa och lägger den åt sidan.`,`You take a ${L(nm)} sock and put it aside.`,`تأخذ جوربًا ${L(nm)} وتضعه جانبًا.`);
+   const q2=K==="candy"?t3(`Hur stor är sannolikheten att nästa bit också är ${L(nm)}?`,`What is the probability that the next sweet is ${L(nm)} too?`,`ما احتمال أن تكون القطعة التالية ${L(nm)} أيضًا؟`):t3(`Hur stor är sannolikheten att nästa strumpa också är ${L(nm)}?`,`What is the probability that the next sock is ${L(nm)} too?`,`ما احتمال أن يكون الجورب التالي ${L(nm)} أيضًا؟`);
+   return{kind:"frac",ans:[x-1,n-1],show:frs(x-1,n-1),q:[...head([C.intro(a,b),first,q2],28,44,40),...bag,A.tx(L(ask),692,474,26,"o")],
+    sol:[txe(L(t3(`kvar totalt: ${n} − 1 = ${n-1}`,`left in total: ${n} − 1 = ${n-1}`,`الباقي كله: ${LRI(`${n} − 1 = ${n-1}`)}`)),300,220,32,"k"),
+     txe(L(t3(`kvar ${L(nm)}: ${x} − 1 = ${x-1}`,`${L(nm)} left: ${x} − 1 = ${x-1}`,`الباقي من اللون: ${LRI(`${x} − 1 = ${x-1}`)}`)),300,280,32,col),
+     A.hl(190,330,220,96),...mrow(["P =",{f:[x-1,n-1],c:"g",ans:true}],300,390,44,"g")]}}
   const Q=lines=>[...head(lines,30,46,42),...bag,...T.sk,A.tx(L(ask),692,474,26,"o")];
   if(level===0){const t=rint(0,1),x=t?b:a,N=x*x,D=n*n,T2=ptree({x0:50,yc:315,dx:150,h1:80,h2:30,c:C.c,p1:[[a,n],[b,n]],p2:[[a,n],[b,n],[a,n],[b,n]],fs:28}),i=t?3:0;
    return{kind:"frac",ans:[N,D],show:frs(N,D),q:Q([C.intro(a,b),C.with,C.both[t]]),sol:[...T2.f1.flat(),...T2.f2.flat(),T2.path(i),...prodRow(T2,i,[x,n],[x,n],[N,D],36)]}}
@@ -340,6 +359,30 @@ LESSONS.push({id:"crit9",subject:"math",grades:"9",kind:"wb",
   `<circle cx="244" cy="82" r="34" fill="#fff" stroke="#1d2433" stroke-width="5"/><path d="M268 106L296 136" stroke="#1d2433" stroke-width="9" stroke-linecap="round"/><text x="244" y="96" ${CV} font-size="44" fill="#d63b2f">?</text>`),
  steps:CRT.steps,mount:wbMount(CRT),
  gen(level){
+  /* level 0: which sample gives a fair picture? */
+  if(level===0&&Math.random()<.25){const act=pick(ACT),G=crowd(150,190,10,6,30),pk=shuffle([...G.keys()]).slice(0,10);
+   const O=[t3("10 slumpvis valda elever från hela skolan","10 randomly chosen students from the whole school","10 طلاب يُختارون عشوائيًا من المدرسة كلها"),t3("dina 10 bästa kompisar","your 10 best friends","أفضل 10 أصدقاء لك"),
+    t3("de 10 första som svarar på en enkät på nätet","the first 10 who answer an online survey","أول 10 يجيبون عن استبيان على الإنترنت"),t3("10 elever från samma klass","10 students from the same class","10 طلاب من الصف نفسه")],sh=shuffle([0,1,2,3]),ans=sh.indexOf(0);
+   const q=[...head([t3(`Du vill veta hur många på skolan som ${act.sv}.`,`You want to know how many at the school ${act.en}.`,`تريد أن تعرف كم طالبًا في المدرسة ${act.ar}.`),pick([t3("Vilket urval ger den mest rättvisa bilden?","Which sample gives the fairest picture?","أي عيّنة تعطي الصورة الأعدل؟"),t3("Vem ska du fråga?","Who should you ask?","مَن يجب أن تسأل؟")])],30,52),
+    A.p(dots(G),"k",12),A.tx(L(t3("hela skolan","the whole school","المدرسة كلها")),285,400,28)];
+   const exp=L(t3("slumpmässigt urval = alla har samma chans","random sample = everyone has the same chance","العيّنة العشوائية = لكل واحد الفرصة نفسها"));
+   return{kind:"choice",opts:sh.map(i=>O[i]),ans,show:L(O[0]),q,sol:[A.p(dots(pk.map(i=>G[i])),"g",18),...pk.map(i=>A.loop(G[i][0],G[i][1],14,14,"g")),mark(A.hl(400-tw(exp,26)/2-24,440,tw(exp,26)+48,42)),A.tx(exp,400,470,fit(exp,26),"g")]}}
+  /* level 2: connection or cause? */
+  if(level===2&&Math.random()<.25){const C=pick([
+    {a:t3("glass","ice cream","البوظة"),b:t3("solbränna","sunburn","حروق الشمس"),c:t3("varmt och soligt väder","hot sunny weather","الطقس الحار المشمس"),
+     s:t3("Ju mer glass som säljs, desto fler får solbränna.","The more ice cream is sold, the more people get sunburnt.","كلما زادت مبيعات البوظة زاد عدد المصابين بحروق الشمس.")},
+    {a:t3("brandmän","firefighters","رجال الإطفاء"),b:t3("skador","damage","الأضرار"),c:t3("hur stor branden är","how big the fire is","حجم الحريق"),
+     s:t3("Ju fler brandmän som kommer, desto större blir skadorna.","The more firefighters come, the bigger the damage.","كلما زاد عدد رجال الإطفاء زادت الأضرار.")},
+    {a:t3("skostorlek","shoe size","مقاس الحذاء"),b:t3("läsförmåga","reading skill","مهارة القراءة"),c:t3("barnens ålder","the children's age","عمر الأطفال"),
+     s:t3("Barn med större skor läser ofta bättre.","Children with bigger shoes often read better.","الأطفال ذوو الأحذية الأكبر يقرؤون غالبًا بشكل أفضل.")}]);
+   const O=[t3(`Något annat, ${L(C.c)}, påverkar båda.`,`Something else, ${L(C.c)}, affects both.`,`شيء آخر، ${L(C.c)}، يؤثّر في الاثنين.`),t3(`Mer ${L(C.a)} orsakar mer ${L(C.b)}.`,`More ${L(C.a)} causes more ${L(C.b)}.`,`زيادة ${L(C.a)} تسبّب زيادة ${L(C.b)}.`),
+    t3(`Mer ${L(C.b)} orsakar mer ${L(C.a)}.`,`More ${L(C.b)} causes more ${L(C.a)}.`,`زيادة ${L(C.b)} تسبّب زيادة ${L(C.a)}.`)],sh=shuffle([0,1,2]),ans=sh.indexOf(0);
+   const q=[...head([C.s,pick([t3("Vilken förklaring är rimligast?","Which explanation is most reasonable?","أي تفسير هو الأرجح؟"),t3("Avgör vad sambandet beror på.","Decide what the connection is caused by.","حدّد سبب هذه العلاقة.")])],30,52),
+    A.p(R.rect(110,200,200,90,.3),"b",4),A.tx(L(C.a),210,256,fit(L(C.a),30,180),"b"),A.p(R.rect(490,200,200,90,.3),"o",4),A.tx(L(C.b),590,256,fit(L(C.b),30,180),"o"),
+    A.p(R.dashed(320,245,480,245,10),"k",3),A.tx("?",400,230,40,"r")];
+   const exp=L(t3("samband ≠ orsak","connection ≠ cause","العلاقة ≠ السبب"));
+   return{kind:"choice",opts:sh.map(i=>O[i]),ans,show:L(O[0]),q,sol:[A.p(R.rect(240,330,320,70,.3),"g",4),A.tx(L(C.c),400,374,fit(L(C.c),28,300),"g"),A.arrow(300,330,250,296,"g"),A.arrow(500,330,550,296,"g"),
+    mark(A.hl(400-tw(exp,30)/2-24,426,tw(exp,30)+48,46)),A.tx(exp,400,460,30,"g")]}}
   if(level===0){const T=rint(0,3),o=[...head([t3("Vad är missvisande i diagrammet?","What is misleading about the chart?","ما المضلِّل في هذا المخطط؟")],32,52)],sol=[];
    if(T===0){const b0=pick([100,200,300,400,500]),v=shuffle([1,2,3,4,5]).slice(0,3).map(k=>b0+k*10),C=bars9({x:240,y:130,w:360,h:260,base:b0,top:b0+60,step:10,vals:v,names:L(t3(["fre","lör","sön"],["Fri","Sat","Sun"],["الجمعة","السبت","الأحد"])),cols:["b","o","g"],ts:24});
     o.push(A.tx(L(t3("Sålda biljetter","Tickets sold","التذاكر المبيعة")),420,108,28,"b"),...C.axis,...C.B,...C.N);sol.push(A.loop(206,C.Y(b0)+1,40,22,"r"))}
@@ -440,7 +483,13 @@ LESSONS.push({id:"prog9",subject:"math",grades:"9",kind:"wb",
  icon:ICO(`<rect x="22" y="24" width="210" height="132" rx="12" fill="#2257c9" fill-opacity=".08" stroke="#2257c9" stroke-width="3"/>${[["def f(x):",0,62],["return 2*x+1",1,98],["print(f(5))",0,134]].map(([s,ind,y])=>`<text x="${40+ind*26}" y="${y}" font-family="Caveat,cursive" font-weight="700" font-size="28" fill="#1d2433" direction="ltr">${s}</text>`).join("")}`+
   `<path d="M240 90H262" stroke="#1d2433" stroke-width="3"/><path d="M256 84L264 90L256 96" fill="none" stroke="#1d2433" stroke-width="3"/><text x="286" y="102" ${CV} font-size="40" fill="#1e9e5a">11</text>`),
  steps:PRG.steps,mount:wbMount(PRG),
- gen(level){const TQ=()=>A.tx(L(t3("Vad skriver programmet ut?","What does the program print?","ماذا يطبع البرنامج؟")),400,44,32);
+ gen(level){const TQ=()=>A.tx(L(pick([t3("Vad skriver programmet ut?","What does the program print?","ماذا يطبع البرنامج؟"),t3("Bestäm vad programmet skriver ut.","Work out what the program prints.","أوجد ما يطبعه البرنامج.")])),400,44,32);
+  /* level 1: a simulation with random numbers, the expected count */
+  if(level===1&&Math.random()<.25){const d=pick([6,6,4,10]),N=d*pick([10,20,50,100]),w=pick([...Array(d)].map((_,i)=>i+1)),sx=lang==="sv"?"antal":"count",k=N9("kast"),ans=N/d;
+   return{kind:"num",ans,show:String(ans),q:[A.wipe(),A.tx(L(pick([t3("Ungefär vilket tal skriver programmet ut?","Roughly what number does the program print?","ما العدد الذي يطبعه البرنامج تقريبًا؟"),t3("Vilket tal kan du vänta dig att programmet skriver ut?","What number can you expect the program to print?","ما العدد المتوقّع أن يطبعه البرنامج؟")])),400,44,30),
+     ...code9(["import random",`${sx} = 0`,`for i in range(${N}):`,[1,`${k} = random.randint(1, ${d})`],[1,`if ${k} == ${w}:`],[2,`${sx} = ${sx} + 1`],`print(${sx})`]),
+     A.tx(L(t3(`randint(1, ${d}) ger ett slumptal 1–${d}`,`randint(1, ${d}) gives a random number 1–${d}`,`${LRI(`randint(1, ${d})`)} يعطي عددًا عشوائيًا من 1 إلى ${d}`)),400,476,fit(L(t3(`randint(1, ${d}) ger ett slumptal 1–${d}`,`randint(1, ${d}) gives a random number 1–${d}`,`randint(1, ${d}) يعطي عددًا عشوائيًا من 1 إلى ${d}`)),24,700),"o")],
+    sol:[A.tx(L(t3(`chansen för ${w}:`,`the chance of ${w}:`,`احتمال ${w}:`)),640,130,28,"b"),...mrow([F(1,d)],640,200,40,"b"),mark(A.tx(`${N} ${MUL()} 1/${d} = ${ans}`,640,290,36)),...out9(`≈ ${ans}`,640,360,34)]}}
   if(level===0){const [f,x]=pick(L(FNS)),a=rint(2,12),b=pick([0,5,10,15,20,25,30,40,50]),two=Math.random()<.5,body=b?`return ${a} * ${x} + ${b}`:`return ${a} * ${x}`,val=v=>a*v+b;
    const ex=v=>b?`${a} ${MUL()} ${v} + ${b} = ${val(v)}`:`${a} ${MUL()} ${v} = ${val(v)}`;
    if(!two){const k=rint(2,9),ans=val(k);
@@ -493,14 +542,14 @@ Object.assign(HELPX,{
    A.tx("f(x) = 2x + 1",400,460,40,"k")]}]
 });
 Object.assign(HINTSX,{
- prob9:[{say:t3("Biten läggs tillbaka, så sannolikheten är densamma båda gångerna. Multiplicera längs vägen.","The item is put back, so the probability is the same both times. Multiply along the path.","تُعاد القطعة، فيبقى الاحتمال نفسه في المرتين. اضرب على طول المسار."),cut:upTo()},
+ prob9:[{say:t3("Biten läggs tillbaka, så sannolikheten är densamma båda gångerna. Multiplicera längs vägen. Tas en bort utan att läggas tillbaka finns en färre kvar.","The item is put back, so the probability is the same both times. Multiply along the path. If one is taken away and not put back, there is one fewer left.","تُعاد القطعة، فيبقى الاحتمال نفسه في المرتين. اضرب على طول المسار. إذا أُخذت قطعة ولم تُعد يبقى عدد أقل بواحد."),cut:upTo()},
   {say:t3("Andra gången finns en färre kvar, både av den färgen och totalt. Multiplicera längs vägen.","The second time there is one fewer left, both of that colour and in total. Multiply along the path.","في المرة الثانية يبقى واحد أقل من ذلك اللون ومن المجموع كله. اضرب على طول المسار."),cut:upTo()},
   {say:t3("Olika färg: addera två vägar. Minst en: räkna 1 minus sannolikheten att det inte blir någon alls.","Different colours: add two paths. At least one: work out 1 minus the probability of getting none at all.","لونان مختلفان: اجمع مسارين. واحدة على الأقل: احسب 1 ناقص احتمال ألا تحصل على أي واحدة."),cut:upTo()}],
- crit9:[{say:t3("Titta noga på axlarna, bilderna och procenten. Vilken del lurar ögat?","Look carefully at the axes, the pictures and the percentages. Which part tricks the eye?","انظر بعناية إلى المحاور والصور والنسب. أي جزء يخدع العين؟"),cut:()=>[]},
+ crit9:[{say:t3("Titta noga på axlarna, bilderna och procenten. Vilken del lurar ögat? Ett rättvist urval väljs slumpvis från alla.","Look carefully at the axes, the pictures and the percentages. Which part tricks the eye? A fair sample is chosen at random from everyone.","انظر بعناية إلى المحاور والصور والنسب. أي جزء يخدع العين؟ العيّنة العادلة تُختار عشوائيًا من الجميع."),cut:()=>[]},
   {say:t3("Hur stor andel av urvalet gäller det? Ta samma andel av hela skolan.","What share of the sample is it? Take the same share of the whole school.","ما نسبة ذلك في العيّنة؟ خذ النسبة نفسها من المدرسة كلها."),cut:upTo()},
-  {say:t3("Läs av värdena på y-axeln. Dela skillnaden med B:s värde.","Read the values on the y-axis. Divide the difference by B's value.","اقرأ القيم على المحور y، ثم اقسم الفرق على قيمة B."),cut:upTo()}],
+  {say:t3("Läs av värdena på y-axeln. Dela skillnaden med B:s värde. Två saker som ökar samtidigt behöver inte orsaka varandra.","Read the values on the y-axis. Divide the difference by B's value. Two things that rise together need not cause each other.","اقرأ القيم على المحور y، ثم اقسم الفرق على قيمة B. شيئان يزدادان معًا لا يعني أن أحدهما يسبّب الآخر."),cut:upTo()}],
  prog9:[{say:t3("Sätt in talet i funktionen: byt ut variabeln mot talet och räkna.","Put the number into the function: replace the variable with the number and work it out.","ضع العدد في الدالة: استبدل المتغيّر بالعدد واحسب."),cut:upTo()},
-  {say:t3("Gör en tabell: skriv i, f(i) och s för varje varv i loopen.","Make a table: write i, f(i) and s for each lap of the loop.","اصنع جدولًا: اكتب i و f(i) و s في كل دورة من الحلقة."),cut:upTo()},
+  {say:t3("Gör en tabell: skriv i, f(i) och s för varje varv i loopen. Med slumptal: antal varv gånger sannolikheten.","Make a table: write i, f(i) and s for each lap of the loop. With random numbers: number of laps times the probability.","اصنع جدولًا: اكتب i و f(i) و s في كل دورة من الحلقة. مع الأعداد العشوائية: عدد الدورات مضروبًا في الاحتمال."),cut:upTo()},
   {say:t3("Skriv x och n efter varje varv. Sluta när villkoret i while blir falskt.","Write x and n after each lap. Stop when the while condition becomes false.","اكتب x و n بعد كل دورة، وتوقّف عندما يصبح شرط while خطأً."),cut:upTo()}]
 });
 

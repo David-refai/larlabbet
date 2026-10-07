@@ -88,7 +88,8 @@ body.inles .wrap{max-width:1500px;padding-block:8px}body.inles .top{padding-bloc
   .lesson .bubble{border-end-start-radius:20px}.lesson .bubble p{font-size:1.2rem}}
 @media (max-width:899px),(max-aspect-ratio:5/4){
   body.inles #hud{display:none}body.inles .top{flex-wrap:nowrap}
-  .lesson .teacher{grid-template-columns:52px 1fr;gap:8px}.lesson .teacher .avatar{width:52px;height:52px}
+  .lesson .teacher{grid-template-columns:52px 1fr;grid-template-rows:minmax(0,1fr);gap:8px}.lesson .wchips{flex:none;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.lesson .wchip{white-space:nowrap}
+  .lesson .bubble .btn{padding:4px 11px!important;font-size:.92rem}.lesson .bubble .row{gap:6px}.lesson .teacher .avatar{width:52px;height:52px}
   .lesson .bubble{padding:10px 14px;gap:8px}.lesson .bubble p{font-size:1.06rem;line-height:1.45}
   .lesson .lhead .btn{padding:4px 12px!important}.lesson .progress i{width:14px}}
 .progress{display:flex;gap:5px}
@@ -232,7 +233,7 @@ const UI={
  sv:{help:"🤔 Jag förstår inte",helpEasy:"enklare förklaring",helpMore:"Visa mer →",backToLesson:"Tillbaka till lektionen →",prev:"← Förra",keyNext:"eller tryck på piltangenten →",keyPrev:"eller tryck på piltangenten ←",course:"Matematik för årskurs 4",courseY:y=>`Matematik för årskurs ${y}`,courseDone:(a,b)=>`${a} av ${b} lektioner klara`,courseNote:"Gör lektionerna i ordning. Varje lektion slutar med egna övningar.",hello:"Hej! Jag är Olle.",intro:"Här läser vi inte bara. Vi ser saker röra sig, rör vid dem och testar själva. Berätta lite om dig, så väljer jag frågor som passar dig.",
   name:"Ditt namn",ph:"till exempel Sara",grade:"Vilken årskurs går du i?",start:"Nu kör vi!",needName:"Skriv ditt namn först ✏️",pickGrade:"Välj din årskurs först",
   greet:n=>n?`Hej ${n}! Välj en lektion`:"Hej! Välj en lektion",soon:"snart",scenes:n=>`${n} interaktiva scener`,forGrades:g=>`Åk ${g}`,gradeChip:g=>`Åk ${g}`,
-  back:"← Lektioner",next:"Nästa →",replay:"↻ Igen",toChallenge:"Till utmaningen →",toPractice:"Öva själv →",yourTurn:"Skriv svaret under tavlan och tryck på Kolla.",check:"Kolla",needAnswer:"Skriv ett svar först",nextProblem:"Nästa uppgift →",finish:"Klar →",showSol:"Visa lösningen",wrongSol:a=>`Inte riktigt. Svaret är ${a}. Titta hur vi löser det på tavlan!`,practiceMore:"Öva mer",teacher:"Olle",voice:"Uppläsning",sound:"Skrivljud på/av",profile:"Byt namn eller årskurs",great:"Bra jobbat!",
+  back:"← Lektioner",next:"Nästa →",replay:"↻ Igen",toChallenge:"Till utmaningen →",toPractice:"Öva själv →",yourTurnPick:"Välj rätt svar under tavlan.",yourTurn:"Skriv svaret under tavlan och tryck på Kolla.",check:"Kolla",needAnswer:"Skriv ett svar först",nextProblem:"Nästa uppgift →",finish:"Klar →",showSol:"Visa lösningen",wrongSol:a=>`Inte riktigt. Svaret är ${a}. Titta hur vi löser det på tavlan!`,practiceMore:"Öva mer",teacher:"Olle",voice:"Uppläsning",sound:"Skrivljud på/av",profile:"Byt namn eller årskurs",great:"Bra jobbat!",
   qOf:(i,n)=>`Fråga ${i} av ${n}: `,right:["Rätt!","Snyggt, det stämmer!","Precis, bra tänkt!"],wrong:"Nästan! Ledtråd: ",
   end3:"Tre stjärnor! Nästa gång får du svårare frågor.",endSome:(r,n)=>`Du fick ${r} av ${n}. Titta på scenerna igen, så klarar du alla!`,end0:"Ingen fara. Forskare försöker många gånger. Vi tittar på lektionen igen.",
   another:"Ny lektion",redo:"Gör om",empty:"Lektionerna förbereds. Samma spelare används, med dialoger och ord du kan höra och röra vid.",
@@ -240,7 +241,7 @@ const UI={
  en:{help:"🤔 I don't get it",helpEasy:"simpler explanation",helpMore:"Show more →",backToLesson:"Back to the lesson →",prev:"← Back",keyNext:"or press the → arrow key",keyPrev:"or press the ← arrow key",course:"Maths for Year 4",courseY:y=>`Maths for Year ${y}`,courseDone:(a,b)=>`${a} of ${b} lessons done`,courseNote:"Take the lessons in order. Each one ends with your own practice.",hello:"Hi! I'm Ollie.",intro:"Here we don't just read. We watch things move, touch them and try them ourselves. Tell me a little about you, and I'll pick questions that fit you.",
   name:"Your name",ph:"for example Sara",grade:"Which year are you in?",start:"Let's go!",needName:"Write your name first ✏️",pickGrade:"Choose your year first",
   greet:n=>n?`Hi ${n}! Pick a lesson`:"Hi! Pick a lesson",soon:"soon",scenes:n=>`${n} interactive scenes`,forGrades:g=>`Years ${g}`,gradeChip:g=>`Year ${g}`,
-  back:"← Lessons",next:"Next →",replay:"↻ Again",toChallenge:"To the challenge →",toPractice:"Practise →",yourTurn:"Type the answer below the board and press Check.",check:"Check",needAnswer:"Type an answer first",nextProblem:"Next problem →",finish:"Done →",showSol:"Show the solution",wrongSol:a=>`Not quite. The answer is ${a}. Watch how we solve it on the board!`,practiceMore:"Practise more",teacher:"Ollie",voice:"Read aloud",sound:"Writing sound on/off",profile:"Change name or year",great:"Well done!",
+  back:"← Lessons",next:"Next →",replay:"↻ Again",toChallenge:"To the challenge →",toPractice:"Practise →",yourTurnPick:"Choose the right answer below the board.",yourTurn:"Type the answer below the board and press Check.",check:"Check",needAnswer:"Type an answer first",nextProblem:"Next problem →",finish:"Done →",showSol:"Show the solution",wrongSol:a=>`Not quite. The answer is ${a}. Watch how we solve it on the board!`,practiceMore:"Practise more",teacher:"Ollie",voice:"Read aloud",sound:"Writing sound on/off",profile:"Change name or year",great:"Well done!",
   qOf:(i,n)=>`Question ${i} of ${n}: `,right:["Correct!","Nice, that's right!","Exactly, good thinking!"],wrong:"Almost! Hint: ",
   end3:"Three stars! Next time you'll get harder questions.",endSome:(r,n)=>`You got ${r} of ${n}. Watch the scenes again and you'll get them all!`,end0:"No problem. Scientists try many times. Let's watch the lesson again.",
   another:"New lesson",redo:"Try again",empty:"These lessons are being prepared. The same player will show dialogues and words you can hear and touch.",
@@ -248,7 +249,7 @@ const UI={
  ar:{help:"🤔 لم أفهم",helpEasy:"شرح أبسط",helpMore:"المزيد ←",backToLesson:"العودة إلى الدرس ←",prev:"→ السابق",keyNext:"أو اضغط مفتاح السهم ←",keyPrev:"أو اضغط مفتاح السهم →",course:"رياضيات الصف الرابع",courseY:y=>({4:"رياضيات الصف الرابع",5:"رياضيات الصف الخامس",6:"رياضيات الصف السادس",7:"رياضيات الصف السابع",8:"رياضيات الصف الثامن",9:"رياضيات الصف التاسع"})[y],courseDone:(a,b)=>`أنهيت ${a} من ${b} دروس`,courseNote:"خذ الدروس بالترتيب. كل درس ينتهي بتمارين خاصة بك.",hello:"مرحبًا! أنا أولي.",intro:"هنا لا نقرأ فقط. نشاهد الأشياء تتحرك، ونلمسها، ونجرّبها بأنفسنا. أخبرني عنك لأختار لك أسئلة على مقاسك.",
   name:"اسمك",ph:"مثلًا: سارة",grade:"في أي صف أنت؟",start:"لنبدأ!",needName:"اكتب اسمك أولًا ✏️",pickGrade:"اختر صفّك أولًا",
   greet:n=>n?`مرحبًا ${n}! اختر درسًا`:"مرحبًا! اختر درسًا",soon:"قريبًا",scenes:n=>`${n} مشاهد تفاعلية`,forGrades:g=>`للصفوف ${g}`,gradeChip:g=>`الصف ${g}`,
-  back:"→ الدروس",next:"التالي ←",replay:"↻ أعِد",toChallenge:"إلى التحدّي ←",toPractice:"تمرّن بنفسك ←",yourTurn:"اكتب الجواب تحت السبورة واضغط تحقّق.",check:"تحقّق",needAnswer:"اكتب جوابًا أولًا",nextProblem:"المسألة التالية ←",finish:"انتهيت ←",showSol:"اعرض الحل",wrongSol:a=>`ليس تمامًا. الجواب ${a}. شاهد كيف نحلّها على السبورة!`,practiceMore:"تمرّن أكثر",teacher:"أولي",voice:"القراءة بصوت",sound:"صوت الكتابة",profile:"غيّر الاسم أو الصف",great:"أحسنت!",
+  back:"→ الدروس",next:"التالي ←",replay:"↻ أعِد",toChallenge:"إلى التحدّي ←",toPractice:"تمرّن بنفسك ←",yourTurnPick:"اختر الجواب الصحيح تحت السبورة.",yourTurn:"اكتب الجواب تحت السبورة واضغط تحقّق.",check:"تحقّق",needAnswer:"اكتب جوابًا أولًا",nextProblem:"المسألة التالية ←",finish:"انتهيت ←",showSol:"اعرض الحل",wrongSol:a=>`ليس تمامًا. الجواب ${a}. شاهد كيف نحلّها على السبورة!`,practiceMore:"تمرّن أكثر",teacher:"أولي",voice:"القراءة بصوت",sound:"صوت الكتابة",profile:"غيّر الاسم أو الصف",great:"أحسنت!",
   qOf:(i,n)=>`سؤال ${i} من ${n}: `,right:["صحيح!","رائع، هذا صحيح!","بالضبط، تفكير جيد!"],wrong:"قريب! تلميح: ",
   end3:"ثلاث نجوم! في المرة القادمة ستأتيك أسئلة أصعب.",endSome:(r,n)=>`حصلت على ${r} من ${n}. شاهد المشاهد مرة أخرى وستحصل على الكل!`,end0:"لا بأس، العلماء يجرّبون مرات كثيرة. لنشاهد الدرس من جديد.",
   another:"درس آخر",redo:"أعِد الدرس",empty:"هذه الدروس قيد التحضير. نفس المشغّل سيعرض محادثات وكلمات تسمعها وتلمسها.",
@@ -276,7 +277,7 @@ let S=PROF.kids[PROF.cur]||Object.assign(fresh(),{id:newId()});
 lang=S.lang||(kidList()[0]||{}).lang||"sv";
 /* saveLocal keeps this browser's copy; save also marks a real change and sends it to the account copy when signed in */
 const saveLocal=()=>{if(S.name&&S.grade){PROF.kids[S.id]=S;PROF.cur=S.id}try{localStorage.setItem(PKEY,JSON.stringify(PROF))}catch(e){}};
-function save(){S.upd=Date.now();saveLocal();pushCloud()}
+function save(){S.upd=Date.now();saveLocal();pushCloud();if(typeof accPush==="function")accPush()}
 function useKid(id){leave();S=PROF.kids[id]||Object.assign(fresh(),{id:newId(),lang});PROF.cur=PROF.kids[id]?id:PROF.cur;saveLocal();viewYear=null;tabNow="math";
   lang=S.lang||lang;S.lang=lang;$("#wrap").dir=lang==="ar"?"rtl":"ltr";document.documentElement.lang=lang;document.querySelectorAll("#langs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===lang));hud()}
 function dropKid(id){if(S.id===id)S=Object.assign(fresh(),{id:newId(),lang});delete PROF.kids[id];PROF.gone[id]=Date.now();if(PROF.cur===id)PROF.cur=null;saveLocal();goneCloud(id)}
@@ -488,7 +489,17 @@ LESSONS.push({id:"placevalue",subject:"math",grades:"4",kind:"wb",
   if(level===0){do{a=rint(11,77);b=rint(11,98-a)}while(a%10+b%10>9)}
   else if(level===1){do{a=rint(15,79);b=rint(15,99-a)}while(a%10+b%10<10)}
   else{do{a=rint(105,689);b=rint(105,989-a)}while(a%10+b%10<10)}
-  return{kind:"num",ans:a+b,q:[A.wipe(),A.tx(`${a} + ${b} = ?`,400,64,56)],sol:vAdd(a,b,0)}}
+  const eq=`${a} + ${b} = ?`,v=rint(0,level?4:3),fz=(s,z)=>Math.min(z,760/(String(s).length*.5));
+  if(!v)return{kind:"num",ans:a+b,q:[A.wipe(),A.tx(eq,400,64,56)],sol:vAdd(a,b,0)};
+  const sol=[A.wipe(),A.tx(eq,400,64,56),...vAdd(a,b,0)];
+  if(v===1)return{kind:"num",ans:a+b,q:[A.wipe(),A.tx(L(t3("Beräkna:","Calculate:","احسب:")),400,150,42),A.tx(eq,400,290,80)],sol};
+  if(v===2){const s=L(t3(`Vad är summan av ${a} och ${b}?`,`What is the sum of ${a} and ${b}?`,`ما مجموع ${a} و${b}؟`));return{kind:"num",ans:a+b,q:[A.wipe(),A.tx(s,400,240,fz(s,48))],sol}}
+  /* a short word problem in the style of the national test */
+  const st=pick([[t3(`Olle har ${a} kr. Han får ${b} kr till.`,`Olle has ${a} kr. He gets ${b} kr more.`,`مع أولي ${a} كرونة، ثم يحصل على ${b} كرونة أخرى.`),t3("Hur mycket pengar har han sammanlagt?","How much money does he have in total?","كم كرونة معه الآن إجمالًا؟")],
+   [t3(`Lisa läser ${a} sidor i dag och ${b} sidor i morgon.`,`Lisa reads ${a} pages today and ${b} pages tomorrow.`,`عدد الصفحات التي تقرؤها ليزا اليوم ${a}، وغدًا ${b}.`),t3("Hur många sidor läser hon totalt?","How many pages does she read in total?","كم صفحة تقرأ إجمالًا؟")],
+   [t3(`I en skola finns ${a} flickor och ${b} pojkar.`,`A school has ${a} girls and ${b} boys.`,`عدد البنات في مدرسة ${a}، وعدد الأولاد ${b}.`),t3("Hur många elever finns det sammanlagt?","How many pupils are there in total?","كم تلميذًا في المدرسة إجمالًا؟")]]);
+  const s1=L(st[0]),s2=L(st[1]);
+  return{kind:"num",ans:a+b,q:[A.wipe(),A.tx(s1,400,170,fz(s1,40)),A.tx(s2,400,250,fz(s2,40),"b")],sol}}
 });
 
 /* ---------- Fractions ---------- */
@@ -531,11 +542,18 @@ LESSONS.push({id:"fractions",subject:"math",grades:"4",kind:"wb",
  icon:`<svg viewBox="0 0 320 180"><defs><pattern id="ih" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(40)"><line x1="2" y1="0" x2="2" y2="8" stroke="#d63b2f" stroke-width="3" stroke-opacity=".6"/></pattern></defs><rect width="320" height="180" fill="#fff"/><circle cx="110" cy="92" r="60" fill="none" stroke="#1d2433" stroke-width="3.5"/><path d="M110 92V32A60 60 0 0 1 170 92Z" fill="url(#ih)"/><path d="M110 32V152M50 92H170" stroke="#1d2433" stroke-width="3"/><text x="240" y="82" font-family="Caveat,cursive" font-weight="700" font-size="48" fill="#d63b2f" text-anchor="middle">1</text><path d="M218 94H262" stroke="#d63b2f" stroke-width="3.5"/><text x="240" y="136" font-family="Caveat,cursive" font-weight="700" font-size="48" fill="#d63b2f" text-anchor="middle">4</text></svg>`,
  steps:FR.steps,mount:wbMount(FR),
  gen(level){
-  if(level===0){const n=pick([2,3,4,5,6,8]),k=rint(1,n-1),cx=300,cy=285,r=150,q=[A.wipe(),A.tx(L(WF.shaded),400,58,44),pieLines(cx,cy,r,n)];
+  if(level===0&&rint(0,2)===0){const n=pick([3,4,5,6,8,10]),k=rint(1,n-1),top=rint(0,1);
+   const ask=top?t3("Vilket tal är täljaren?","Which number is the numerator?","ما البسط في هذا الكسر؟"):t3("Vilket tal är nämnaren?","Which number is the denominator?","ما المقام في هذا الكسر؟");
+   return{kind:"num",ans:top?k:n,show:String(top?k:n),q:[A.wipe(),A.tx(L(ask),400,90,42),...A.frac(k,n,400,250,110)],
+    sol:[A.tx(`${L(WF.numW)} ${L(WF.numD)}`,400,400,30,"b"),A.tx(`${L(WF.denW)} ${L(WF.denD)}`,400,445,30,"g"),A.loop(400,top?186:302,54,56,"r"),A.tx(top?k:n,620,top?200:320,70,"g")]}}
+  if(level===0){const n=pick([2,3,4,5,6,8]),k=rint(1,n-1),cx=300,cy=285,r=150,q=[A.wipe(),A.tx(L(pick([WF.shaded,WF.shaded,t3("Hur stor del är målad? Svara i bråkform.","What part is shaded? Answer as a fraction.","ما الجزء الملوّن؟ أجب بكسر.")])),400,58,40),pieLines(cx,cy,r,n)];
    for(let i=0;i<k;i++)q.push(A.hatch(R.wedge(cx,cy,r,n,i),"r"));
    const sol=[];for(let i=0;i<n;i++){const a=(-90+360*(i+.5)/n)*Math.PI/180;sol.push(A.tx(i+1,cx+Math.cos(a)*r*.62,cy+Math.sin(a)*r*.62+11,30,i<k?"r":"g"))}
    sol.push(...A.frac(k,n,640,240,84,"r"),A.tx(L({sv:`${k} av ${n} bitar`,en:`${k} of ${n} pieces`,ar:`${k} من ${n} قطع`}),640,390,38));
    return{kind:"frac",ans:[k,n],q,sol}}
+  if(level===1&&rint(0,1)){const n=pick([4,6,8]),a=rint(1,n-2),b=rint(1,n-a-1);
+   const s1=L(t3(`Olle äter ${a}/${n} av pizzan och Sara äter ${b}/${n}.`,`Olle eats ${a}/${n} of the pizza and Sara eats ${b}/${n}.`,`أكل أولي ${a}/${n} من البيتزا، وأكلت سارة ${b}/${n}.`)),s2=L(t3("Hur stor del av pizzan äter de tillsammans?","What part of the pizza do they eat together?","ما الجزء الذي أكلاه من البيتزا معًا؟"));
+   return{kind:"frac",ans:[a+b,n],show:`${a+b}/${n}`,q:[A.wipe(),A.tx(s1,400,60,Math.min(36,760/(s1.length*.5))),A.tx(s2,400,112,Math.min(36,760/(s2.length*.5)),"b")],sol:fracAddBoard(a,b,n,150).slice(1)}}
   if(level===1){const n=pick([4,5,6,8]),a=rint(1,n-2),b=rint(1,n-a);
    return{kind:"frac",ans:[a+b,n],q:[A.wipe(),...A.frac(a,n,300,62,44),A.tx("+",360,82,44),...A.frac(b,n,420,62,44),A.tx("= ?",500,82,44)],sol:fracAddBoard(a,b,n,150).slice(1)}}
   const m=pick([2,3,4]),k=rint(1,m-1),f=m===4?2:pick([2,3]);
@@ -592,13 +610,23 @@ LESSONS.push({id:"pv4",subject:"math",grades:"4",kind:"wb",
  gen(level){
   if(level===0){let n;do{n=rint(1000,9999)}while(new Set(String(n)).size<4||String(n).includes("0"));
    const p=rint(0,3),d=+String(n)[p],v=d*10**(3-p);
-   return{kind:"num",ans:v,show:fmt(v),q:[A.wipe(),A.tx(L(t3(`Vad är siffran ${d} värd i talet`,`What is the digit ${d} worth in`,`ما قيمة الرقم ${d} في العدد`)),400,90,40),A.tx(fmt(n),400,260,120)],
+   return{kind:"num",ans:v,show:fmt(v),q:[A.wipe(),A.tx(L(pick([t3(`Vad är siffran ${d} värd i talet`,`What is the digit ${d} worth in`,`ما قيمة الرقم ${d} في العدد`),t3(`Vilket värde har siffran ${d} i talet`,`What value does the digit ${d} have in`,`ما قيمة الرقم ${d} في العدد`)])),400,90,40),A.tx(fmt(n),400,260,120)],
     sol:[A.wipe(),...pvHead(),...pvDigits(n,230),A.loop(PVX[p],196,46,58,PVC[p]),A.arrow(PVX[p],252,PVX[p],292,PVC[p]),A.tx(fmt(v),PVX[p],340,46,PVC[p]),A.tx(`${d} ${PVH()[p]} = ${fmt(v)}`,400,445,46,PVC[p])]}}
+  if(level===1&&rint(0,1)){const s=pick([10,100,1000]),p=3-String(s).length+1,up=rint(0,1);let n;
+   do{n=rint(1000,8999)}while(up?+String(n)[p]===9:+String(n)[p]===0||String(n).includes("0")&&rint(0,1));
+   const r=up?n+s:n-s,o=[A.wipe(),...pvHead(),...pvDigits(n,180,80),A.tx(`${up?"+":"−"} ${fmt(s)}`,PVX[p]+50,262,34,"r","start"),A.arrow(PVX[p],222,PVX[p],276,"r"),...pvDigits(r,350,80,"g"),A.loop(PVX[p],324,44,52,"r")];
+   o.push(A.hl(150,400,500,64),A.tx(`${fmt(n)} ${up?"+":"−"} ${fmt(s)} = ${fmt(r)}`,400,448,48,"g"));
+   return{kind:"num",ans:r,show:fmt(r),q:[A.wipe(),A.tx(L(up?t3(`Vilket tal är ${fmt(s)} mer än`,`Which number is ${fmt(s)} more than`,`ما العدد الذي يزيد بمقدار ${s} على`):t3(`Vilket tal är ${fmt(s)} mindre än`,`Which number is ${fmt(s)} less than`,`ما العدد الذي يقل بمقدار ${s} عن`)),400,90,40),A.tx(fmt(n)+(lang==="ar"?"؟":"?"),400,260,120)],sol:o}}
   if(level===1){let d;do{d=[rint(1,9),rint(0,1)?0:rint(1,9),rint(0,1)?0:rint(1,9),rint(1,9)]}while(!d.includes(0));
    const n=d[0]*1000+d[1]*100+d[2]*10+d[3],parts=d.map((x,i)=>x*10**(3-i)).filter(x=>x);
    const o=[A.wipe(),...pvHead(),...pvDigits(n,230)];d.forEach((x,i)=>{if(!x)o.push(A.loop(PVX[i],196,46,58,"r"))});
    o.push(A.tx(`${parts.map(fmt).join(" + ")} = ${fmt(n)}`,400,445,46,"g"));
    return{kind:"num",ans:n,show:fmt(n),q:[A.wipe(),A.tx(L(t3("Skriv som ett tal:","Write as one number:","اكتبه عددًا واحدًا:")),400,110,40),A.tx(`${parts.map(fmt).join(" + ")} = ?`,400,260,60)],sol:o}}
+  if(rint(0,1)){const ds=shuffle([1,2,3,4,5,6,7,8,9]).slice(0,4),big=rint(0,1),srt=ds.slice().sort((x,y)=>big?y-x:x-y),r=+srt.join("");
+   const ask=big?t3("Bilda det största talet med siffrorna","Make the biggest number with the digits","كوّن أكبر عدد من الأرقام"):t3("Bilda det minsta talet med siffrorna","Make the smallest number with the digits","كوّن أصغر عدد من الأرقام");
+   return{kind:"num",ans:r,show:fmt(r),q:[A.wipe(),A.tx(L(ask),400,90,38),A.tx(ds.join("   "),400,250,96,"b"),A.tx(L(t3("Använd varje siffra en gång.","Use each digit once.","استعمل كل رقم مرة واحدة.")),400,370,32)],
+    sol:[A.wipe(),A.tx(L(ask),400,70,34),A.tx(ds.join("   "),400,150,60,"b"),A.tx(L(big?t3("Största siffran först, på tusentalsplatsen.","The biggest digit first, in the thousands place.","الرقم الأكبر أولًا، في منزلة الآلاف."):t3("Minsta siffran först, på tusentalsplatsen.","The smallest digit first, in the thousands place.","الرقم الأصغر أولًا، في منزلة الآلاف.")),400,230,30,"r"),
+     A.hl(220,270,360,90),A.tx(fmt(r),400,340,96,"g"),A.tx(srt.join(big?" > ":" < "),400,440,40,"b")]}}
   let a,b;do{a=rint(1000,9999);const s=String(a).split(""),p=rint(1,3);s[p]=String(rint(0,9));b=+s.join("")}while(a===b);
   const opts=[fmt(a),fmt(b)];
   return{kind:"choice",opts,ans:a>b?0:1,show:fmt(Math.max(a,b)),q:[A.wipe(),A.tx(L(t3("Vilket tal är störst?","Which number is bigger?","أي العددين أكبر؟")),400,100,44),A.tx(fmt(a),220,280,90),A.tx(fmt(b),580,280,90)],sol:cmpBoard(a,b)}}
@@ -633,11 +661,21 @@ LESSONS.push({id:"round",subject:"math",grades:"4",kind:"wb",
  icon:`<svg viewBox="0 0 320 180"><rect width="320" height="180" fill="#fff"/><path d="M30 100H290" stroke="#1d2433" stroke-width="3.5"/>${[0,1,2,3,4,5,6,7,8,9,10].map(i=>`<path d="M${30+i*26} ${i%10?92:86}V${i%10?108:114}" stroke="#1d2433" stroke-width="2.5"/>`).join("")}<circle cx="212" cy="100" r="8" fill="#d63b2f"/><path d="M216 120Q250 150 284 120" fill="none" stroke="#1e9e5a" stroke-width="3.5"/><text x="30" y="70" font-family="Caveat,cursive" font-weight="700" font-size="34" text-anchor="middle">30</text><text x="290" y="70" font-family="Caveat,cursive" font-weight="700" font-size="34" text-anchor="middle">40</text><text x="212" y="62" font-family="Caveat,cursive" font-weight="700" font-size="34" fill="#d63b2f" text-anchor="middle">37</text></svg>`,
  steps:RND.steps,mount:wbMount(RND),
  gen(level){let n,to;
+  if(level===1&&rint(0,2)===0){/* estimate (överslag): round both numbers to tens first */
+   let a,b;do{a=rint(12,89);b=rint(12,89)}while(a%10===0||b%10===0||a%10===5||b%10===5);const ra=Math.round(a/10)*10,rb=Math.round(b/10)*10,s=L(t3("Gör ett överslag. Avrunda båda talen till tiotal.","Estimate. Round both numbers to tens first.","قدّر الناتج. قرّب العددين إلى العشرات أولًا."));
+   return{kind:"num",ans:ra+rb,show:String(ra+rb),q:[A.wipe(),A.tx(s,400,100,Math.min(38,760/(s.length*.5))),A.tx(`${a} + ${b} ≈ ?`,400,280,96)],
+    sol:[A.wipe(),A.tx(`${a} ≈ ${ra}`,400,110,52,"b"),A.tx(`${b} ≈ ${rb}`,400,200,52,"b"),A.hl(230,262,340,70),A.tx(`${ra} + ${rb} = ${ra+rb}`,400,312,52,"g"),A.tx(`${a} + ${b} ≈ ${ra+rb}`,400,420,44)]}}
   if(level===0){to=10;do{n=rint(11,99)}while(n%10===0)}
   else if(level===1){to=10;do{n=rint(101,999)}while(n%10===0)}
   else{to=100;do{n=rint(1001,9999)}while(n%100===0)}
   const r=Math.round(n/to)*to;
-  return{kind:"num",ans:r,show:fmt(r),q:[A.wipe(),A.tx(L(to===10?t3("Avrunda till närmaste tiotal:","Round to the nearest ten:","قرّب إلى أقرب عشرة:"):t3("Avrunda till närmaste hundratal:","Round to the nearest hundred:","قرّب إلى أقرب مئة:")),400,100,42),A.tx(fmt(n),400,280,120)],
+  if(level&&rint(0,3)===0){const it=pick([t3("En cykel","A bike","دراجة"),t3("En tv","A TV","تلفاز"),t3("En resa","A trip","رحلة")]),s1=L(t3(`${it.sv} kostar ${fmt(n)} kr.`,`${it.en} costs ${fmt(n)} kr.`,`سعر ${it.ar} ${fmt(n)} كرونة.`)),
+    s2=L(to===10?t3("Ungefär hur mycket? Avrunda till tiotal kronor.","About how much? Round to tens of kronor.","كم السعر تقريبًا؟ قرّب إلى أقرب عشر كرونات."):t3("Ungefär hur mycket? Avrunda till hundratal kronor.","About how much? Round to hundreds of kronor.","كم السعر تقريبًا؟ قرّب إلى أقرب مئة كرونة."));
+   return{kind:"num",ans:r,show:`${fmt(r)} kr`,q:[A.wipe(),A.p(`M200,150L560,150L640,235L560,320L200,320Z`+R.circ(585,235,13),"o",4.5),A.tx(`${fmt(n)} kr`,390,262,Math.min(84,330/((fmt(n).length+3)*.5))),A.tx(s1,400,60,40),A.tx(s2,400,400,Math.min(36,760/(s2.length*.5)),"b")],
+    sol:[A.wipe(),...roundBoard(n,to,3)]}}
+  const ask=to===10?pick([t3("Avrunda till närmaste tiotal:","Round to the nearest ten:","قرّب إلى أقرب عشرة:"),t3("Avrunda till tiotal:","Round to tens:","قرّب إلى العشرات:"),t3("Avrunda talet till hela tiotal:","Round the number to whole tens:","قرّب العدد إلى عشرات كاملة:")])
+   :pick([t3("Avrunda till närmaste hundratal:","Round to the nearest hundred:","قرّب إلى أقرب مئة:"),t3("Avrunda till hundratal:","Round to hundreds:","قرّب إلى المئات:")]);
+  return{kind:"num",ans:r,show:fmt(r),q:[A.wipe(),A.tx(L(ask),400,100,42),A.tx(fmt(n),400,280,120)],
    sol:[A.wipe(),...roundBoard(n,to,3)]}}
 });
 
@@ -693,7 +731,17 @@ LESSONS.push({id:"sub",subject:"math",grades:"4",kind:"wb",
   if(level===0){do{a=rint(35,99);b=rint(11,a-10)}while(a%10<b%10)}
   else if(level===1){do{a=rint(31,98);b=rint(12,a-5)}while(a%10>=b%10||b%10===0)}
   else{do{a=rint(211,989);b=rint(105,a-50)}while(a%10>=b%10||Math.floor(a/10)%10===0)}
-  return{kind:"num",ans:a-b,q:[A.wipe(),A.tx(`${a} − ${b} = ?`,400,64,56)],sol:vSub(a,b,0)}}
+  const eq=`${a} − ${b} = ?`,v=rint(0,4),fz=(s,z)=>Math.min(z,760/(String(s).length*.5));
+  if(!v)return{kind:"num",ans:a-b,q:[A.wipe(),A.tx(eq,400,64,56)],sol:vSub(a,b,0)};
+  const sol=[A.wipe(),A.tx(eq,400,64,56),...vSub(a,b,0)];
+  if(v===1)return{kind:"num",ans:a-b,q:[A.wipe(),A.tx(L(t3("Beräkna:","Calculate:","احسب:")),400,150,42),A.tx(eq,400,290,80)],sol};
+  if(v===2){const s=L(pick([t3(`Vad är differensen mellan ${a} och ${b}?`,`What is the difference between ${a} and ${b}?`,`ما ناتج طرح ${b} من ${a}؟`),t3(`Hur mycket större är ${a} än ${b}?`,`How much bigger is ${a} than ${b}?`,`بكم يزيد ${a} على ${b}؟`)]));
+   return{kind:"num",ans:a-b,q:[A.wipe(),A.tx(s,400,240,fz(s,46))],sol}}
+  const st=pick([[t3(`Olle har ${a} kr. Han köper en bok för ${b} kr.`,`Olle has ${a} kr. He buys a book for ${b} kr.`,`مع أولي ${a} كرونة، ويشتري كتابًا بـ ${b} كرونة.`),t3("Hur mycket pengar har han kvar?","How much money does he have left?","كم كرونة يبقى معه؟")],
+   [t3(`Tåget har ${a} platser. ${b} platser är sålda.`,`The train has ${a} seats. ${b} seats are sold.`,`عدد المقاعد في القطار ${a}، وعدد المقاعد المبيعة ${b}.`),t3("Hur många platser är kvar?","How many seats are left?","كم مقعدًا بقي؟")],
+   [t3(`Lag A fick ${a} poäng och lag B fick ${b} poäng.`,`Team A got ${a} points and team B got ${b} points.`,`نقاط الفريق A ${a}، ونقاط الفريق B ${b}.`),t3("Hur stor är skillnaden?","How big is the difference?","ما الفرق بين النقاط؟")]]);
+  const s1=L(st[0]),s2=L(st[1]);
+  return{kind:"num",ans:a-b,q:[A.wipe(),A.tx(s1,400,170,fz(s1,40)),A.tx(s2,400,250,fz(s2,40),"b")],sol}}
 });
 
 /* ---------- 5. Multiplication ---------- */
@@ -726,9 +774,18 @@ LESSONS.push({id:"mul",subject:"math",grades:"4",kind:"wb",
  title:t3("Multiplikation","Multiplication","الضرب"),
  icon:`<svg viewBox="0 0 320 180"><rect width="320" height="180" fill="#fff"/>${dotGrid(50,50,4,3,34).map(([x,y])=>`<circle cx="${x}" cy="${y}" r="10" fill="#2257c9"/>`).join("")}<text x="240" y="108" font-family="Caveat,cursive" font-weight="700" font-size="46" text-anchor="middle">3·4=12</text></svg>`,
  steps:MULT.steps,mount:wbMount(MULT),
- gen(level){
-  if(level<2){const r=level?rint(6,9):rint(2,5),c=level?rint(3,9):rint(2,9);return{kind:"num",ans:r*c,q:[A.wipe(),A.tx(`${r} ${MUL()} ${c} = ?`,400,64,56)],sol:[A.wipe(),...arrayBoard(r,c)]}}
+ gen(level){const v=rint(0,3),fz=(s,z)=>Math.min(z,760/(String(s).length*.5)),two=(s1,s2)=>[A.wipe(),A.tx(s1,400,170,fz(s1,40)),A.tx(s2,400,250,fz(s2,40),"b")];
+  if(level<2){const r=level?rint(6,9):rint(2,5),c=level?rint(3,9):rint(2,9),eq=`${r} ${MUL()} ${c} = ?`,sol=[A.wipe(),...arrayBoard(r,c)];
+   if(v===1){const s=L(t3(`Vad är produkten av ${r} och ${c}?`,`What is the product of ${r} and ${c}?`,`ما حاصل ضرب ${r} في ${c}؟`));return{kind:"num",ans:r*c,q:[A.wipe(),A.tx(s,400,240,fz(s,46))],sol}}
+   if(v===2){const st=pick([[t3(`Det finns ${r} påsar med ${c} äpplen i varje.`,`There are ${r} bags with ${c} apples in each.`,`عدد الأكياس ${r}، وعدد التفاحات في كل كيس ${c}.`),t3("Hur många äpplen är det sammanlagt?","How many apples are there in total?","كم تفاحة في المجموع؟")],
+     [t3(`I salen står ${r} rader med ${c} stolar i varje.`,`The hall has ${r} rows with ${c} chairs in each.`,`عدد صفوف الكراسي في القاعة ${r}، وفي كل صف ${c}.`),t3("Hur många stolar är det totalt?","How many chairs are there in total?","كم كرسيًّا في القاعة إجمالًا؟")]]);
+    return{kind:"num",ans:r*c,q:two(L(st[0]),L(st[1])),sol}}
+   return{kind:"num",ans:r*c,q:[A.wipe(),A.tx(eq,400,64,56)],sol}}
   let a;do{a=rint(12,49)}while(a%10===0);const b=rint(2,6);
+  if(v>=2){const st=pick([[t3(`En glass kostar ${a} kr.`,`An ice cream costs ${a} kr.`,`سعر قطعة البوظة ${a} كرونة، وعدد القطع ${b}.`),t3(`Vad kostar ${b} glassar?`,`How much do ${b} ice creams cost?`,"كم الثمن كله؟")],
+     [t3(`En ask innehåller ${a} kritor.`,`A box holds ${a} crayons.`,`في العلبة ${a} قلم تلوين، وعدد العلب ${b}.`),t3(`Hur många kritor finns i ${b} askar?`,`How many crayons are in ${b} boxes?`,"كم قلم تلوين في كل العلب؟")]]);
+   return{kind:"num",ans:a*b,q:two(L(st[0]),L(st[1])),sol:mulBoard(a,b)}}
+  if(v===1)return{kind:"num",ans:a*b,q:[A.wipe(),A.tx(L(t3("Beräkna produkten:","Calculate the product:","احسب حاصل الضرب:")),400,150,42),A.tx(`${a} ${MUL()} ${b}`,400,290,80)],sol:mulBoard(a,b)};
   return{kind:"num",ans:a*b,q:[A.wipe(),A.tx(`${a} ${MUL()} ${b} = ?`,400,64,56)],sol:mulBoard(a,b)}}
 });
 
@@ -756,11 +813,16 @@ LESSONS.push({id:"div",subject:"math",grades:"4",kind:"wb",
  title:t3("Division","Division","القسمة"),
  icon:`<svg viewBox="0 0 320 180"><rect width="320" height="180" fill="#fff"/>${[70,160,250].map(x=>`<ellipse cx="${x}" cy="100" rx="38" ry="50" fill="none" stroke="#1d2433" stroke-width="3"/>${dotGrid(x-10,80,2,2,20).map(([a,b])=>`<circle cx="${a}" cy="${b}" r="7" fill="#2257c9"/>`).join("")}`).join("")}</svg>`,
  steps:DIVL.steps,mount:wbMount(DIVL),
- gen(level){const D=DIVS();
-  if(level<2){const b=level?rint(6,9):rint(2,5),q=rint(2,9),a=b*q;return{kind:"num",ans:q,q:[A.wipe(),A.tx(`${a} ${D} ${b} = ?`,400,64,56)],
+ gen(level){const D=DIVS(),v=rint(0,3),fz=(s,z)=>Math.min(z,760/(String(s).length*.5)),two=(s1,s2)=>[A.wipe(),A.tx(s1,400,150,fz(s1,40)),A.tx(s2,400,230,fz(s2,40),"b")];
+  if(level<2){const b=level?rint(6,9):rint(2,5),q=rint(2,9),a=b*q;
+   const qq=v===1?[A.wipe(),A.tx(L(t3("Beräkna kvoten:","Calculate the quotient:","احسب خارج القسمة:")),400,150,42),A.tx(`${a} ${D} ${b}`,400,290,80)]
+    :v===2?two(...pick([[t3(`${a} kakor delas lika mellan ${b} barn.`,`${a} biscuits are shared equally between ${b} children.`,`عدد الكعكات ${a}، وعدد الأطفال ${b}، والقسمة بالتساوي.`),t3("Hur många kakor får varje barn?","How many biscuits does each child get?","كم كعكة يأخذ كل طفل؟")],
+      [t3(`${a} elever delas in i ${b} lika stora grupper.`,`${a} pupils are split into ${b} equal groups.`,`عدد التلاميذ ${a}، وعدد المجموعات المتساوية ${b}.`),t3("Hur många elever blir det i varje grupp?","How many pupils are in each group?","كم تلميذًا في كل مجموعة؟")]]).map(L))
+    :[A.wipe(),A.tx(`${a} ${D} ${b} = ?`,400,64,56)];
+   return{kind:"num",ans:q,q:qq,
    sol:[A.wipe(),A.tx(`${a} ${D} ${b} = ${q}`,400,64,50,"g"),...groupsBoard(b,q,0,100),A.tx(`${L(t3("för att","because","لأن"))} ${b} ${MUL()} ${q} = ${a}`,400,440,42,"b")]}}
   const b=rint(2,6),q=rint(2,8),r=rint(1,b-1),a=b*q+r;
-  return{kind:"pair",ans:[q,r],labels:[t3("svar","answer","الناتج"),REST],show:`${q} ${L(REST)} ${r}`,q:[A.wipe(),A.tx(`${a} ${D} ${b} = ?`,400,64,56)],
+  return{kind:"pair",ans:[q,r],labels:[t3("svar","answer","الناتج"),REST],show:`${q} ${L(REST)} ${r}`,q:v>=2?two(L(t3(`${a} elever ska bilda lag med ${b} i varje lag.`,`${a} pupils make teams of ${b}.`,`عدد التلاميذ ${a}، وفي كل فريق ${b}.`)),L(t3("Hur många lag blir det, och hur många blir över?","How many teams are there, and how many are left over?","كم فريقًا يتكوّن؟ وكم تلميذًا يبقى؟"))):[A.wipe(),A.tx(`${a} ${D} ${b} = ?`,400,64,56)],
    sol:[A.wipe(),A.tx(`${a} ${D} ${b} = ${q} ${L(REST)} ${r}`,400,64,50,"g"),...groupsBoard(b,q,r,100),A.tx(`${b} ${MUL()} ${q} + ${r} = ${a}`,400,450,42,"b")]}}
 });
 
@@ -802,11 +864,22 @@ LESSONS.push({id:"dec",subject:"math",grades:"4",kind:"wb",
  icon:`<svg viewBox="0 0 320 180"><rect width="320" height="180" fill="#fff"/><rect x="30" y="40" width="260" height="44" fill="none" stroke="#1d2433" stroke-width="3"/>${[1,2,3,4,5,6,7,8,9].map(i=>`<path d="M${30+i*26} 40V84" stroke="#1d2433" stroke-width="2"/>`).join("")}<rect x="30" y="40" width="78" height="44" fill="#2257c9" fill-opacity=".35"/><text x="160" y="150" font-family="Caveat,cursive" font-weight="700" font-size="56" fill="#2257c9" text-anchor="middle">0,3</text></svg>`,
  steps:DEC.steps,mount:wbMount(DEC),
  gen(level){
+  const TN=k=>t3(k===1?"1 tiondel":`${k} tiondelar`,k===1?"1 tenth":`${k} tenths`,k===1?"عُشر واحد":k===2?"عُشران":`${k} أعشار`);
+  if(level===0&&rint(0,1)){const k=rint(1,9);
+   return{kind:"num",dec:true,ans:k/10,show:dfmt(k/10),q:[A.wipe(),A.tx(L(t3("Skriv som decimaltal:","Write as a decimal:","اكتبه كسرًا عشريًا:")),400,80,42),A.tx(L(TN(k)),400,190,72,"b")],
+    sol:[...bar10(150,240,500,70,k).map(a=>Object.assign(a,{dur:400})),...[...Array(k)].map((_,i)=>qt(i+1,175+i*50,288,28,"b")),...A.frac(k,10,280,400,56,"b"),A.tx("=",390,422,52),A.tx(dfmt(k/10),510,426,78,"g")]}}
+  if(level===1&&rint(0,2)===0){const w=rint(1,9),k=rint(1,9),hd=t3("ental","ones","آحاد"),td=t3("tiondelar","tenths","أعشار");
+   return{kind:"num",dec:true,ans:w+k/10,show:dfmt(w+k/10),q:[A.wipe(),A.tx(L(t3("Skriv som decimaltal:","Write as a decimal:","اكتبه كسرًا عشريًا:")),400,80,42),A.tx(L(t3(`${w} ${w>1?"hela":"hel"} och ${L(TN(k))}`,`${w} ${w>1?"wholes":"whole"} and ${L(TN(k))}`,`${w} صحيح و${L(TN(k))}`)),400,190,56,"b")],
+    sol:[A.band(290,262,90,190,"g"),A.band(420,262,90,190,"b"),A.tx(L(hd),335,300,28,"g"),A.tx(L(td),465,300,28,"b"),A.hl(280,350,240,90),A.tx(w,335,420,90,"g"),A.tx(SEP(),400,420,90),A.tx(k,465,420,90,"b")]}}
   if(level===0){const k=rint(1,9);return{kind:"num",dec:true,ans:k/10,show:dfmt(k/10),q:[A.wipe(),A.tx(L(t3("Skriv som decimaltal:","Write as a decimal:","اكتبه كسرًا عشريًا:")),400,70,42),...bar10(150,140,500,90,k)],
    sol:[...[...Array(k)].map((_,i)=>qt(i+1,175+i*50,198,30,"b")),...A.frac(k,10,280,340,64,"b"),A.tx("=",390,365,58),A.tx(dfmt(k/10),510,368,84,"g")]}}
   let a,b;
   if(level===1){do{a=rint(11,39);b=rint(1,9)}while(a%10+b%10>9||a%10===0)}
   else{do{a=rint(2,29);b=rint(2,9)}while(a%10+b%10<10)}
+  const v=rint(0,3);
+  if(v===3){const s1=L(t3(`Sara springer ${dfmt(a/10)} km på måndag och ${dfmt(b/10)} km på tisdag.`,`Sara runs ${dfmt(a/10)} km on Monday and ${dfmt(b/10)} km on Tuesday.`,`تركض سارة يوم الاثنين ${dfmt(a/10)} كيلومتر، ويوم الثلاثاء ${dfmt(b/10)} كيلومتر.`)),s2=L(t3("Hur långt springer hon sammanlagt?","How far does she run in total?","كم كيلومترًا تركض إجمالًا؟"));
+   return{kind:"num",dec:true,ans:(a+b)/10,show:`${dfmt((a+b)/10)} km`,q:[A.wipe(),A.tx(s1,400,170,Math.min(38,760/(s1.length*.5))),A.tx(s2,400,250,40,"b")],sol:decCol(a,b)}}
+  if(v===2)return{kind:"num",dec:true,ans:(a+b)/10,show:dfmt((a+b)/10),q:[A.wipe(),A.tx(L(t3("Beräkna summan:","Calculate the sum:","احسب المجموع:")),400,150,42),A.tx(`${dfmt(a/10)} + ${dfmt(b/10)}`,400,290,80)],sol:decCol(a,b)};
   return{kind:"num",dec:true,ans:(a+b)/10,show:dfmt((a+b)/10),q:[A.wipe(),A.tx(`${dfmt(a/10)} + ${dfmt(b/10)} = ?`,400,64,56)],sol:decCol(a,b)}}
 });
 
@@ -835,12 +908,22 @@ LESSONS.push({id:"len",subject:"math",grades:"4",kind:"wb",
  icon:`<svg viewBox="0 0 320 180"><rect width="320" height="180" fill="#fff"/><rect x="30" y="80" width="260" height="50" fill="#fff6d6" stroke="#1d2433" stroke-width="3"/>${[...Array(27)].map((_,i)=>`<path d="M${36+i*9.4} 80v${i%10?(i%5?8:13):20}" stroke="#1d2433" stroke-width="2"/>`).join("")}<path d="M36 52L56 42H230V62H56Z" fill="#ffd18a" stroke="#e07b00" stroke-width="3"/></svg>`,
  steps:LEN.steps,mount:wbMount(LEN),
  gen(level){const M=MUL(),D=DIVS();let qs,ans,lines;
-  if(level===0){const k=rint(2,15);if(rint(0,1)){qs=`${k} cm = ? mm`;ans=10*k;lines=["1 cm = 10 mm",`${k} ${M} 10 = ${10*k}`,`${k} cm = ${10*k} mm`]}
+  if(level===0&&rint(0,2)===0){let L0;do{L0=rint(41,98)}while(L0%10===0);const c=Math.floor(L0/10),mm=L0%10,ex=100+L0*6;
+   const q=[A.wipe(),A.tx(L(t3("Hur lång är pennan? Svara i mm.","How long is the pencil? Answer in mm.","ما طول القلم؟ أجب بالمليمتر.")),400,60,40),
+    A.p(R.line(100,212,130,198,.2)+R.line(100,212,130,226,.2)+R.rect(130,198,ex-160,28,.3)+R.rect(ex-30,198,30,28,.3),"o",4),...ruler(100,250,10,60)];
+   return{kind:"num",ans:L0,show:`${L0} mm`,q,sol:[A.p(R.dashed(ex,190,ex,330),"r",3.5),A.tx("1 cm = 10 mm",400,385,34,"b"),A.tx(`${c} cm ${mm} mm`,ex<400?600:250,150,40,"r"),A.tx(`${c} ${M} 10 + ${mm} = ${L0}`,400,440,40),A.tx(`${L0} mm`,ex<400?600:250,105,44,"g")]}}
+  if(level===1&&rint(0,2)===0){const k=rint(2,9),c=pick([["cm","m",100],["cm","dm",10],["dm","m",10],["mm","cm",10]]);qs=`${k*c[2]} ${c[0]} = ? ${c[1]}`;ans=k;lines=[`${c[2]} ${c[0]} = 1 ${c[1]}`,`${k*c[2]} ${D} ${c[2]} = ${k}`,`${k*c[2]} ${c[0]} = ${k} ${c[1]}`]}
+  else if(level===2&&rint(0,2)===0){const a=rint(1,5),b=rint(1,19)*50,n=1000*a+b;
+   const s1=L(t3(`Sara går ${fmt(n)} m till skolan.`,`Sara walks ${fmt(n)} m to school.`,`تمشي سارة ${fmt(n)} متر إلى المدرسة.`)),s2=L(t3("Hur många km och m är det?","How many km and m is that?","كم كيلومترًا ومترًا هذه المسافة؟"));
+   return{kind:"pair",ans:[a,b],labels:[t3("km","km","km"),t3("m","m","m")],show:`${a} km ${b} m`,q:[A.wipe(),A.tx(s1,400,130,44),A.tx(s2,400,210,40,"b"),A.tx(`${fmt(n)} m = ? km ? m`,400,350,60)],
+    sol:[A.wipe(),A.tx(`${fmt(n)} m = ? km ? m`,400,80,44),A.tx(`1 km = ${fmt(1000)} m`,400,200,48),A.tx(`${fmt(n)} = ${fmt(1000*a)} + ${b}`,400,300,48,"b"),A.tx(`${fmt(n)} m = ${a} km ${b} m`,400,400,48,"g")]}}
+  else if(level===0){const k=rint(2,15);if(rint(0,1)){qs=`${k} cm = ? mm`;ans=10*k;lines=["1 cm = 10 mm",`${k} ${M} 10 = ${10*k}`,`${k} cm = ${10*k} mm`]}
    else{qs=`${10*k} mm = ? cm`;ans=k;lines=["10 mm = 1 cm",`${10*k} ${D} 10 = ${k}`,`${10*k} mm = ${k} cm`]}}
   else if(level===1){const k=rint(2,9),c=pick([["m","cm",100],["dm","cm",10],["m","dm",10]]);qs=`${k} ${c[0]} = ? ${c[1]}`;ans=k*c[2];lines=[`1 ${c[0]} = ${c[2]} ${c[1]}`,`${k} ${M} ${c[2]} = ${ans}`,`${k} ${c[0]} = ${ans} ${c[1]}`]}
   else if(rint(0,1)){const a=rint(1,5),b=rint(1,19)*50;qs=`${a} km ${b} m = ? m`;ans=1000*a+b;lines=[`1 km = ${fmt(1000)} m`,`${a} ${M} ${fmt(1000)} + ${b} = ${fmt(ans)}`,`${a} km ${b} m = ${fmt(ans)} m`]}
   else{const a=rint(1,4),b=rint(1,19)*5;qs=`${a} m ${b} cm = ? cm`;ans=100*a+b;lines=["1 m = 100 cm",`${a} ${M} 100 + ${b} = ${ans}`,`${a} m ${b} cm = ${ans} cm`]}
-  return{kind:"num",ans,show:fmt(ans),q:[A.wipe(),A.tx(qs,400,250,64)],sol:[A.wipe(),A.tx(qs,400,80,44),...lines.map((l,i)=>A.tx(l,400,200+i*100,48,i===2?"g":i?"b":"k"))]}}
+  const un=qs.split(" ").pop(),hd=pick([null,t3("Omvandla:","Convert:","حوّل:"),t3(`Gör om till ${un}:`,`Change to ${un}:`,`حوّل إلى ${un}:`),t3("Vilket tal saknas?","Which number is missing?","ما العدد الناقص؟")]);
+  return{kind:"num",ans,show:fmt(ans),q:[A.wipe(),...(hd?[A.tx(L(hd),400,130,42)]:[]),A.tx(qs,400,hd?280:250,64)],sol:[A.wipe(),A.tx(qs,400,80,44),...lines.map((l,i)=>A.tx(l,400,200+i*100,48,i===2?"g":i?"b":"k"))]}}
 });
 
 /* ---------- 10. Time ---------- */
@@ -873,10 +956,18 @@ LESSONS.push({id:"time",subject:"math",grades:"4",kind:"wb",
  icon:`<svg viewBox="0 0 320 180"><rect width="320" height="180" fill="#fff"/><circle cx="160" cy="90" r="70" fill="#fff" stroke="#1d2433" stroke-width="4"/><path d="M160 90V36" stroke="#2257c9" stroke-width="5" stroke-linecap="round"/><path d="M160 90L195 110" stroke="#1d2433" stroke-width="7" stroke-linecap="round"/></svg>`,
  steps:TIME.steps,mount:wbMount(TIME),
  gen(level){
+  if(level===1&&rint(0,2)===0){const h=rint(1,11),m=pick([15,30,45]),h1=h%12+1,hm1=h===1?12:h-1;
+   const O={sv:[`kvart över ${h}`,`halv ${h1}`,`kvart i ${h1}`,`halv ${h}`],en:[`quarter past ${h}`,`half past ${h}`,`quarter to ${h1}`,`quarter to ${h}`],ar:[`${h} والربع`,`${h} والنصف`,`${h1} إلا ربعًا`,`${h} إلا ربعًا`]}[lang];
+   const k=m===15?0:m===30?1:2,ord=shuffle([0,1,2,3]);
+   return{kind:"choice",opts:ord.map(i=>O[i]),ans:ord.indexOf(k),show:O[k],q:[A.wipe(),A.tx(L(t3("Vad säger vi?","How do we say it?","كيف نقرأ الوقت؟")),650,80,40),...clock(330,265,170,h,m)],
+    sol:[...minLabels(330,265,170),A.tx(`${h}:${pad(m)}`,650,220,56,"b"),A.tx(O[k],650,320,Math.min(44,280/(O[k].length*.5)),"g")]}}
   if(level<2){const h=rint(1,12),m=level?rint(1,11)*5:pick([0,30]);
-   return{kind:"pair",sep:":",ans:[h,m],check:(a,b)=>a%12===h%12&&b===m,show:`${h}:${pad(m)}`,q:[A.wipe(),A.tx(L(t3("Vad är klockan?","What time is it?","كم الساعة؟")),660,80,40),...clock(330,265,170,h,m)],
+   return{kind:"pair",sep:":",ans:[h,m],check:(a,b)=>a%12===h%12&&b===m,show:`${h}:${pad(m)}`,q:[A.wipe(),A.tx(L(pick([t3("Vad är klockan?","What time is it?","كم الساعة؟"),t3("Hur mycket är klockan?","What time is it?","كم الساعة الآن؟"),t3("Vad visar klockan?","What does the clock show?","ماذا تُظهر الساعة؟")])),660,80,40),...clock(330,265,170,h,m)],
     sol:[...minLabels(330,265,170),A.loop(330+Math.sin(m*6*Math.PI/180)*200,265-Math.cos(m*6*Math.PI/180)*200,30,24,"g"),A.tx(`${h}:${pad(m)}`,680,300,60,"g")]}}
-  const h=rint(7,15),m=rint(0,11)*5,dur=rint(4,19)*5,t2=h*60+m+dur;
+  const h=rint(7,15),m=rint(0,11)*5,dur=rint(4,19)*5,t2=h*60+m+dur,T2=`${pad(Math.floor(t2/60))}:${pad(t2%60)}`;
+  if(rint(0,1)&&(m===0||m<=40)){const st=pick([t3(`Filmen börjar ${pad(h)}:${pad(m)} och slutar ${T2}.`,`The film starts at ${pad(h)}:${pad(m)} and ends at ${T2}.`,`يبدأ الفيلم الساعة ${pad(h)}:${pad(m)} وينتهي الساعة ${T2}.`),
+    t3(`Matchen börjar ${pad(h)}:${pad(m)} och slutar ${T2}.`,`The match starts at ${pad(h)}:${pad(m)} and ends at ${T2}.`,`تبدأ المباراة الساعة ${pad(h)}:${pad(m)} وتنتهي الساعة ${T2}.`)]),s1=L(st);
+   return{kind:"num",ans:dur,show:`${dur} min`,q:[A.wipe(),A.tx(s1,400,170,Math.min(40,760/(s1.length*.5))),A.tx(L(t3("Hur lång tid tar den? Svara i minuter.","How long does it last? Answer in minutes.","كم تستغرق؟ أجب بالدقائق.")),400,250,38,"b")],sol:[A.wipe(),...timeline(h,m,dur)]}}
   return{kind:"num",ans:dur,show:`${dur} min`,q:[A.wipe(),A.tx(L(t3("Hur många minuter?","How many minutes?","كم دقيقة؟")),400,90,44),A.tx(`${pad(h)}:${pad(m)}  →  ${pad(Math.floor(t2/60))}:${pad(t2%60)}`,400,270,72)],sol:[A.wipe(),...timeline(h,m,dur)]}}
 });
 
@@ -905,8 +996,15 @@ LESSONS.push({id:"area",subject:"math",grades:"4",kind:"wb",
  icon:`<svg viewBox="0 0 320 180"><rect width="320" height="180" fill="#fff"/><rect x="70" y="40" width="180" height="100" fill="#2257c9" fill-opacity=".12"/>${[1,2,3,4,5].map(i=>`<path d="M${70+i*30} 40V140" stroke="#9aa8c4" stroke-width="1.5"/>`).join("")}${[1,2].map(j=>`<path d="M70 ${40+j*33.3}H250" stroke="#9aa8c4" stroke-width="1.5"/>`).join("")}<rect x="70" y="40" width="180" height="100" fill="none" stroke="#d63b2f" stroke-width="5"/></svg>`,
  steps:AREA.steps,mount:wbMount(AREA),
  gen(level){const M=MUL();
+  if(level===1&&rint(0,2)===0){const a=rint(3,8),b=rint(2,5),u=Math.min(50,380/a,250/b),x=70+(400-a*u)/2,y=140+(280-b*u)/2;
+   const s1=L(t3(`Ett rum är ${a} m långt och ${b} m brett.`,`A room is ${a} m long and ${b} m wide.`,`طول غرفة ${a} م، وعرضها ${b} م.`)),s2=L(t3("Hur stor är golvets area?","What is the area of the floor?","ما مساحة أرضية الغرفة؟"));
+   return{kind:"num",ans:a*b,show:`${a*b} m²`,q:[A.wipe(),A.tx(s1,400,50,36),A.tx(s2,400,94,34,"b"),...gridRect(x,y,a,b,u),A.tx(`${a} m`,x+a*u/2,y-14,32),A.tx(`${b} m`,x-40,y+b*u/2+10,30)],
+    sol:[A.hatch(`M${x},${y}h${a*u}v${b*u}h${-a*u}Z`,"o"),A.tx(L(t3("längd · bredd","length × width","الطول × العرض")),640,240,34),A.tx(`${a} ${M} ${b} = ${a*b} m²`,640,320,44,"g")]}}
+  if(level===2&&rint(0,2)===0){const a=rint(3,9),b=rint(2,6),r=rectQ(a,b),s=L(t3(`Arean är ${a*b} cm².`,`The area is ${a*b} cm².`,`المساحة ${a*b} سم².`));
+   const q=[A.wipe(),...gridRect(r.x,r.y,a,b,r.u).slice(0,1),A.tx(`${a} ${CM()}`,r.x+a*r.u/2,r.y-14,34),A.tx(`? ${CM()}`,r.x-46,r.y+b*r.u/2+10,30,"r"),A.tx(L(t3("Rektangeln","The rectangle","المستطيل")),640,110,36),A.tx(s,640,170,36),A.tx(L(t3("Hur bred är den?","How wide is it?","ما عرضه؟")),640,240,36,"b")];
+   return{kind:"num",ans:b,show:`${b} ${CM()}`,q,sol:[A.hatch(`M${r.x},${r.y}h${a*r.u}v${b*r.u}h${-a*r.u}Z`,"b"),A.tx(L(t3("längd · bredd = area","length × width = area","الطول × العرض = المساحة")),620,320,30),A.tx(`${a} ${M} ? = ${a*b}`,620,375,40),A.tx(`? = ${a*b} ${DIVS()} ${a} = ${b}`,620,440,40,"g")]}}
   if(level<2){const a=rint(2,9),b=rint(2,6),r=rectQ(a,b);
-   const ask=level?t3("Vad är arean?","What is the area?","ما المساحة؟"):t3("Vad är omkretsen?","What is the perimeter?","ما المحيط؟");
+   const ask=level?pick([t3("Vad är arean?","What is the area?","ما المساحة؟"),t3("Beräkna arean.","Calculate the area.","احسب المساحة."),t3("Hur stor är arean?","How big is the area?","كم المساحة؟")]):pick([t3("Vad är omkretsen?","What is the perimeter?","ما المحيط؟"),t3("Beräkna omkretsen.","Calculate the perimeter.","احسب المحيط."),t3("Hur lång är omkretsen?","How long is the perimeter?","كم طول المحيط؟")]);
    const q=[A.wipe(),...r.draw,A.tx(L(ask),640,90,38)];
    if(!level)return{kind:"num",ans:2*(a+b),show:`${2*(a+b)} ${CM()}`,q,sol:[A.p(R.rect(r.x,r.y,a*r.u,b*r.u,.3),"r",8),A.tx(`${a} + ${b} + ${a} + ${b}`,640,240,38,"r"),A.tx(`= ${2*(a+b)} ${CM()}`,640,320,48,"g")]};
    return{kind:"num",ans:a*b,show:`${a*b} ${CM2()}`,q,sol:[A.hatch(`M${r.x},${r.y}h${a*r.u}v${b*r.u}h${-a*r.u}Z`,"b"),A.tx(`${a} ${M} ${b} = ${a*b} ${CM2()}`,640,280,44,"g")]}}
@@ -942,8 +1040,17 @@ LESSONS.push({id:"shapes",subject:"math",grades:"4",kind:"wb",
  steps:SHP.steps,mount:wbMount(SHP),
  gen(level){
   if(level===0){const k=rint(0,2),deg=k===0?rint(25,65):k===1?90:rint(110,155);
-   return{kind:"choice",opts:L(ANG),ans:k,show:L(ANG)[k],q:[A.wipe(),A.tx(L(t3("Vilken sorts vinkel?","What kind of angle?","ما نوع هذه الزاوية؟")),400,70,42),...angleAt(deg>90?470:300,400,deg,230)],
+   return{kind:"choice",opts:L(ANG),ans:k,show:L(ANG)[k],q:[A.wipe(),A.tx(L(pick([t3("Vilken sorts vinkel?","What kind of angle?","ما نوع هذه الزاوية؟"),t3("Är vinkeln spetsig, rät eller trubbig?","Is the angle acute, right or obtuse?","هل الزاوية حادة أم قائمة أم منفرجة؟")])),400,70,40),...angleAt(deg>90?470:300,400,deg,230)],
     sol:[A.p(R.dashed(deg>90?470:300,400,deg>90?470:300,160),"g",3.5),A.tx(L(t3("rät vinkel","right angle","زاوية قائمة")),deg>90?470:300,140,28,"g"),A.tx(L(ANG)[k],650,300,48,"r")]}}
+  if(level===1&&rint(0,1)){const n=rint(3,6),pts=polyPts(330,270,150,n,-90+rint(0,40)).map(([x,y],i)=>[x+jit(i,n)*30,y+jit(n,i)*30]);
+   const nm=L({sv:["triangel","fyrhörning","femhörning","sexhörning"],en:["triangle","quadrilateral","pentagon","hexagon"],ar:["مثلث","رباعي","خماسي","سداسي"]}),ord=shuffle([0,1,2,3]);
+   return{kind:"choice",opts:ord.map(i=>nm[i]),ans:ord.indexOf(n-3),show:nm[n-3],q:[A.wipe(),A.tx(L(t3("Vad heter figuren?","What is the shape called?","ما اسم هذا الشكل؟")),640,80,40),A.p(plines(pts),"k",4.5)],
+    sol:[A.p(dots(pts),"r",16),...pts.map(([x,y],i)=>qt(i+1,330+(x-330)*1.2,270+(y-270)*1.2+10,30,"r")),A.tx(`${n} ${L(t3("hörn","corners","رؤوس"))}`,650,250,44,"r"),A.tx(nm[n-3],650,330,44,"g")]}}
+  if(level===2&&rint(0,2)===0){const sq=rint(0,1),ord=shuffle([0,1,2,3]),nm=L({sv:["kvadrat","rektangel","triangel","femhörning"],en:["square","rectangle","triangle","pentagon"],ar:["مربع","مستطيل","مثلث","خماسي"]});
+   const s1=L(sq?t3("Vilken figur har fyra lika långa sidor","Which shape has four equal sides","أي شكل له أربعة أضلاع متساوية"):t3("Vilken figur har fyra räta vinklar,","Which shape has four right angles,","أي شكل له أربع زوايا قائمة،")),s2=L(sq?t3("och fyra räta vinklar?","and four right angles?","وأربع زوايا قائمة؟"):t3("men bara motstående sidor lika långa?","but only opposite sides equal?","لكن كل ضلعين متقابلين فقط متساويان؟"));
+   const P=sq?[[300,190],[500,190],[500,390],[300,390]]:[[220,210],[580,210],[580,390],[220,390]],mk=P.map(([x,y],i)=>{const n=P[(i+1)%4],v=P[(i+3)%4],ux=Math.sign(n[0]-x),uy=Math.sign(n[1]-y),wx=Math.sign(v[0]-x),wy=Math.sign(v[1]-y);return`M${x+ux*20},${y+uy*20}l${wx*20},${wy*20}l${-ux*20},${-uy*20}`}).join("");
+   return{kind:"choice",opts:ord.map(i=>nm[i]),ans:ord.indexOf(sq?0:1),show:nm[sq?0:1],q:[A.wipe(),A.tx(s1,400,90,Math.min(40,760/(s1.length*.5))),A.tx(s2,400,145,Math.min(40,760/(s2.length*.5)))],
+    sol:[A.p(plines(P),"b",4.5),A.p(mk,"r",3),A.tx(nm[sq?0:1],400,462,46,"g")]}}
   if(level===1){const n=rint(3,8),pts=polyPts(330,270,150,n,-90+rint(0,40)).map(([x,y],i)=>[x+jit(i,n)*30,y+jit(n,i)*30]);
    return{kind:"num",ans:n,q:[A.wipe(),A.tx(L(t3("Hur många hörn?","How many corners?","كم رأسًا؟")),660,80,40),A.p(plines(pts),"k",4.5)],
     sol:[A.p(dots(pts),"r",16),...pts.map(([x,y],i)=>qt(i+1,330+(x-330)*1.2,270+(y-270)*1.2+10,30,"r")),A.tx(`${n} ${L(t3("hörn","corners","رؤوس"))}`,660,300,46,"g")]}}
@@ -976,12 +1083,19 @@ LESSONS.push({id:"stats",subject:"math",grades:"4",kind:"wb",
  steps:STAT.steps,mount:wbMount(STAT),
  gen(level){const set=pick([FRUIT,SPORT]),n=L(set);let v;do{v=[0,0,0,0].map(()=>rint(1,10))}while(new Set(v).size<4);
   const i=rint(0,3);let j;do{j=rint(0,3)}while(j===i);const hi=v[i]>v[j]?i:j,lo=hi===i?j:i;
-  const q=(s)=>[A.wipe(),...chart(v,n),A.tx(L(s),470,50,32)];
+  const q=(s)=>[A.wipe(),...chart(v,n),A.tx(L(s),L(s).length>38?400:470,50,Math.min(32,760/(L(s).length*.48)))];
+  if(level===0&&rint(0,2)===0){const Y=k=>150+k*85;
+   return{kind:"num",ans:v[i],q:[A.wipe(),A.tx(L(t3(`Tabellen visar rösterna. Hur många valde ${n[i]}?`,`The table shows the votes. How many chose ${n[i]}?`,`يبيّن الجدول الأصوات. كم تلميذًا اختار ${n[i]}؟`)),400,56,30),
+    ...v.flatMap((k,r)=>[A.tx(n[r],170,Y(r)+12,34,BCOL[r]),A.p(tally(330,Y(r),k),"k",4)]),A.p(R.line(260,105,260,470,.2)+R.line(60,105,740,105,.2),"k",3)],
+    sol:[A.hl(70,Y(i)-38,660,72),A.tx(v[i]>=5?`5${v[i]>=10?" + 5":""}${v[i]%5?` + ${v[i]%5}`:""} = ${v[i]}`:`${v[i]}`,640,Y(i)+14,40,"g")]}}
+  if(level===1&&rint(0,2)===0){const mx=v.indexOf(Math.max(...v)),ord=[0,1,2,3];
+   return{kind:"choice",opts:ord.map(k=>n[k]),ans:mx,show:n[mx],q:q(t3("Vilket svar är typvärdet?","Which answer is the mode?","أي إجابة هي المنوال؟")),
+    sol:[...v.map((x,k)=>A.tx(x,BX(k)+45,BY(x)-14,36,"r")),A.loop(BX(mx)+45,450,62,24,"g"),A.tx(L(t3("typvärde","mode","المنوال")),BX(mx)+45,BY(v[mx])-50,30,"g")]}}
   if(level===0)return{kind:"num",ans:v[i],q:q(t3(`Hur många valde ${n[i]}?`,`How many chose ${n[i]}?`,`كم تلميذًا اختار ${n[i]}؟`)),sol:[A.p(R.dashed(150,BY(v[i]),BX(i),BY(v[i])),"r",3),A.loop(122,BY(v[i])+2,22,20,"r"),A.tx(v[i],BX(i)+45,BY(v[i])-14,40,"r")]};
-  if(level===1)return{kind:"num",ans:v[hi]-v[lo],q:q(t3(`Hur många fler valde ${n[hi]} än ${n[lo]}?`,`How many more chose ${n[hi]} than ${n[lo]}?`,`كم تلميذًا اختار ${n[hi]} أكثر من ${n[lo]}؟`)),
+  if(level===1)return{kind:"num",ans:v[hi]-v[lo],q:q(pick([t3(`Hur många fler valde ${n[hi]} än ${n[lo]}?`,`How many more chose ${n[hi]} than ${n[lo]}?`,`كم تلميذًا اختار ${n[hi]} أكثر من ${n[lo]}؟`),t3(`Hur stor är skillnaden mellan ${n[hi]} och ${n[lo]}?`,`What is the difference between ${n[hi]} and ${n[lo]}?`,`ما الفرق بين ${n[hi]} و${n[lo]}؟`)])),
    sol:[A.p(R.dashed(150,BY(v[hi]),770,BY(v[hi])),"r",3),A.p(R.dashed(150,BY(v[lo]),770,BY(v[lo])),"o",3),A.tx(v[hi],BX(hi)+45,BY(v[hi])-14,36,"r"),A.tx(v[lo],BX(lo)+45,BY(v[lo])-14,36,"o"),A.tx(`${v[hi]} − ${v[lo]} = ${v[hi]-v[lo]}`,470,90,36,"g")]};
   const tot=v.reduce((a,b)=>a+b,0);
-  return{kind:"num",ans:tot,q:q(t3("Hur många röstade totalt?","How many voted in total?","كم تلميذًا صوّت إجمالًا؟")),sol:[...v.map((x,k)=>A.tx(x,BX(k)+45,BY(x)-14,36,"r")),A.tx(`${v.join(" + ")} = ${tot}`,470,90,36,"g")]}}
+  return{kind:"num",ans:tot,q:q(pick([t3("Hur många röstade totalt?","How many voted in total?","كم تلميذًا صوّت إجمالًا؟"),t3("Hur många röstade sammanlagt?","How many voted altogether?","كم كان عدد الأصوات كلها؟")])),sol:[...v.map((x,k)=>A.tx(x,BX(k)+45,BY(x)-14,36,"r")),A.tx(`${v.join(" + ")} = ${tot}`,470,90,36,"g")]}}
 });
 
 /* ---------- 15. Patterns and missing numbers ---------- */
@@ -1005,9 +1119,16 @@ LESSONS.push({id:"alg",subject:"math",grades:"4",kind:"wb",
  icon:`<svg viewBox="0 0 320 180"><rect width="320" height="180" fill="#fff"/><path d="M160 50V150M120 150H200M60 50H260M60 50L35 100M60 50L85 100M260 50L235 100M260 50L285 100" stroke="#1d2433" stroke-width="3" fill="none"/><path d="M30 100Q60 118 90 100M230 100Q260 118 290 100" stroke="#e07b00" stroke-width="4" fill="none"/><text x="60" y="94" font-family="Caveat,cursive" font-weight="700" font-size="26" text-anchor="middle" fill="#2257c9">7+□</text><text x="260" y="94" font-family="Caveat,cursive" font-weight="700" font-size="26" text-anchor="middle" fill="#1e9e5a">15</text></svg>`,
  steps:ALG.steps,mount:wbMount(ALG),
  gen(level){const M=MUL(),D=DIVS();
-  if(level===0){const a=rint(1,20),d=rint(2,9),v=[0,1,2,3].map(i=>a+i*d),nx=a+4*d,X=i=>100+i*150;
-   return{kind:"num",ans:nx,q:[A.wipe(),...v.map((n,i)=>A.tx(n,X(i),270,64)),A.tx("?",X(4),270,64,"r")],
-    sol:[...[0,1,2,3].flatMap(i=>[A.arrow(X(i)+20,200,X(i+1)-20,200,"g",-34),A.tx(`+${d}`,X(i)+75,148,32,"g")]),A.tx(`${v[3]} + ${d} = ${nx}`,400,420,54,"g")]}}
+  if(level===0){const dn=rint(0,2)===0,d=rint(2,9),a=dn?rint(4*d+1,4*d+30):rint(1,20),s=dn?-d:d,v=[0,1,2,3].map(i=>a+i*s),nx=a+4*s,X=i=>100+i*150,sg=dn?"−":"+";
+   const hd=pick([null,t3("Vilket tal kommer sedan?","Which number comes next?","ما العدد التالي؟"),t3("Fortsätt mönstret.","Continue the pattern.","أكمل النمط.")]);
+   return{kind:"num",ans:nx,q:[A.wipe(),...(hd?[A.tx(L(hd),400,80,40,"b")]:[]),...v.map((n,i)=>A.tx(n,X(i),270,64)),A.tx("?",X(4),270,64,"r")],
+    sol:[...[0,1,2,3].flatMap(i=>[A.arrow(X(i)+20,200,X(i+1)-20,200,"g",-34),A.tx(`${sg}${d}`,X(i)+75,148,32,"g")]),A.tx(L(dn?t3(`Talet minskar med ${d} varje gång.`,`The number decreases by ${d} each time.`,`ينقص العدد ${d} في كل مرة.`):t3(`Talet ökar med ${d} varje gång.`,`The number increases by ${d} each time.`,`يزداد العدد ${d} في كل مرة.`)),400,350,34,"b"),A.tx(`${v[3]} ${sg} ${d} = ${nx}`,400,430,54,"g")]}}
+  if(level===2&&rint(0,2)===0){const mul=rint(0,1),a=mul?rint(2,9):rint(3,15),x=mul?rint(2,9):rint(2,30),c=mul?a*x:a+x,M2=MUL();
+   const s0=L(t3("Olle tänker på ett tal.","Olle thinks of a number.","يفكّر أولي في عدد.")),s1=L(mul?t3(`Han multiplicerar det med ${a} och får ${c}.`,`He multiplies it by ${a} and gets ${c}.`,`يضربه في ${a} فيحصل على ${c}.`):t3(`Han lägger till ${a} och får ${c}.`,`He adds ${a} and gets ${c}.`,`يضيف إليه ${a} فيحصل على ${c}.`)),s2=L(t3("Vilket tal tänker han på?","Which number is he thinking of?","ما العدد الذي يفكّر فيه؟"));
+   return{kind:"num",ans:x,q:[A.wipe(),A.tx(s0,400,150,40),A.tx(s1,400,220,Math.min(40,760/(s1.length*.5))),A.tx(s2,400,300,40,"b")],
+    sol:[A.wipe(),...eqLines(mul?[`${a} ${M2} □ = ${c}`,`□ = ${c} ${D} ${a}`,`□ = ${x}`]:[`□ + ${a} = ${c}`,`□ = ${c} − ${a}`,`□ = ${x}`])]}}
+  if(level===1&&rint(0,2)===0){const a=rint(5,50),x=rint(3,40);
+   return{kind:"num",ans:x,q:[A.wipe(),A.tx(L(t3("Vilket tal ska stå i rutan?","Which number goes in the box?","ما العدد الذي يوضع في المربع؟")),400,120,40,"b"),A.tx(`□ + ${a} = ${a+x}`,400,280,72)],sol:[A.wipe(),...eqLines([`□ + ${a} = ${a+x}`,`□ = ${a+x} − ${a}`,`□ = ${x}`])]}}
   if(level===1){if(rint(0,1)){const a=rint(5,50),x=rint(3,40),c=a+x;return{kind:"num",ans:x,q:[A.wipe(),A.tx(`${a} + □ = ${c}`,400,250,72)],sol:[A.wipe(),...eqLines([`${a} + □ = ${c}`,`□ = ${c} − ${a}`,`□ = ${x}`])]}}
    const x=rint(20,90),b=rint(3,x-5),c=x-b;return{kind:"num",ans:x,q:[A.wipe(),A.tx(`□ − ${b} = ${c}`,400,250,72)],sol:[A.wipe(),...eqLines([`□ − ${b} = ${c}`,`□ = ${c} + ${b}`,`□ = ${x}`])]}}
   if(rint(0,1)){const a=rint(2,9),x=rint(2,9);return{kind:"num",ans:x,q:[A.wipe(),A.tx(`${a} ${M} □ = ${a*x}`,400,250,72)],sol:[A.wipe(),...eqLines([`${a} ${M} □ = ${a*x}`,`□ = ${a*x} ${D} ${a}`,`□ = ${x}`])]}}
@@ -1490,7 +1611,10 @@ LESSONS.push({id:"big5",subject:"math",grades:"5",kind:"wb",
   if(level===1){let a,b;do{a=rint(100000,999999);const s=String(a).split(""),p=rint(1,5);s[p]=String(rint(0,9));b=+s.join("")}while(a===b);
    return{kind:"choice",opts:[fmt(a),fmt(b)],ans:a>b?0:1,show:fmt(Math.max(a,b)),q:[A.wipe(),A.tx(L(t3("Vilket tal är störst?","Which number is bigger?","أي العددين أكبر؟")),400,100,44),A.tx(fmt(a),210,280,78),A.tx(fmt(b),590,280,78)],sol:[A.wipe(),...bCmp(a,b)]}}
   const to=Math.random()<.5?1000:10000;let n;do{n=rint(10000,999999)}while((n%to)/to<.18||(n%to)/to>.82);
-  const r=Math.round(n/to)*to,cap=to===1000?t3("Avrunda till närmaste tusental:","Round to the nearest thousand:","قرّب إلى أقرب ألف:"):t3("Avrunda till närmaste tiotusental:","Round to the nearest ten thousand:","قرّب إلى أقرب عشرة آلاف:");
+  const r=Math.round(n/to)*to,cap=to===1000?pick([t3("Avrunda till närmaste tusental:","Round to the nearest thousand:","قرّب إلى أقرب ألف:"),t3("Avrunda till tusental:","Round to thousands:","قرّب إلى الآلاف:")]):pick([t3("Avrunda till närmaste tiotusental:","Round to the nearest ten thousand:","قرّب إلى أقرب عشرة آلاف:"),t3("Avrunda till tiotusental:","Round to ten thousands:","قرّب إلى عشرات الآلاف:")]);
+  if(rint(0,2)===0){const st=pick([t3(`En stad har ${fmt(n)} invånare.`,`A town has ${fmt(n)} inhabitants.`,`عدد سكان مدينة ${fmt(n)}.`),t3(`Ett spel har laddats ner ${fmt(n)} gånger.`,`A game has been downloaded ${fmt(n)} times.`,`عدد مرات تنزيل لعبة ${fmt(n)}.`)]);
+   return{kind:"num",ans:r,show:fmt(r),q:[A.wipe(),A.tx(L(st),400,140,40),A.tx(L(t3("Ungefär hur många?","About how many?","كم العدد تقريبًا؟")),400,210,40,"b"),A.tx(L(cap).replace(/:$/,"."),400,290,40,"b")],
+    sol:[A.wipe(),A.tx(L(cap),400,60,36,"b"),...rLine(n,to,250,null,0,0).slice(0,-1),rNote(n,to),A.hl(170,392,460,70),A.tx(`${fmt(n)} ≈ ${fmt(r)}`,400,444,52,"g")]}}
   return{kind:"num",ans:r,show:fmt(r),q:[A.wipe(),A.tx(L(cap),400,110,42),A.tx(fmt(n),400,290,120)],
    sol:[A.wipe(),A.tx(L(cap),400,60,36,"b"),...rLine(n,to,250,null,0,0).slice(0,-1),rNote(n,to),A.hl(170,392,460,70),A.tx(`${fmt(n)} ≈ ${fmt(r)}`,400,444,52,"g")]}}
 });
@@ -1552,6 +1676,11 @@ LESSONS.push({id:"neg",subject:"math",grades:"5",kind:"wb",
  icon:ICO(`<path d="M100 22a12 12 0 0 1 24 0V128a22 22 0 1 1-24 0Z" fill="none" stroke="#1d2433" stroke-width="3.5"/><circle cx="112" cy="146" r="15" fill="#d63b2f"/><path d="M112 140V104" stroke="#d63b2f" stroke-width="11" stroke-linecap="round"/>${[30,48,66,84,102,120].map(y=>`<path d="M100 ${y}h-12" stroke="#1d2433" stroke-width="2.5"/>`).join("")}<path d="M100 66h-22" stroke="#1d2433" stroke-width="3.5"/><text x="66" y="74" ${CV} font-size="26" fill="#1d2433">0</text><text x="62" y="110" ${CV} font-size="24" fill="#2257c9">−5</text><text x="225" y="112" ${CV} font-size="58" fill="#2257c9">−5 °C</text><path d="M210 40l24 24M234 40l-24 24M222 34v36" stroke="#2257c9" stroke-width="3" stroke-linecap="round"/>`),
  steps:NEG.steps,mount:wbMount(NEG),
  gen(level){
+  if(level===0&&rint(0,2)===0){let t;do{t=[-rint(1,12),-rint(1,12),rint(-3,9)]}while(t.some((x,i)=>t.some((y,j)=>i!==j&&Math.abs(x-y)<2)));const lo=Math.min(...t),cold=rint(0,1),k=cold?lo:Math.max(...t),opts=shuffle(t);
+   const H=hLine(-12,10,70,730,250,5),o=[...H.o,A.p(dots(t.map(x=>[H.X(x),250])),"r",18),...t.map(x=>qt(ng(x),H.X(x),205,30,"r")),
+    A.arrow(330,350,110,350,"b"),A.tx(L(t3("kallare","colder","أبرد")),220,335,28,"b"),A.arrow(470,350,690,350,"r"),A.tx(L(t3("varmare","warmer","أدفأ")),580,335,28,"r")];
+   o.push(mark(A.loop(H.X(k),228,34,52,"g"),"ans"),A.hl(250,400,300,66),A.tx(dg(k),400,450,50,"g"));
+   return{kind:"choice",opts:opts.map(dg),ans:opts.indexOf(k),show:dg(k),q:[A.wipe(),A.tx(L(cold?t3("Vilken temperatur är lägst?","Which temperature is the lowest?","أي درجة حرارة هي الأدنى؟"):t3("Vilken temperatur är högst?","Which temperature is the highest?","أي درجة حرارة هي الأعلى؟")),400,110,44),A.tx(L(t3("Tänk på en tallinje.","Think of a number line.","فكّر في خط الأعداد.")),400,330,32,"b")],sol:[A.wipe(),A.tx(L(cold?t3("Längst till vänster = lägst","Furthest left = lowest","الأبعد إلى اليسار = الأدنى"):t3("Längst till höger = högst","Furthest right = highest","الأبعد إلى اليمين = الأعلى")),400,100,36),...o]}}
   if(level===0){let v;do{v=Math.random()<.75?-rint(1,14):rint(1,6)}while(v%5===0);
    const T=thermo(-15,15,230,75,405,v),m=Math.round(v/5)*5,k=v-m;
    const q=[A.wipe(),...T.o,A.tx(L(t3("Vilken temperatur","What temperature","ما درجة الحرارة")),540,62,36),A.tx(L(t3("visar termometern?","does it show?","التي يبيّنها الميزان؟")),540,110,36)];
@@ -1646,6 +1775,11 @@ LESSONS.push({id:"colmul",subject:"math",grades:"5",kind:"wb",
   if(level===0){do{a=rint(12,98);b=rint(3,9)}while(a%10*b<10||a%10===0)}
   else if(level===1){do{a=rint(102,989);b=rint(3,9)}while(a%10*b<10||a%100<10)}
   else{do{a=rint(12,98);b=rint(12,29)}while(!(a%10)||!(b%10))}
+  if(level===1&&rint(0,3)===0){const ra=Math.max(100,Math.round(a/100)*100),est=b*ra,ops=shuffle([est,est*10,est/10]);
+   return{kind:"choice",opts:ops.map(fmt),ans:ops.indexOf(est),show:fmt(est),q:[A.wipe(),A.tx(L(t3("Gör ett överslag. Ungefär hur mycket är","Estimate. About how much is","قدّر الناتج. كم يساوي تقريبًا")),400,110,38),A.tx(`${b} ${M} ${a} ≈ ?`,400,270,84)],
+    sol:[A.wipe(),A.tx(`${b} ${M} ${a} ≈ ?`,400,70,48),mark(A.tx(`${a} ≈ ${ra}`,400,170,48,"b"),"s0"),mark(A.tx(`${b} ${M} ${ra} = ${fmt(est)}`,400,260,48),"s1"),A.hl(230,320,340,72),mark(A.tx(`${b} ${M} ${a} ≈ ${fmt(est)}`,400,372,50,"g"),"ans"),A.tx(L(t3(`Exakt: ${fmt(a*b)}`,`Exact: ${fmt(a*b)}`,`بالضبط: ${fmt(a*b)}`)),400,450,34)]}}
+  if(rint(0,3)===0){const eq=`${level<2?b:a} ${M} ${level<2?a:b}`;
+   return{kind:"num",ans:a*b,show:fmt(a*b),q:[A.wipe(),A.tx(L(t3("Beräkna produkten:","Calculate the product:","احسب حاصل الضرب:")),400,150,42),A.tx(eq,400,290,84)],sol:[A.wipe(),A.tx(`${eq} = ?`,400,58,44),...(level<2?colMul1(a,b):colMul2(a,b))]}}
   const ci=level===1?pick([0,1,3]):pick([0,1,2]),ct=MCT[ci],q=[A.wipe(),A.tx(L(ct[0](a,b)),400,100,36),A.tx(L(ct[1](a,b)),400,155,36),A.tx(`${level<2?b:a} ${M} ${level<2?a:b} = ?`,400,level<2?290:320,80)];
   if(level<2)q.push(...mPic(ci===3?2:ci,b,a));
   return{kind:"num",ans:a*b,show:fmt(a*b),q,
@@ -1704,9 +1838,13 @@ LESSONS.push({id:"shortdiv",subject:"math",grades:"5",kind:"wb",
   if(level===0){d=rint(2,4);const m=[0,1,2,3,4,5,6,7,8,9].filter(x=>x%d===0);let ds;do{ds=[pick(m.filter(x=>x)),pick(m),pick(m)]}while(ds.filter(x=>!x).length>1);a=+ds.join("")}
   else if(level===1){let I;do{d=rint(3,9);a=d*rint(Math.ceil(100/d),Math.floor(999/d));I=kInfo(a,d)}while(!I.carries||I.zero)}
   else{let I;do{d=rint(3,9);a=rint(100,999);I=kInfo(a,d)}while(a%d===0||I.zero||Math.floor(a/d)<10)}
+  if(level===1&&rint(0,3)===0){const ra=Math.max(10*d,Math.round(a/(10*d))*10*d),est=ra/d,ops=shuffle([est,est*10,est/10]);
+   return{kind:"choice",opts:ops.map(fmt),ans:ops.indexOf(est),show:String(est),q:[A.wipe(),A.tx(L(t3("Gör ett överslag. Ungefär hur mycket är","Estimate. About how much is","قدّر الناتج. كم يساوي تقريبًا")),400,110,38),A.tx(`${a} ${D} ${d} ≈ ?`,400,270,84)],
+    sol:[A.wipe(),A.tx(`${a} ${D} ${d} ≈ ?`,400,70,48),A.tx(L(t3(`Välj ett tal nära ${a} som går jämnt att dela med ${d}.`,`Pick a number close to ${a} that ${d} divides exactly.`,`اختر عددًا قريبًا من ${a} يقبل القسمة على ${d}.`)),400,150,30,"b"),mark(A.tx(`${a} ≈ ${ra}`,400,230,48,"b"),"k0"),mark(A.tx(`${ra} ${D} ${d} = ${est}`,400,310,48),"k1"),A.hl(250,350,300,72),mark(A.tx(`${a} ${D} ${d} ≈ ${est}`,400,402,50,"g"),"ans")]}}
   const q=Math.floor(a/d),r=a%d,pic=level<2?A.p(Array.from({length:d},(_,i)=>head(400+(i-(d-1)/2)*74,430,24)).join(""),"k",3.5):A.p(Array.from({length:d},(_,i)=>sack(400+(i-(d-1)/2)*74,430)).join(""),"o",3.5);
   const ct=level<2?pick(SCT):SCT2;
-  const q0=[A.wipe(),A.tx(L(ct[0](a,d)),400,90,34),A.tx(L(ct[1]),400,145,34),A.tx(`${a} ${D} ${d} = ?`,400,300,80),pic];
+  const q0=rint(0,3)?[A.wipe(),A.tx(L(ct[0](a,d)),400,90,34),A.tx(L(ct[1]),400,145,34),A.tx(`${a} ${D} ${d} = ?`,400,300,80),pic]
+   :[A.wipe(),A.tx(L(level<2?t3("Beräkna kvoten med kort division:","Work out the quotient with short division:","احسب خارج القسمة بالقسمة القصيرة:"):t3("Beräkna kvoten och resten:","Work out the quotient and the remainder:","احسب خارج القسمة والباقي:")),400,130,40),A.tx(`${a} ${D} ${d}`,400,290,90)];
   const sol=[A.wipe(),A.tx(`${a} ${D} ${d}`,400,60,44),...kDiv(a,d)];
   if(level<2)return{kind:"num",ans:q,show:String(q),q:q0,sol};
   return{kind:"pair",ans:[q,r],labels:[t3("svar","answer","الناتج"),REST2],show:`${q} ${L(REST2)} ${r}`,q:q0,sol}}
@@ -1842,11 +1980,14 @@ LESSONS.push({id:"fraceq",subject:"math",grades:"5",kind:"wb",
  icon:`<svg viewBox="0 0 320 180"><rect width="320" height="180" fill="#fff"/><rect x="40" y="34" width="120" height="44" fill="#2257c9" fill-opacity=".3"/><rect x="40" y="34" width="240" height="44" fill="none" stroke="#1d2433" stroke-width="3"/><path d="M160 34V78" stroke="#1d2433" stroke-width="3"/><rect x="40" y="104" width="120" height="44" fill="#1e9e5a" fill-opacity=".3"/><rect x="40" y="104" width="240" height="44" fill="none" stroke="#1d2433" stroke-width="3"/><path d="M100 104V148M160 104V148M220 104V148" stroke="#1d2433" stroke-width="3"/><path d="M160 22V160" stroke="#d63b2f" stroke-width="3" stroke-dasharray="7 6"/></svg>`,
  steps:FQ.steps,mount:wbMount(FQ),
  gen(level){
-  if(level===0){let m,k,f;do{m=rint(2,6);k=rint(1,m-1);f=rint(2,5)}while(gcd(k,m)>1||m*f>24);
+  if(level===0&&rint(0,2)){let m,k,f;do{m=rint(2,6);k=rint(1,m-1);f=rint(2,5)}while(gcd(k,m)>1||m*f>24);
    const N=k*f,D=m*f,miss=rint(0,3)===0;/* miss: the denominator is missing */
    const it=sz=>[["f",k,m],["t","="],["f",miss?N:"?",miss?"?":D]];
    const B=fqBoard(row(it(),400,46,34).flat(),k,m,N,D,f,MUL());
    return{kind:"num",ans:miss?D:N,show:String(miss?D:N),hk:B.hk,q:[A.wipe(),A.tx(L(t3("Vilket tal saknas?","Which number is missing?","ما العدد الناقص؟")),400,80,42),...row(it(),400,255,90).flat()],sol:B.sol}}
+  if(level===0){let b,a,f;do{b=rint(2,6);a=rint(1,b-1);f=rint(2,4)}while(gcd(a,b)>1||b*f>24);
+   const N=a*f,D=b*f,ops=shuffle([`${N}/${D}`,`${a+f}/${b+f}`,`${N}/${b+1===D?b+2:b+1}`]),B=fqBoard(row([["f",a,b],["t","="],["f",N,D]],400,46,34).flat(),a,b,N,D,f,MUL());
+   return{kind:"choice",opts:ops,ans:ops.indexOf(`${N}/${D}`),show:`${N}/${D}`,hk:B.hk,q:[A.wipe(),A.tx(L(t3("Vilket bråk är lika stort som","Which fraction is equal to","أي كسر يساوي")),400,90,42),...A.frac(a,b,400,250,100)],sol:B.sol}}
   if(level===1){let b,a,f;do{b=rint(2,6);a=rint(1,b-1);f=rint(2,5)}while(gcd(a,b)>1||b*f>24);
    const N=a*f,D=b*f,B=fqBoard(row([["t",L(t3("Förkorta","Simplify","اختصر")),"k"],["f",N,D]],400,46,34,true).flat(),N,D,a,b,f,DIVS());
    return{kind:"frac",ans:[a,b],show:`${a}/${b}`,hk:B.hk,q:[A.wipe(),A.tx(L(t3("Förkorta så långt det går:","Simplify as far as you can:","اختصر الكسر إلى أبسط صورة:")),400,90,42),...A.frac(N,D,400,270,100)],sol:B.sol}}
@@ -1894,7 +2035,10 @@ LESSONS.push({id:"fracof",subject:"math",grades:"5",kind:"wb",
    const N=n*q,ans=m*q,T=row([["f",m,n,"b"],["t",L(OF)],["t",N],["t","="],["t",ans,"g"]],400,52,40,true),x=120,w=560;
    const o=[A.wipe(),...T[0],...T[1],...T[2],...roof(x,w,145,String(N),36),A.p(R.bar(x,165,w,70,n),"k",3.5),A.hatch(prt(x,165,w,70,n,0,m),"b")],hk=o.length;
    o.push(A.tx(`${N} ${D} ${n} = ${q}`,400,325,46),...[...Array(n)].map((_,i)=>qt(q,x+w*(i+.5)/n,213,32,i<m?"b":"k")),A.hl(250,370,300,70),A.tx(`${m} ${M} ${q} = ${ans}`,400,420,50,"g"),...T[3],...T[4]);
-   return{kind:"num",ans,show:String(ans),hk,q:[A.wipe(),A.tx(L(t3("Räkna ut:","Work it out:","احسب:")),400,95,42),...row([["f",m,n],["t",L(OF)],["t",N],["t","="],["t","?"]],400,260,84,true).flat()],sol:o}}
+   if(rint(0,1)){const st=pick([[t3(`I klassen går ${N} elever. ${m}/${n} av dem cyklar till skolan.`,`There are ${N} pupils in the class. ${m}/${n} of them cycle to school.`,`عدد تلاميذ الصف ${N}، و${m}/${n} منهم يأتون إلى المدرسة بالدراجة.`),t3("Hur många elever cyklar?","How many pupils cycle?","كم تلميذًا يأتي بالدراجة؟")],
+     [t3(`Olle har ${N} kr. Han använder ${m}/${n} av pengarna till en bok.`,`Olle has ${N} kr. He spends ${m}/${n} of the money on a book.`,`مع أولي ${N} كرونة، ويدفع ${m}/${n} منها ثمنًا لكتاب.`),t3("Hur mycket kostar boken?","How much does the book cost?","كم ثمن الكتاب؟")]]),s1=L(st[0]);
+    return{kind:"num",ans,show:String(ans),hk,q:[A.wipe(),A.tx(s1,400,170,Math.min(38,760/(s1.length*.47))),A.tx(L(st[1]),400,250,40,"b")],sol:o}}
+   return{kind:"num",ans,show:String(ans),hk,q:[A.wipe(),A.tx(L(pick([t3("Räkna ut:","Work it out:","احسب:"),t3("Beräkna:","Calculate:","احسب:")])),400,95,42),...row([["f",m,n],["t",L(OF)],["t",N],["t","="],["t","?"]],400,260,84,true).flat()],sol:o}}
   const w=rint(1,3),d=pick([2,3,4,5,6,8]);let n;do{n=rint(1,d-1)}while(gcd(n,d)>1);const N=w*d+n,P=w+1,r=Math.min(85,(740/P-24)/2),cx=i=>400+(i-(P-1)/2)*(2*r+24),cy=190;
   const o=[A.wipe(),...mixed(w,n,d,400,48,36,"b")];
   for(let i=0;i<P;i++){o.push(...pizza(cx(i),cy,r,d,i<w?d:n,"r"),...A.frac(i<w?d:n,d,cx(i),cy+r+42,34,i<w?"k":"r"))}
@@ -1946,7 +2090,7 @@ LESSONS.push({id:"dec2",subject:"math",grades:"5",kind:"wb",
    if(C)o.push(A.tx(`${L(TEN(C))} = ${dfmt(C/10)}`,615,160,36,"b"));
    o.push(A.tx(`${L(HUN(r))} = ${dfmt(r/100,2)}`,615,C?240:200,36,"r"));
    o.push(A.hl(470,330,290,90),A.tx(C?`= ${dfmt(k/100,2)}`:dfmt(k/100,2),615,395,70,"g"));
-   return{kind:"num",dec:true,ans:k/100,show:dfmt(k/100,2),hk,q:[A.wipe(),A.tx(L(t3("Skriv som decimaltal:","Write as a decimal:","اكتبه كسرًا عشريًا:")),400,50,40),...grid(220,80,38,k,"b")],sol:o}}
+   return{kind:"num",dec:true,ans:k/100,show:dfmt(k/100,2),hk,q:[A.wipe(),A.tx(L(pick([t3("Skriv som decimaltal:","Write as a decimal:","اكتبه كسرًا عشريًا:"),C<2?t3("Skriv som decimaltal:","Write as a decimal:","اكتبه كسرًا عشريًا:"):t3(`Skriv ${C} tiondelar och ${r} hundradelar som decimaltal:`,`Write ${C} tenths and ${r} hundredths as a decimal:`,`اكتب ${C} أعشار و${r} أجزاء من مئة كسرًا عشريًا:`),t3("Hur stor del är färgad? Svara i decimalform.","How much is shaded? Answer as a decimal.","ما الجزء الملوّن؟ أجب بكسر عشري.")])),400,50,30),...grid(220,80,38,k,"b")],sol:o}}
   if(level===1){const t=rint(2,9),u=rint(1,9);let x,y,dx,dy;/* x has one decimal, y two */
    if(rint(0,1)){x=t*10;y=(t-1)*10+u}/* 0,5 vs 0,45: more digits but smaller */else{x=(t-1)*10;y=x+u}/* 0,4 vs 0,45 */
    dx=1;dy=2;const sw=rint(0,1),A1=sw?y:x,B1=sw?x:y,da=sw?dy:dx,db=sw?dx:dy,big=Math.max(A1,B1),opts=[dfmt(A1/100,da),dfmt(B1/100,db)];
@@ -1956,7 +2100,7 @@ LESSONS.push({id:"dec2",subject:"math",grades:"5",kind:"wb",
    return{kind:"choice",opts,ans:A1>B1?0:1,show:A1>B1?opts[0]:opts[1],hk,q:[A.wipe(),A.tx(L(t3("Vilket tal är störst?","Which number is bigger?","أي العددين أكبر؟")),400,100,44),A.tx(opts[0],230,290,100),A.tx(opts[1],570,290,100)],sol:o}}
   let a,b;do{a=rint(101,689);b=rint(101,899-a)}while(a%10===0||b%10===0||(a%10+b%10<10&&Math.floor(a/10)%10+Math.floor(b/10)%10<10));
   const sol=dcol(a,b);
-  return{kind:"num",dec:true,ans:(a+b)/100,show:dfmt((a+b)/100,2),hk:idx(sol,"hl"),q:[A.wipe(),A.tx(`${dfmt(a/100,2)} + ${dfmt(b/100,2)} = ?`,400,265,72)],sol}}
+  return{kind:"num",dec:true,ans:(a+b)/100,show:dfmt((a+b)/100,2),hk:idx(sol,"hl"),q:[A.wipe(),...(rint(0,1)?[A.tx(L(t3(`Ali går ${dfmt(a/100,2)} km till skolan och sedan ${dfmt(b/100,2)} km till simhallen.`,`Ali walks ${dfmt(a/100,2)} km to school and then ${dfmt(b/100,2)} km to the pool.`,`يمشي علي ${dfmt(a/100,2)} كم إلى المدرسة ثم ${dfmt(b/100,2)} كم إلى المسبح.`)),400,170,26),A.tx(L(t3("Hur långt går han sammanlagt? Svara i km.","How far does he walk in total? Answer in km.","كم يمشي في المجموع؟ أجب بالكيلومترات.")),400,250,30,"b")]:[...(rint(0,1)?[A.tx(L(t3("Beräkna summan:","Find the sum:","احسب المجموع:")),400,120,40)]:[]),A.tx(`${dfmt(a/100,2)} + ${dfmt(b/100,2)} = ?`,400,265,72)])],sol}}
 });
 
 /* =================== 4. Percent =================== */
@@ -1992,12 +2136,12 @@ LESSONS.push({id:"percent",subject:"math",grades:"5",kind:"wb",
    if(C)o.push(A.p(R.rect(44,69,C*38+9,392,.3),"b",5));if(r)o.push(A.p(R.rect(50+C*38+4,79,30,r*38-8,.2),"r",5));
    const hk=o.length;if(C)o.push(A.tx(`${C} ${MUL()} 10 = ${C*10}`,615,150,40,"b"));if(r)o.push(A.tx(C?`${C*10} + ${r} = ${k}`:L(t3(`${r} rutor`,`${r} squares`,`${r} مربعات`)),615,C?225:180,40,C?"k":"r"));
    o.push(A.hl(450,290,330,130),...row([["f",k,100,"g"],["t","="],["t",pct(k),"g"]],615,345,56).flat());
-   return{kind:"num",ans:k,show:pct(k),hk,q:[A.wipe(),A.tx(L(t3("Hur många procent är målat?","What percent is shaded?","ما النسبة المئوية الملوّنة؟")),400,50,40),...grid(220,80,38,k,"b")],sol:o}}
+   return{kind:"num",ans:k,show:pct(k),hk,q:[A.wipe(),A.tx(L(pick([t3("Hur många procent är målat?","What percent is shaded?","ما النسبة المئوية الملوّنة؟"),t3("Hur stor andel är färgad? Svara i procent.","What share is shaded? Answer in percent.","ما الجزء الملوّن؟ أجب بالنسبة المئوية."),t3("Skriv den färgade delen i procent:","Write the shaded part as a percent:","اكتب الجزء الملوّن نسبةً مئوية:")])),400,50,34),...grid(220,80,38,k,"b")],sol:o}}
   if(level===1){const p=pick([50,25,10]),n=100/p,q=p===50?rint(4,90)*5:p===25?rint(3,40)*5:rint(2,40)*5,N=n*q,x=120,w=560;
    const title=L(t3(`${pct(p)} av ${N} kr`,`${pct(p)} of ${N} kr`,`${pct(p)} من ${N} كرونة`));
    const o=[A.wipe(),A.tx(title,400,62,46),...roof(x,w,150,`${N} kr`,36),A.p(R.bar(x,170,w,70,n),"k",3.5),A.hatch(prt(x,170,w,70,n,0,1),"b"),...row([["t",pct(p)],["t","="],["f",1,n]],400,320,46).flat()],hk=o.length;
    o.push(...[...Array(n)].map((_,i)=>qt(n===10?q:`${q} kr`,x+w*(i+.5)/n,215,n===10?26:30,i?"k":"b")),A.hl(200,385,400,72),A.tx(`${N} ${D} ${n} = ${q} kr`,400,437,52,"g"));
-   return{kind:"num",ans:q,show:`${q} kr`,hk,q:[A.wipe(),A.tx(L(t3("Räkna ut:","Work it out:","احسب:")),400,120,42),A.tx(title,400,280,72)],sol:o}}
+   return{kind:"num",ans:q,show:`${q} kr`,hk,q:[A.wipe(),A.tx(L(pick([t3("Räkna ut:","Work it out:","احسب:"),t3("Beräkna:","Calculate:","احسب:"),t3("Beräkna. Svara i hela kronor.","Calculate. Answer in whole kronor.","احسب. أجب بالكرونات الكاملة.")])),400,120,42),A.tx(title,400,280,72)],sol:o}}
   const p=pick([10,20,25,50]),P=p===25?rint(5,40)*20:p===50?rint(50,400)*2:rint(10,90)*10,disc=P*p/100,ans=P-disc,n=p===25?4:p===50?2:10,k=p===20?2:1,it=pick(ITEMS),x=120,w=560;
   const head=L(t3(`${P} kr, rea ${pct(p)}`,`${P} kr, ${pct(p)} off`,`خصم ${pct(p)} على ${P} كرونة`));
   const o=[A.wipe(),A.tx(head,400,55,42),...roof(x,w,135,`${P} kr`,34),A.p(R.bar(x,155,w,64,n),"k",3.5),A.hatch(prt(x,155,w,64,n,0,k),"r"),A.tx(L(t3("rabatt","discount","الخصم")),x+w*k/n/2,262,28,"r")],hk=o.length;
@@ -2136,7 +2280,7 @@ LESSONS.push({id:"units5",subject:"math",grades:"5",kind:"wb",
     else{i=rint(0,1);j=rint(i+1,n-1);down=false;let a;do{a=rint(11,49)/10}while(Number.isInteger(a));v=Math.round(a*fac(f,i,j))}}
    const F=fac(f,i,j),ans=Math.round((down?v*F:v/F)*1000)/1000,qs=down?`${nf(v)} ${S.U[i]} = ? ${S.U[j]}`:`${nf(v)} ${S.U[j]} = ? ${S.U[i]}`;
    const pu=down?S.U[i]:S.U[j];
-   return{kind:"num",dec:!Number.isInteger(ans),ans,show:`${nf(ans)} ${down?S.U[j]:S.U[i]}`,q:[A.wipe(),A.tx(qs,400,110,66),...unitPic(f,nf(v),pu)],sol:unitSol(f,i,j,v,down,qs)}}
+   return{kind:"num",dec:!Number.isInteger(ans),ans,show:`${nf(ans)} ${down?S.U[j]:S.U[i]}`,q:[A.wipe(),...(rint(0,1)?[A.tx(pick([T("Omvandla:","Convert:","حوّل:"),T(`Gör om till ${down?S.U[j]:S.U[i]}:`,`Change to ${down?S.U[j]:S.U[i]}:`,`حوّل إلى ${down?S.U[j]:S.U[i]}:`)]),400,38,30,"k")]:[]),A.tx(qs,400,110,66),...unitPic(f,nf(v),pu)],sol:unitSol(f,i,j,v,down,qs)}}
   const t=rint(0,2);
   if(t===0){const m=pick([3,4,5,6,8]),k=pick([2,3]),p=4*k,tot=m*k,ans=tot/10;
    const q=[A.wipe(),...para(T(`Ett recept för 4 personer behöver ${m} dl mjölk. Hur många liter mjölk behövs till ${p} personer?`,`A recipe for 4 people needs ${m} dl of milk. How many litres of milk are needed for ${p} people?`,`تحتاج وصفة لأربعة أشخاص إلى ${m} ديسيلترات من الحليب. كم لترًا من الحليب نحتاج إلى ${p===8?"8 أشخاص":"12 شخصًا"}؟`),400,62,36,40,48),
@@ -2369,8 +2513,13 @@ LESSONS.push({id:"angles",subject:"math",grades:"5",kind:"wb",
  icon:`<svg viewBox="0 0 320 180"><rect width="320" height="180" fill="#fff"/><path d="M45 155A115 115 0 0 1 275 155Z" fill="#e07b00" fill-opacity=".1" stroke="#1d2433" stroke-width="4" stroke-linejoin="round"/>${[...Array(19)].map((_,i)=>{const a=i*10*Math.PI/180,l=i%9?10:18;return`<path d="M${(160+115*Math.cos(a)).toFixed(1)} ${(155-115*Math.sin(a)).toFixed(1)}L${(160+(115-l)*Math.cos(a)).toFixed(1)} ${(155-(115-l)*Math.sin(a)).toFixed(1)}" stroke="#1d2433" stroke-width="2"/>`}).join("")}<path d="M160 155H300M160 155L${(160+140*Math.cos(Math.PI*50/180)).toFixed(1)} ${(155-140*Math.sin(Math.PI*50/180)).toFixed(1)}" stroke="#2257c9" stroke-width="5" stroke-linecap="round" fill="none"/><path d="M200 155A40 40 0 0 0 185.7 124.4" stroke="#d63b2f" stroke-width="4" fill="none"/></svg>`,
  steps:ANG5.steps,mount:wbMount(ANG5),
  gen(level){
+  if(level===0&&!rint(0,2)){const ty=rint(0,3),d=[rint(3,8)*10,90,rint(10,16)*10,180][ty],cx=400,cy=380;
+   const opts=[T("spetsig","acute","حادة"),T("rät","right","قائمة"),T("trubbig","obtuse","منفرجة"),T("rak","straight","مستقيمة")];
+   const why=[T("mindre än 90°","less than 90°","أقل من 90 درجة"),T("exakt 90°","exactly 90°","90 درجة تمامًا"),T("mellan 90° och 180°","between 90° and 180°","بين 90 و180 درجة"),T("exakt 180°","exactly 180°","180 درجة تمامًا")][ty];
+   return{kind:"choice",opts,ans:ty,show:opts[ty],q:[A.wipe(),A.tx(pick([T("Vilken sorts vinkel är det?","What kind of angle is it?","ما نوع هذه الزاوية؟"),T("Är vinkeln spetsig, rät, trubbig eller rak?","Is the angle acute, right, obtuse or straight?","هل الزاوية حادة أم قائمة أم منفرجة أم مستقيمة؟")]),400,60,32),leg(cx,cy,0,240,"k"),leg(cx,cy,d,240,"k"),A.p(arc(cx,cy,56,0,d),"b",4)],
+    sol:[A.tx(`${d}°`,640,180,52,"b"),fin(A.tx(why,400,450,36,"r")),fin(A.tx(`→ ${opts[ty]}`,640,250,44,"g"))]}}
   if(level===0){const d=Math.random()<.7?rint(1,17)*10:rint(1,16)*10+5,cx=400,cy=440,r=262,ax=d<=90?100:700;
-   return{kind:"num",ans:d,show:`${d}°`,q:[A.wipe(),A.tx(T("Hur många grader är vinkeln?","How many degrees is the angle?","كم درجة هذه الزاوية؟"),400,60,40),...prot(cx,cy,r),leg(cx,cy,0,r+50),leg(cx,cy,d,r)],
+   return{kind:"num",ans:d,show:`${d}°`,q:[A.wipe(),A.tx(pick([T("Hur många grader är vinkeln?","How many degrees is the angle?","كم درجة هذه الزاوية؟"),T("Mät vinkeln med gradskivan.","Measure the angle with the protractor.","قِس الزاوية بالمنقلة."),T("Hur stor är vinkeln? Svara i grader.","How big is the angle? Answer in degrees.","ما قياس الزاوية؟ أجب بالدرجات.")]),400,60,36),...prot(cx,cy,r),leg(cx,cy,0,r+50),leg(cx,cy,d,r)],
     sol:[A.p(arc(cx,cy,60,0,d),"r",4),fin(d%10?A.p(dots([P(cx,cy,r,d)]),"r",14):A.loop(...P(cx,cy,r+26,d).map((v,i)=>i?Math.min(v,cy-21):v),28,19,"r")),fin(A.tx(`${d}°`,ax,190,68,"g"))]}}
   if(level===1){const a=rint(25,155),right=rint(0,1),th=right?a:180-a,k=right?[0,th]:[th,180],u=right?[th,180]:[0,th],x=180-a;
    return{kind:"num",ans:x,show:`${x}°`,q:[A.wipe(),A.tx(T("Hur stor är vinkeln?","How big is the angle?","ما قياس الزاوية؟"),400,58,40),A.p(R.line(100,320,700,320,.4),"k",5),leg(400,320,th,220,"k"),
@@ -2566,11 +2715,11 @@ LESSONS.push({id:"mean",subject:"math",grades:"5",kind:"wb",
   if(level===1){const ctx=MCTX[pick(["read","pts","temp"])],k=ctx.k||1;let v;
    do{v=[];while(v.length<5){const x=rint(ctx.lo,ctx.hi)*k;if(!v.includes(x))v.push(x)}}while(v[2]===v.slice().sort((a,b)=>a-b)[2]);
    const X=i=>160+i*120,s=v.slice().sort((a,b)=>a-b);
-   return{kind:"num",ans:s[2],show:String(s[2]),hc:8,q:[...mHead(t3("Vad är medianen?","What is the median?","ما الوسيط؟"),ctx),...cards(v,X,180)],sol:medSteps(v,X,180,320,450)}}
+   return{kind:"num",ans:s[2],show:String(s[2]),hc:8,q:[...mHead(pick([t3("Vad är medianen?","What is the median?","ما الوسيط؟"),t3("Bestäm medianen.","Find the median.","أوجد الوسيط.")]),ctx),...cards(v,X,180)],sol:medSteps(v,X,180,320,450)}}
   const ctx=MCTX[pick(["books","ice","goal2"])],n=rint(4,5),m=rint(3,7);let v;
   do{v=Array.from({length:n-1},()=>rint(1,9));v.push(n*m-v.reduce((a,b)=>a+b,0))}while(v[n-1]<1||v[n-1]>10||v.every(x=>x===m));
   const X=i=>400+(i-(n-1)/2)*120,B=405,s=18,sum=n*m,D=DIVS();
-  return{kind:"num",ans:m,show:String(m),hc:1+2*n,q:[...mHead(t3("Vad är medelvärdet?","What is the mean?","ما الوسط الحسابي؟"),ctx),...cards(v,X,158)],
+  return{kind:"num",ans:m,show:String(m),hc:1+2*n,q:[...mHead(pick([t3("Vad är medelvärdet?","What is the mean?","ما الوسط الحسابي؟"),t3("Beräkna medelvärdet.","Work out the mean.","احسب الوسط الحسابي.")]),ctx),...cards(v,X,158)],
    sol:[A.p(R.line(X(0)-70,B,X(n-1)+70,B,.3),"k",4),...v.flatMap((x,i)=>towerAct(X(i),B,x,s,"b",44)),A.p(R.dashed(X(0)-70,B-m*s,X(n-1)+70,B-m*s),"g",4),A.tx(m,X(n-1)+92,B-m*s+12,36,"g"),
     A.tx(`${v.join(" + ")} = ${sum}`,290,462,38),A.hl(545,420,190,60),A.tx(`${sum} ${D} ${n} = ${m}`,640,465,44,"g")]}}
 });
@@ -2819,9 +2968,17 @@ Object.assign(HINTSX,{
 const TERMS={},WORDS={};
 function TERM(k,o){if(!TERMS[k])TERMS[k]=Object.assign({k},o)}
 const lessonWords=l=>l?(WORDS[l.id]||[]).filter(k=>TERMS[k]):[];
-function termsIn(texts){const out=[];texts.filter(Boolean).forEach(t=>{t=String(t);const lo=t.toLowerCase();
+/* Swedish patterns run on Swedish text only (sv=true, or the app in Swedish); otherwise the word's translation must appear as a whole word */
+const trRe={};
+function termsIn(texts,sv=lang==="sv"){const out=[];texts.filter(Boolean).forEach(t=>{t=String(t);
   for(const k in TERMS){const w=TERMS[k];if(out.includes(k))continue;
-    if((w.m&&w.m.test(t))||(lang!=="sv"&&w.tr&&w.tr[lang]&&lo.includes(String(w.tr[lang]).toLowerCase())))out.push(k)}});return out.slice(0,4)}
+    if(sv){if(w.m&&w.m.test(t))out.push(k);continue}
+    const tr=!w.sw&&w.tr&&w.tr[lang];if(!tr)continue;   /* Svenska's own words are found in Swedish text only */
+    /* Arabic glues و ب ل ف and ال onto words, and has plural/feminine endings */
+    const re=trRe[k+lang]||(trRe[k+lang]=lang==="ar"
+      ?new RegExp("(?<![\\p{L}\\p{M}])(?:وال|بال|فال|كال|لل|ال|و|ب|ل|ف)?"+String(tr).split(/[،,(/]/)[0].trim().replace(/^ال/,"").replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"(?:ة|ات|ان|ين|ون)?(?![\\p{L}\\p{M}])","u")
+      :new RegExp("(?<![\\p{L}\\p{M}])"+String(tr).split(/[,(/]/)[0].trim().replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+"(e?s)?(?![\\p{L}\\p{M}])","iu"));
+    if(re.test(t))out.push(k)}});return out.slice(0,4)}
 function showWords(keys){const el=$("#words");if(!el)return;keys=(keys||[]).filter(k=>TERMS[k]);
   el.innerHTML=keys.map(k=>`<button class="wchip" data-w="${k}">📖 ${esc(TERMS[k].sv)}</button>`).join("");el.hidden=!keys.length;
   el.querySelectorAll(".wchip").forEach(b=>b.onclick=()=>wordCard([b.dataset.w]))}
@@ -3038,7 +3195,7 @@ const memState=id=>{const p=S.lessons[id]||{},r=(S.rev||{})[id];return p.mastere
 const revLv=id=>{const p=S.lessons[id]||{},l=p.level!=null?p.level:1;return Math.max(0,l-(Math.random()<.5?1:0))};
 /* one earlier lesson to mix into practice: one that is due for review if there is one */
 function mixPick(id){const me=LESSONS.find(l=>l.id===id);if(!me||!me.year)return null;
-  const c=LESSONS.filter(l=>l.gen&&l.id!==id&&l.year&&isDone(l.id)&&(l.year<me.year||(l.year===me.year&&l.ord<me.ord)));if(!c.length)return null;
+  const c=LESSONS.filter(l=>l.gen&&l.id!==id&&l.year&&l.subject===me.subject&&isDone(l.id)&&(l.year<me.year||(l.year===me.year&&l.ord<me.ord)));if(!c.length)return null;
   const due=c.filter(l=>(S.rev||{})[l.id]&&S.rev[l.id].due<=today());return pick(due.length?due:c)}
 /* "Remind me": the old lesson's short explanation on the board, then a similar problem */
 function remind(ctx,id,then){const l=LESSONS.find(x=>x.id===id),H=(l&&l.help)||[],quiz=$("#quiz");let h=0;ctx.helpBtn.hidden=true;
@@ -3132,9 +3289,9 @@ function poseProblem(ctx,g,o,done){
   const {wb,talk,helpBtn,av}=ctx,ctrl=$("#ctrl"),quiz=$("#quiz");ctx.cur={g,hinted:false,judged:false};
   wb.run(g.q);helpBtn.hidden=!(o.hint&&g.hint);helpBtn.disabled=false;
   if(!g.wordQ)showWords(termsIn([...g.q.filter(c=>c&&c.t==="text").map(c=>c.s),...(g.kind==="choice"?g.opts.map(x=>L(x)):[])]));else showWords([]);
-  talk(o.head+T("yourTurn"));
+  talk(o.head+T(g.kind==="choice"?"yourTurnPick":"yourTurn"));
   const numIn=t=>{t=String(t).replace(/[\s ]/g,"").replace(/[−–]/g,"-");t=lang==="en"?t.replace(/,(?=\d{3}(\D|$))/g,""):t;t=t.replace(",",".");return t===""||!/^-?\d*\.?\d+$/.test(t)?NaN:+t};
-  const inp=(id,lab)=>`<input id="${id}" type="text" inputmode="${g.dec?"decimal":"numeric"}" autocomplete="off" aria-label="${esc(lab||"answer")}">`;
+  const inp=(id,lab)=>`<input id="${id}" type="text" inputmode="${g.kind==="text"?"text":g.dec?"decimal":"numeric"}"${g.kind==="text"?` class="txtin" autocapitalize="off" spellcheck="false"`:""} autocomplete="off" aria-label="${esc(lab||"answer")}">`;
   const skip=o.skip?`<button class="btn ghost" id="skip">${T("dunno")}</button>`:"";
   ctrl.innerHTML=g.kind==="choice"?`<span class="answer">${g.opts.map((x,j)=>`<button class="btn ghost ch" data-j="${j}">${esc(L(x))}</button>`).join("")}${skip}</span>`
    :`<span class="answer">${g.kind==="frac"?`<span class="fracin">${inp("an","numerator")}<i></i>${inp("ad","denominator")}</span>`
@@ -3157,6 +3314,10 @@ function poseProblem(ctx,g,o,done){
   const sg=$("#sgn");if(sg){sg.onpointerdown=e=>e.preventDefault();sg.onclick=()=>{const a=lastIn||$("#an");a.value=/^\s*[-−]/.test(a.value)?a.value.replace(/^\s*[-−]/,""):"-"+a.value;a.focus()};}
   if(g.kind==="choice"){ctrl.querySelectorAll(".ch").forEach(b=>b.onclick=()=>judge(+b.dataset.j===g.ans,L(g.opts[+b.dataset.j])));return}
   $("#chk").onclick=()=>{
+    /* a written word or sentence (Svenska): case, spaces and end punctuation don't count; one letter off counts as right with a spelling note */
+    if(g.kind==="text"){const nz=t=>String(t).toLowerCase().replace(/[.!?,;:”"'’]/g,"").replace(/\s+/g," ").trim(),v=nz(an.value);if(!v){toast(T("needAnswer"));return}
+      const acc=[].concat(g.ans).map(nz),near=(a,b)=>{if(Math.abs(a.length-b.length)>1)return false;let i=0,j=0,e=0;while(i<a.length&&j<b.length){if(a[i]===b[j]){i++;j++;continue}if(++e>1)return false;if(a.length>b.length)i++;else if(b.length>a.length)j++;else{i++;j++}}return e+(a.length-i)+(b.length-j)<=1};
+      const ok=acc.includes(v),almost=!ok&&v.length>4&&acc.some(a=>near(a,v));if(almost)toast("✏️ "+[].concat(g.ans)[0]);judge(ok||almost,an.value.trim());return}
     const v=numIn(an.value),d=g.kind==="num"?0:numIn($("#ad").value);
     if(isNaN(v)||(g.kind!=="num"&&isNaN(d))||(g.kind==="frac"&&!d)){toast(T("needAnswer"));return}
     const gcd=(x,y)=>y?gcd(y,x%y):Math.abs(x);
@@ -3405,14 +3566,14 @@ function aiClose(env){aiOn=false;env.busy=false;$("#aibox").innerHTML="";$("#qui
 /* after the explanation the problem comes back exactly as it was */
 const probBoard=c=>[A.wipe(),...c.g.q,...(c.judged&&!c.ok?c.g.sol:[])];
 
-const SUBJECTS=[{id:"math"},{id:"science"},{id:"english",soon:true},{id:"swedish",soon:true}];
+const SUBJECTS=[{id:"math"},{id:"science"},{id:"english",soon:true},{id:"swedish"}];
 
 /* =================== screens =================== */
 /* lessons fill exactly one screen: the board takes the room the explanation leaves, keeping its 16:10 shape */
 function fitStage(){const st=$("#stage"),ls=$(".lesson");if(!st||!ls||!document.body.classList.contains("inles"))return;
   document.documentElement.style.setProperty("--toph",$(".top").offsetHeight+"px");
   const bd=st.parentNode,ct=$("#ctrl"),side=getComputedStyle($(".lmain")).gridTemplateColumns.split(" ").length>1,W=bd.clientWidth,
-    ch=ct&&ct.offsetHeight?ct.offsetHeight+8:0,H=side?bd.clientHeight-ch:Math.max(150,ls.clientHeight*.5-ch);
+    ch=ct&&ct.offsetHeight?ct.offsetHeight+8:0,H=side?bd.clientHeight-ch:Math.max(140,ls.clientHeight*(ls.clientHeight<600?.42:.5)-ch);
   st.style.width=Math.floor(Math.min(W,H*1.6))+"px"}
 const fitRO=window.ResizeObserver?new ResizeObserver(()=>fitStage()):null;
 function fitOn(){document.body.classList.add("inles");fitStage();requestAnimationFrame(fitStage);
@@ -3433,7 +3594,7 @@ function welcome(){
      <label class="label" for="nm">${T("name")}</label><input type="text" id="nm" maxlength="30" placeholder="${T("ph")}" value="${esc(S.name)}">
      <span class="label">${T("grade")}</span>
      <div class="grades" id="gr">${[4,5,6,7,8,9].map(g=>`<button data-g="${g}" aria-pressed="${S.grade===g}">${g}</button>`).join("")}</div>
-     <div class="row"><button class="btn" id="go">${T("start")}</button>${kidList().some(k=>k.id!==S.id)?`<button class="btn ghost" id="wwho">👥 ${T("whoSwitch")}</button>`:""}${PROF.kids[S.id]?`<button class="btn ghost" id="wdel" style="margin-inline-start:auto">🗑 ${T("delKid")}</button>`:""}</div>
+     <div class="row"><button class="btn" id="go">${T("start")}</button>${kidList().some(k=>k.id!==S.id)?`<button class="btn ghost" id="wwho">👥 ${T("whoSwitch")}</button>`:""}${PROF.kids[S.id]&&!String(S.id).startsWith("db-")?`<button class="btn ghost" id="wdel" style="margin-inline-start:auto">🗑 ${T("delKid")}</button>`:""}</div>
    </section></div>`;
   const ww=$("#wwho");if(ww)ww.onclick=()=>{if(!PROF.kids[S.id])S=PROF.kids[PROF.cur]||S;who()};
   /* deleting asks for a second tap that names the child */
@@ -3531,7 +3692,7 @@ function lesson(id){
   function go(k){i=k;const s=Ls.steps[k];taskDone=!s.task;taskEl.hidden=!s.task;taskEl.classList.remove("ok");if(s.task)taskEl.textContent=L(s.task);
     $("#quiz").innerHTML="";next.disabled=true;const r=active.step(k);
     if(r&&r.then){busy=true;r.then(()=>{if(i===k){busy=false;lockNext()}})}else busy=false;
-    showWords(termsIn([s.say&&s.say.sv,L(s.say)]));
+    showWords([...new Set([...termsIn([s.say&&s.say.sv],true),...(lang!=="sv"?termsIn([L(s.say)]):[])])].slice(0,4));
     prev.disabled=k===0;prog();next.textContent=k===Ls.steps.length-1?T(Ls.gen?"toPractice":"toChallenge"):T("next");talk(L(s.say),lockNext)}
   const wl=$("#wlist");if(wl)wl.onclick=()=>wordCard(lessonWords(Ls),T("wordsT"));
   next.onclick=()=>{if(i<Ls.steps.length-1)go(i+1);else if(Ls.gen)practice();else challenge()};
@@ -3559,7 +3720,7 @@ function lesson(id){
 
   /* practice on the board: the student answers, then the solution is drawn by hand. Right answers raise the level, wrong ones lower it. */
   function practice(){
-    const p=S.lessons[id]||{};let lvl=p.level!=null?p.level:(S.grade<=4?0:S.grade<=5?1:2),n=0,right=0;
+    const p=S.lessons[id]||{};let lvl=p.level!=null?p.level:Ls.startLv!=null?Ls.startLv:(S.grade<=4?0:S.grade<=5?1:2),n=0,right=0;
     /* the third of four questions comes from an earlier lesson, so old ideas keep coming back */
     const mixL=mixPick(id),wq=lessonWords(Ls).length>0,plan=["o","o",...(wq?["w"]:[]),"o",...(mixL?["m"]:[]),"o","o"],N=plan.length,O=5;
     i=Ls.steps.length;prog();taskEl.hidden=true;again.hidden=true;next.hidden=true;prev.hidden=true;delete aiBtn.dataset.idle;aiShow();
@@ -3614,7 +3775,8 @@ function lesson(id){
 }
 
 $("#home").onclick=()=>S.grade?map():welcome();
+/*ACCOUNT*/
 setLang(lang);
-route();
+if(!accStart())route();
 setTimeout(checkBadges,700);
 </script>

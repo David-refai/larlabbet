@@ -117,19 +117,28 @@ LESSONS.push({id:"line9",subject:"math",grades:"9",kind:"wb",
   if(level===0){let k,x1,x2,y1,y2;do{k=pick([-3,-2,-1,1,2,3]);x1=rint(1,5);x2=x1+rint(2,4);y1=rint(2,15);y2=y1+k*(x2-x1)}while(x2>7||y2<2||y2>15||Math.abs(y2-y1)<3);
    const P=plot(LBOX),m=y1-k*x1,up=k>0;
    const q=[A.wipe(),...P.o,A.p(seg(P,k,m),"b",4.5),...ptL(P,x1,y1,"A",...(up?["r",-14,-14,"end"]:["r",-14,30,"end"])),...ptL(P,x2,y2,"B",...(up?["r",-14,-14,"end"]:["r",-14,30,"end"])),
-    A.tx(L(t3("Bestäm lutningen k","Find the slope k","أوجد الميل k")),RX,95,38),tl(`A = (${x1}, ${y1})`,RX,170,34),tl(`B = (${x2}, ${y2})`,RX,220,34)];
+    A.tx(L(pick([t3("Bestäm lutningen k","Find the slope k","أوجد الميل k"),t3("Beräkna linjens lutning k","Calculate the slope k of the line","احسب ميل المستقيم k"),t3("Bestäm k-värdet","Find the k-value","أوجد قيمة k")])),RX,95,36),tl(`A = (${x1}, ${y1})`,RX,170,34),tl(`B = (${x2}, ${y2})`,RX,220,34)];
    const sol=[...stepTri(P,x1,y1,x2,y2,`Δx = ${x2-x1}`,`Δy = ${ng(y2-y1)}`)],hc=sol.length;
    sol.push(...frow([["t","k ="],["f","Δy","Δx","o"],["t","="],["f",ng(y2-y1),x2-x1],["t","="],["t",ng(k),"g"]],RX,320,40),A.hl(RX-120,380,240,64),A.tx(`k = ${ng(k)}`,RX,430,48,"g"));
    return{kind:"num",ans:k,signed:true,show:ng(k),hc,q,sol}}
+  /* level 1: does the point lie on the line? */
+  if(level===1&&Math.random()<.3){let k,m,a,b;do{k=pick([-3,-2,-1,2,3,4,5]);m=rint(-8,9);a=rint(-4,6)}while(m===0||a===0);
+   const v=k*a+m,yes=Math.random()<.5;b=yes?v:v+pick([-2,-1,1,2]);
+   const O=[t3("Ja, punkten ligger på linjen","Yes, the point is on the line","نعم، النقطة تقع على المستقيم"),t3("Nej, punkten ligger inte på linjen","No, the point is not on the line","لا، النقطة لا تقع على المستقيم")],ans=b===v?0:1,xa=a<0?`(${ng(a)})`:a;
+   const q=[A.wipe(),A.tx(L(pick([t3("Ligger punkten på linjen?","Is the point on the line?","هل تقع النقطة على المستقيم؟"),t3("Avgör om punkten ligger på linjen.","Decide if the point is on the line.","حدّد هل تقع النقطة على المستقيم.")])),400,70,38),
+    A.tx(lin(k,m),400,160,48,"b"),A.tx(`P = (${ng(a)}, ${ng(b)})`,400,240,44,"o")];
+   const sol=[A.tx(L(t3(`Sätt in x = ${ng(a)}:`,`Put in x = ${ng(a)}:`,`عوّض x = ${LRI(ng(a))}:`)),400,305,32)],hc=1;
+   sol.push(A.tx(`y = ${ng(k)} ${M} ${xa} ${m<0?"−":"+"} ${Math.abs(m)} = ${ng(v)}`,400,360,40),A.hl(150,385,500,64),A.tx(b===v?`${ng(v)} = ${ng(b)}  ✓`:`${ng(v)} ≠ ${ng(b)}`,400,435,46,b===v?"g":"r"));
+   return{kind:"choice",opts:O,ans,show:L(O[ans]),hc,q,sol}}
   if(level===1){let k,m,a,b;do{k=pick([-3,-2,-1,1,2,3,4]);m=rint(1,13);a=rint(1,6);b=k*a+m}while(b<1||b>15||Math.abs(b-m)<2||(k>0&&a<3));
    const P=plot(LBOX);
    const q=[A.wipe(),...P.o,A.p(seg(P,k,m),"b",4.5),...ptL(P,a,b,`P (${a}, ${b})`,...(k>0?["r",-14,-14,"end"]:["r",14,-14,"start"])),A.p(R.circ(P.X(0),P.Y(m),12),"o",4),tl("(0, m)",P.X(0)+18,P.Y(m)+(k>0?34:-16),26,"o","start"),
-    A.tx(L(t3("Bestäm m","Find m","أوجد m")),RX,95,40),A.tx(`k = ${ng(k)}`,RX,165,40,"o"),A.tx(`y = ${k===1?"":k===-1?"−":ng(k)}x + m`,RX,225,40,"b")];
+    A.tx(L(pick([t3("Bestäm m","Find m","أوجد m"),t3("Bestäm m-värdet","Find the m-value","أوجد قيمة m"),t3("Var skär linjen y-axeln?","Find the y-intercept m","أوجد المقطع الصادي m")])),RX,95,34),A.tx(`k = ${ng(k)}`,RX,165,40,"o"),A.tx(`y = ${k===1?"":k===-1?"−":ng(k)}x + m`,RX,225,40,"b")];
    const sol=[A.tx(`${b} = ${ng(k)} ${M} ${a} + m`,RX,295,38)],hc=1;
    sol.push(A.tx(`${b} = ${ng(k*a)} + m`,RX,350,38),A.hl(RX-110,375,220,64),A.tx(`m = ${m}`,RX,425,48,"g"),dot(P.X(0),P.Y(m),"g",20),A.loop(P.X(0),P.Y(m),24,22,"g"));
    return{kind:"num",ans:m,signed:true,show:String(m),hc,q,sol}}
   const C=pick(LCTX),{k,m,x1,x2}=C.mk(),y1=k*x1+m,y2=k*x2+m,cx=215,X1=330;
-  const q=[A.wipe(),A.tx(L(t3("Bestäm k och m","Find k and m","أوجد k وm")),400,58,40)],hx=C.t?`x (${L(C.xh)})`:"x",hy=C.t?`y (${L(C.yh)})`:"y",T0=160;
+  const q=[A.wipe(),A.tx(L(pick([t3("Bestäm k och m","Find k and m","أوجد k وm"),t3("Bestäm linjens ekvation y = kx + m","Find the equation y = kx + m",`أوجد معادلة المستقيم ${LRI("y = kx + m")}`)])),400,58,36)],hx=C.t?`x (${L(C.xh)})`:"x",hy=C.t?`y (${L(C.yh)})`:"y",T0=160;
   if(C.t)q.push(A.tx(L(C.t),cx,125,30,"b"));
   q.push(A.p(R.rect(cx-180,T0,360,160,.3)+R.line(cx-180,T0+80,cx+180,T0+80,.3)+R.line(cx-20,T0,cx-20,T0+160,.3)+R.line(cx+80,T0,cx+80,T0+160,.3),"k",3.5),
    tl(hx,cx-100,T0+50,28,"o"),tl(hy,cx-100,T0+130,28,"b"),tl(x1,cx+30,T0+52,34),tl(x2,cx+130,T0+52,34),tl(nf(y1),cx+30,T0+132,34),tl(nf(y2),cx+130,T0+132,34),
@@ -214,9 +223,19 @@ LESSONS.push({id:"nonlin9",subject:"math",grades:"9",kind:"wb",
  icon:ICO(`<path d="M20 160H150M85 165V20" stroke="#1d2433" stroke-width="3"/><path d="M30 25Q85 290 140 25" stroke="#2257c9" stroke-width="5" fill="none"/><path d="M175 160H305M180 165V20" stroke="#1d2433" stroke-width="3"/><path d="M196 24Q206 140 300 148" stroke="#d63b2f" stroke-width="5" fill="none"/><text direction="ltr" x="120" y="60" ${CV} font-size="30" fill="#2257c9">x²</text><text direction="ltr" x="262" y="80" ${CV} font-size="30" fill="#d63b2f">k/x</text>`),
  steps:NL.steps,mount:wbMount(NL),
  gen(level){const M=MUL(),D=DIVS();
+  /* level 0: a square patio, the side is made n times longer */
+  if(level===0&&Math.random()<.3){const n=pick([2,2,3,3,4]),a=n===4?pick([1,2]):rint(2,4),A1=a*a,A2=(n*a)**2,u=52/Math.max(1,a*n/4.2)/1.3,w1=a*u,w2=a*n*u,y0=430;
+   const q=[A.wipe(),A.tx(L(t3(`En kvadratisk uteplats har sidan ${a} m.`,`A square patio has side ${a} m.`,`فناء مربع طول ضلعه ${LRI(a+" m")}.`)),400,50,30),
+    A.tx(L(pick([t3(`Sidan görs ${n} gånger så lång. Beräkna den nya arean.`,`The side is made ${n} times as long. Work out the new area.`,`يُجعل الضلع أطول ${n} مرات. احسب المساحة الجديدة.`),t3(`Sidan blir ${n} gånger så lång. Hur stor blir arean?`,`The side becomes ${n} times as long. How big is the area?`,`يصبح الضلع أطول ${n} مرات. كم تصبح المساحة؟`)])),400,94,28,"b"),
+    A.hatch(`M120,${y0}h${f1(w1)}v${f1(-w1)}h${f1(-w1)}Z`,"b"),A.p(R.rect(120,y0-w1,w1,w1,.3),"b",4),tl(`${a} m`,120+w1/2,y0+34,28,"b"),
+    A.hatch(`M${f1(700-w2)},${y0}h${f1(w2)}v${f1(-w2)}h${f1(-w2)}Z`,"o"),A.p(R.rect(700-w2,y0-w2,w2,w2,.3),"o",4),tl(`${n*a} m`,700-w2/2,y0+34,28,"o"),tl("?",700-w2/2,y0-w2/2+14,44,"r"),
+    A.arrow(140+w1,y0-w1/2,680-w2,y0-w2/2,"k"),tl(`${L(t3("sidan","side","الضلع"))} ${LRI(M+" "+n)}`,(140+w1+680-w2)/2,y0-(w1+w2)/4+40,28,"o")];
+   const sol=[tl(`${a} ${M} ${a} = ${A1} m²`,120+w1/2,y0-w1-24,30,"b")],hc=1;
+   sol.push(A.tx(`${n*a} ${M} ${n*a} = ${A2} m²`,400,170,40),A.hl(260,190,280,60),A.tx(`${A2} m²`,400,236,44,"g"),A.tx(L(t3(`arean ${M} ${n*n}`,`area ${M} ${n*n}`,`المساحة ${LRI(M+" "+n*n)}`)),400,290,30,"g"));
+   return{kind:"num",ans:A2,show:`${A2} m²`,hc,q,sol}}
   if(level===0){const a=pick([1,2,3,4,5]),c=pick([-6,-5,-4,-3,-2,2,3,4,5,6]),y=a*c*c,fs=a===1?"y = x²":`y = ${a}x²`;
    const top=Math.ceil(y*1.15/10)*10,P=plot({l:470,r:750,t:100,b:420,x0:-7,x1:7,y0:0,y1:top,xs:100,ys:1e9,nolab:true,nogrid:true}),X=P.X(c),Yp=P.Y(y);
-   const q=[A.wipe(),A.tx(L(t3(`Beräkna y när x = ${ng(c)}`,`Work out y when x = ${ng(c)}`,`احسب y عندما x = ${ng(c)}`)),400,62,38),A.tx(fs,230,180,64,"b"),A.tx(`x = ${ng(c)}`,230,260,48,"o"),
+   const q=[A.wipe(),A.tx(L(pick([t3(`Beräkna y när x = ${ng(c)}`,`Work out y when x = ${ng(c)}`,`احسب y عندما x = ${ng(c)}`),t3(`Bestäm y för x = ${ng(c)}`,`Find y for x = ${ng(c)}`,`أوجد y عند x = ${ng(c)}`)])),400,62,38),A.tx(fs,230,180,64,"b"),A.tx(`x = ${ng(c)}`,230,260,48,"o"),
     ...P.o,A.p(curve(P,x=>a*x*x,-7,7),"b",4),A.p(R.dashed(X,P.ax,X,Yp,10),"o",3.5),tl(ng(c),X,P.ax+32,28,"o"),dot(X,Yp,"r",17),tl("?",X+(c<0?-18:18),Yp+6,36,"r",c<0?"end":"start")];
    const sol=[A.tx(a===1?`y = ${sq(c)}`:`y = ${a} ${M} ${sq(c)}`,230,340,44)],hc=1;
    if(a>1)sol.push(A.tx(`y = ${a} ${M} ${c*c}`,230,395,40));sol.push(A.loop(X,Yp,22,22,"g"),A.hl(110,410,240,64),A.tx(`y = ${y}`,230,460,50,"g"));
@@ -232,7 +251,7 @@ LESSONS.push({id:"nonlin9",subject:"math",grades:"9",kind:"wb",
   const xs=[1,2,3,4],ys=xs.map(F[type].f),ord=shuffle([0,1,2,3]),ans=ord.indexOf(type);
   const T=tbl([["x","o",xs],["y","b",ys]],400,120,110,120,70,34);
   const vv=n=>Number.isInteger(n)?String(n):dfmt(n,1);
-  const q=[A.wipe(),A.tx(L(t3("Vilken formel passar tabellen?","Which formula fits the table?","أي صيغة تناسب الجدول؟")),400,62,38),...T.o];
+  const q=[A.wipe(),A.tx(L(pick([t3("Vilken formel passar tabellen?","Which formula fits the table?","أي صيغة تناسب الجدول؟"),t3("Vilken funktion beskriver värdetabellen?","Which function describes the table of values?","أي دالة تصف جدول القيم؟")])),400,62,34),...T.o];
   const sol=[A.hl(T.cx[1]-55,124,110,136)],hc=1;
   ord.forEach((k,i)=>{const ok=k===type,cx=i%2?590:210,cy=i<2?345:425,val=F[k].f(2);
    sol.push(tl(`${F[k].s}: ${F[k].s.replace(/^y = /,"").replace(/(\d)x/,`$1 ${M} x`).replace(/x/,"2")} = ${vv(val)} ${ok?"✓":"✗"}`,cx,cy,32,ok?"g":"r"));if(ok)sol.push(A.loop(cx,cy-10,170,34,"g"))});
@@ -325,10 +344,19 @@ LESSONS.push({id:"exp9",subject:"math",grades:"9",kind:"wb",
    vals.slice(1).forEach((v,j)=>{const i=j+1,h=v*sc;sol.push(A.p(R.rect(X(i)-28,base-h,56,h,.2),up?"b":"r",3.5),tl(fmt(v),X(i),base-h-12,28,i===n?"g":up?"b":"r"))});
    sol.push(A.hl(190,425,420,62),...erow([`${fmt(N)} ${M} `,["p",up?"2":fx(.5,1),n],` = ${fmt(ans)}`],400,470,42,"g"));
    return{kind:"num",ans,show:`${fmt(ans)}${C.u?" "+C.u:""}`,hc,q,sol}}
+  /* level 1: linear or exponential? */
+  if(level===1&&Math.random()<.3){const S=pick([160,200,400,800]),ex=Math.random()<.5,a=pick([1.5,2]),d=S*pick([.5,1]),vals=[0,1,2,3].map(i=>ex?S*a**i:S+d*i);
+   const O=[t3("Linjär: lika mycket mer varje år","Linear: the same amount more each year","خطي: الزيادة نفسها كل سنة"),t3("Exponentiell: samma faktor varje år","Exponential: the same factor each year","أسّي: المعامل نفسه كل سنة")],ans=ex?1:0;
+   const X=i=>160+i*160,q=[A.wipe(),A.tx(L(t3("En samling växer så här, år för år.","A collection grows like this, year by year.","تنمو مجموعة هكذا سنةً بعد سنة.")),400,60,32),
+    A.tx(L(pick([t3("Är ökningen linjär eller exponentiell?","Is the growth linear or exponential?","هل الزيادة خطية أم أسّية؟"),t3("Avgör om ökningen är linjär eller exponentiell.","Decide if the growth is linear or exponential.","حدّد هل الزيادة خطية أم أسّية.")])),400,106,30,"b"),
+    ...vals.map((v,i)=>tl(L(t3(`år ${i}`,`year ${i}`,`السنة ${i}`)),X(i),190,26,"k")),...vals.map((v,i)=>tl(fmt(v),X(i),250,40,"b"))];
+   const sol=[],hc=2;for(let i=0;i<3;i++){const m=(X(i)+X(i+1))/2;sol.push(A.arrow(X(i)+30,290,X(i+1)-30,290,"o",-30),tl(`+${fmt(vals[i+1]-vals[i])}`,m,330,28,"o"),tl(`${(vals[i+1]/vals[i]*100)%1?"≈ ":""}${M} ${fx(vals[i+1]/vals[i],vals[i+1]/vals[i]*100%10?2:1)}`,m,380,28,"r"))}
+   sol.push(A.hl(100,410,600,62),A.tx(L(O[ans]),400,452,32,"g"));
+   return{kind:"choice",opts:O,ans,show:L(O[ans]),hc,q,sol}}
   if(level===1){const up=Math.random()<.5,p=pick([2,3,4,5,6,8,12,15,25,30,35,40]),a=(100+(up?p:-p))/100,toF=Math.random()<.55;
    const W=380,o=[A.wipe()];
    if(toF)o.push(A.tx(L(up?t3(`Ett pris ökar med ${pc(p)}.`,`A price increases by ${p}%.`,`يزداد سعر بنسبة ${p}%.`):t3(`Ett värde minskar med ${pc(p)}.`,`A value decreases by ${p}%.`,`تنقص قيمة بنسبة ${p}%.`)),400,62,38),
-     A.tx(L(t3("Vad är förändringsfaktorn?","What is the change factor?","ما معامل التغيّر؟")),400,112,36,"b"));
+     A.tx(L(pick([t3("Vad är förändringsfaktorn?","What is the change factor?","ما معامل التغيّر؟"),t3("Bestäm förändringsfaktorn.","Find the change factor.","أوجد معامل التغيّر."),t3("Ange förändringsfaktorn i decimalform.","Give the change factor as a decimal.","اكتب معامل التغيّر بصيغة عشرية.")])),400,112,34,"b"));
    else o.push(A.tx(L(t3(`Förändringsfaktorn är ${fx(a)}.`,`The change factor is ${fx(a)}.`,`معامل التغيّر ${fx(a)}`)),400,62,38),
      A.tx(L(up?t3("Med hur många procent ökar värdet?","By what percent does the value increase?","بأي نسبة مئوية تزداد القيمة؟"):t3("Med hur många procent minskar värdet?","By what percent does the value decrease?","بأي نسبة مئوية تنقص القيمة؟")),400,112,36,"b"));
    o.push(bx(150,160,W,56,"k"),A.hatch(`M150,160h${W}v56h-${W}Z`,"b"),tl(pc(100),150+W+16,198,30,"b","start"),tl(L(t3("före","before","قبل")),100,198,28),
@@ -406,11 +434,20 @@ LESSONS.push({id:"pct9",subject:"math",grades:"9",kind:"wb",
  icon:ICO(`${[[30,"#2257c9","1000"],[125,"#e07b00","1200"],[220,"#d63b2f","960"]].map(([x,c,t],i)=>`<rect x="${x}" y="${[70,46,78][i]}" width="70" height="${[90,114,82][i]}" fill="${c}" fill-opacity=".18" stroke="${c}" stroke-width="3"/><text direction="ltr" x="${x+35}" y="${[60,36,68][i]}" ${CV} font-size="26" fill="${c}">${t}</text>`).join("")}<path d="M20 160H300" stroke="#1d2433" stroke-width="3"/>`),
  steps:PCT.steps,mount:wbMount(PCT),
  gen(level){const M=MUL(),D=DIVS();
+  /* level 1: two discounts, how big is the total discount? */
+  if(level===1&&Math.random()<.3){let p1,p2;do{p1=pick([10,20,25,30,40,50]);p2=pick([10,20,25,50])}while((100-p1)*(100-p2)%100);
+   const t=(100-p1)*(100-p2)/100,r=100-t,a1=(100-p1)/100,a2=(100-p2)/100;
+   const C=chain([pc(100),"","?"],[sgp(-p1),sgp(-p2)],230,["b","k","k"]);
+   const q=[A.wipe(),A.tx(L(t3(`Rea ${pc(p1)} på skorna och sedan ${pc(p2)} extra i kassan.`,`Shoes are ${p1}% off, then another ${p2}% off at the till.`,`تخفيض ${p1}% على الحذاء ثم ${p2}% إضافية عند الصندوق.`)),400,58,30),
+    A.tx(L(pick([t3("Hur många procent är rabatten totalt?","What is the total discount in percent?","كم النسبة المئوية للتخفيض الكلي؟"),t3("Beräkna den totala rabatten i procent.","Work out the total discount in percent.","احسب التخفيض الكلي بالنسبة المئوية.")])),400,104,32,"b"),...C.o];
+   const sol=[tl(`${M} ${fx(a1)}`,C.mid(0),260,30,"o"),tl(`${M} ${fx(a2)}`,C.mid(1),260,30,"o"),A.tx(pc(100-p1),C.X[1],244,34)],hc=2;
+   sol.push(A.tx(`${fx(a1)} ${M} ${fx(a2)} = ${fx(t/100,t%10?2:2)} = ${pc(t)}`,400,370,38),A.hl(230,400,340,64),A.tx(`${pc(100)} − ${pc(t)} = ${pc(r)}`,400,448,44,"g"));
+   return{kind:"num",ans:r,show:pc(r),hc,q,sol}}
   if(level===0||level===1){let P,p1,p2,v1,v2;const S=level===0?[10,20,25,30,40,50]:[10,15,20,25,30,40,50];
    do{P=level===0?rint(2,20)*100:100;p1=pick(S)*pick([1,-1]);p2=pick(S)*pick([1,-1]);v1=P*(100+p1)/100;v2=v1*(100+p2)/100}while(!Number.isInteger(v1)||!Number.isInteger(v2)||(p1>0&&p2>0&&level===0));
    const it=pick(ITM),l0=level===0;
    const C=chain([l0?kr(P):pc(100),"",l0?"?":"?"],[sgp(p1),sgp(p2)],210,["b","k","k"]);
-   const q=[A.wipe(),A.tx(L(l0?t3(`Vad kostar ${it.sv} efter båda ändringarna?`,`What does ${it.en} cost after both changes?`,`كم يصبح سعر ${it.ar} بعد التغييرين؟`):t3("Hur många procent av det första priset är det nya priset?","The new price is what percent of the first price?","النسبة المئوية للسعر الجديد من السعر الأول؟")),400,62,l0?36:34),
+   const q=[A.wipe(),A.tx(L(l0?pick([t3(`Vad kostar ${it.sv} efter båda ändringarna?`,`What does ${it.en} cost after both changes?`,`كم يصبح سعر ${it.ar} بعد التغييرين؟`),t3(`Beräkna priset på ${it.sv} efter båda ändringarna.`,`Work out the price of ${it.en} after both changes.`,`احسب سعر ${it.ar} بعد التغييرين.`)]):t3("Hur många procent av det första priset är det nya priset?","The new price is what percent of the first price?","النسبة المئوية للسعر الجديد من السعر الأول؟")),400,62,l0?36:34),
     ...(l0?[]:[A.tx(L(t3("Priset ändras två gånger.","The price changes twice.","يتغيّر السعر مرتين.")),400,110,32,"b")]),...C.o];
    const a1=(100+p1)/100,a2=(100+p2)/100,sol=[tl(`${M} ${fx(a1)}`,C.mid(0),240,30,"o"),tl(`${M} ${fx(a2)}`,C.mid(1),240,30,"o")],hc=2;
    if(l0){sol.push(A.tx(kr(v1),C.X[1],224,36),A.tx(`${fmt(P)} ${M} ${fx(a1)} ${M} ${fx(a2)} = ${fmt(v2)}`,400,365,40),A.hl(270,400,260,64),A.tx(kr(v2),400,448,48,"g"));
@@ -423,7 +460,7 @@ LESSONS.push({id:"pct9",subject:"math",grades:"9",kind:"wb",
   else{p=pick([5,10,15,20,25]);do{P0=rint(10,150)*10}while(P0*(100+p)%100)}
   const s=kind==="sale"?-1:1,P1=P0*(100+s*p)/100,a=(100+s*p)/100,it=pick(ITM);
   const lab=kind==="vat"?L(t3(`moms ${sgp(p)}`,`VAT ${sgp(p)}`,`الضريبة ${LRI(sgp(p))}`)):kind==="sale"?L(t3(`rea ${sgp(-p)}`,`sale ${sgp(-p)}`,`تخفيض ${LRI(sgp(-p))}`)):sgp(p);
-  const Q=kind==="vat"?t3("Vad är priset utan moms?","What is the price without VAT?","ما السعر بدون الضريبة؟"):kind==="sale"?t3("Vad var det ordinarie priset?","What was the normal price?","ما السعر الأصلي قبل التخفيض؟"):t3("Vad var priset före höjningen?","What was the price before the rise?","كم كان السعر قبل الزيادة؟");
+  const Q=kind==="vat"?pick([t3("Vad är priset utan moms?","What is the price without VAT?","ما السعر بدون الضريبة؟"),t3("Beräkna priset utan moms.","Work out the price without VAT.","احسب السعر بدون الضريبة.")]):kind==="sale"?t3("Vad var det ordinarie priset?","What was the normal price?","ما السعر الأصلي قبل التخفيض؟"):t3("Vad var priset före höjningen?","What was the price before the rise?","كم كان السعر قبل الزيادة؟");
   const U=kind==="vat"?[t3("utan moms","without VAT","بدون الضريبة"),t3("med moms","with VAT","مع الضريبة")]:kind==="sale"?[t3("ordinarie pris","normal price","السعر الأصلي"),t3("reapris","sale price","سعر التخفيض")]:[t3("före","before","قبل"),t3("efter","after","بعد")];
   const C=chain(["?",kr(P1)],[lab],200,["k","b"]);
   const q=[A.wipe(),A.tx(L(Q),400,66,38),...C.o,tl(L(U[0]),C.X[0],138,28),tl(L(U[1]),C.X[1],138,28,"b")];
@@ -472,16 +509,16 @@ Object.assign(HELPX,{
 });
 Object.assign(HINTSX,{
  exp9:[{say:t3("Räkna först hur många fördubblingar eller halveringar det blir: dela hela tiden med tiden för ett steg.","First count how many doublings or halvings there are: divide the whole time by the time for one step.","احسب أولًا عدد مرات التضاعف أو التنصيف: اقسم الزمن كله على زمن الخطوة الواحدة."),cut:g=>g.sol.slice(0,g.hc)},
-  {say:t3("Faktorn 1 betyder 100 %. Över 1 är en ökning och under 1 är en minskning.","A factor of 1 means 100%. Above 1 is an increase and below 1 is a decrease.","المعامل 1 يعني 100%. ما فوق 1 زيادة، وما دون 1 نقصان."),cut:g=>g.sol.slice(0,g.hc)},
+  {say:t3("Faktorn 1 betyder 100 %. Över 1 är en ökning och under 1 är en minskning. Linjär: samma tillskott varje steg. Exponentiell: samma faktor varje steg.","A factor of 1 means 100%. Above 1 is an increase and below 1 is a decrease. Linear: the same amount added each step. Exponential: the same factor each step.","المعامل 1 يعني 100%. ما فوق 1 زيادة، وما دون 1 نقصان. خطي: الزيادة نفسها في كل خطوة. أسّي: المعامل نفسه في كل خطوة."),cut:g=>g.sol.slice(0,g.hc)},
   {say:t3("Skriv förändringsfaktorn som decimaltal. Multiplicera startvärdet med faktorn en gång för varje år eller månad.","Write the change factor as a decimal. Multiply the starting value by the factor once for every year or month.","اكتب معامل التغيّر عددًا عشريًا، ثم اضرب قيمة البداية في المعامل مرة عن كل سنة أو شهر."),cut:g=>g.sol.slice(0,g.hc)}],
  pct9:[{say:t3("Gör om varje procentändring till en förändringsfaktor. Multiplicera priset med faktorerna i tur och ordning.","Turn each percent change into a change factor. Multiply the price by the factors one after the other.","حوّل كل تغيّر بالنسبة المئوية إلى معامل تغيّر، ثم اضرب السعر في المعاملات بالترتيب."),cut:g=>g.sol.slice(0,g.hc)},
-  {say:t3("Multiplicera de två förändringsfaktorerna. Skriv produkten i procent.","Multiply the two change factors. Write the product as a percent.","اضرب معاملي التغيّر، ثم اكتب الناتج نسبةً مئوية."),cut:g=>g.sol.slice(0,g.hc)},
+  {say:t3("Multiplicera de två förändringsfaktorerna. Skriv produkten i procent. Rabatten totalt är 100 % minus det du betalar.","Multiply the two change factors. Write the product as a percent. The total discount is 100% minus what you pay.","اضرب معاملي التغيّر، ثم اكتب الناتج نسبةً مئوية. التخفيض الكلي هو 100% ناقص ما تدفعه."),cut:g=>g.sol.slice(0,g.hc)},
   {say:t3("Räkna baklänges: dela det nya priset med förändringsfaktorn. Dra inte bara av procenten!","Work backwards: divide the new price by the change factor. Don't just subtract the percent!","احسب بالعكس: اقسم السعر الجديد على معامل التغيّر، ولا تطرح النسبة فقط!"),cut:g=>g.sol.slice(0,g.hc)}],
- nonlin9:[{say:t3("Sätt in x i formeln. Räkna kvadraten först: (−3)² = (−3) · (−3) = 9.","Put x into the formula. Work out the square first: (−3)² = (−3) × (−3) = 9.","عوّض x في الصيغة، واحسب المربع أولًا: (−3)² = (−3) × (−3) = 9."),cut:g=>g.sol.slice(0,g.hc)},
+ nonlin9:[{say:t3("Sätt in x i formeln. Räkna kvadraten först: (−3)² = (−3) · (−3) = 9. Blir sidan n gånger så lång blir arean n · n gånger så stor.","Put x into the formula. Work out the square first: (−3)² = (−3) × (−3) = 9. If the side becomes n times as long, the area becomes n × n times as big.","عوّض x في الصيغة، واحسب المربع أولًا: (−3)² = (−3) × (−3) = 9. إذا أصبح الضلع أطول n مرات تصبح المساحة أكبر n × n مرة."),cut:g=>g.sol.slice(0,g.hc)},
   {say:t3("När den ena storheten ökar minskar den andra, och x · y är lika stort hela tiden. Räkna ut produkten först.","When one quantity grows the other shrinks, and x × y stays the same. Work out the product first.","عندما يزيد أحد المقدارين ينقص الآخر، ويبقى x × y ثابتًا. احسب حاصل الضرب أولًا."),cut:g=>g.sol.slice(0,g.hc)},
   {say:t3("Alla formlerna ger samma y när x = 1. Testa dem med x = 2 i stället.","All the formulas give the same y when x = 1. Test them with x = 2 instead.","كل الصيغ تعطي قيمة y نفسها عندما x = 1. جرّبها عندما x = 2."),cut:g=>g.sol.slice(0,g.hc)}],
  line9:[{say:t3("Gå från A till B: hur många steg åt höger och hur många upp eller ner? k = Δy / Δx.","Go from A to B: how many steps right, and how many up or down? k = Δy ÷ Δx.","انتقل من A إلى B: كم خطوة إلى اليمين، وكم خطوة إلى الأعلى أو الأسفل؟ k = Δy ÷ Δx."),cut:g=>g.sol.slice(0,g.hc)},
-  {say:t3("Punkten ligger på linjen. Sätt in dess x och y i y = kx + m och lös ut m.","The point lies on the line. Put its x and y into y = kx + m and solve for m.","النقطة تقع على الخط. عوّض قيمتي x وy في y = kx + m ثم أوجد m."),cut:g=>g.sol.slice(0,g.hc)},
+  {say:t3("Punkten ligger på linjen. Sätt in dess x och y i y = kx + m och lös ut m. Ligger punkten på linjen? Sätt in x och se om du får samma y.","The point lies on the line. Put its x and y into y = kx + m and solve for m. Is the point on the line? Put in x and see if you get the same y.","النقطة تقع على الخط. عوّض قيمتي x وy في y = kx + m ثم أوجد m. هل النقطة على المستقيم؟ عوّض x وانظر هل تحصل على y نفسها."),cut:g=>g.sol.slice(0,g.hc)},
   {say:t3("Räkna först ut k = Δy / Δx. Sätt sedan in en av punkterna för att få m.","First work out k = Δy ÷ Δx. Then put in one of the points to get m.","احسب أولًا k = Δy ÷ Δx، ثم عوّض إحدى النقطتين لتحصل على m."),cut:g=>g.sol.slice(0,g.hc)}]
 });
 }

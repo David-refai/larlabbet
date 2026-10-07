@@ -9,6 +9,7 @@ await p.route(/fonts\.googleapis/,r=>r.fulfill({body:fs.readFileSync('tests/font
 await p.route(/fonts\.gstatic/,r=>{const f=fmap[r.request().url()];f?r.fulfill({body:fs.readFileSync(f),contentType:'font/woff2'}):r.abort()});
 await p.goto('file://'+process.cwd()+'/build/test.html');await p.waitForTimeout(700);
 await p.evaluate(()=>LESSONS.forEach(l=>{if(l.gen){const g0=l.gen;l.gen=lv=>{const g=g0(lv);g.__id=l.id;window.__g=g;return g}}}));
+await p.evaluate(()=>{const w0=wordQ;wordQ=l=>{const r=w0(l);if(r){r.g.__id='word';window.__g=r.g}return r}});
 const shot=n=>p.screenshot({path:`${D}/${n}.png`,fullPage:true});
 async function answer(right){const g=await p.evaluate(()=>{const g=window.__g;return{kind:g.kind,ans:g.ans,n:g.opts?g.opts.length:0,id:g.__id}});
  if(g.kind==='choice'){await p.click(`.ch[data-j="${right?g.ans:(g.ans+1)%g.n}"]`)}
@@ -19,12 +20,12 @@ const toPractice=async id=>{await p.click(`.card[data-l="${id}"]`);await p.waitF
 await p.click('#langs button[data-l="sv"]');await p.fill('#nm','Sara');await p.click('#gr button[data-g="5"]');await p.click('#go');await p.waitForTimeout(300);
 await p.click('#pskip');await p.waitForTimeout(200);
 // 1. finish lesson 1 -> scheduled for tomorrow
-await toPractice('big5');for(let k=0;k<3;k++){await answer(true);await p.click('#nx');await p.waitForTimeout(150)}
+await toPractice('big5');while(await p.$('#chk, .ch')){await answer(true);await p.click('#nx');await p.waitForTimeout(150)}
 await closePop();let r=await p.evaluate(()=>JSON.stringify(S.rev));console.log('after big5:',r,'tomorrow',await p.evaluate(()=>inDays(1)));
 await p.click('#mapb');await p.waitForTimeout(200);
 // 2. lesson 2: question 3 comes from big5; answer it wrong, use Remind me, then the similar problem
 await toPractice('neg');const ids=[];
-for(let k=0;k<5;k++){const head=await p.textContent('#say');
+for(let k=0;k<10;k++){const head=await p.textContent('#say');
   const isMix=/tidigare lektion/.test(head);const id=await answer(!isMix);ids.push(id+(isMix?'(mix)':''));
   if(isMix){await shot('1-mix-wrong');const rem=await p.$('#rem');console.log('remind button',!!rem);await rem.click();await p.waitForTimeout(300);await shot('2-remind');
     while(await p.$('#rmore')){await p.click('#rmore');await p.waitForTimeout(200)}await p.click('#rtry');await p.waitForTimeout(200);console.log('retry head:',(await p.textContent('#say')).slice(0,60));

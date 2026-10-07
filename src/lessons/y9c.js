@@ -119,10 +119,38 @@ LESSONS.push(fixGen({id:"cone9",subject:"math",grades:"9",kind:"wb",
   <text x="160" y="172" ${CV} font-size="26" fill="#1d2433">V = B · h / 3</text>`),
  steps:fixSteps(CONE9.steps),mount:wbMount(CONE9),
  gen(level){const [M,D]=MK2();
+  /* level 0: a pyramid tent, word problem in m³ */
+  if(level===0&&Math.random()<.3){let a,h;do{a=rint(2,6);h=rint(2,5)}while((a*a*h)%3);
+   const w=100+30*a,dep=60+20*a,H=150+30*h,p=pyr(240,420,w,dep,H),B=a*a,V=B*h/3,dx=p.FL[0]-22;
+   return{kind:"num",ans:V,show:wu(fmt(V),"m3"),hc:4,
+    q:[A.wipe(),...head2(T(`Ett tält är en pyramid med kvadratisk botten och höjden ${h} m.`,`A tent is a pyramid with a square base and a height of ${h} m.`,`خيمة على شكل هرم قاعدته مربعة وارتفاعه ${wu(h,"m")}.`),
+      L(pick([t3("Hur många m³ luft finns i tältet?","How many m³ of air are in the tent?","كم مترًا مكعبًا من الهواء في الخيمة؟"),t3("Beräkna tältets volym.","Work out the volume of the tent.","احسب حجم الخيمة.")]))),
+     A.hatch(p.base,"o"),A.hatch(p.front,"b"),...p.o,A.p(R.dashed(...p.T,...p.C,9),"r",3),
+     qt(wu(a,"m"),240,458,28),Object.assign(qt(wu(a,"m"),p.FR[0]+dep*.25+14,p.FR[1]-dep*.17+6,28),{anchor:"start"}),
+     A.p(R.dashed(dx-8,p.T[1],p.T[0],p.T[1],9),"#9aa8c4",2),dimV(dx,p.T[1],p.C[1],"r"),Object.assign(qt(wu(h,"m"),dx-12,(p.T[1]+p.C[1])/2+10,28,"r"),{anchor:"end"})],
+    sol:[A.tx(`V = B ${M} h ${D} 3`,620,170,36,"b"),A.tx(wu(`B = ${a} ${M} ${a} = ${B}`,"m2"),620,245,34,"o"),A.tx(`V = ${B} ${M} ${h} ${D} 3`,620,320,34),
+     fin(A.hl(480,358,280,62)),fin(A.tx(wu(`V = ${fmt(V)}`,"m3"),620,404,40,"g"))]}}
+  /* level 1: a cone and a cylinder with the same radius and height */
+  if(level===1&&Math.random()<.3){const C=rint(4,30)*3*(Math.random()<.5?10:1),Vc=C/3,yb=400,cx1=200,cx2=420;
+   return{kind:"num",ans:Vc,show:wu(fmt(Vc),"cm3"),hc:2,
+    q:[A.wipe(),...head2(T(`En cylinder rymmer ${fmt(C)} cm³. En kon har samma radie och höjd.`,`A cylinder holds ${fmt(C)} cm³. A cone has the same radius and height.`,`تتسع أسطوانة لـ ${wu(fmt(C),"cm3")}، ولمخروط نصف القطر نفسه والارتفاع نفسه.`),
+      L(pick([t3("Hur mycket rymmer konen?","How much does the cone hold?","كم يتسع المخروط؟"),t3("Beräkna konens volym.","Work out the volume of the cone.","احسب حجم المخروط.")]))),
+     A.hatch(cylFront(cx1,170,80,22,230),"b"),...cyl(cx1,170,80,22,230,"b"),A.tx(wu(fmt(C),"cm3"),cx1,yb+60,32,"b"),
+     ...coneUp(cx2,yb,80,22,230,"o"),A.tx("?",cx2,yb-70,48,"r")],
+    sol:[A.p(R.dashed(cx1-80,170+230/3,cx1+80,170+230/3,9)+R.dashed(cx1-80,170+460/3,cx1+80,170+460/3,9),"b",2.5),A.tx(T("3 koner = 1 cylinder","3 cones = 1 cylinder","3 مخاريط = أسطوانة واحدة"),650,180,30,"g"),
+     fin(A.tx(`${fmt(C)} ${D} 3 = ${fmt(Vc)}`,650,260,38)),fin(A.hl(520,288,260,62)),fin(A.tx(wu(`V = ${fmt(Vc)}`,"cm3"),650,334,40,"g"))]}}
+  /* level 2: air in a football, in litres */
+  if(level===2&&Math.random()<.3){let r;do{r=pick([10,10.5,11,11.5,12,13])}while(!okPi(p=>4*p*r**3/3000,1));
+   const V=rnd(4*Math.PI*r**3/3000,1),cm=4*Math.PI*r**3/3,rs=nf(r);
+   return{kind:"num",dec:true,ans:V,show:`${dfmt(V,1)} ${U("l")}`,hc:3,
+    q:[A.wipe(),...head2(T(`En boll har radien ${rs} cm.`,`A ball has a radius of ${rs} cm.`,`نصف قطر كرة ${wu(rs,"cm")}.`),T("Hur många liter luft rymmer den? Svara med en decimal.","How many litres of air does it hold? Give one decimal.","كم لترًا من الهواء تتسع؟ أجب بمنزلة عشرية واحدة.")),
+     A.hatch(`M90,290a130,130 0 1,0 260,0a130,130 0 1,0 -260,0`,"o"),...sph(220,290,130,"k"),A.p(R.line(220,290,350,290,.2),"r",4),A.p(dots([[220,290]]),"r",10),A.tx(wu(`r = ${rs}`,"cm"),285,250,30,"r")],
+    sol:[A.tx(`V = 4 ${M} π ${M} ${rs}³ ${D} 3`,615,160,fitS(`V = 4 · π · ${rs}³ / 3`,300,34)),A.tx(wu(`V ≈ ${fmt(Math.round(cm))}`,"cm3"),615,240,34),A.tx(`1 ${U("l")} = ${fmt(1000)} cm³`,615,320,30,"b"),
+     fin(A.hl(480,358,270,62)),fin(A.tx(`V ≈ ${dfmt(V,1)} ${U("l")}`,615,404,40,"g"))]}}
   if(level===0){let l,b,h;do{l=rint(3,12);b=rint(3,12);h=rint(4,15)}while((l*b*h)%3||l*b*h/3>600);
    const w=100+11*l,dep=60+8*b,H=150+9*h,p=pyr(240,420,w,dep,H),B=l*b,V=B*h/3,dx=p.FL[0]-22;
    return{kind:"num",ans:V,show:wu(fmt(V),"cm3"),hc:4,
-    q:[A.wipe(),...head2(T("Beräkna pyramidens volym.","Work out the volume of the pyramid.","احسب حجم الهرم.")),A.hatch(p.base,"o"),...p.o,A.p(R.dashed(...p.T,...p.C,9),"r",3),
+    q:[A.wipe(),...head2(L(pick([t3("Beräkna pyramidens volym.","Work out the volume of the pyramid.","احسب حجم الهرم."),t3("Bestäm pyramidens volym.","Find the volume of the pyramid.","أوجد حجم الهرم.")]))),A.hatch(p.base,"o"),...p.o,A.p(R.dashed(...p.T,...p.C,9),"r",3),
      qt(wu(l,"cm"),240,458,28),Object.assign(qt(wu(b,"cm"),p.FR[0]+dep*.25+14,p.FR[1]-dep*.17+6,28),{anchor:"start"}),
      A.p(R.dashed(dx-8,p.T[1],p.T[0],p.T[1],9),"#9aa8c4",2),dimV(dx,p.T[1],p.C[1],"r"),Object.assign(qt(wu(h,"cm"),dx-12,(p.T[1]+p.C[1])/2+10,28,"r"),{anchor:"end"})],
     sol:[A.tx(`V = B ${M} h ${D} 3`,620,170,36,"b"),A.tx(wu(`B = ${l} ${M} ${b} = ${B}`,"cm2"),620,245,fitS(`B = ${l} · ${b} = ${B} cm²`,300,34),"o"),A.tx(`V = ${B} ${M} ${h} ${D} 3`,620,320,34),
@@ -130,7 +158,7 @@ LESSONS.push(fixGen({id:"cone9",subject:"math",grades:"9",kind:"wb",
   if(level===1){let r,h;do{r=rint(2,9);h=rint(3,20)}while((r*r*h)%3||!okPi(p=>p*r*r*h/3));
    const k=r*r*h/3,V=rnd(Math.PI*k),rx=64+7*r,ry=rx*.27,H=130+8*h,yb=410,cx=270,dx=cx-rx-26;
    return{kind:"num",ans:V,show:wu(fmt(V),"cm3"),hc:2,
-    q:[A.wipe(),...head2(T("Beräkna konens volym.","Work out the volume of the cone.","احسب حجم المخروط."),T("Avrunda till hela cm³.","Round to the nearest whole cm³.","قرّب الناتج إلى أقرب عدد صحيح.")),
+    q:[A.wipe(),...head2(L(pick([t3("Beräkna konens volym.","Work out the volume of the cone.","احسب حجم المخروط."),t3("Hur stor volym har konen?","What is the volume of the cone?","ما حجم المخروط؟")])),T("Avrunda till hela cm³.","Round to the nearest whole cm³.","قرّب الناتج إلى أقرب عدد صحيح.")),
      A.hatch(P2([[cx,yb-H],...eArc(cx,yb,rx,ry,Math.PI,0,24)])+"Z","o"),...coneUp(cx,yb,rx,ry,H),A.p(R.line(cx,yb,cx+rx,yb,.2),"r",4),A.p(R.dashed(cx,yb-H,cx,yb,9),"r",3),ra(cx,yb,1,-1,14,"r"),
      A.p(R.dashed(dx-8,yb-H,cx,yb-H,9),"#9aa8c4",2),dimV(dx,yb-H,yb,"r"),Object.assign(qt(wu(h,"cm"),dx-12,yb-H/2+10,28,"r"),{anchor:"end"}),qt("h",cx+16,yb-H*.42,28,"r"),
      A.tx(wu(`r = ${r}`,"cm"),cx+rx/2,yb+ry+32,28,"r")],
@@ -156,8 +184,8 @@ fixHelp({cone9:[
     A.hl(250,402,300,62),A.tx(T("3 strutar = 1 glas","3 cones = 1 glass","3 أقماع = كوب واحد"),400,448,40,"g"));return o}}]});
 Object.assign(HINTSX,{cone9:[
  {say:t3("Börja med bottenytan B = längd · bredd. Volymen är B · h / 3.","Start with the base area B = length × width. The volume is B × h ÷ 3.",`ابدأ بمساحة القاعدة: الطول × العرض. ثم الحجم ${LRI("B × h ÷ 3")}.`),cut:g=>g.sol.slice(0,2)},
- {say:t3("Sätt in radien och höjden i V = π · r² · h / 3.","Put the radius and the height into V = π × r² × h ÷ 3.",`عوّض نصف القطر والارتفاع في ${LRI("V = π × r² × h ÷ 3")}.`),cut:g=>g.sol.slice(0,2)},
- {say:t3("Radien är halva diametern. Använd sedan V = 4 · π · r³ / 3.","The radius is half the diameter. Then use V = 4 × π × r³ ÷ 3.",`نصف القطر يساوي نصف طول القطر. ثم استخدم ${LRI("V = 4 × π × r³ ÷ 3")}.`),cut:g=>g.sol.slice(0,2)}]});
+ {say:t3("Sätt in radien och höjden i V = π · r² · h / 3. Har konen samma radie och höjd som en cylinder rymmer den en tredjedel.","Put the radius and the height into V = π × r² × h ÷ 3. If the cone has the same radius and height as a cylinder, it holds a third.",`عوّض نصف القطر والارتفاع في ${LRI("V = π × r² × h ÷ 3")}. إذا كان للمخروط نصف قطر الأسطوانة وارتفاعها نفسهما فإنه يتسع لثلثها.`),cut:g=>g.sol.slice(0,2)},
+ {say:t3("Radien är halva diametern. Använd sedan V = 4 · π · r³ / 3. 1 liter = 1 000 cm³, så dela med 1 000 för att få liter.","The radius is half the diameter. Then use V = 4 × π × r³ ÷ 3. 1 litre = 1,000 cm³, so divide by 1,000 to get litres.",`نصف القطر يساوي نصف طول القطر. ثم استخدم ${LRI("V = 4 × π × r³ ÷ 3")}. اللتر = 1000 سم³، فاقسم على 1000 لتحصل على اللترات.`),cut:g=>g.sol.slice(0,2)}]});
 
 /* =====================================================================
    2. surf9: surface area of cuboid and cylinder
@@ -226,7 +254,7 @@ LESSONS.push(fixGen({id:"surf9",subject:"math",grades:"9",kind:"wb",
   if(level===0){let l,b,h;do{l=rint(3,12);b=rint(2,10);h=rint(2,10)}while(l===b||b===h||l===h);
    const c=box(l,b,h),A1=2*l*b,A2=2*l*h,A3=2*b*h,tot=A1+A2+A3;
    return{kind:"num",ans:tot,show:wu(fmt(tot),"cm2"),hc:2,
-    q:[A.wipe(),...head2(T("Beräkna rätblockets begränsningsarea.","Work out the surface area of the cuboid.","احسب المساحة الكلية لمتوازي المستطيلات.")),...c.o,
+    q:[A.wipe(),...head2(...(Math.random()<.3?[T("Du ska slå in en present som är formad som ett rätblock.","You are wrapping a present shaped like a cuboid.","ستغلّف هدية على شكل متوازي مستطيلات."),T("Hur mycket papper behövs minst?","What is the least paper you need?","ما أقل مساحة من الورق تحتاجها؟")]:[L(pick([t3("Beräkna rätblockets begränsningsarea.","Work out the surface area of the cuboid.","احسب المساحة الكلية لمتوازي المستطيلات."),t3("Bestäm rätblockets begränsningsarea.","Find the surface area of the cuboid.","أوجد المساحة الكلية لمتوازي المستطيلات.")]))])),...c.o,
      qt(wu(l,"cm"),c.x+c.w/2,c.y+c.H+38,28),Object.assign(qt(wu(h,"cm"),c.x-12,c.y+c.H/2+10,28),{anchor:"end"}),Object.assign(qt(wu(b,"cm"),c.x+c.dx/2-10,c.y-c.dy/2-6,28),{anchor:"end"})],
     sol:[A.hatch(c.top,"o"),A.hatch(c.front,"b"),A.hatch(c.side,"r"),A.tx(`2 ${M} ${l} ${M} ${b} = ${A1}`,630,160,34,"o"),A.tx(`2 ${M} ${l} ${M} ${h} = ${A2}`,630,235,34,"b"),A.tx(`2 ${M} ${b} ${M} ${h} = ${A3}`,630,310,34,"r"),
      fin(A.hl(490,350,280,62)),fin(A.tx(wu(`A = ${fmt(tot)}`,"cm2"),630,396,40,"g"))]}}
@@ -238,10 +266,17 @@ LESSONS.push(fixGen({id:"surf9",subject:"math",grades:"9",kind:"wb",
     A.tx(wu(open?`π ${M} ${r}² ≈ ${nf(end)}`:`2 ${M} π ${M} ${r}² ≈ ${nf(end)}`,"cm2"),640,274,fitS(`2 · π · ${r}² ≈ ${nf(end)} cm²`,300,32),"o"),
     fin(A.hl(505,330,270,62)),fin(A.tx(wu(`A ≈ ${fmt(tot)}`,"cm2"),640,376,40,"g"))];
    return{tot,q,sol,top:A.hatch(ellD(cx,yt,rx,ry),"o"),bot:A.hatch(ellD(cx,yt+H,rx,ry),"o")}};
+  /* level 1: only the curved surface, the label on a can */
+  if(level===1&&Math.random()<.3){let r,h;do{r=rint(3,6);h=rint(8,15)}while(!okPi(p=>2*p*r*h));
+   const C=cylQ(r,h,false),man=rnd(2*Math.PI*r*h);
+   return{kind:"num",ans:man,show:wu(fmt(man),"cm2"),hc:2,
+    q:[A.wipe(),...head2(T("Etiketten täcker hela burkens sida, men inte botten och lock.","The label covers the whole side of the can, but not the bottom or lid.","يغطّي الملصق جانب العلبة كله، لكن ليس القاع ولا الغطاء."),
+      T("Hur stor är etikettens area? Avrunda till hela cm².","What is the area of the label? Round to whole cm².","ما مساحة الملصق؟ قرّب إلى أقرب عدد صحيح.")),...C.q],
+    sol:[C.sol[0],C.sol[1],C.sol[2],fin(A.hl(505,330,270,62)),fin(A.tx(wu(`A ≈ ${fmt(man)}`,"cm2"),640,376,40,"g"))]}}
   if(level===1){let r,h;do{r=rint(2,8);h=rint(3,15)}while(!okPi(p=>2*p*r*h+2*p*r*r));
    const C=cylQ(r,h,false);C.sol.splice(1,0,C.top);
    return{kind:"num",ans:C.tot,show:wu(fmt(C.tot),"cm2"),hc:4,
-    q:[A.wipe(),...head2(T("Beräkna cylinderns begränsningsarea.","Work out the surface area of the cylinder.","احسب المساحة الكلية للأسطوانة."),T("Avrunda till hela cm².","Round to the nearest whole cm².","قرّب الناتج إلى أقرب عدد صحيح.")),...C.q],sol:C.sol}}
+    q:[A.wipe(),...head2(L(pick([t3("Beräkna cylinderns begränsningsarea.","Work out the surface area of the cylinder.","احسب المساحة الكلية للأسطوانة."),t3("Hur stor är cylinderns begränsningsarea?","What is the surface area of the cylinder?","ما المساحة الكلية للأسطوانة؟")])),T("Avrunda till hela cm².","Round to the nearest whole cm².","قرّب الناتج إلى أقرب عدد صحيح.")),...C.q],sol:C.sol}}
   if(Math.random()<.5){let l,b,h;do{l=rint(4,10);b=rint(2,5);h=rint(3,6)}while(b===h);
    const c=box(l,b,h),A0=l*b,A1=2*l*h,A2=2*b*h,tot=A0+A1+A2;
    return{kind:"num",ans:tot,show:wu(fmt(tot),"dm2"),hc:4,
@@ -265,7 +300,7 @@ fixHelp({surf9:[
     A.hl(400,412,380,58),A.tx(T("A = summan av 6 ytor","A = the sum of 6 faces","A = مجموع 6 أوجه"),590,454,34,"g")]}}]});
 Object.assign(HINTSX,{surf9:[
  {say:t3("Ytorna kommer i tre par. Räkna ut en yta i varje par och ta gånger 2.","The faces come in three pairs. Work out one face in each pair and multiply by 2.","الأوجه ثلاثة أزواج. احسب مساحة وجه واحد من كل زوج واضربها في 2."),cut:g=>g.sol.slice(0,4)},
- {say:t3("Mantelytan är en rektangel: π · d gånger höjden. Lägg till två cirklar, π · r² var.","The curved surface is a rectangle: π × d times the height. Add two circles, π × r² each.",`المساحة الجانبية مستطيل: ${LRI("π × d")} مضروبًا في الارتفاع. أضف دائرتين، مساحة كل منهما ${LRI("π × r²")}.`),cut:g=>g.sol.slice(0,4)},
+ {say:t3("Mantelytan är en rektangel: π · d gånger höjden. Lägg till två cirklar, π · r² var. En etikett är bara mantelytan, utan cirklarna.","The curved surface is a rectangle: π × d times the height. Add two circles, π × r² each. A label is only the curved surface, without the circles.",`المساحة الجانبية مستطيل: ${LRI("π × d")} مضروبًا في الارتفاع. أضف دائرتين، مساحة كل منهما ${LRI("π × r²")}. الملصق هو المساحة الجانبية فقط، بلا الدائرتين.`),cut:g=>g.sol.slice(0,4)},
  {say:t3("Utan lock finns bara en botten. Räkna bara de ytor som finns och lägg ihop.","With no lid there is only a bottom. Count only the faces that are there, then add them up.","بلا غطاء يوجد قاع فقط. احسب الأوجه الموجودة فقط ثم اجمعها."),cut:g=>g.sol.slice(0,g.hc)}]});
 
 /* =====================================================================
@@ -326,10 +361,18 @@ LESSONS.push(fixGen({id:"scale9",subject:"math",grades:"9",kind:"wb",
  steps:fixSteps(SCALE9.steps),mount:wbMount(SCALE9),
  gen(level){const [M,D]=MK2();
   /* the drawn triangles have area 0,36 · base², so the given areas match the picture */
+  /* level 0: how many times as much pizza? (area scale) */
+  if(level===0&&Math.random()<.3){const [d,k]=pick([[10,2],[12,2],[15,2],[16,2],[10,3],[12,3]]),D2=d*k,rs=40,rb=40*k;
+   return{kind:"num",ans:k*k,show:`${k*k}`,hc:2,
+    q:[A.wipe(),...head2(T(`En liten pizza har diametern ${d} cm och en stor ${D2} cm.`,`A small pizza is ${d} cm across and a big one is ${D2} cm.`,`قطر بيتزا صغيرة ${wu(d,"cm")} وقطر بيتزا كبيرة ${wu(D2,"cm")}.`),
+      L(pick([t3("Hur många gånger så mycket pizza är den stora?","How many times as much pizza is the big one?","كم ضعفًا من البيتزا في الكبيرة؟"),t3("Bestäm areaskalan.","Find the area scale.","أوجد مقياس المساحة.")]))),
+     ...pizza(60+rs,300,rs),...pizza(Math.min(560,150+2*rs+rb),300,Math.min(rb,150)),A.p(R.dashed(60,300,60+2*rs,300,9),"k",2.5),qt(wu(d,"cm"),60+rs,300+rs+36,26),qt(wu(D2,"cm"),Math.min(560,150+2*rs+rb),300+Math.min(rb,150)+36,28)],
+    sol:[A.tx(`k = ${D2} ${D} ${d} = ${k}`,650,150,34,"b"),fin(A.tx(T(`areaskala = ${k}² = ${k*k}`,`area scale = ${k}² = ${k*k}`,`مقياس المساحة = ${LRI(`${k}² = ${k*k}`)}`),650,220,30,"o")),
+     fin(A.hl(530,250,240,62)),fin(A.tx(T(`${k*k} gånger`,`${k*k} times`,`${k*k} أضعاف`),650,294,38,"g"))]}}
   if(level===0){const k=rint(2,4),a=rint(4,10),Asm=Math.round(.36*a*a),big=a*k,ans=Asm*k*k,sb=280/k;
    const s=tri(40,400,sb),B=tri(70+sb,400,280);
    return{kind:"num",ans,show:wu(fmt(ans),"cm2"),hc:2,
-    q:[A.wipe(),...head2(T("Trianglarna är likformiga.","The triangles are similar.","المثلثان متشابهان."),T("Vilken area har den stora triangeln?","What is the area of the big triangle?","ما مساحة المثلث الكبير؟")),
+    q:[A.wipe(),...head2(T("Trianglarna är likformiga.","The triangles are similar.","المثلثان متشابهان."),L(pick([t3("Vilken area har den stora triangeln?","What is the area of the big triangle?","ما مساحة المثلث الكبير؟"),t3("Beräkna den stora triangelns area.","Work out the area of the big triangle.","احسب مساحة المثلث الكبير.")]))),
      A.hatch(s.d,"b"),s.o,B.o,qt(wu(a,"cm"),40+sb/2,434,26),qt(wu(big,"cm"),210+sb,434,28),A.tx(wu(`A = ${Asm}`,"cm2"),Math.max(80,40+sb/2),474,28,"b"),A.tx("A = ?",70+sb+280*.42,340,36,"r")],
     sol:[A.tx(`k = ${big} ${D} ${a} = ${k}`,630,170,36,"b"),A.tx(T(`areaskala = ${k}² = ${k*k}`,`area scale = ${k}² = ${k*k}`,`مقياس المساحة = ${k}² = ${k*k}`),630,250,32,"o"),
      fin(A.hl(490,290,280,62)),fin(A.tx(wu(`${k*k} ${M} ${Asm} = ${fmt(ans)}`,"cm2"),630,336,fitS(`${k*k} · ${Asm} = ${ans} cm²`,270,38),"g"))]}}
@@ -337,7 +380,7 @@ LESSONS.push(fixGen({id:"scale9",subject:"math",grades:"9",kind:"wb",
    /* a solid chocolate egg weighs roughly 0,3 · height³ grams */
    if(ctx==="egg"){const [hs,m]=pick([[3,10],[4,20],[4,25],[5,35],[5,40],[6,60],[6,70]]),ans=m*k**3,hS=Math.min(270/k,100),hB=hS*k;
     return{kind:"num",ans,show:wu(fmt(ans),"g"),hc:2,
-     q:[A.wipe(),...head2(T("Chokladäggen är likformiga.","The chocolate eggs are similar.","بيضتا الشوكولاتة متشابهتان."),T("Hur mycket väger det stora ägget?","How much does the big egg weigh?","كم تزن البيضة الكبيرة؟")),
+     q:[A.wipe(),...head2(T("Chokladäggen är likformiga.","The chocolate eggs are similar.","بيضتا الشوكولاتة متشابهتان."),L(pick([t3("Hur mycket väger det stora ägget?","How much does the big egg weigh?","كم تزن البيضة الكبيرة؟"),t3("Beräkna det stora äggets vikt.","Work out the weight of the big egg.","احسب وزن البيضة الكبيرة.")]))),
       A.hatch(egg(130,420,hS),"o"),A.p(egg(130,420,hS),"o",4.5),A.hatch(egg(305,420,hB),"o"),A.p(egg(305,420,hB),"o",4.5),
       dimV(130-hS*.38-18,420-hS,420),Object.assign(qt(wu(hs,"cm"),130-hS*.38-28,420-hS/2+10,26),{anchor:"end"}),dimV(305+hB*.38+22,420-hB,420),Object.assign(qt(wu(hs*k,"cm"),305+hB*.38+36,420-hB/2+10,28),{anchor:"start"}),
       A.tx(wu(m,"g"),130,420-hS-20,28,"b"),A.tx("?",305,420-hB/2+16,48,"r")],
@@ -439,6 +482,28 @@ LESSONS.push(fixGen({id:"pythapp9",subject:"math",grades:"9",kind:"wb",
   <path d="M270 30V150M230 150H290" stroke="#1d2433" stroke-width="4"/><path d="M226 148L264 40M240 152L278 44" stroke="#e07b00" stroke-width="3.5"/><text x="230" y="30" ${CV} font-size="26" fill="#1d2433">a² + b² = c²</text>`),
  steps:fixSteps(PYTH9.steps),mount:wbMount(PYTH9),
  gen(level){const M=MUL();
+  /* level 0: walk straight across the pitch, how many metres shorter? */
+  if(level===0&&Math.random()<.3){let w,h,c,dd;do{w=rint(60,110);h=rint(40,75);c=Math.hypot(w,h);dd=w+h-c}while(!safe(dd)||!safe(c)||w-h<10);
+   const ans=rnd(w+h)-rnd(c),sc=Math.min(320/w,250/h),W=w*sc,H=h*sc,x=110+(320-W)/2,y=170+(250-H)/2;
+   return{kind:"num",ans,show:wu(fmt(ans),"m"),hc:2,
+    q:[A.wipe(),...head2(T("Du går snett över planen i stället för längs kanterna.","You walk diagonally across the pitch instead of along the edges.","تمشي قطريًا عبر الملعب بدلًا من المشي على حافتيه."),
+      L(pick([t3("Hur många meter kortare blir vägen? Avrunda till hela m.","How many metres shorter is the walk? Round to whole m.","بكم مترًا يقصر الطريق؟ قرّب إلى أقرب عدد صحيح."),t3("Beräkna hur mycket kortare vägen blir. Svara i hela meter.","Work out how much shorter the walk is. Answer in whole metres.","احسب بكم يقصر الطريق. أجب بالأمتار الكاملة.")]))),
+     A.hatch(`M${x},${y}h${W}v${H}h${-W}Z`,"g"),A.p(R.rect(x,y,W,H,.3)+R.line(x+W/2,y,x+W/2,y+H,.2)+R.circ(x+W/2,y+H/2,Math.min(W,H)*.14),"g",3.5),
+     A.p(R.line(x,y+H,x+W,y+H,.2)+R.line(x+W,y+H,x+W,y,.2),"o",6),A.p(R.arrow(x,y+H,x+W,y,0),"r",5),
+     qt(wu(w,"m"),x+W/2,y+H+36,28),Object.assign(qt(wu(h,"m"),x+W+14,y+H/2+10,28),{anchor:"start"})],
+    sol:[A.tx(wu(`${w} + ${h} = ${w+h}`,"m"),630,150,34,"o"),A.tx(`c² = ${w}² + ${h}²`,630,215,34,"r"),A.tx(wu(`c = √${fmt(w*w+h*h)} ≈ ${fmt(rnd(c))}`,"m"),630,280,fitS(`c = √${w*w+h*h} ≈ ${rnd(c)} m`,300,32)),
+     fin(A.hl(500,318,260,62)),fin(A.tx(wu(`${w+h} − ${fmt(rnd(c))} = ${fmt(ans)}`,"m"),630,364,fitS(`${w+h} − ${rnd(c)} = ${ans} m`,250,38),"g"))]}}
+  /* level 2: the carpenter's check, is the corner a right angle? */
+  if(level===2&&Math.random()<.3){const [a0,b0,c0]=pick([[3,4,5],[6,8,10],[5,12,13],[8,15,17]]),k=c0>12?5:10,a=a0*k,b=b0*k,yes=Math.random()<.5,c=yes?c0*k:c0*k+pick([-3,-2,-1,1,2,3]),ok=a*a+b*b===c*c;
+   const O=[t3("Ja, hörnet är rätt (90°)","Yes, the corner is right (90°)","نعم، الزاوية قائمة (90°)"),t3("Nej, hörnet är inte 90°","No, the corner is not 90°","لا، الزاوية ليست 90°")],ans=ok?0:1,cx=110,cy=420,sx=Math.min(300/b,300/a),pa=a*sx,pb=b*sx;
+   return{kind:"choice",opts:O,ans,show:L(O[ans]),hc:2,
+    q:[A.wipe(),...head2(T(`En snickare mäter ${a} cm och ${b} cm från hörnet. Mellan märkena är det ${c} cm.`,`A carpenter measures ${a} cm and ${b} cm from the corner. The marks are ${c} cm apart.`,`يقيس نجّار ${wu(a,"cm")} و${wu(b,"cm")} من الركن، والمسافة بين العلامتين ${wu(c,"cm")}.`),
+      L(pick([t3("Är hörnet rätvinkligt?","Is the corner a right angle?","هل الزاوية قائمة؟"),t3("Avgör om vinkeln är rät.","Decide if the angle is a right angle.","حدّد هل الزاوية قائمة.")]))),
+     A.hatch(`M${cx-30},${cy}h${pb+60}v30h${-pb-60}Z`,"o"),A.hatch(`M${cx-30},${cy}v${-pa-40}h30v${pa+40}Z`,"o"),A.p(R.rect(cx-30,cy,pb+60,30,.3)+R.rect(cx-30,cy-pa-40,30,pa+40,.3),"o",4),
+     A.p(dots([[cx,cy-pa],[cx+pb,cy]]),"r",14),A.p(R.line(cx,cy-pa,cx+pb,cy,.2),"r",4.5),A.tx("?",cx+22,cy-16,30,"r","start"),
+     Object.assign(qt(wu(a,"cm"),cx+14,cy-pa/2,28,"b"),{anchor:"start"}),qt(wu(b,"cm"),cx+pb/2,cy-14,28,"b"),qt(wu(c,"cm"),cx+pb/2+30,cy-pa/2-24,30,"r")],
+    sol:[A.tx(`${a}² + ${b}² = ${fmt(a*a+b*b)}`,620,170,34),A.tx(`${c}² = ${fmt(c*c)}`,620,240,34,"r"),
+     fin(A.tx(ok?`${fmt(a*a+b*b)} = ${fmt(c*c)}`:`${fmt(a*a+b*b)} ≠ ${fmt(c*c)}`,620,310,36,ok?"g":"r")),fin(A.hl(470,340,300,62)),fin(A.tx(L(O[ans]),620,384,fitS(L(O[ans]),290,30),"g"))]}}
   if(level===0){let C,w,h,c;do{C=pick(RCTX);w=rint(...C.w);h=rint(...C.h);c=Math.hypot(w,h)}while(!safe(c)||Math.abs(w-h)<4);
    const ans=rnd(c),sc=Math.min(320/w,250/h),W=w*sc,H=h*sc,x=110+(320-W)/2,y=150+(250-H)/2,un=C.u,o=[A.wipe(),
     ...head2(T(`${L(C.t)}: hur lång är diagonalen?`,`${L(C.t)}: how long is the diagonal?`,`${L(C.t)}: ما طول القطر؟`),T(`Avrunda till hela ${un}.`,`Round to the nearest whole ${un}.`,"قرّب الناتج إلى أقرب عدد صحيح."))];
@@ -453,14 +518,14 @@ LESSONS.push(fixGen({id:"pythapp9",subject:"math",grades:"9",kind:"wb",
   if(level===1){let Lg,a,h;do{Lg=pick([3,3.5,4,4.5,5,5.5,6]);a=rint(10,24)/10;h=Math.sqrt(Lg*Lg-a*a)}while(!safe(h,1)||a>Lg*.45);
    const ans=rnd(h,1),sc=290/Lg,wx=360,gy=440,fx=wx-a*sc,ty=gy-h*sc,d=dfmt,ls=nf(Lg),as=nf(a);
    return{kind:"num",dec:true,ans,show:wu(nf(ans),"m"),hc:2,
-    q:[A.wipe(),...head2(T("Hur högt upp på väggen når stegen?","How high up the wall does the ladder reach?","إلى أي ارتفاع على الحائط يصل السلّم؟"),T("Avrunda till en decimal.","Round to one decimal place.","قرّب الناتج إلى منزلة عشرية واحدة.")),
+    q:[A.wipe(),...head2(L(pick([t3("Hur högt upp på väggen når stegen?","How high up the wall does the ladder reach?","إلى أي ارتفاع على الحائط يصل السلّم؟"),t3("Beräkna hur högt stegen når.","Work out how high the ladder reaches.","احسب الارتفاع الذي يصل إليه السلّم.")])),T("Avrunda till en decimal.","Round to one decimal place.","قرّب الناتج إلى منزلة عشرية واحدة.")),
      ...wall(wx,ty-20,gy,fx-80),ladder(fx,gy,wx,ty),ra(wx,gy,-1,-1,16),Object.assign(qt(wu(ls,"m"),fx+(wx-fx)/2-26,gy-h*sc/2,30,"o"),{anchor:"end"}),
      qt(wu(as,"m"),fx+(wx-fx)/2,gy+36,28),dimV(wx+48,ty,gy,"r"),Object.assign(qt("h = ?",wx+62,gy-h*sc/2+10,32,"r"),{anchor:"start"})],
     sol:[A.tx(`h² + ${as}² = ${ls}²`,650,150,34,"b"),A.tx(`h² = ${nf(Lg*Lg,2)} − ${nf(a*a,2)}`,650,215,34),A.tx(`h² = ${nf(Lg*Lg-a*a,2)}`,650,280,34),A.tx(`h = √${nf(Lg*Lg-a*a,2)}`,650,345,34),
      fin(A.hl(530,380,240,62)),fin(A.tx(wu(`h ${Math.abs(h-ans)<1e-9?"=":"≈"} ${nf(ans)}`,"m"),650,426,40,"g"))]}}
   let x1,y1,x2,y2,d;do{x1=rint(-5,5);x2=rint(-5,5);y1=rint(-4,4);y2=rint(-4,4);d=Math.hypot(x2-x1,y2-y1)}while(Math.abs(x2-x1)<2||Math.abs(y2-y1)<2||!x1||!x2||!y1||!y2||!safe(d,1));
   const sq=n=>n<0?`(${ng(n)})²`:`${n}²`,ans=rnd(d,1),u=32,ox=255,oy=300,X=x=>ox+x*u,Y=y=>oy-y*u,dx=x2-x1,dy=y2-y1,S=dx*dx+dy*dy,o=[A.wipe(),
-   ...head2(T("Hur långt är det mellan A och B?","How far is it from A to B?","ما المسافة بين A وB؟"),T("Avrunda till en decimal.","Round to one decimal place.","قرّب الناتج إلى منزلة عشرية واحدة."))];
+   ...head2(L(pick([t3("Hur långt är det mellan A och B?","How far is it from A to B?","ما المسافة بين A وB؟"),t3("Beräkna avståndet mellan A och B.","Work out the distance between A and B.","احسب المسافة بين A وB.")])),T("Avrunda till en decimal.","Round to one decimal place.","قرّب الناتج إلى منزلة عشرية واحدة."))];
   let g="";for(let i=-5;i<=5;i++)if(i)g+=`M${X(i)},${Y(-4.5)}V${Y(4.5)}`;for(let j=-4;j<=4;j++)if(j)g+=`M${X(-5.5)},${Y(j)}H${X(5.5)}`;
   o.push(A.p(g,"#c9d2e3",1.5),A.p(R.arrow(X(-5.6),Y(0),X(5.8),Y(0))+R.arrow(X(0),Y(-4.6),X(0),Y(4.9)),"k",3.5),qt("x",X(5.8),Y(0)+30,26),qt("y",X(0)+20,Y(4.9),26));
   [-4,-2,2,4].forEach(i=>o.push(qt(ng(i),X(i),Y(0)+26,22)));[-4,-2,2,4].forEach(j=>o.push(Object.assign(qt(ng(j),X(0)-8,Y(j)+8,22),{anchor:"end"})));
@@ -491,7 +556,7 @@ fixHelp({pythapp9:[
     A.tx("9",Cx-1.5*u,Cy-1.5*u+18,54,"b"),A.tx("16",Cx+2*u,Cy+2*u+18,54,"o"),A.tx("25",(Q[0][0]+Q[2][0])/2,(Q[0][1]+Q[2][1])/2+18,54,"g"),
     A.tx("9 + 16 = 25",670,330,42),A.hl(560,370,230,62),A.tx("3² + 4² = 5²",675,414,40,"g")]}}]});
 Object.assign(HINTSX,{pythapp9:[
- {say:t3("Diagonalen är hypotenusan. Använd c² = a² + b².","The diagonal is the hypotenuse. Use c² = a² + b².",`القطر هو الوتر. استخدم ${LRI("c² = a² + b²")}.`),cut:g=>g.sol.slice(0,2)},
+ {say:t3("Diagonalen är hypotenusan. Använd c² = a² + b². Snett över: jämför diagonalen med de två kanterna tillsammans.","The diagonal is the hypotenuse. Use c² = a² + b². Across: compare the diagonal with the two edges together.",`القطر هو الوتر. استخدم ${LRI("c² = a² + b²")}. عبر الملعب: قارن القطر بالحافتين معًا.`),cut:g=>g.sol.slice(0,2)},
  {say:t3("Stegen är hypotenusan. Ta stegens längd i kvadrat minus avståndet i kvadrat.","The ladder is the hypotenuse. Take the ladder's length squared minus the distance squared.","السلّم هو الوتر. اطرح مربع المسافة من مربع طول السلّم."),cut:g=>g.sol.slice(0,1)},
- {say:t3("Rita en rätvinklig triangel mellan punkterna. Räkna stegen i x-led och i y-led.","Draw a right-angled triangle between the points. Count the steps along x and along y.","ارسم مثلثًا قائم الزاوية بين النقطتين، ثم عُدّ الخطوات أفقيًا وعموديًا."),cut:g=>g.sol.slice(0,2)}]});
+ {say:t3("Rita en rätvinklig triangel mellan punkterna. Räkna stegen i x-led och i y-led. Är hörnet rätt? Jämför a² + b² med c².","Draw a right-angled triangle between the points. Count the steps along x and along y. Is the corner right? Compare a² + b² with c².","ارسم مثلثًا قائم الزاوية بين النقطتين، ثم عُدّ الخطوات أفقيًا وعموديًا. هل الزاوية قائمة؟ قارن a² + b² مع c²."),cut:g=>g.sol.slice(0,2)}]});
 }

@@ -77,10 +77,17 @@ LESSONS.push({id:"quad9",subject:"math",grades:"9",kind:"wb",
  icon:ICO(`<rect x="40" y="28" width="86" height="86" fill="#2257c9" fill-opacity=".12"/><rect x="126" y="28" width="36" height="86" fill="#e07b00" fill-opacity=".15"/><rect x="40" y="114" width="86" height="36" fill="#e07b00" fill-opacity=".15"/><rect x="126" y="114" width="36" height="36" fill="#1e9e5a" fill-opacity=".18"/><path d="M40 28H162V150H40ZM126 28V150M40 114H162" stroke="#1d2433" stroke-width="3" fill="none"/><text x="83" y="82" ${CV} font-size="32" fill="#2257c9">x²</text><text x="144" y="78" ${CV} font-size="20" fill="#e07b00">3x</text><text x="83" y="140" ${CV} font-size="20" fill="#e07b00">3x</text><text x="144" y="140" ${CV} font-size="20" fill="#1e9e5a">9</text><text x="245" y="78" ${CV} font-size="36" fill="#1d2433">(x + 3)²</text><text x="245" y="126" ${CV} font-size="26" fill="#1e9e5a">x² + 6x + 9</text>`),
  steps:QUAD.steps,mount:wbMount(QUAD),
  gen(level){const M=MUL();
+  /* level 1, word problem: a square lawn made b metres longer in both directions, (x + b)² without brackets */
+  if(level===1&&Math.random()<.3){const b=rint(2,6),P=150,Q=b*20,X0=110,Y0=180;
+   return{kind:"pair",ans:[2*b,b*b],...(lang==="ar"?{sep:"،",labels:[t3("","","معامل x"),t3("","","العدد الثابت")]}:{sep:"x +"}),show:lang==="ar"?LRI(`x² + ${2*b}x + ${b*b}`):`x² + ${2*b}x + ${b*b}`,hc:2,
+    q:[A.wipe(),A.tx(L(t3(`En kvadratisk gräsmatta har sidan x m. Den görs ${b} m längre åt båda hållen.`,`A square lawn has side x m. It is made ${b} m longer in both directions.`,`مرجة عشب مربعة طول ضلعها x م. نزيد طولها ${b} م في الاتجاهين.`)),400,50,28),
+     A.tx(L(t3("Skriv den nya arean utan parentes: x² + □x + □","Write the new area without brackets: x² + □x + □","اكتب المساحة الجديدة دون أقواس: x² + □x + □")),400,96,30,"b"),
+     ...sqArea(X0,Y0,P,Q,"x",String(b),"b","o"),A.tx(`(x + ${b})²`,600,260,56)],
+    sol:[...sqFill(X0,Y0,P,Q,["x²",`${b}x`,`${b}x`,String(b*b)],44,30),A.tx(`= x² + ${b}x + ${b}x + ${b*b}`,600,340,36),...ansBox(`= x² + ${2*b}x + ${b*b}`,430,42,600)]}}
   if(level===0){const b=rint(2,12),mid=Math.random()<.6,ans=mid?2*b:b*b;
    const eq=mid?`(x + ${b})² = x² + □x + ${b*b}`:`(x + ${b})² = x² + ${2*b}x + □`;
    return{kind:"num",ans,show:String(ans),hc:1,
-    q:[A.wipe(),A.tx(L(t3("Vilket tal ska stå i rutan?","Which number goes in the box?","ما العدد الذي يوضع في المربع؟")),400,64,38),A.tx(eq,400,180,54)],
+    q:[A.wipe(),A.tx(L(pick([t3("Vilket tal ska stå i rutan?","Which number goes in the box?","ما العدد الذي يوضع في المربع؟"),t3("Utveckla med kvadreringsregeln. Vilket tal fattas?","Expand with the squaring rule. Which number is missing?","افكّ باستخدام قاعدة التربيع. ما العدد الناقص؟")])),400,64,38),A.tx(eq,400,180,54)],
     sol:[A.tx("(a + b)² = a² + 2ab + b²",400,266,36,"b"),A.tx(`(x + ${b})² = x² + 2 ${M} ${b} ${M} x + ${b}²`,400,345,40),...ansBox(`(x + ${b})² = x² + ${2*b}x + ${b*b}`,440,44)]}}
   if(level===1){const b=rint(2,9),t=rint(0,2),B=b*b,b2=2*b;
    const E=[`(x − ${b})²`,`(x + ${b})(x − ${b})`,`(x + ${b})²`][t];
@@ -90,18 +97,18 @@ LESSONS.push({id:"quad9",subject:"math",grades:"9",kind:"wb",
    const prod=[`x² − ${b}x − ${b}x + ${B}`,`x² − ${b}x + ${b}x − ${B}`,`x² + ${b}x + ${b}x + ${B}`][t];
    const opts=shuffle([right,...wrong]),ans=opts.indexOf(right);
    return{kind:"choice",opts,ans,show:right,hc:1,
-    q:[A.wipe(),A.tx(L(t3("Vilket uttryck är lika med","Which expression is equal to","أيّ مقدار يساوي")),400,64,38),A.tx(E,400,190,72)],
+    q:[A.wipe(),A.tx(L(pick([t3("Vilket uttryck är lika med","Which expression is equal to","أيّ مقدار يساوي"),t3("Förenkla. Vilket uttryck är rätt?","Simplify. Which expression is right?","بسّط. أيّ مقدار صحيح؟"),t3("Utveckla med kvadreringsregeln eller konjugatregeln","Expand with the squaring rule or the difference of squares","افكّ باستخدام قاعدة التربيع أو الفرق بين مربعين")])),400,64,t?38:34),A.tx(E,400,190,72)],
     sol:[A.tx(rule,400,280,36,"b"),A.tx(`${E} = ${prod}`,400,358,40),...ansBox(`${E} = ${right}`,445,44)]}}
   const t=rint(0,2);
   if(t===0){const m=rint(2,9)*10,d=rint(1,4),ans=m*m-d*d;
-   return{kind:"num",ans,show:fmt(ans),hc:1,q:[A.wipe(),A.tx(L(t3("Räkna i huvudet","Work it out in your head","احسب في ذهنك")),400,64,38),A.tx(`${m+d} ${M} ${m-d}`,400,190,72)],
+   return{kind:"num",ans,show:fmt(ans),hc:1,q:[A.wipe(),A.tx(L(pick([t3("Räkna i huvudet","Work it out in your head","احسب في ذهنك"),t3("Beräkna utan räknare","Calculate without a calculator","احسب دون آلة حاسبة")])),400,64,38),A.tx(`${m+d} ${M} ${m-d}`,400,190,72)],
     sol:[A.tx(`= (${m} + ${d})(${m} − ${d})`,400,280,42),A.tx(`= ${m}² − ${d}² = ${fmt(m*m)} − ${d*d}`,400,358,42),...ansBox(`= ${fmt(ans)}`,445,48)]}}
   if(t===1){const m=rint(2,9)*10,d=pick([-2,-1,1,2]),n=m+d,ans=n*n;
-   return{kind:"num",ans,show:fmt(ans),hc:1,q:[A.wipe(),A.tx(L(t3("Räkna i huvudet","Work it out in your head","احسب في ذهنك")),400,64,38),A.tx(`${n}²`,400,190,72)],
+   return{kind:"num",ans,show:fmt(ans),hc:1,q:[A.wipe(),A.tx(L(pick([t3("Räkna i huvudet","Work it out in your head","احسب في ذهنك"),t3("Beräkna utan räknare","Calculate without a calculator","احسب دون آلة حاسبة")])),400,64,38),A.tx(`${n}²`,400,190,72)],
     sol:[A.tx(`= (${m} ${pm(d)})²`,400,280,42),A.tx(`= ${fmt(m*m)} ${pm(2*m*d)} + ${d*d}`,400,358,42),...ansBox(`= ${fmt(ans)}`,445,48)]}}
   const a=rint(2,5),b=rint(1,7),ans=2*a*b;
   return{kind:"num",ans,show:String(ans),hc:1,
-   q:[A.wipe(),A.tx(L(t3("Vilket tal ska stå i rutan?","Which number goes in the box?","ما العدد الذي يوضع في المربع؟")),400,64,38),A.tx(`(${a}x + ${b})² = ${a*a}x² + □x + ${b*b}`,400,180,52)],
+   q:[A.wipe(),A.tx(L(pick([t3("Vilket tal ska stå i rutan?","Which number goes in the box?","ما العدد الذي يوضع في المربع؟"),t3("Utveckla med kvadreringsregeln. Vilket tal fattas?","Expand with the squaring rule. Which number is missing?","افكّ باستخدام قاعدة التربيع. ما العدد الناقص؟")])),400,64,38),A.tx(`(${a}x + ${b})² = ${a*a}x² + □x + ${b*b}`,400,180,52)],
    sol:[A.tx("(a + b)² = a² + 2ab + b²",400,266,36,"b"),A.tx(`2 ${M} ${a}x ${M} ${b} = ${ans}x`,400,345,42),...ansBox(`(${a}x + ${b})² = ${a*a}x² + ${ans}x + ${b*b}`,440,44)]}}
 });
 
@@ -163,8 +170,18 @@ LESSONS.push({id:"qeq9",subject:"math",grades:"9",kind:"wb",
  title:t3("Andragradsekvationer","Quadratic equations","المعادلات التربيعية"),
  icon:ICO(`<path d="M25 100H195" stroke="#1d2433" stroke-width="3"/><path d="M40 25Q110 235 180 25" stroke="#2257c9" stroke-width="4" fill="none"/><circle cx="72.5" cy="100" r="7" fill="#1e9e5a"/><circle cx="147.5" cy="100" r="7" fill="#1e9e5a"/><text x="250" y="72" ${CV} font-size="34" fill="#1d2433">x² = 49</text><text x="250" y="128" ${CV} font-size="34" fill="#1e9e5a">x = ±7</text>`),
  steps:QEQ.steps,mount:wbMount(QEQ),
- gen(level){const D=DIVS();
-  if(level===0){const r=rint(2,12),a=r*r,t=rint(0,2),q=[A.wipe(),A.tx(L(SOLVE),400,62,38)],sol=[];
+ gen(level){const D=DIVS(),SV=pick([SOLVE,SOLVE,t3("Lös ekvationen. Ange båda lösningarna.","Solve the equation. Give both solutions.","حلّ المعادلة. اكتب الحلّين كليهما."),t3("Bestäm x","Find x","أوجد x")]);
+  /* level 0, word problem: a square dance floor, only the positive root is a length */
+  if(level===0&&Math.random()<.25){const r=rint(4,15),a=r*r;
+   return{kind:"num",ans:r,show:`${r} m`,hc:3,q:[A.wipe(),A.tx(L(t3(`Ett kvadratiskt dansgolv har arean ${a} m².`,`A square dance floor has an area of ${a} m².`,`أرضية رقص مربعة مساحتها ${a} م².`)),400,70,38),
+     A.tx(L(t3("Hur lång är sidan? Ställ upp en ekvation.","How long is a side? Set up an equation.","كم طول الضلع؟ كوّن معادلة.")),400,124,34,"b"),A.hatch("M300,170h200v200h-200Z","o"),A.p(R.rect(300,170,200,200,.3),"k",4),A.tx(`${a} m²`,400,282,40),A.tx("x",400,410,40,"r"),A.tx("x",270,282,40,"r")],
+    sol:[...eqR("x²",a,200,44,"k",660),...eqR("x",`±${r}`,270,44,"k",660),A.tx(L(t3("bara + är en längd","only + is a length","الموجب فقط طول")),660,330,26,"r"),...ansBox(`x = ${r} m`,420,44,660)]}}
+  /* level 1, word problem: a kicked ball, h = bt − t², break out t */
+  if(level===1&&Math.random()<.3){const b=rint(3,8);
+   return{kind:"num",ans:b,show:L(t3(`${b} s`,`${b} s`,`${b} ث`)),hc:3,q:[A.wipe(),A.tx(L(t3("En boll sparkas rakt upp. Efter t sekunder är höjden","A ball is kicked straight up. After t seconds its height is","تُركل كرة إلى الأعلى. بعد t ثانية يكون ارتفاعها")),400,60,30),
+     A.tx(`h = ${b}t − t²`,400,140,56,"b"),A.tx(L(t3("meter. Efter hur många sekunder landar bollen?","metres. After how many seconds does the ball land?","مترًا. بعد كم ثانية تهبط الكرة؟")),400,206,30)],
+    sol:[...eqR(`${b}t − t²`,"0",280,42),...eqR(`t(${b} − t)`,"0",340,42),A.tx(L(t3(`t = 0 (sparken) eller t = ${b}`,`t = 0 (the kick) or t = ${b}`,`t = 0 (الركلة) أو t = ${b}`)),400,398,34,"b"),...ansBox(L(t3(`landar efter ${b} s`,`lands after ${b} s`,`تهبط بعد ${b} ث`)),462,40)]}}
+  if(level===0){const r=rint(2,12),a=r*r,t=rint(0,2),q=[A.wipe(),A.tx(L(SV),400,62,38)],sol=[];
    if(t===0){q.push(...eqR("x²",a,180,60));sol.push(...eqR(`x ${MUL()} x`,a,270,50),...eqR("x",`±√${a}`,350,50))}
    else if(t===1){const c=rint(1,40);q.push(...eqR(`x² + ${c}`,a+c,180,58));sol.push(...note(`− ${c}`,180,590),...eqR("x²",a,270,50),...eqR("x",`±√${a}`,350,50))}
    else{const k=rint(2,5),rr=rint(2,9),aa=rr*rr;
@@ -177,7 +194,7 @@ LESSONS.push({id:"qeq9",subject:"math",grades:"9",kind:"wb",
    const rw=facRow(qfac(r1),qfac(r2),170,60),zf=r1===0;
    const E1=A.tx(qzero(r1),240,300,46,"b"),E2=A.tx(qzero(r2),560,300,46,"r");
    return{kind:"pair",ans:[r1,r2],labels:X12,sep:"",signed:true,check:(u,v)=>(u===r1&&v===r2)||(u===r2&&v===r1),show:`x = ${ng(r1)}, x = ${ng(r2)}`,hc:3,
-    q:[A.wipe(),A.tx(L(SOLVE),400,62,38),...rw.o],
+    q:[A.wipe(),A.tx(L(SV),400,62,38),...rw.o],
     sol:[A.arrow(rw.pos[0],196,250,252,"b"),A.arrow(rw.pos[1],196,550,252,"r"),...(zf?[E2,E1]:[E1,E2]),...ansBox(`x₁ = ${ng(r1)}`,410,48,240),...ansBox(`x₂ = ${ng(r2)}`,410,48,560)]}}
   let r1,r2;do{r1=rint(-9,9);r2=rint(-9,9)}while(r1===r2||!r1||!r2||(r1+r2)%2||r1+r2===0);
   const p=-(r1+r2),q=r1*r2,m=(r1+r2)/2,d=Math.abs(r1-r2)/2,hi=Math.max(r1,r2),lo=Math.min(r1,r2);
@@ -185,7 +202,7 @@ LESSONS.push({id:"qeq9",subject:"math",grades:"9",kind:"wb",
   const sol=[A.tx(`p = ${ng(p)}`,300,245,40,"o"),A.tx(`q = ${ng(q)}`,500,245,40,"o"),...rad(`x = ${ng(m)} ± `,`${par(p/2)}² ${pm(-q)}`,400,325,44)];
   const hc=sol.length;sol.push(A.tx(`x = ${ng(m)} ± ${d}`,400,395,44),...ansBox(`x₁ = ${ng(hi)}`,462,44,280),...ansBox(`x₂ = ${ng(lo)}`,462,44,520));
   return{kind:"pair",ans:[hi,lo],labels:X12,sep:"",signed:true,check:(u,v)=>(u===r1&&v===r2)||(u===r2&&v===r1),show:`x = ${ng(hi)}, x = ${ng(lo)}`,hc,
-   q:[A.wipe(),A.tx(L(t3("Lös ekvationen med pq-formeln","Solve with the pq formula","حلّ المعادلة باستخدام صيغة pq")),400,62,38),A.tx(eq,400,160,56)],sol}}
+   q:[A.wipe(),A.tx(L(pick([t3("Lös ekvationen med pq-formeln","Solve with the pq formula","حلّ المعادلة باستخدام صيغة pq"),t3("Lös andragradsekvationen med pq-formeln","Solve the quadratic equation with the pq formula","حلّ المعادلة التربيعية باستخدام صيغة pq")])),400,62,38),A.tx(eq,400,160,56)],sol}}
 });
 
 /* ---------------------------------------------------------------
@@ -234,7 +251,7 @@ const FORM={steps:[
 /* level-0 and level-1 templates: build the question board, the sol and the answer */
 const fQ=(head,ctx,formula,given)=>{const G=[].concat(given);return[A.wipe(),A.tx(head,400,60,36),...(ctx?[A.tx(ctx,400,110,28,"b")]:[]),A.tx(formula,400,200,58),
  ...G.map((g,i)=>A.tx(g,400+(i-(G.length-1)/2)*200,280,40,"o"))]};
-const WORK=v=>t3(`Beräkna ${v}`,`Work out ${v}`,`احسب ${v}`);
+const WORK=v=>pick([t3(`Beräkna ${v}`,`Work out ${v}`,`احسب ${v}`),t3(`Beräkna ${v}`,`Work out ${v}`,`احسب ${v}`),t3(`Bestäm ${v}`,`Find ${v}`,`أوجد ${v}`),t3(`Sätt in värdena och beräkna ${v}`,`Substitute the values and work out ${v}`,`عوّض القيم واحسب ${v}`)]);
 LESSONS.push({id:"formula9",subject:"math",grades:"9",kind:"wb",
  title:t3("Formler: sätta in och lösa ut","Formulas: substitute and rearrange","الصيغ: التعويض وتغيير موضوع القانون"),
  icon:ICO(`<text x="160" y="62" ${CV} font-size="44" fill="#1d2433">s = v · t</text><path d="M160 76V100M150 90L160 102L170 90" stroke="#d63b2f" stroke-width="3.5" fill="none" stroke-linecap="round"/><text x="140" y="152" ${CV} font-size="40" fill="#1e9e5a">t =</text><text x="196" y="132" ${CV} font-size="36" fill="#1e9e5a">s</text><path d="M180 141H212" stroke="#1e9e5a" stroke-width="3.5"/><text x="196" y="170" ${CV} font-size="36" fill="#1e9e5a">v</text>`),
@@ -287,7 +304,7 @@ LESSONS.push({id:"formula9",subject:"math",grades:"9",kind:"wb",
    {f:`V = l ${M} b ${M} h`,v:"h",step:`V ${D} (l ${M} b) = h`,right:`h = V ${D} (l ${M} b)`,wrong:[`h = V − l ${M} b`,`h = V ${M} l ${D} b`,`h = l ${M} b ${D} V`]}];
   const c=pick(T),opts=shuffle([c.right,...c.wrong]),ans=opts.indexOf(c.right);
   return{kind:"choice",opts,ans,show:c.right,hc:1,
-   q:[A.wipe(),A.tx(L(t3(`Lös ut ${c.v} ur formeln`,`Solve the formula for ${c.v}`,`اجعل ${c.v} موضوع القانون`)),400,62,38),A.tx(c.f,400,190,64)],
+   q:[A.wipe(),A.tx(L(pick([t3(`Lös ut ${c.v} ur formeln`,`Solve the formula for ${c.v}`,`اجعل ${c.v} موضوع القانون`),t3(`Skriv om formeln så att ${c.v} står ensamt`,`Rewrite the formula with ${c.v} on its own`,`أعد كتابة الصيغة بحيث يكون ${c.v} وحده`)])),400,62,38),A.tx(c.f,400,190,64)],
    sol:[A.tx(c.step,400,290,46),...ansBox(c.right,400,48)]}}
 });
 
@@ -351,6 +368,12 @@ LESSONS.push({id:"sys9",subject:"math",grades:"9",kind:"wb",
  icon:ICO(`<path d="${[30,50,70,90,110,130,150,170].map(x=>`M${x} 20V160`).join("")}${[20,40,60,80,100,120,140,160].map(y=>`M30 ${y}H170`).join("")}" stroke="#d3d9e3" stroke-width="1.5"/><path d="M30 160H172M30 160V18" stroke="#1d2433" stroke-width="3"/><path d="M30 150L170 30" stroke="#2257c9" stroke-width="4.5"/><path d="M30 40L170 140" stroke="#e07b00" stroke-width="4.5"/><circle cx="100" cy="90" r="9" fill="#1e9e5a"/><text x="250" y="66" ${CV} font-size="28" fill="#2257c9">y = 2x + 1</text><text x="250" y="106" ${CV} font-size="28" fill="#e07b00">x + y = 7</text><text x="250" y="150" ${CV} font-size="32" fill="#1e9e5a">(2, 5)</text>`),
  steps:SYS.steps,mount:wbMount(SYS),
  gen(level){const M=MUL();
+  /* level 1, word problem: two climbing gyms, when do they cost the same? */
+  if(level===1&&Math.random()<.3){const p=pick([20,25,30,40]),d=pick([10,15,20,25,30]),q=p+d,x0=rint(3,12),f=d*x0;
+   return{kind:"num",ans:x0,show:String(x0),hc:2,q:[A.wipe(),A.tx(L(t3(`Gym A: ${f} kr i avgift plus ${p} kr per besök.`,`Gym A: a ${f} kr fee plus ${p} kr per visit.`,`النادي A: رسم ${f} كرونة و${p} كرونة لكل زيارة.`)),400,60,34,"b"),
+     A.tx(L(t3(`Gym B: ${q} kr per besök.`,`Gym B: ${q} kr per visit.`,`النادي B: ${q} كرونة لكل زيارة.`)),400,110,34,"o"),
+     A.tx(L(t3("Efter hur många besök kostar gymmen lika mycket?","After how many visits do the gyms cost the same?","بعد كم زيارة تتساوى تكلفة الناديين؟")),400,170,32),...sys(`y = ${p}x + ${f}`,`y = ${q}x`,"b","o",250,310,40)],
+    sol:[A.tx(`${q}x = ${p}x + ${f}`,400,380,40),A.tx(`${d}x = ${f}`,400,430,40),...ansBox(`x = ${x0}`,480,40)]}}
   if(level===0){const X=v=>80+v*44,Y=v=>452-v*42;let a,b,k1,k2,m1,m2,s1,s2;
    const clip=(k,m)=>{if(k===0)return[0,8];const xa=-m/k,xb=(8-m)/k;return[Math.max(0,Math.min(xa,xb)),Math.min(8,Math.max(xa,xb))]};
    const len=(k,c)=>(c[1]-c[0])*Math.hypot(1,k);
@@ -358,7 +381,7 @@ LESSONS.push({id:"sys9",subject:"math",grades:"9",kind:"wb",
    while(len(k1,s1)<5||len(k2,s2)<5||m1===m2);
    const e1=`y = ${lin(k1,m1)}`,e2=`y = ${lin(k2,m2)}`;
    return{kind:"pair",ans:[a,b],labels:["x","y"],sep:",",show:`(${a}, ${b})`,hc:0,
-    q:[A.wipe(),A.tx(L(t3("Var skär linjerna varandra?","Where do the lines cross?","أين يتقاطع المستقيمان؟")),400,50,34),...plot(X,Y,R8,R8,R8,R8.slice(1)),txe("x",X(8)+26,Y(0)+30,28),txe("y",X(0)-26,Y(8)-22,28),
+    q:[A.wipe(),A.tx(L(pick([t3("Var skär linjerna varandra?","Where do the lines cross?","أين يتقاطع المستقيمان؟"),t3("Lös ekvationssystemet grafiskt","Solve the system graphically","حلّ نظام المعادلتين بيانيًا"),t3("Bestäm linjernas skärningspunkt","Find where the lines intersect","أوجد نقطة تقاطع المستقيمين")])),400,50,34),...plot(X,Y,R8,R8,R8,R8.slice(1)),txe("x",X(8)+26,Y(0)+30,28),txe("y",X(0)-26,Y(8)-22,28),
      seg(X,Y,s1[0],k1*s1[0]+m1,s1[1],k1*s1[1]+m1,"b"),seg(X,Y,s2[0],k2*s2[0]+m2,s2[1],k2*s2[1]+m2,"o"),
      A.tx(e1,615,170,42,"b"),A.tx(e2,615,240,42,"o"),A.tx("(x, y) = (?, ?)",615,330,38)],
     sol:[A.loop(X(a),Y(b),24,22,"g"),A.p(R.dashed(X(a),Y(b),X(a),Y(0))+R.dashed(X(a),Y(b),X(0),Y(b)),"g",3),A.p(dots([[X(a),Y(b)]]),"g",14),...ansBox(`(x, y) = (${a}, ${b})`,420,40,615)]}}
@@ -371,7 +394,7 @@ LESSONS.push({id:"sys9",subject:"math",grades:"9",kind:"wb",
   do{a=pick([-3,-2,-1,1,2,3]);b=rint(-6,6);p=rint(1,4);q=rint(1,3);x0=rint(-4,5);y0=a*x0+b;r=p*x0+q*y0}while(!b||Math.abs(p+q*a)<2||Math.abs(r)>40);
   const e2=`${lin(p,0)} + ${q===1?"":q}y = ${ng(r)}`;
   return{kind:"pair",ans:[x0,y0],labels:["x","y"],sep:"",signed:true,show:`(x, y) = (${ng(x0)}, ${ng(y0)})`,hc:1,
-   q:[A.wipe(),A.tx(L(t3("Lös ekvationssystemet","Solve the simultaneous equations","حلّ نظام المعادلتين")),400,56,36),...sys(`y = ${lin(a,b)}`,e2,"b","k")],
+   q:[A.wipe(),A.tx(L(pick([t3("Lös ekvationssystemet","Solve the simultaneous equations","حلّ نظام المعادلتين"),t3("Lös ekvationssystemet med substitutionsmetoden","Solve the system by substitution","حلّ نظام المعادلتين بطريقة التعويض")])),400,56,36),...sys(`y = ${lin(a,b)}`,e2,"b","k")],
    sol:[A.tx(`${lin(p,0)} + ${q===1?"":q}(${lin(a,b)}) = ${ng(r)}`,400,262,42,"b"),A.tx(`${lin(p+q*a,q*b)} = ${ng(r)}`,400,322,42),A.tx(`${lin(p+q*a,0)} = ${ng(r-q*b)}`,400,382,42),
     ...ansBox(`x = ${ng(x0)}`,455,42,200),...ansBox(`y = ${a===1?ng(x0):a===-1?"−"+par(x0):ng(a)+" "+M+" "+par(x0)} ${pm(b)} = ${ng(y0)}`,455,42,530)]}}
 });
@@ -434,16 +457,16 @@ Object.assign(HELPX,{
 });
 Object.assign(HINTSX,{
  quad9:[{say:t3("Använd regeln: första termen i kvadrat, plus dubbla produkten, plus andra termen i kvadrat.","Use the rule: the first term squared, plus twice the product, plus the second term squared.","استخدم القاعدة: مربع الحدّ الأول، زائد ضعف حاصل الضرب، زائد مربع الحدّ الثاني."),cut:g=>g.sol.slice(0,g.hc)},
-  {say:t3("Vilken regel passar? Tänk på tecknen och på mittentermen.","Which rule fits? Think about the signs and the middle term.","أيّ قاعدة تناسب؟ انتبه إلى الإشارات وإلى الحدّ الأوسط."),cut:g=>g.sol.slice(0,g.hc)},
+  {say:t3("Vilken regel passar? Tänk på tecknen och på mittentermen. Rita gärna arean som fyra delar.","Which rule fits? Think about the signs and the middle term. You can draw the area as four parts.","أيّ قاعدة تناسب؟ انتبه إلى الإشارات وإلى الحدّ الأوسط. يمكنك رسم المساحة أربعة أجزاء."),cut:g=>g.sol.slice(0,g.hc)},
   {say:t3("Leta efter en av reglerna. Ett tal som 41 kan du skriva som 40 + 1.","Look for one of the rules. A number like 41 can be written as 40 + 1.","ابحث عن قاعدة مناسبة. يمكنك أن تكتب عددًا مثل 41 على الصورة 40 + 1."),cut:g=>g.sol.slice(0,g.hc)}],
- qeq9:[{say:t3("Få x² ensamt först. Dra sedan roten ur, och glöm inte den negativa lösningen!","Get x² on its own first. Then take the square root, and don't forget the negative solution!","اجعل x² وحده أولًا، ثم خذ الجذر التربيعي، ولا تنسَ الحلّ السالب!"),cut:g=>g.sol.slice(0,g.hc)},
-  {say:t3("Produkten är 0. Sätt varje faktor lika med 0 och lös dem var för sig.","The product is 0. Set each factor equal to 0 and solve them one at a time.","حاصل الضرب صفر. اجعل كل عامل يساوي صفرًا وحلّ كلّ معادلة وحدها."),cut:g=>g.sol.slice(0,g.hc)},
+ qeq9:[{say:t3("Få x² ensamt först. Dra sedan roten ur, och glöm inte den negativa lösningen! En längd kan inte vara negativ.","Get x² on its own first. Then take the square root, and don't forget the negative solution! A length cannot be negative.","اجعل x² وحده أولًا، ثم خذ الجذر التربيعي، ولا تنسَ الحلّ السالب! الطول لا يكون سالبًا."),cut:g=>g.sol.slice(0,g.hc)},
+  {say:t3("Produkten är 0. Sätt varje faktor lika med 0 och lös dem var för sig. Bryt ut t eller x först om det behövs.","The product is 0. Set each factor equal to 0 and solve them one at a time. Factor out t or x first if needed.","حاصل الضرب صفر. اجعل كل عامل يساوي صفرًا وحلّ كلّ معادلة وحدها. أخرج t أو x عاملًا مشتركًا أولًا إن لزم."),cut:g=>g.sol.slice(0,g.hc)},
   {say:t3("Läs av p och q. Sätt in i x = −p/2 ± √((p/2)² − q).","Read off p and q. Put them into x = −p/2 ± √((p/2)² − q).","حدّد p وq، ثم عوّض في الصيغة."),cut:g=>g.sol.slice(0,g.hc)}],
  formula9:[{say:t3("Byt ut bokstäverna mot talen. Räkna gånger och delat före plus och minus.","Replace the letters with the numbers. Do times and divide before plus and minus.","ضع الأعداد مكان الحروف. اضرب واقسم قبل الجمع والطرح."),cut:g=>g.sol.slice(0,g.hc)},
   {say:t3("Få bokstaven du söker ensam. Gör det motsatta räknesättet på båda sidor.","Get the letter you want on its own. Do the opposite operation on both sides.","اجعل الحرف المطلوب وحده، بإجراء العملية العكسية على الطرفين."),cut:g=>g.sol.slice(0,g.hc)},
   {say:t3("Ta först bort det som läggs till eller dras bort. Dela eller multiplicera sedan.","First remove what is added or subtracted. Then divide or multiply.","أزل أولًا ما يُضاف أو يُطرح، ثم اقسم أو اضرب."),cut:g=>g.sol.slice(0,g.hc)}],
  sys9:[{say:t3("Hitta punkten där linjerna korsar varandra. Läs av x först, sedan y.","Find the point where the lines cross. Read off x first, then y.","جد النقطة التي يتقاطع فيها المستقيمان. اقرأ x أولًا ثم y."),cut:g=>g.sol.slice(0,g.hc)},
-  {say:t3("Båda uttrycken är lika med y. Sätt dem lika med varandra och lös ut x.","Both expressions are equal to y. Set them equal to each other and solve for x.","كلا المقدارين يساوي y. اجعلهما متساويين ثم أوجد x."),cut:g=>g.sol.slice(0,g.hc)},
+  {say:t3("Båda uttrycken är lika med y. Sätt dem lika med varandra och lös ut x. Kostar lika mycket: sätt kostnaderna lika.","Both expressions are equal to y. Set them equal to each other and solve for x. Costs the same: set the costs equal.","كلا المقدارين يساوي y. اجعلهما متساويين ثم أوجد x. التكلفة نفسها: اجعل التكلفتين متساويتين."),cut:g=>g.sol.slice(0,g.hc)},
   {say:t3("Byt ut y i den andra ekvationen mot uttrycket från den första.","Replace y in the second equation with the expression from the first one.","عوّض عن y في المعادلة الثانية بالمقدار من المعادلة الأولى."),cut:g=>g.sol.slice(0,g.hc)}]
 });
 }

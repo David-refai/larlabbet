@@ -102,10 +102,12 @@ function rtFit(a,b,mir){const s=Math.min(300/b,240/a),w=b*s,h=a*s,cx=mir?250:268
  const C=mir?[cx+w/2,Cy]:[cx-w/2,Cy],B=[C[0],Cy-h],Ah=mir?[cx-w/2,Cy]:[cx+w/2,Cy];return{C,B,A:Ah}}
 const rtDraw=(t,la,lb,lc,ca="k",cb="k",cc="k")=>{const z=s=>s.length<2?46:34;return[A.p(plines([t.C,t.B,t.A]),"k",5),raM(t.C,t.B,t.A,"r",20),sideLab(t.C,t.B,t.A,la,z(la),ca),sideLab(t.C,t.A,t.B,lb,z(lb),cb),sideLab(t.B,t.A,t.C,lc,z(lc),cc)]};
 const PX=620,PY=[135,197,259,321],ansBox=(s,c="g")=>[fin(A.hl(462,350,316,66)),fin(A.tx(s,PX,398,fitS(s,300,46),c))];
+/* "one decimal" said the way tests say it, picked at random: [sv,en,ar] */
+const RD1=()=>pick([["Svara med en decimal.","Give one decimal.","أجب بمنزلة عشرية واحدة."],["Avrunda till tiondelar.","Round to tenths.","قرّب إلى أعشار."],["Avrunda till närmaste tiondel.","Round to the nearest tenth.","قرّب إلى أقرب عُشر."]]);
 function pyLeg(){/* ladder: find the height on the wall */
  let Lg,f,h;do{Lg=rint(30,60)/10;f=rint(8,18)/10;h=Math.sqrt(Lg*Lg-f*f)}while(Math.abs(h*10%1-.5)<.04);
  const ans=Math.round(h*10)/10,s=Math.min(290/h,220/f),W=360,G=430,Fx=W-f*s,F=[Fx,G],Tp=[W,G-h*s];
- const q=[A.wipe(),A.tx(T("Hur högt når stegen? Svara med en decimal.","How high up the wall does the ladder reach? Give one decimal.","إلى أي ارتفاع يصل السلّم؟ أجب بمنزلة عشرية واحدة."),400,52,32),
+ const r1=RD1(),q=[A.wipe(),A.tx(T(`Hur högt når stegen? ${r1[0]}`,`How high up the wall does the ladder reach? ${r1[1]}`,`إلى أي ارتفاع يصل السلّم؟ ${r1[2]}`),400,52,32),
   ...wall(W,G-h*s-30,G,Math.max(40,Fx-60)),ladder(F,Tp),raM([W,G],[W,G-40],F,"r",18),A.p(R.dashed(W+44,G,W+44,Tp[1],10),"r",3.5),A.tx("h",W+72,(G+Tp[1])/2+12,42,"r"),
   sideLab(F,Tp,[W,G],lab(dfmt(Lg),"m"),32,"o",14),A.tx(lab(dfmt(f),"m"),(Fx+W)/2,G+40,30)];
  const sol=[ftx(`${dfmt(f)}² + h² = ${dfmt(Lg)}²`,PX,PY[0],38),ftx(`h² = ${nf(Lg*Lg)} − ${nf(f*f)}`,PX,PY[1],38),fin(ftx(`h² = ${nf(Lg*Lg-f*f)}`,PX,PY[2],38)),fin(ftx(`h = √${nf(Lg*Lg-f*f)}`,PX,PY[3],38)),...ansBox(eqU(`h ≈ ${dfmt(ans)}`,"m"))];
@@ -115,23 +117,37 @@ LESSONS.push({id:"pyth8",subject:"math",grades:"8",kind:"wb",
  icon:ICO(`<rect x="74" y="74" width="36" height="36" fill="#2257c9" fill-opacity=".15" stroke="#2257c9" stroke-width="3"/><rect x="110" y="110" width="48" height="48" fill="#1e9e5a" fill-opacity=".15" stroke="#1e9e5a" stroke-width="3"/><path d="M110 74L158 110L194 62L146 26Z" fill="#e07b00" fill-opacity=".15" stroke="#e07b00" stroke-width="3" stroke-linejoin="round"/><path d="M110 74V110H158Z" fill="none" stroke="#1d2433" stroke-width="4" stroke-linejoin="round"/><text x="250" y="150" ${CV} font-size="30" fill="#1d2433">a²+b²=c²</text>`),
  steps:PYTH.steps,mount:wbMount(PYTH),
  gen(level){
+  /* level 0, word problem: how much shorter is the walk straight across the lawn? */
+  if(level===0&&Math.random()<.3){const [a0,b0]=pick(TRIP.filter(t=>t[0]<t[1])),a=a0*10,b=b0*10,c=Math.hypot(a,b),s=Math.min(300/b,220/a),w=b*s,h=a*s,x0=255-w/2,y0=280-h/2;
+   return{kind:"num",ans:a+b-c,show:`${a+b-c} m`,q:[A.wipe(),A.tx(T("Du går snett över en gräsplan i stället för runt kanten.","You walk diagonally across a lawn instead of round the edge.","تمشي قطريًا عبر مرجة عشب بدلًا من المشي حول حافتها."),400,42,28),
+     A.tx(T("Hur många meter kortare blir vägen?","How many metres shorter is the walk?","بكم مترًا يصبح الطريق أقصر؟"),400,84,32,"b"),
+     A.hatch(pth([[x0,y0],[x0+w,y0],[x0+w,y0+h],[x0,y0+h]]),"g"),A.p(R.rect(x0,y0,w,h,.3),"g",4),A.p(seg([x0,y0+h],[x0+w,y0]),"b",4.5),A.arrow(x0+8,y0+h+20,x0+w-8,y0+h+20,"o"),A.arrow(x0+w+20,y0+h-8,x0+w+20,y0+8,"o"),
+     A.tx(lab(b,"m"),x0+w/2,y0+h+60,32),A.tx(lab(a,"m"),x0+w+70,y0+h/2+10,32),A.tx("?",x0+w/2-16,y0+h/2-14,44,"b")],
+    sol:[ftx(`c² = ${fmt(a)}² + ${fmt(b)}²`,PX,PY[0],38),ftx(`c² = ${fmt(a*a+b*b)}`,PX,PY[1],38),fin(ftx(`c = ${fmt(c)}`,PX,PY[2],40,"b")),fin(ftx(`${fmt(a)} + ${fmt(b)} = ${fmt(a+b)}`,PX,PY[3],38,"o")),...ansBox(eqU(`${fmt(a+b)} − ${fmt(c)} = ${fmt(a+b-c)}`,"m"))]}}
+  /* level 2: the converse, is the corner a right angle? */
+  if(level===2&&Math.random()<.25){const [a0,b0,c0]=pick(TRIP.filter(t=>t[0]<t[1]&&t[2]<=26)),k=pick([5,10]),yes=Math.random()<.5,a=a0*k,b=b0*k,c=yes?c0*k:c0*k+pick([-2,-1,1,2])*(k===5?1:2),t=rtFit(a0,b0,false),ok=a*a+b*b===c*c;
+   const O=[t3("Ja, hörnet är rätt (90°)","Yes, the corner is right (90°)","نعم، الزاوية قائمة (90°)"),t3("Nej, hörnet är inte 90°","No, the corner is not 90°","لا، الزاوية ليست 90°")];
+   return{kind:"choice",opts:O,ans:ok?0:1,show:L(O[ok?0:1]),
+    q:[A.wipe(),A.tx(T("En snickare mäter sidorna i en triangel.","A carpenter measures the sides of a triangle.","يقيس نجّار أضلاع مثلث."),400,42,28),A.tx(T("Är vinkeln vid hörnet rät? Visa med Pythagoras sats.","Is the angle at the corner a right angle? Show with Pythagoras.","هل الزاوية عند الركن قائمة؟ بيّن ذلك بمبرهنة فيثاغورس."),400,84,28,"b"),
+     A.p(plines([t.C,t.B,t.A]),"k",5),A.p(angArc(t.C,t.B,t.A,30),"r",3),A.tx("?",t.C[0]+40,t.C[1]-22,32,"r"),sideLab(t.C,t.B,t.A,lab(a,"cm"),34),sideLab(t.C,t.A,t.B,lab(b,"cm"),34),sideLab(t.B,t.A,t.C,lab(c,"cm"),34)],
+    sol:[ftx(`${a}² + ${b}² = ${fmt(a*a+b*b)}`,PX,PY[0],38),ftx(`${c}² = ${fmt(c*c)}`,PX,PY[1],38),fin(ftx(ok?`${fmt(a*a+b*b)} = ${fmt(c*c)}`:`${fmt(a*a+b*b)} ≠ ${fmt(c*c)}`,PX,PY[2],40,ok?"g":"r")),...ansBox(L(O[ok?0:1]).replace(/,.*/,""),ok?"g":"r")]}}
   if(level===0){const [a,b,c]=pick(TRIP),t=rtFit(a,b,Math.random()<.5);
-   return{kind:"num",ans:c,show:lab(c,"cm"),q:[A.wipe(),A.tx(T("Hur lång är hypotenusan c?","How long is the hypotenuse c?","ما طول الوتر c؟"),400,58,38),...rtDraw(t,lab(a,"cm"),lab(b,"cm"),"c","k","k","r")],
+   return{kind:"num",ans:c,show:lab(c,"cm"),q:[A.wipe(),A.tx(L(pick([t3("Hur lång är hypotenusan c?","How long is the hypotenuse c?","ما طول الوتر c؟"),t3("Beräkna hypotenusans längd.","Calculate the length of the hypotenuse.","احسب طول الوتر.")])),400,58,38),...rtDraw(t,lab(a,"cm"),lab(b,"cm"),"c","k","k","r")],
     sol:[ftx(`${a}² + ${b}² = c²`,PX,PY[0],40),ftx(`${fmt(a*a)} + ${fmt(b*b)} = c²`,PX,PY[1],40),fin(ftx(`c² = ${fmt(c*c)}`,PX,PY[2],40)),fin(ftx(`c = √${fmt(c*c)}`,PX,PY[3],40)),...ansBox(eqU(`c = ${c}`,"cm"))]}}
   if(level===1){const [a,b,c]=pick(TRIP),t=rtFit(a,b,Math.random()<.5),vert=Math.random()<.5,k=vert?b:a,x=vert?a:b;
-   return{kind:"num",ans:x,show:lab(x,"cm"),q:[A.wipe(),A.tx(T("Hur lång är kateten x?","How long is the leg x?","ما طول ضلع القائمة x؟"),400,58,38),...rtDraw(t,vert?"x":lab(a,"cm"),vert?lab(b,"cm"):"x",lab(c,"cm"),vert?"r":"k",vert?"k":"r","k")],
+   return{kind:"num",ans:x,show:lab(x,"cm"),q:[A.wipe(),A.tx(L(pick([t3("Hur lång är kateten x?","How long is the leg x?","ما طول ضلع القائمة x؟"),t3("Beräkna kateten x.","Calculate the leg x.","احسب ضلع القائمة x.")])),400,58,38),...rtDraw(t,vert?"x":lab(a,"cm"),vert?lab(b,"cm"):"x",lab(c,"cm"),vert?"r":"k",vert?"k":"r","k")],
     sol:[ftx(`x² + ${k}² = ${c}²`,PX,PY[0],40),ftx(`x² = ${fmt(c*c)} − ${fmt(k*k)}`,PX,PY[1],40),fin(ftx(`x² = ${fmt(x*x)}`,PX,PY[2],40)),fin(ftx(`x = √${fmt(x*x)}`,PX,PY[3],40)),...ansBox(eqU(`x = ${x}`,"cm"))]}}
   const kind=rint(0,2);
   if(kind===2)return pyLeg();
   let a,b,c;do{if(kind===0){b=rint(40,90);a=rint(Math.round(b*.45),Math.round(b*.7))}else{b=rint(15,40)/10;a=rint(4,14)/10}c=Math.sqrt(a*a+b*b)}while(Math.abs(c*10%1-.5)<.04||Math.abs(c*10%1)<.02||Math.abs(c*10%1)>.98);
-  const ans=Math.round(c*10)/10,u=kind?"m":"cm",q=[A.wipe()],F=v=>kind?dfmt(v):String(v);
+  const ans=Math.round(c*10)/10,u=kind?"m":"cm",q=[A.wipe()],F=v=>kind?dfmt(v):String(v),r1=RD1();
   if(kind===0){const s=Math.min(300/b,220/a),w=b*s,h=a*s,x0=265-w/2,y0=250-h/2;
-   q.push(A.tx(T("Hur lång är skärmens diagonal? Svara med en decimal.","How long is the screen's diagonal? Give one decimal.","ما طول قطر الشاشة؟ أجب بمنزلة عشرية واحدة."),400,52,32),
+   q.push(A.tx(T(`Hur lång är skärmens diagonal? ${r1[0]}`,`How long is the screen's diagonal? ${r1[1]}`,`ما طول قطر الشاشة؟ ${r1[2]}`),400,52,32),
     A.p(R.rect(x0-10,y0-10,w+20,h+20,.3),"k",5),A.p(`M${f1(265-16)},${f1(y0+h+10)}l-8,40M${f1(265+16)},${f1(y0+h+10)}l8,40M${f1(265-60)},${f1(y0+h+50)}h120`,"k",4),
     A.p(seg([x0,y0+h],[x0+w,y0]),"r",4.5),sideLab([x0-10,y0-10],[x0+w+10,y0-10],[265,250],lab(b,"cm"),32),sideLab([x0-10,y0-10],[x0-10,y0+h+10],[265,250],lab(a,"cm"),32),
     sideLab([x0,y0+h],[x0+w,y0],[x0+w,y0+h],"?",42,"r",4))}
   else{const s=Math.min(330/b,230/a),w=b*s,h=a*s,x0=250-w/2,yb=300+h/2;
-   q.push(A.tx(T("Hur lång är rampens lutande yta? Svara med en decimal.","How long is the ramp's sloping surface? Give one decimal.","ما طول السطح المائل للمنحدر؟ أجب بمنزلة عشرية واحدة."),400,52,32),
+   q.push(A.tx(T(`Hur lång är rampens lutande yta? ${r1[0]}`,`How long is the ramp's sloping surface? ${r1[1]}`,`ما طول السطح المائل للمنحدر؟ ${r1[2]}`),400,52,32),
     A.hatch(pth([[x0,yb],[x0+w,yb],[x0+w,yb-h]]),"o"),A.p(plines([[x0,yb],[x0+w,yb],[x0+w,yb-h]]),"k",4.5),raM([x0+w,yb],[x0,yb],[x0+w,yb-h],"r",18),
     sideLab([x0,yb],[x0+w,yb],[x0+w,yb-h],lab(dfmt(b),"m"),32),sideLab([x0+w,yb],[x0+w,yb-h],[x0,yb],lab(dfmt(a),"m"),32),sideLab([x0,yb],[x0+w,yb-h],[x0+w,yb],"?",44,"r",6))}
   const sum=a*a+b*b;
@@ -151,9 +167,9 @@ Object.assign(HELPX,{pyth8:[
    "لماذا 5 بالضبط؟ لأن 3 × 3 + 4 × 4 = 9 + 16 = 25، و5 × 5 = 25. العدد الذي إذا ضُرب في نفسه أعطى 25 هو 5."),
   draw:()=>{const M=MUL();return[A.tx(`3 ${M} 3 + 4 ${M} 4`,400,120,52),A.tx("= 9 + 16 = 25",400,200,52),A.tx(`5 ${M} 5 = 25`,400,300,52,"b"),A.hl(260,340,280,74),A.tx("√25 = 5",400,396,56,"g")]}}]});
 Object.assign(HINTSX,{pyth8:[
- {say:t3("Använd a² + b² = c². Kvadrera kateterna, lägg ihop och dra roten ur.","Use a² + b² = c². Square the legs, add them and take the square root.","استخدم a² + b² = c²: ربّع ضلعي القائمة، واجمع، ثم خذ الجذر التربيعي."),cut:noFin},
+ {say:t3("Använd a² + b² = c². Kvadrera kateterna, lägg ihop och dra roten ur. Genväg: jämför med vägen runt kanten.","Use a² + b² = c². Square the legs, add them and take the square root. Shortcut: compare with the way round the edge.","استخدم a² + b² = c²: ربّع ضلعي القائمة، واجمع، ثم خذ الجذر التربيعي. الطريق المختصر: قارنه بالطريق حول الحافة."),cut:noFin},
  {say:t3("Du söker en katet. Ta hypotenusan i kvadrat minus den andra kateten i kvadrat, och dra roten ur.","You want a leg. Take the hypotenuse squared minus the other leg squared, then take the square root.","تبحث عن ضلع قائمة: اطرح مربع ضلع القائمة الآخر من مربع الوتر، ثم خذ الجذر التربيعي."),cut:noFin},
- {say:t3("Hitta den räta vinkeln. Är det hypotenusan eller en katet du söker? Avrunda först på slutet.","Find the right angle. Are you looking for the hypotenuse or a leg? Round only at the very end.","حدّد الزاوية القائمة: هل تبحث عن الوتر أم عن ضلع قائمة؟ لا تقرّب إلا في النهاية."),cut:noFin}]});
+ {say:t3("Hitta den räta vinkeln. Är det hypotenusan eller en katet du söker? Avrunda först på slutet. Är vinkeln rät? Kolla om a² + b² = c².","Find the right angle. Are you looking for the hypotenuse or a leg? Round only at the very end. Is the angle right? Check whether a² + b² = c².","حدّد الزاوية القائمة: هل تبحث عن الوتر أم عن ضلع قائمة؟ لا تقرّب إلا في النهاية. هل الزاوية قائمة؟ تحقّق هل a² + b² = c²."),cut:noFin}]});
 
 /* =====================================================================
    2. vol8: volume of prisms and cylinders
@@ -218,7 +234,13 @@ LESSONS.push({id:"vol8",subject:"math",grades:"8",kind:"wb",
  title:t3("Volym av prisma och cylinder","Volume of prisms and cylinders","حجم المنشور والأسطوانة"),
  icon:ICO(`<path d="M40 140L110 140L75 80Z" fill="#e07b00" fill-opacity=".2" stroke="#1d2433" stroke-width="3.5" stroke-linejoin="round"/><path d="M110 140L160 105L125 45L75 80M125 45" fill="none" stroke="#1d2433" stroke-width="3.5" stroke-linejoin="round"/><ellipse cx="235" cy="45" rx="45" ry="14" fill="#2257c9" fill-opacity=".2" stroke="#1d2433" stroke-width="3.5"/><path d="M190 45V140A45 14 0 0 0 280 140V45" fill="none" stroke="#1d2433" stroke-width="3.5"/><text x="160" y="172" ${CV} font-size="26" fill="#1e9e5a">V = B · h</text>`),
  steps:VOL.steps,mount:wbMount(VOL),
- gen(level){const M=MUL(),D=DIVS(),ask=A.tx(T("Vad är volymen?","What is the volume?","ما الحجم؟"),640,70,40);
+ gen(level){const M=MUL(),D=DIVS(),ask=A.tx(L(pick([t3("Vad är volymen?","What is the volume?","ما الحجم؟"),t3("Beräkna volymen.","Calculate the volume.","احسب الحجم.")])),640,70,40);
+  /* level 1, word problem: how many litres does an aquarium hold? (1 dm³ = 1 litre) */
+  if(level===1&&Math.random()<.3){const l=rint(4,9),b=rint(2,4),h=rint(3,5),sc=Math.min(300/(l+b*.41),230/(h+b*.29)),V=OB(80,420,sc);
+   const q=[A.wipe(),A.tx(T(`Ett akvarium är ${l*10} cm långt, ${b*10} cm brett och ${h*10} cm högt.`,`A fish tank is ${l*10} cm long, ${b*10} cm wide and ${h*10} cm high.`,`حوض سمك طوله ${l*10} سم وعرضه ${b*10} سم وارتفاعه ${h*10} سم.`),400,50,30),
+    A.tx(T("Hur många liter vatten rymmer det?","How many litres of water does it hold?","كم لترًا من الماء يتّسع؟"),400,96,34,"b"),A.hatch(pth([V(0,0,0),V(l,0,0),V(l,0,h*.8),V(0,0,h*.8)]),"b"),...boxD(V,l,b,h),...boxLabs(V,l,b,h,lab(l*10,"cm"),lab(b*10,"cm"),lab(h*10,"cm"),28)];
+   const sol=[ftx(`${l} dm ${M} ${b} dm ${M} ${h} dm`,620,170,38,"k",300),ftx(`V = ${l*b*h} dm³`,620,232,40,"k",300),ftx(T("1 dm³ = 1 liter","1 dm³ = 1 litre","1 dm³ = 1 لتر"),620,294,36,"b",300),fin(A.hl(480,326,280,66)),fin(ftx(T(`${l*b*h} liter`,`${l*b*h} litres`,`${l*b*h} لترًا`),620,374,46,"g",270))];
+   return{kind:"num",ans:l*b*h,show:T(`${l*b*h} liter`,`${l*b*h} litres`,`${l*b*h} لترًا`),q,sol}}
   if(level===0){const n=pick([3,4,5,6]),B=rint(6,40),h=rint(3,15),H=Math.min(230,80+h*12),yb=400,cx=220,p=uprPrism(cx,yb,130,40,H,n,n===4?30:n===3?90:n===5?90:0),ty=Math.min(...p.top.map(q=>q[1])),bx=cx+165;
    const bl=A.tx(`B = ${lab(B,"cm2")}`,cx,ty-18,34,"b");
    return{kind:"num",ans:B*h,show:lab(B*h,"cm3"),q:[A.wipe(),ask,...p.draw,bl,A.p(seg([bx,yb],[bx,yb-H],.1)+`M${bx-8},${yb}h16M${bx-8},${yb-H}h16`,"k",2.5),A.tx(lab(h,"cm"),bx+44,yb-H/2+10,30)],
@@ -230,7 +252,7 @@ LESSONS.push({id:"vol8",subject:"math",grades:"8",kind:"wb",
    return{kind:"num",ans:Bv*Lg,show:lab(Bv*Lg,"cm3"),q,sol:[ftx(`B = ${b} ${M} ${ht} ${D} 2`,640,150,40,"o",270),ftx(eqU(`B = ${Bv}`,"cm2"),640,210,40,"o",270),ftx(`V = ${Bv} ${M} ${Lg}`,640,280,40,"k",270),fin(A.hl(500,312,280,66)),fin(ftx(eqU(`V = ${fmt(Bv*Lg)}`,"cm3"),640,360,44,"g",270))]}}
   let r,h,useD,v1,v2;do{r=rint(2,8);h=rint(4,20);useD=Math.random()<.4;v1=Math.round(Math.PI*r*r*h);v2=Math.round(3.14*r*r*h)}while(v1!==v2);
   const s=Math.min(300/(h+2*r*.3),250/(2*r),38),rx=r*s,ry=Math.max(12,rx*.3),H=h*s,cx=230,yt=265-H/2;
-  const q=[A.wipe(),A.tx(T("Vad är volymen? Avrunda till hela cm³.","What is the volume? Round to a whole cm³.","ما الحجم؟ قرّب إلى أقرب سم³."),400,52,34),A.hatch(ellP(cx,yt,rx,ry)+"Z","b"),...cylD(cx,yt,rx,ry,H),
+  const q=[A.wipe(),A.tx(L(pick([t3("Vad är volymen? Avrunda till hela cm³.","What is the volume? Round to a whole cm³.","ما الحجم؟ قرّب إلى أقرب سم³."),t3("Beräkna burkens volym. Avrunda till hela cm³.","Calculate the volume of the can. Round to a whole cm³.","احسب حجم العلبة. قرّب إلى أقرب سم³."),t3("Hur många ml rymmer burken? Avrunda till hela ml.","How many ml does the can hold? Round to a whole ml.","كم مل تتّسع العلبة؟ قرّب إلى أقرب مل.")])),400,52,34),A.hatch(ellP(cx,yt,rx,ry)+"Z","b"),...cylD(cx,yt,rx,ry,H),
    A.p(dots([[cx,yt]]),"r",10),A.p(useD?seg([cx-rx,yt],[cx+rx,yt],.1):seg([cx,yt],[cx+rx,yt],.1),"r",3.5),A.tx(useD?`d = ${lab(2*r,"cm")}`:`r = ${lab(r,"cm")}`,cx,yt-ry-16,32,"r"),
    A.p(seg([cx+rx+28,yt],[cx+rx+28,yt+H],.1)+`M${cx+rx+20},${yt}h16M${cx+rx+20},${yt+H}h16`,"k",2.5),A.tx(lab(h,"cm"),cx+rx+74,yt+H/2+10,30)];
   const sol=[...(useD?[ftx(`r = ${2*r} ${D} 2 = ${r}`,620,140,38,"r",280)]:[]),ftx(`V = π ${M} r² ${M} h`,620,205,40,"k",290),ftx(`V = π ${M} ${r}² ${M} ${h}`,620,270,40,"k",290),fin(A.hl(480,312,280,66)),fin(ftx(eqU(`V ≈ ${fmt(v1)}`,"cm3"),620,360,44,"g",270))];
@@ -246,7 +268,7 @@ Object.assign(HELPX,{vol8:[
     A.tx(T("yta · höjd","area × height","المساحة × الارتفاع"),620,220,40),A.hl(490,262,260,70),A.tx(`V = B ${MUL()} h`,620,312,48,"g"));return o}}]});
 Object.assign(HINTSX,{vol8:[
  {say:t3("Volymen är basytans area gånger höjden: V = B · h.","The volume is the area of the base times the height: V = B × h.","الحجم هو مساحة القاعدة ضرب الارتفاع: V = B × h."),cut:noFin},
- {say:t3("Basytan är triangeln: basen · höjden / 2. Multiplicera sedan med prismats längd.","The base is the triangle: base × height ÷ 2. Then multiply by the length of the prism.","القاعدة هي المثلث: القاعدة × الارتفاع ÷ 2، ثم اضرب في طول المنشور."),cut:noFin},
+ {say:t3("Basytan är triangeln: basen · höjden / 2. Multiplicera sedan med prismats längd. Akvarium: 1 dm³ = 1 liter.","The base is the triangle: base × height ÷ 2. Then multiply by the length of the prism. Fish tank: 1 dm³ = 1 litre.","القاعدة هي المثلث: القاعدة × الارتفاع ÷ 2، ثم اضرب في طول المنشور. وفي الحوض: 1 dm³ = 1 لتر."),cut:noFin},
  {say:t3("Basytan är en cirkel med arean π · r². Kom ihåg att radien är halva diametern.","The base is a circle with area π × r². Remember that the radius is half the diameter.","القاعدة دائرة مساحتها π × r². تذكّر أن نصف القطر هو نصف القطر الكامل."),cut:noFin}]});
 
 /* =====================================================================
@@ -312,17 +334,26 @@ LESSONS.push({id:"sim8",subject:"math",grades:"8",kind:"wb",
  icon:ICO(`<path d="M40 140H110L82 98Z" fill="#2257c9" fill-opacity=".12" stroke="#1d2433" stroke-width="3.5" stroke-linejoin="round"/><path d="M140 150H280L224 66Z" fill="#2257c9" fill-opacity=".12" stroke="#1d2433" stroke-width="3.5" stroke-linejoin="round"/><path d="M58 140A18 18 0 0 0 55 130M176 150A36 36 0 0 0 170 130" fill="none" stroke="#e07b00" stroke-width="3"/><text x="160" y="40" ${CV} font-size="30" fill="#1e9e5a">k = 2</text>`),
  steps:SIM.steps,mount:wbMount(SIM),
  gen(level){const M=MUL(),D=DIVS();
+  /* level 0: are the two rectangles similar? (stretching only one way is not) */
+  if(level===0&&Math.random()<.3){const [w,h]=pick([[4,6],[5,8],[6,9],[4,7],[5,6],[3,5],[6,8]]),k=pick([2,3,1.5]),yes=Math.random()<.5,W=w*k;let H=h*k;if(!yes)H+=pick([-2,-1,1,2,3]);
+   const sc=Math.min(260/W,215/H),pw=w*sc,ph=h*sc,bw=W*sc,bh=H*sc,ok=Math.abs(W/w-H/h)<1e-9;
+   const O=[t3("Ja, de är likformiga","Yes, they are similar","نعم، هما متشابهان"),t3("Nej, de är inte likformiga","No, they are not similar","لا، ليسا متشابهين")];
+   return{kind:"choice",opts:O,ans:ok?0:1,show:L(O[ok?0:1]),
+    q:[A.wipe(),A.tx(L(pick([t3("Är rektanglarna likformiga?","Are the rectangles similar?","هل المستطيلان متشابهان؟"),t3("Avgör om rektanglarna är likformiga.","Decide whether the rectangles are similar.","حدّد هل المستطيلان متشابهان.")])),400,56,36),
+     ...photo(170-pw/2,300-ph/2,pw,ph),A.tx(lab(nf(w),"cm"),170,300-ph/2-14,28),A.tx(lab(nf(h),"cm"),170-pw/2-44,310,26),
+     ...photo(520-bw/2,300-bh/2,bw,bh,"b"),A.tx(lab(nf(W),"cm"),520,300-bh/2-14,30,"b"),A.tx(lab(nf(H),"cm"),520+bw/2+50,310,28,"b")],
+    sol:[A.tx(`${nf(W)} ${D} ${nf(w)} = ${nf(W/w)}`,400,446,32,"b"),A.tx(`${nf(H)} ${D} ${nf(h)} ${Math.abs(H/h*100-Math.round(H/h*100))<1e-6?"=":"≈"} ${nf(H/h,2)}`,400,486,32,ok?"b":"r"),fin(A.tx(ok?"✓":"≠",560,470,48,ok?"g":"r"))]}}
   if(level<2&&(level===0||Math.random()<.5)){const t=pick(TRS),k=level===0?pick([2,3,4]):pick([1.5,2.5,3.5]),big=t.map(v=>v*k),j=rint(0,2),i=pick([0,1,2].filter(x=>x!==j)),rev=level===0&&Math.random()<.3;
    const SD=[[0,1],[0,2],[1,2]],/* simTri label order: base, left, right */ idx=[0,1,2];
    const labS=idx.map(m=>rev?(m===j?"x":m===i?nf(t[m]):null):(nf(t[m]))),labB=idx.map(m=>rev?nf(big[m]):(m===j?"x":m===i?nf(big[m]):null));
    const colS=idx.map(m=>m===j&&rev?"r":m===i?"b":"k"),colB=idx.map(m=>m===j&&!rev?"r":m===i?"b":"k");
    const ans=rev?t[j]:big[j],dec=!Number.isInteger(ans);
-   const q=[A.wipe(),A.tx(T("Trianglarna är likformiga. Hur lång är x?","The triangles are similar. How long is x?","المثلثان متشابهان. ما طول x؟"),400,56,36),...simPair(t[0],t[1],t[2],labS,labB,colS,colB,k)];
+   const q=[A.wipe(),A.tx(L(pick([t3("Trianglarna är likformiga. Hur lång är x?","The triangles are similar. How long is x?","المثلثان متشابهان. ما طول x؟"),t3("Trianglarna är likformiga. Beräkna sidan x.","The triangles are similar. Calculate the side x.","المثلثان متشابهان. احسب الضلع x.")])),400,56,36),...simPair(t[0],t[1],t[2],labS,labB,colS,colB,k)];
    const sol=[A.tx(`k = ${nf(big[i])} ${D} ${nf(t[i])} = ${nf(k)}`,400,410,38,"b"),fin(A.hl(230,424,340,62)),fin(A.tx(rev?`x = ${nf(big[j])} ${D} ${nf(k)} = ${nf(ans)}`:`x = ${nf(t[j])} ${M} ${nf(k)} = ${nf(ans)}`,400,466,40,"g"))];
    return{kind:"num",dec,ans,show:nf(ans),q,sol}}
   if(level===1){const [w,h]=pick([[10,15],[9,13],[10,12],[13,18],[6,9],[8,12],[12,16],[10,14]]),k=pick([1.5,2.5,3,3.5,4,2.5]),W=w*k,ans=h*k;
    const pw=66,ph=pw*h/w,bw=Math.min(pw*Math.min(k,3.2),310*w/h),bh=bw*h/w;
-   const q=[A.wipe(),A.tx(T("Fotot förstoras till en likformig affisch. Hur hög blir den?","The photo is enlarged to a similar poster. How tall will it be?","تُكبَّر الصورة إلى ملصق مشابه لها. ما ارتفاعه؟"),400,56,32),
+   const q=[A.wipe(),A.tx(L(pick([t3("Fotot förstoras till en likformig affisch. Hur hög blir den?","The photo is enlarged to a similar poster. How tall will it be?","تُكبَّر الصورة إلى ملصق مشابه لها. ما ارتفاعه؟"),t3("Fotot förstoras likformigt. Bestäm affischens höjd x.","The photo is enlarged to a similar shape. Find the poster's height x.","تُكبَّر الصورة تكبيرًا متشابهًا. أوجد ارتفاع الملصق x.")])),400,56,32),
     ...photo(80,280-ph/2,pw,ph),A.tx(lab(w,"cm"),80+pw/2,280-ph/2-14,28),txE(lab(h,"cm"),70,290,28),A.arrow(160,280,236,280,"k",-14),
     ...photo(255,275-bh/2,bw,bh,"b"),A.tx(lab(nf(W),"cm"),255+bw/2,275-bh/2-14,32,"b"),A.tx("x",255+bw+34,288,52,"r")];
    const sol=[ftx(`k = ${nf(W)} ${D} ${w} = ${nf(k)}`,660,200,38,"b",250),ftx(`x = ${h} ${M} ${nf(k)}`,660,270,40,"k",250),fin(A.hl(535,310,250,66)),fin(ftx(eqU(`x = ${nf(ans)}`,"cm"),660,358,44,"g",240))];
@@ -405,19 +436,19 @@ LESSONS.push({id:"poly8",subject:"math",grades:"8",kind:"wb",
  steps:POLY.steps,mount:wbMount(POLY),
  gen(level){const M=MUL(),D=DIVS();
   if(level===0){const n=rint(5,11),P=rndPoly(n,290,280,165),S=(n-2)*180;
-   return{kind:"num",ans:S,show:`${fmt(S)}°`,q:[A.wipe(),A.tx(T("Hur stor är vinkelsumman?","What is the angle sum?","ما مجموع الزوايا؟"),400,52,40),A.p(plines(P),"k",4.5),arcs(P,"r",22)],
+   return{kind:"num",ans:S,show:`${fmt(S)}°`,q:[A.wipe(),A.tx(L(pick([t3("Hur stor är vinkelsumman?","What is the angle sum?","ما مجموع الزوايا؟"),t3("Beräkna vinkelsumman i månghörningen.","Calculate the angle sum of the polygon.","احسب مجموع زوايا المضلع.")])),400,52,40),A.p(plines(P),"k",4.5),arcs(P,"r",22)],
     sol:[A.p(dots(P),"b",14),...P.map(([x,y],i)=>qt(i+1,290+(x-290)*1.17,280+(y-280)*1.17+10,30,"b")),A.tx(`n = ${n}`,650,180,44,"b"),ftx(`(${n} − 2) ${M} 180°`,650,250,40,"k",260),fin(A.hl(520,292,260,66)),fin(A.tx(`= ${fmt(S)}°`,650,340,46,"g"))]}}
   if(level===1){const n=rint(4,6);let P,an,kn,x,j;
    for(let t=0;t<3000;t++){P=rndPoly(n,280,275,175);an=polyAngs(P);j=rint(0,n-1);kn=an.map(a=>Math.round(a/5)*5);x=(n-2)*180-kn.reduce((s,v,i)=>i===j?s:s+v,0);
     const lp=P.map((v,i)=>angPos(v,P[(i+n-1)%n],P[(i+1)%n],i===j?48:28,16));if(lp.some((a,i)=>lp.some((b,m)=>m>i&&Math.abs(a[0]-b[0])<70&&Math.abs(a[1]-b[1])<38)))continue;
     if(Math.abs(x-an[j])<7&&x>55&&x<170)break}
-   const S=(n-2)*180,known=kn.filter((_,i)=>i!==j),q=[A.wipe(),A.tx(T("Hur stor är vinkeln x?","How big is the angle x?","ما قياس الزاوية x؟"),600,70,34),A.p(plines(P),"k",4.5)];
+   const S=(n-2)*180,known=kn.filter((_,i)=>i!==j),q=[A.wipe(),A.tx(L(pick([t3("Hur stor är vinkeln x?","How big is the angle x?","ما قياس الزاوية x؟"),t3("Bestäm vinkeln x.","Find the angle x.","أوجد الزاوية x."),t3("Beräkna vinkeln x.","Calculate the angle x.","احسب الزاوية x.")])),600,70,34),A.p(plines(P),"k",4.5)];
    P.forEach((v,i)=>{const a=P[(i+n-1)%n],b=P[(i+1)%n];q.push(A.p(angArc(v,a,b,24),i===j?"r":"b",3),angLab(v,a,b,i===j?"x":`${kn[i]}°`,i===j?48:28,i===j?"r":"b",16))});
    const tot=`= ${fmt(known.reduce((s,v)=>s+v,0))}°`,h2=Math.ceil(known.length/2),sumL=known.length>3?[known.slice(0,h2).join(" + "),`+ ${known.slice(h2).join(" + ")} ${tot}`]:[`${known.join(" + ")} ${tot}`];
    const yD=sumL.length>1?304:262;
    return{kind:"num",ans:x,show:`${x}°`,q,sol:[ftx(`(${n} − 2) ${M} 180° = ${fmt(S)}°`,640,150,36,"k",280),...sumL.map((l,i)=>ftx(l,640,204+i*48,34,"b",280)),ftx(`x = ${fmt(S)}° − ${fmt(S-x)}°`,640,yD,38,"k",280),fin(A.hl(510,yD+28,260,66)),fin(A.tx(`x = ${x}°`,640,yD+76,46,"g"))]}}
   if(Math.random()<.5){const n=pick([5,6,8,9,10,12]),P=regPts(250,280,170,n),S=(n-2)*180,x=S/n,ttl=T(`Regelbunden ${n}-hörning`,`Regular ${n}-sided polygon`,n<=10?`مضلع منتظم له ${n} رؤوس`:`مضلع منتظم له ${n} رأسًا`),q=[A.wipe(),A.tx(ttl,610,80,fitS(ttl,330,38),"b"),
-    A.tx(T("Hur stor är vinkeln x?","How big is the angle x?","ما قياس الزاوية x؟"),610,136,34),A.p(plines(P),"k",4.5),arcs(P,"b",20)];
+    A.tx(L(pick([t3("Hur stor är vinkeln x?","How big is the angle x?","ما قياس الزاوية x؟"),t3("Bestäm vinkeln x.","Find the angle x.","أوجد الزاوية x."),t3("Beräkna vinkeln x.","Calculate the angle x.","احسب الزاوية x.")])),610,136,34),A.p(plines(P),"k",4.5),arcs(P,"b",20)];
    const k=Math.floor(n/2);q.push(A.p(angArc(P[k],P[k-1],P[k+1],20),"r",4),angLab(P[k],P[k-1],P[k+1],"x",48,"r",14));
    return{kind:"num",ans:x,show:`${x}°`,q,sol:[ftx(`(${n} − 2) ${M} 180°`,610,220,40,"k",320),fin(ftx(`= ${fmt(S)}°`,610,276,40,"k",320)),fin(ftx(`x = ${fmt(S)}° ${D} ${n}`,610,340,40,"k",320)),fin(A.hl(490,368,240,66)),fin(A.tx(`x = ${x}°`,610,416,46,"g"))]}}
   const n=rint(7,20),S=(n-2)*180;

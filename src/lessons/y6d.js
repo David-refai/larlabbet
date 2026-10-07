@@ -89,7 +89,7 @@ const EQCTX=[
 function pic6(a,b,c,y){const bw=a>5?40:54,gp=a>5?6:10,fb=L(KR(b)),ft=L(KR(c)),w2=W6(fb,26)+24,wt=W6(ft,34),tot=a*(bw+gp)-gp+40+w2+44+wt;let x=400-tot/2;const o=[];let d="";
  for(let i=0;i<a;i++){d+=R.rect(x,y-24,bw,48,.25);o.push(A.tx("x",x+bw/2,y+10,30,"o"));x+=bw+gp}o.unshift(A.p(d,"o",4));x+=-gp+20;o.push(A.tx("+",x,y+14,40));x+=20;
  o.push(A.p(R.rect(x,y-24,w2,48,.25),"r",4),A.tx(fb,x+w2/2,y+9,26,"r"));x+=w2+22;o.push(A.tx("=",x,y+14,40));x+=22;o.push(A.tx(ft,x+wt/2,y+12,34,"g"));return o}
-const askBag=()=>A.tx(L(t3("Hur mycket väger påsen x?","How much does the bag x weigh?","كم يزن الكيس x؟")),400,44,30,"b");
+const askBag=()=>A.tx(L(pick([t3("Hur mycket väger påsen x?","How much does the bag x weigh?","كم يزن الكيس x؟"),t3("Lös ekvationen. Hur mycket väger påsen x?","Solve the equation. How much does the bag x weigh?","حلّ المعادلة. كم يزن الكيس x؟")])),400,44,30,"b");
 LESSONS.push({id:"eq6",subject:"math",grades:"6",kind:"wb",
  title:t3("Ekvationer i ett och två steg","One- and two-step equations","معادلات بخطوة واحدة وبخطوتين"),
  icon:`<svg viewBox="0 0 320 180"><rect width="320" height="180" fill="#fff"/><path d="M28 112Q83 126 138 112M182 112Q237 126 292 112" stroke="#1d2433" stroke-width="3.5" fill="none"/><path d="M83 119V134M237 119V134M83 134H237M160 134L146 164H174Z" stroke="#1d2433" stroke-width="3" fill="none"/>${[52,84].map(x=>`<path d="M${x-5} 82C${x-20} 88 ${x-18} 110 ${x-7} 111H${x+7}C${x+18} 110 ${x+20} 88 ${x+5} 82Z" fill="#2257c9" fill-opacity=".12" stroke="#2257c9" stroke-width="2.5"/><text direction="ltr" x="${x}" y="105" font-family="Caveat,cursive" font-weight="700" font-size="20" fill="#2257c9" text-anchor="middle">x</text>`).join("")}${[[104,95]].map(([x,y])=>`<rect x="${x}" y="${y}" width="15" height="15" fill="none" stroke="#1e9e5a" stroke-width="2.5"/>`).join("")}${[0,1,2,3,4,5,6].map(i=>`<rect x="${205+(i%4)*18}" y="${i<4?95:77}" width="15" height="15" fill="none" stroke="#1e9e5a" stroke-width="2.5"/>`).join("")}<text direction="ltr" x="160" y="46" font-family="Caveat,cursive" font-weight="700" font-size="34" text-anchor="middle">2x + 1 = 7</text></svg>`,
@@ -107,13 +107,20 @@ LESSONS.push({id:"eq6",subject:"math",grades:"6",kind:"wb",
    return{kind:"num",ans:x,show:String(x),hc:5,q:[A.wipe(),askBag(),A.tx(`${k}x + ${a} = ${b}`,400,100,50),...balance6(),...P.o,...Q.o],
     sol:[minus6(P,a),minus6(Q,a),cross6(P.C),cross6(Q.C.slice(b-a)),A.tx(`${k}x = ${b-a}`,190,476,44,"b"),
      ...groups6(Q.C,P.S,x),A.hl(390,430,330,62),A.tx(`x = ${b-a} ${D} ${k} = ${x}`,555,476,44,"g")]}}
+  if(Math.random()<.3){/* NP style: which equation fits the story? */
+   const ctx=pick(EQCTX),{a,b,x,c}=ctx.gen(),T=ctx.t(a,b,c),right=`${a}x + ${b} = ${c}`;
+   const wrong=shuffle([`${b}x + ${a} = ${c}`,`${a}x = ${c} + ${b}`,`x + ${a} + ${b} = ${c}`,`${a}x − ${b} = ${c}`]).slice(0,2),opts=shuffle([right,...wrong]);
+   return{kind:"choice",opts,ans:opts.indexOf(right),show:right,hc:1,nt:"which",
+    hsay:t3("Kalla det okända priset x. Hur många x betalar du för, och vad läggs till?","Call the unknown price x. How many x do you pay for, and what is added?","سمِّ السعر المجهول x. كم x تدفع ثمنه، وما الذي يُضاف؟"),
+    q:[A.wipe(),A.tx(L(T[0]),400,52,30),A.tx(L(T[1]),400,94,30,"b"),...pic6(a,b,c,190),A.tx(L(pick([t3("Vilken ekvation passar?","Which equation fits?","أي معادلة تناسب؟"),t3("Vilken ekvation beskriver texten?","Which equation describes the text?","أي معادلة تصف النص؟")])),400,300,38)],
+    sol:[A.tx(L(ctx.x),400,350,28,"o"),A.hl(250,370,300,58),A.tx(right,400,412,44,"g"),...lf6(L(t3("Lösning:","Solution:","الحل:")),`x = ${x}`,400,476,32,"b","b")]}}
   if(Math.random()<.5){const ctx=pick(EQCTX),{a,b,x,c}=ctx.gen(),T=ctx.t(a,b,c);
    return{kind:"num",ans:x,show:KR(x),hc:3,q:[A.wipe(),A.tx(L(T[0]),400,52,30),A.tx(L(T[1]),400,94,30,"b"),...pic6(a,b,c,160)],
     sol:[A.tx(L(ctx.x),400,232,28,"o"),...eqR(`${a}x + ${b}`,c,292,46),...ann(`− ${b}`,292),...eqR(`${a}x`,c-b,356,46),...ann(`${D} ${a}`,356),...eqR("x",x,420,46,"g"),A.loop(410,405,96,34,"g"),
      ...chk6(`${a} ${M} ${x} + ${b} = ${c} ✓`,482)]}}
   const a=rint(2,9),x=rint(3,15),minus=Math.random()<.5;let b,c;if(minus){b=rint(2,Math.min(30,a*x-1));c=a*x-b}else{b=rint(3,40);c=a*x+b}
   const lhs=`${a}x ${minus?"−":"+"} ${b}`,op=minus?`+ ${b}`:`− ${b}`;
-  return{kind:"num",ans:x,show:String(x),hc:4,q:[A.wipe(),A.tx(L(t3("Lös ekvationen","Solve the equation","حلّ المعادلة")),400,62,38),...eqR(lhs,c,160,58)],
+  return{kind:"num",ans:x,show:String(x),hc:4,q:[A.wipe(),A.tx(L(pick([t3("Lös ekvationen","Solve the equation","حلّ المعادلة"),t3("Bestäm x","Find x","أوجد x"),t3("Lös ekvationen och kontrollera svaret","Solve the equation and check the answer","حلّ المعادلة وتحقّق من الجواب")])),400,62,38),...eqR(lhs,c,160,58)],
    sol:[...ann(op,160),...eqR(`${a}x`,a*x,250),...ann(`${D} ${a}`,250),...eqR("x",x,340,54,"g"),A.loop(410,322,108,40,"g"),...chk6(`${a} ${M} ${x} ${minus?"−":"+"} ${b} = ${c} ✓`,445)]}}
 });
 
@@ -185,12 +192,25 @@ LESSONS.push({id:"pattern6",subject:"math",grades:"6",kind:"wb",
  icon:`<svg viewBox="0 0 320 180"><rect width="320" height="180" fill="#fff"/>${[[30,1],[90,2],[180,3]].map(([x,n])=>{let s="";for(let i=0;i<n;i++)s+=`M${x+i*36} 70H${x+(i+1)*36}M${x+i*36} 106H${x+(i+1)*36}`;for(let i=0;i<=n;i++)s+=`M${x+i*36} 70V106`;return`<path d="${s}" stroke="#e07b00" stroke-width="4.5" stroke-linecap="round"/>`}).join("")}<text direction="ltr" x="160" y="150" font-family="Caveat,cursive" font-weight="700" font-size="30" text-anchor="middle" fill="#2257c9">4, 7, 10, …</text><text direction="ltr" x="160" y="46" font-family="Caveat,cursive" font-weight="700" font-size="26" text-anchor="middle" fill="#1e9e5a">+3  +3</text></svg>`,
  steps:PAT.steps,mount:wbMount(PAT),
  gen(level){const M=MUL(),D=DIVS();
+  if(level===0&&Math.random()<.35){/* the next number in a sequence */
+   const d=rint(2,9),c0=rint(1,12),v=[0,1,2,3].map(i=>c0+i*d),ans=c0+4*d,X=i=>400+(i-2)*130;
+   const o=[A.wipe(),A.tx(L(pick([t3("Vilket är nästa tal i talföljden?","What is the next number in the sequence?","ما العدد التالي في المتتالية؟"),t3("Talföljden fortsätter. Vilket tal kommer sedan?","The sequence goes on. Which number comes next?","تستمر المتتالية. ما العدد الذي يأتي بعد ذلك؟")])),400,70,36),
+    ...cards6([...v,"?"],X,220,"k",96)];
+   return{kind:"num",ans,show:String(ans),hc:2,nt:"next",hsay:t3("Hur mycket ökar talföljden varje gång?","How much does the sequence increase by each time?","بكم تزداد المتتالية في كل مرة؟"),q:o,
+    sol:[...[0,1,2,3].flatMap(i=>[A.arrow(X(i)+30,268,X(i+1)-30,268,"g",-20),qt(`+${d}`,(X(i)+X(i+1))/2,316,30,"g")]),A.loop(X(4),220,60,44,"g"),
+     A.hl(220,378,360,64),...lf6(L(t3("ökar med","increases by","يزداد بمقدار")),`${d}: ${v[3]} + ${d} = ${ans}`,400,422,40,"k","g")]}}
+  if(level===2&&Math.random()<.3){/* square numbers */
+   const N=rint(6,12),g=34,X=[170,330,530],by=300,o=[A.wipe(),A.tx(L(t3(`Mönstret fortsätter. Hur många prickar har figur ${N}?`,`The pattern goes on. How many dots does figure ${N} have?`,`يستمر النمط. كم نقطة في الشكل ${N}؟`)),400,52,32)];
+   [1,2,3].forEach((n,i)=>{const P=[];for(let r=0;r<n;r++)for(let c=0;c<n;c++)P.push([X[i]-(n-1)*g/2+c*g,by-(n-1-r)*g]);o.push(A.p(dots(P),"g",24),A.tx(L(t3(`Figur ${n}`,`Figure ${n}`,`الشكل ${n}`)),X[i],by+50,28))});
+   o.push(A.tx("…",680,by-20,44));
+   return{kind:"num",ans:N*N,show:String(N*N),hc:1,nt:"square",hsay:t3("Figur n är en kvadrat med n prickar på varje sida. Det är ett kvadrattal.","Figure n is a square with n dots on each side. It is a square number.","الشكل n مربع في كل ضلع منه n نقطة، وهذا عدد مربع."),q:o,
+    sol:[A.tx("1, 4, 9, …",400,384,34,"b"),A.hl(200,410,400,62),...lf6(L(t3(`figur ${N}:`,`figure ${N}:`,`الشكل ${N}:`)),`${N} ${M} ${N} = ${N*N}`,400,454,42,"k","g")]}}
   if(level<2){const key=pick(Object.keys(FIG6)),F=FIG6[key],by=key==="crs"?268:272,r=figRow(F,by),c=[1,2,3].map(n=>cnt6(F,n)),N=level===0?pick([4,5]):pick([10,12,15,20]),ans=cnt6(F,N),nm=L(F.nm);
-   const q=[A.wipe(),A.tx(L(t3(`Hur många ${F.nm.sv} har figur ${N}?`,`How many ${F.nm.en} does figure ${N} have?`,`كم ${F.acc} في الشكل ${N}؟`)),400,50,34),...r.o];
+   const q=[A.wipe(),A.tx(L(rint(0,1)?t3(`Hur många ${F.nm.sv} har figur ${N}?`,`How many ${F.nm.en} does figure ${N} have?`,`كم ${F.acc} في الشكل ${N}؟`):t3(`Mönstret fortsätter. Hur många ${F.nm.sv} har figur ${N}?`,`The pattern goes on. How many ${F.nm.en} does figure ${N} have?`,`يستمر النمط. كم ${F.acc} في الشكل ${N}؟`)),400,50,34),...r.o];
    const counts=c.map((v,i)=>A.tx(v,r.cx[i],by+82,36,"b"));
    if(level===0)return{kind:"num",ans,show:F.cnt(ans),hc:7,q,sol:[...counts,...steps6(r.cx,by+98,F.d),A.hl(210,428,380,64),A.tx(N===4?`${c[2]} + ${F.d} = ${ans}`:`${c[2]} + ${F.d} + ${F.d} = ${ans}`,400,476,46,"g")]};
    return{kind:"num",ans,show:F.cnt(ans),hc:4,q:[...q,...counts],sol:[...steps6(r.cx,by+98,F.d),A.hl(220,428,360,64),A.tx(`${c[0]} + ${N-1} ${M} ${F.d} = ${ans}`,400,476,46,"g")]};}
-  const d=rint(2,7),c0=rint(1,9),n=rint(12,40),N=d*n+c0,X=i=>290+i*100,o=[A.wipe(),A.tx(L(t3(`Mönstret fortsätter. Vilken figur har talet ${N}?`,`The pattern goes on. Which figure has the number ${N}?`,`يستمر النمط. أي شكل فيه العدد ${N}؟`)),400,50,30)];
+  const d=rint(2,7),c0=rint(1,9),n=rint(12,40),N=d*n+c0,X=i=>290+i*100,o=[A.wipe(),A.tx(L(rint(0,1)?t3(`Talföljden fortsätter. Vilken figur har talet ${N}?`,`The sequence goes on. Which figure has the number ${N}?`,`تستمر المتتالية. أي شكل فيه العدد ${N}؟`):t3(`Mönstret fortsätter. Vilken figur har talet ${N}?`,`The pattern goes on. Which figure has the number ${N}?`,`يستمر النمط. أي شكل فيه العدد ${N}؟`)),400,50,30)];
   o.push(A.p(R.rect(70,86,660,128,.3)+R.line(70,150,730,150,.3)+R.line(220,86,220,214,.3),"k",3.5),A.tx(L(t3("figur","figure","الشكل")),145,130,34),A.tx(L(t3("antal","number","العدد")),145,194,34,"b"));
   [1,2,3,4].forEach(k=>o.push(qt(k,X(k-1),131,38),qt(d*k+c0,X(k-1),195,38,"b")));o.push(qt("…",X(4)-20,131,38),qt("…",X(4)-20,195,38,"b"));
   return{kind:"num",ans:n,show:String(n),hc:8,q:o,
@@ -266,25 +286,49 @@ const OUT6=[
  {t:t3("Skärmtid i går (min)","Screen time yesterday (min)","وقت الشاشة أمس (دقيقة)"),lo:12,hi:30,k:5,olo:80,ohi:120,ok:5},
  {t:t3("Följare på kontot","Followers on the account","المتابعون على الحساب"),lo:20,hi:60,k:5,olo:10,ohi:20,ok:100}
 ];
+const SPORT6=[[t3("fotboll","football","كرة القدم"),t3("dans","dance","الرقص"),t3("simning","swimming","السباحة"),t3("hockey","hockey","الهوكي")],
+ [t3("handboll","handball","كرة اليد"),t3("ridning","riding","ركوب الخيل"),t3("fotboll","football","كرة القدم"),t3("judo","judo","الجودو")],
+ [t3("basket","basketball","كرة السلة"),t3("tennis","tennis","التنس"),t3("gymnastik","gymnastics","الجمباز"),t3("fotboll","football","كرة القدم")]];
 const mHead6=(q,ctx)=>[A.wipe(),A.tx(L(q),400,50,36),A.tx(L(ctx.t),400,94,30,"b")];
 LESSONS.push({id:"median6",subject:"math",grades:"6",kind:"wb",
  title:t3("Lägesmått – välj rätt","Averages – pick the right one","مقاييس النزعة المركزية: اختر المناسب"),
  icon:`<svg viewBox="0 0 320 180"><rect width="320" height="180" fill="#fff"/><path d="M30 110H290" stroke="#1d2433" stroke-width="3"/>${[[50,98],[70,98],[70,78],[90,98],[270,98]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="8" fill="#1d2433"/>`).join("")}<circle cx="270" cy="98" r="16" fill="none" stroke="#d63b2f" stroke-width="3"/><path d="M70 150V122M66 128L70 120L74 128" stroke="#1e9e5a" stroke-width="3.5" fill="none"/><path d="M130 150V122M126 128L130 120L134 128" stroke="#2257c9" stroke-width="3.5" fill="none"/><text direction="ltr" x="70" y="172" font-family="Caveat,cursive" font-weight="700" font-size="20" text-anchor="middle" fill="#1e9e5a">median</text><text direction="ltr" x="140" y="172" font-family="Caveat,cursive" font-weight="700" font-size="20" text-anchor="middle" fill="#2257c9">mean</text><text direction="ltr" x="270" y="66" font-family="Caveat,cursive" font-weight="700" font-size="26" text-anchor="middle" fill="#d63b2f">!</text></svg>`,
  steps:MED.steps,mount:wbMount(MED),
  gen(level){const D=DIVS(),M=MUL();
+  if(level===0&&Math.random()<.35){/* the mode */
+   const ctx=MCTX6[pick(["goals","bus","pts","push"])],n=7;let v,md;
+   md=rint(ctx.lo,ctx.hi)*ctx.k;const rest=shuffle(Array.from({length:ctx.hi-ctx.lo+1},(_,k)=>(ctx.lo+k)*ctx.k).filter(x=>x!==md)).slice(0,n-3);v=shuffle([md,md,md,...rest]);   /* md 3 times, the others once */
+   const X=i=>400+(i-(n-1)/2)*100;
+   return{kind:"num",ans:md,show:String(md),hc:0,nt:"mode",hsay:t3("Typvärdet är det värde som finns flest gånger.","The mode is the value that appears most often.","المنوال هو القيمة الأكثر تكرارًا."),
+    q:[...mHead6(rint(0,1)?t3("Vad är typvärdet?","What is the mode?","ما المنوال؟"):t3("Bestäm typvärdet.","Find the mode.","أوجد المنوال."),ctx),...cards6(v,X,200,"k",84)],
+    sol:[...v.flatMap((x,i)=>x===md?[A.loop(X(i),200,52,46,"g")]:[]),A.tx(L(t3(`${md} finns ${v.filter(x=>x===md).length} gånger`,`${md} appears ${v.filter(x=>x===md).length} times`,`يتكرّر ${md} ثلاث مرات`)),400,320,34,"b"),
+     A.hl(220,380,360,66),...lf6(`${L(TYP6)} =`,String(md),400,428,46,"k","g")]}}
   if(level===0){const ctx=MCTX6[pick(["goals","bus","jump","temp","pts"])],n=pick([6,8]);let v,s;
    do{v=Array.from({length:n},()=>rint(ctx.lo,ctx.hi)*ctx.k);s=v.slice().sort((a,b)=>a-b)}while(new Set(v).size<n-2||s[n/2-1]===s[n/2]&&Math.random()<.7);
    const X=i=>400+(i-(n-1)/2)*(n===8?92:112),m=medVal(s),S=medSort6(v,X,180,320);
-   return{kind:"num",dec:true,ans:m,show:dfmt(m,m%1?1:0),hc:n+3,q:[...mHead6(t3("Vad är medianen?","What is the median?","ما الوسيط؟"),ctx),...cards6(v,X,180)],
+   return{kind:"num",dec:true,ans:m,show:dfmt(m,m%1?1:0),hc:n+3,q:[...mHead6(rint(0,1)?t3("Vad är medianen?","What is the median?","ما الوسيط؟"):t3("Bestäm medianen.","Find the median.","أوجد الوسيط."),ctx),...cards6(v,X,180)],
     sol:[...S.o,A.hl(150,402,500,66),...lf6(`${L(MED6)} =`,`(${s[n/2-1]} + ${s[n/2]}) ${D} 2 = ${dfmt(m,m%1?1:0)}`,400,450,44,"k","g")]}}
   if(level===1){const ctx=MCTX6[pick(["pts","jump","push"])],n=rint(5,6);let v,m;
    do{m=rint(ctx.lo+3,ctx.hi-3);v=Array.from({length:n-1},()=>rint(ctx.lo,ctx.hi));v.push(n*m-v.reduce((a,b)=>a+b,0))}while(v[n-1]<ctx.lo||v[n-1]>ctx.hi||new Set(v).size<n-1);
    const X=i=>400+(i-(n-1)/2)*112,sum=n*m;
-   if(Math.random()<.5)return{kind:"num",ans:m,show:String(m),hc:1,q:[...mHead6(t3("Vad är medelvärdet?","What is the mean?","ما الوسط الحسابي؟"),ctx),...cards6(v,X,180)],
+   if(Math.random()<.5)return{kind:"num",ans:m,show:String(m),hc:1,q:[...mHead6(rint(0,1)?t3("Vad är medelvärdet?","What is the mean?","ما الوسط الحسابي؟"):t3("Beräkna medelvärdet.","Calculate the mean.","احسب الوسط الحسابي."),ctx),...cards6(v,X,180)],
     sol:[A.tx(`${v.join(" + ")} = ${sum}`,400,300,40),A.hl(200,350,400,66),...lf6(`${L(MEAN6)} =`,`${sum} ${D} ${n} = ${m}`,400,398,44,"k","g")]};
    const j=rint(0,n-1),x=v[j],shown=v.map((a,i)=>i===j?"?":a),rest=v.filter((_,i)=>i!==j),so=rest.reduce((a,b)=>a+b,0);
    return{kind:"num",ans:x,show:String(x),hc:2,q:[A.wipe(),A.tx(L(t3(`Medelvärdet är ${m}. Vilket värde saknas?`,`The mean is ${m}. Which value is missing?`,`الوسط الحسابي ${m}. ما القيمة الناقصة؟`)),400,50,36),A.tx(L(ctx.t),400,94,30,"b"),...cards6(shown,X,180)],
     sol:[...lf6(L(t3("summa:","total:","المجموع:")),`${n} ${M} ${m} = ${sum}`,400,290,40,"b","b"),A.tx(`${rest.join(" + ")} = ${so}`,400,355,40),A.hl(200,392,400,66),A.tx(`? = ${sum} − ${so} = ${x}`,400,440,46,"g")]}}
+  if(Math.random()<.3){/* which average fits best? words -> mode, an outlier -> median */
+   const opts=shuffle([MEAN6,MED6,TYP6]),words=Math.random()<.5,head=[A.wipe(),A.tx(L(pick([t3("Vilket lägesmått passar bäst?","Which average fits best?","أي مقياس يناسب أكثر؟"),t3("Vilket lägesmått är bäst att använda här?","Which average is best to use here?","أي مقياس هو الأفضل هنا؟")])),400,50,36)];
+   if(words){const S=pick(SPORT6),fav=L(S[0]),all=shuffle([S[0],S[0],S[0],S[1],S[2],S[1],S[3]]),X=i=>400+((i%4)-1.5)*170,Y=i=>190+Math.floor(i/4)*70;
+    const q=[...head,A.tx(L(t3("Favoritsport i klassen","Favourite sport in the class","الرياضة المفضلة في الصف")),400,100,30,"b"),...all.map((w,i)=>qt(L(w),X(i),Y(i),30))];
+    return{kind:"choice",opts,ans:opts.indexOf(TYP6),show:TYP6,hc:0,nt:"which",hsay:t3("Är det ord eller tal? Finns det ett extremvärde?","Are they words or numbers? Is there an outlier?","هل هي كلمات أم أعداد؟ وهل توجد قيمة متطرفة؟"),q,
+     sol:[...all.flatMap((w,i)=>w===S[0]?[A.loop(X(i),Y(i)-10,70,26,"g")]:[]),A.tx(L(t3("Ord har inget medelvärde eller median.","Words have no mean or median.","الكلمات ليس لها وسط حسابي ولا وسيط.")),400,350,30,"r"),
+      A.hl(150,388,500,64),A.tx(`${L(TYP6)}: ${fav}`,400,432,40,"g")]}}
+   const ctx=pick(OUT6);let v,o;do{v=Array.from({length:4},()=>rint(ctx.lo,ctx.hi)*ctx.k);o=rint(ctx.olo,ctx.ohi)*ctx.ok}while(new Set(v).size<3||o<3*Math.max(...v));
+   const all=shuffle([...v,o]),X=i=>400+(i-2)*130;
+   return{kind:"choice",opts,ans:opts.indexOf(MED6),show:MED6,hc:0,nt:"which",hsay:t3("Är det ord eller tal? Finns det ett extremvärde?","Are they words or numbers? Is there an outlier?","هل هي كلمات أم أعداد؟ وهل توجد قيمة متطرفة؟"),
+    q:[...head,A.tx(L(ctx.t),400,100,30,"b"),...cards6(all,X,200,"k",100)],
+    sol:[A.loop(X(all.indexOf(o)),200,62,44,"r"),A.tx(L(t3("extremvärde","outlier","قيمة متطرفة")),X(all.indexOf(o)),280,28,"r"),A.tx(L(t3("Medianen påverkas inte av extremvärdet.","The median is not pulled away by the outlier.","الوسيط لا يتأثّر بالقيمة المتطرفة.")),400,350,30,"b"),
+     A.hl(220,388,360,64),A.tx(L(MED6),400,432,42,"g")]}}
   const ctx=pick(OUT6);let v,o;do{v=Array.from({length:4},()=>rint(ctx.lo,ctx.hi)*ctx.k);o=rint(ctx.olo,ctx.ohi)*ctx.ok}while(new Set(v).size<3||o<3*Math.max(...v));
   const all=shuffle([...v,o]),s=all.slice().sort((a,b)=>a-b),md=s[2],sum=s.reduce((a,b)=>a+b,0),mn=sum/5,X=i=>400+(i-2)*130,S=medSort6(all,X,160,292,false,100);
   return{kind:"pair",ans:[md,mn],labels:[MED6,MEAN6],sep:"",check:(a,b)=>a===md&&b===mn,show:t3(`median ${fmt(md)}, medelvärde ${fmt(mn)}`,`median ${fmt(md)}, mean ${fmt(mn)}`,`الوسيط ${md}، الوسط الحسابي ${mn}`),hc:8,
@@ -372,6 +416,14 @@ LESSONS.push({id:"prog6",subject:"math",grades:"6",kind:"wb",
  icon:`<svg viewBox="0 0 320 180"><rect width="320" height="180" fill="#fff"/><rect x="40" y="22" width="170" height="30" rx="7" fill="#e07b00" fill-opacity=".18" stroke="#e07b00" stroke-width="3"/><path d="M40 62H210V88H62V118H140V138H40Z" fill="#d63b2f" fill-opacity=".14" stroke="#d63b2f" stroke-width="3" stroke-linejoin="round"/><rect x="62" y="88" width="148" height="30" rx="7" fill="#2257c9" fill-opacity=".18" stroke="#2257c9" stroke-width="3"/><rect x="40" y="146" width="120" height="28" rx="7" fill="#1e9e5a" fill-opacity=".18" stroke="#1e9e5a" stroke-width="3"/><path d="M240 60H290V110H240Z" fill="none" stroke="#1e9e5a" stroke-width="3.5"/><path d="M232 52l8 8" stroke="#1d2433" stroke-width="3"/></svg>`,
  steps:PRG.steps,mount:wbMount(PRG),
  gen(level){
+  if(level===0&&Math.random()<.35){/* a loop: how far does the robot go? */
+   const n=rint(2,6),s=pick([10,20,25,30,50,100]),e=Math.random()<.5?pick([5,10,15,20]):0,tot=n*s+e,M=MUL();
+   const o=[A.wipe(),A.tx(L(rint(0,1)?t3("Hur många steg går roboten sammanlagt?","How many steps does the robot move altogether?","كم خطوة يتقدّم الروبوت في المجموع؟"):t3("Loopen körs. Hur långt går roboten totalt?","The loop runs. How far does the robot go in total?","تُنفَّذ الحلقة. كم خطوة يتقدّم الروبوت في المجموع؟")),400,62,34),
+    ...rep6(PX,110,PW,L(B6.rep(n)),62),...blk6(PX+26,164,PW-26,L(B6.move(s)),"b")];
+   if(e)o.push(...blk6(PX,260,PW,L(B6.move(e)),"b"));
+   o.push(robot6(610,140));
+   return{kind:"num",ans:tot,show:String(tot),hc:0,nt:"loop",hsay:t3("Loopen kör blocken inuti flera gånger. Hur många gånger? Glöm inte blocken efter loopen.","The loop runs the blocks inside several times. How many times? Don't forget the blocks after the loop.","الحلقة تنفّذ الأوامر التي داخلها عدة مرات. كم مرة؟ ولا تنسَ الأوامر بعد الحلقة."),q:o,
+    sol:[A.tx(`${n} ${M} ${s} = ${n*s}`,610,250,38,"b"),...(e?[A.tx(`${n*s} + ${e} = ${tot}`,610,310,38)]:[]),A.hl(480,350,260,62),A.tx(L(t3(`${tot} steg`,`${tot} steps`,`${tot} خطوة`)),610,394,42,"g")]}}
   if(level===0){const v=pick(VN);let a,ops,vals;
    do{a=rint(2,20);const k=rint(2,3);ops=[];vals=[a];let x=a;for(let i=0;i<pick([2,3]);i++){const t=rint(0,2);let b;
      if(t===0){b=rint(2,15);x+=b;ops.push(B6.chg(v,b))}else if(t===1){b=-rint(2,9);x+=b;ops.push(B6.chg(v,b))}else{x*=k;ops.push(B6.mul(v,k))}vals.push(x)}}
@@ -441,4 +493,7 @@ Object.assign(HINTSX,{
   {say:t3("Gör en tabell och gå igenom loopen ett varv i taget.","Make a table and go through the loop one round at a time.","ارسم جدولًا ونفّذ الحلقة دورة بعد دورة."),cut:g=>g.sol.slice(0,g.hc)},
   {say:t3("Jämför varje tal i programmet med texten. Vilket tal stämmer inte?","Compare each number in the program with the text. Which number doesn't match?","قارن كل عدد في البرنامج بالنص. أي عدد لا يطابقه؟"),cut:g=>g.sol.slice(0,g.hc)}]
 });
+/* a question type can bring its own hint text (g.hsay) and cut (g.hcut); the app calls cut(g) just before it reads say */
+for(const id of ["eq6","pattern6","median6","prog6"]){const H=HINTSX[id];if(H)HINTSX[id]=H.map(h=>{let cur=null;
+ return{cut:g=>{cur=g;return g.hcut?g.hcut(g):h.cut(g)},get say(){return cur&&cur.hsay||h.say}}})}
 }

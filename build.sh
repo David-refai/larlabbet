@@ -13,6 +13,8 @@ import glob
 les=''.join(open(f).read()+'\n' for f in sorted(glob.glob('src/lessons/*.js')))
 assert s.count('/*NEW-LESSONS*/')==1
 s=s.replace('/*NEW-LESSONS*/',les+'/*NEW-LESSONS*/')
+assert s.count('/*ACCOUNT*/')==1
+s=s.replace('/*ACCOUNT*/',open('src/account.js').read())
 open('dist/larlabbet.html','w').write(s)
 open('index.html','w').write('<!doctype html>\n<html lang="sv"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>\n'+s+'\n</body></html>\n')  # GitHub Pages
 open('build/test.html','w').write('<!doctype html>\n'+s)

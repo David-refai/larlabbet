@@ -117,7 +117,12 @@ LESSONS.push({id:"pow8",subject:"math",grades:"8",kind:"wb",
  icon:ICO(`<text x="78" y="112" ${CV} font-size="84" fill="#1d2433">a</text><text x="110" y="70" ${CV} font-size="46" fill="#2257c9">5</text><text x="140" y="104" ${CV} font-size="50" fill="#1d2433">·</text><text x="178" y="112" ${CV} font-size="84" fill="#1d2433">a</text><text x="210" y="70" ${CV} font-size="46" fill="#d63b2f">3</text>
   <rect x="96" y="128" width="128" height="40" rx="8" fill="#ffd84d" fill-opacity=".45"/><text x="146" y="160" ${CV} font-size="38" fill="#1e9e5a">= a</text><text x="186" y="142" ${CV} font-size="26" fill="#1e9e5a">8</text>`),
  steps:P8.steps,mount:wbMount(P8),
- gen(level){const M=MUL(),D=DIVS(),title=A.tx(T("Skriv som en enda potens","Write as a single power","اكتب في صورة قوة واحدة"),400,80,40);
+ gen(level){const M=MUL(),D=DIVS(),title=A.tx(L(pick([t3("Skriv som en enda potens","Write as a single power","اكتب في صورة قوة واحدة"),t3("Förenkla. Svara i potensform.","Simplify. Answer as a power.","بسّط. اكتب الجواب في صورة قوة."),t3("Förenkla uttrycket","Simplify the expression","بسّط العبارة")])),400,80,40);
+  /* level 0: a product of equal factors written as a power (base and exponent) */
+  if(level===0&&Math.random()<.3){const b=pick([2,3,5,7,"x","a"]),n=rint(3,6),r=rowEx([{s:facs(b,n),c:"b"},{s:`= ${b}^{[r|?]}`}],400,240,56),[x1,x2]=r.xs[0];
+   return{kind:"num",ans:n,show:`${b}${sup(n)}`,
+    q:[A.wipe(),A.tx(T("Skriv produkten som en potens","Write the product as a power","اكتب حاصل الضرب في صورة قوة"),400,80,40),...r.o],
+    sol:[A.p(brace(x1+6,x2-6,262,10),"r",3),...ansEx(`${b}^{${n}}`,400,430,64),qt(T(`${n} faktorer ${b}: basen är ${b}, exponenten är ${n}`,`${n} factors ${b}: the base is ${b}, the exponent is ${n}`,`${n} عوامل: الأساس ${b} والأس ${n}`),400,330,30,"r")]}}
   if(level===0){const b=pick([2,3,5,7,10,"x","a"]),mul=Math.random()<.5;let m,n;
    if(mul){m=rint(2,6);n=rint(2,6)}else{m=rint(5,11);n=rint(2,m-2)}
    const e=mul?m+n:m-n,big=String(b).length>1,sol=[];
@@ -137,13 +142,21 @@ LESSONS.push({id:"pow8",subject:"math",grades:"8",kind:"wb",
    const F=exFrac(`${b}^{${m}} ${M} ${b}^{${n}}`,`${b}^{${k}}`,0,0,60),qw=F.w+30+exW(`= ${b}^{?}`,60),fx=400-qw/2+F.w/2;
    return{kind:"num",ans:e,show:`${b}${sup(e)}`,q:[A.wipe(),title,...exFrac(`${b}^{${m}} ${M} ${b}^{${n}}`,`${b}^{${k}}`,fx,235,60),...ex(`= ${b}^{[r|?]}`,fx+F.w/2+30,252,60,"k","start")],
     sol:rowEx([{s:`= ${b}^{${m}+${n}}`},{s:`= ${b}^{${m}+${n}−${k}}`},{s:`= ${b}^{${e}}`,c:"g",hl:true,m:"ans"}],400,430,48).o}}
+  /* level 2, word problem: a clip that spreads, k new people per person each round */
+  if(Math.random()<.3){const k=pick([2,3,4,5]),n=rint(3,{2:9,3:6,4:5,5:4}[k]),v=k**n;
+   return{kind:"num",ans:v,show:fmt(v),
+    q:[A.wipe(),A.tx(T("Ett klipp sprids på nätet.","A clip spreads online.","ينتشر مقطع فيديو على الإنترنت."),400,62,34),
+     A.tx(T(`I varje omgång skickar alla det till ${k} nya personer.`,`In each round, everyone sends it to ${k} new people.`,`في كل جولة يرسله كل شخص إلى ${k} أشخاص جدد.`),400,112,32),
+     A.tx(T(`Beräkna hur många som får klippet i omgång ${n}.`,`Work out how many people get the clip in round ${n}.`,`احسب عدد من يصلهم المقطع في الجولة ${n}.`),400,162,32,"b"),
+     ...ex(`1 → ${k} → ${k*k} → …`,400,260,52)],
+    sol:[...mk1("e",`${n<=6?facs(k,n)+" = ":""}${k}^{${n}}`,400,350,46),...ansEx(`${k}^{${n}} = ${fmt(v)}`,400,450,52)]}}
   /* level 2: the value of an expression */
   const b=pick([2,2,3,5,10]),mx={2:8,3:5,5:4,10:3}[b];const e=Math.random()<.25?0:rint(1,mx),v=b**e;let num,den,step;
   if(Math.random()<.55){let m,n,k;do{m=rint(2,6);n=rint(2,6);k=m+n-e}while(k<2||k===m||k===n);num=`${b}^{${m}} ${M} ${b}^{${n}}`;den=`${b}^{${k}}`;step=`${m}+${n}−${k}`}
   else{let m,n,k;do{m=rint(2,4);n=rint(2,3);k=m*n-e}while(k<2);num=`(${b}^{${m}})^{${n}}`;den=`${b}^{${k}}`;step=`${m} ${M} ${n}−${k}`}
   const F=exFrac(num,den,0,0,60),qw=F.w+30+exW("= ?",60),fx=400-qw/2+F.w/2;
   return{kind:"num",ans:v,show:fmt(v),
-   q:[A.wipe(),A.tx(T("Beräkna värdet","Work out the value","احسب القيمة"),400,80,40),...exFrac(num,den,fx,235,60),...ex("= ?",fx+F.w/2+30,252,60,"k","start")],
+   q:[A.wipe(),A.tx(L(pick([t3("Beräkna värdet","Work out the value","احسب القيمة"),t3("Beräkna","Calculate","احسب"),t3("Bestäm uttryckets värde","Find the value of the expression","أوجد قيمة العبارة")])),400,80,40),...exFrac(num,den,fx,235,60),...ex("= ?",fx+F.w/2+30,252,60,"k","start")],
    sol:rowEx([{s:`= ${b}^{${step}}`},{s:`= ${b}^{${e}}`,m:"e"},{s:`= ${fmt(v)}`,c:"g",hl:true,m:"ans"}],400,430,50).o}}
 });
 
@@ -199,11 +212,16 @@ LESSONS.push({id:"root8",subject:"math",grades:"8",kind:"wb",
  gen(level){const M=MUL();
   if(level===0){
    if(Math.random()<.6){const n=rint(4,15),N=n*n,t=n-1;
-    return{kind:"num",ans:n,show:String(n),q:[A.wipe(),A.tx(T("Beräkna","Work out","احسب"),400,80,40),...ex(`√{${N}} = ?`,400,250,90)],
+    return{kind:"num",ans:n,show:String(n),q:[A.wipe(),A.tx(L(pick([t3("Beräkna","Work out","احسب"),t3("Bestäm kvadratroten","Find the square root","أوجد الجذر التربيعي")])),400,80,40),...ex(`√{${N}} = ?`,400,250,90)],
      sol:[...ex(`${t} ${M} ${t} = ${t*t}`,400,355,40,"r"),qt(T("för litet","too small","أصغر من اللازم"),640,355,28,"r"),mark(A.hl(270,410,260,62),"ans"),...ex(`${n} ${M} ${n} = ${N}`,400,455,46,"g")]}}
    const n=rint(11,25),N=n*n,t=n%10,ten=n-t;
-   return{kind:"num",ans:N,show:String(N),q:[A.wipe(),A.tx(T("Beräkna","Work out","احسب"),400,80,40),...ex(`${n}^{2} = ?`,400,250,90)],
+   return{kind:"num",ans:N,show:String(N),q:[A.wipe(),A.tx(L(pick([t3("Beräkna","Work out","احسب"),t3("Kvadrera talet","Square the number","ربّع العدد")])),400,80,40),...ex(`${n}^{2} = ?`,400,250,90)],
     sol:[...ex(`${n}^{2} = ${n} ${M} ${n}`,400,340,42),...(t?ex(`= ${n} ${M} ${ten} + ${n} ${M} ${t} = ${n*ten} + ${n*t}`,400,400,38):[]),...rowEx([{s:`= ${N}`,c:"g",hl:true,m:"ans"}],400,462,48).o]}}
+  /* level 1: the side of a square from its area */
+  if(level===1&&Math.random()<.35){const n=rint(4,15),N=n*n;
+   return{kind:"num",ans:n,show:`${n} m`,q:[A.wipe(),A.tx(T(`En kvadratisk terrass har arean ${fmt(N)} m².`,`A square patio has an area of ${fmt(N)} m².`,`شرفة مربعة مساحتها ${N} م².`),400,70,36),
+     A.tx(L(pick([t3("Hur lång är en sida? (m)","How long is one side? (m)","كم طول الضلع؟ (م)"),t3("Bestäm sidans längd i meter.","Find the length of a side in metres.","أوجد طول الضلع بالمتر.")])),400,122,32),...sqBox(300,170,170,"o"),A.tx(`${fmt(N)} m²`,385,268,36),A.tx("?",385,385,40,"r")],
+    sol:[...mk1("cut",`x = √{${N}}`,640,220,44,"r"),...ansEx(`x = ${n} m`,640,330,48),A.tx(T(`ty ${n} ${M} ${n} = ${N}`,`since ${n} ${M} ${n} = ${N}`,`لأن ${n} ${M} ${n} = ${N}`),640,420,30,"g")]}}
   if(level===1){let N;do{N=rint(6,300)}while(Number.isInteger(Math.sqrt(N)));const lo=Math.floor(Math.sqrt(N)),L0=Math.max(2,lo-rint(0,3)),sq=[];
    for(let k=L0;k<L0+5;k++)sq.push({s:`${k}^{2} = ${k*k}`,z:32});
    const r=rowEx(sq,400,320,32,40);
@@ -212,11 +230,11 @@ LESSONS.push({id:"root8",subject:"math",grades:"8",kind:"wb",
     sol:[...r.o,...rowEx([{s:`${lo*lo} < ${N} < ${(lo+1)**2}`,c:"k",m:"ineq"}],400,392,40).o,...ansEx(`${lo} < √{${N}} < ${lo+1}`,400,462,48)]}}
   if(Math.random()<.5){let N,r;do{N=rint(10,300);r=Math.sqrt(N)}while(Number.isInteger(r)||Math.abs(r-Math.floor(r)-.5)<.18);
    const n=Math.round(r);
-   return{kind:"num",ans:n,show:String(n),q:[A.wipe(),A.tx(T("Vilket heltal ligger närmast","Which whole number is closest to","ما العدد الصحيح الأقرب إلى"),400,80,38),...ex(`√{${N}}`,400,250,90)],
+   return{kind:"num",ans:n,show:String(n),q:[A.wipe(),A.tx(L(pick([t3("Vilket heltal ligger närmast","Which whole number is closest to","ما العدد الصحيح الأقرب إلى"),t3("Avrunda till närmaste heltal","Round to the nearest whole number","قرّب إلى أقرب عدد صحيح")])),400,80,38),...ex(`√{${N}}`,400,250,90)],
     sol:[A.wipe(),...ex(`√{${N}} ≈ ?`,400,62,44),...estLine(N,150,320),...ansEx(`√{${N}} ≈ ${n}`,400,455,50)]}}
   const n=rint(6,20),N=n*n;
   return{kind:"num",ans:4*n,show:`${4*n} m`,q:[A.wipe(),A.tx(T(`En kvadratisk tomt har arean ${fmt(N)} m².`,`A square plot has an area of ${fmt(N)} m².`,`قطعة أرض مربعة مساحتها ${N} م².`),400,70,36),
-    A.tx(T("Hur långt blir staketet runt hela tomten? (m)","How long is a fence around the whole plot? (m)","كم يبلغ طول السياج حول القطعة كلها؟ (م)"),400,122,32),...sqBox(300,170,170,"g"),A.tx(`${fmt(N)} m²`,385,268,36)],
+    A.tx(L(pick([t3("Hur långt blir staketet runt hela tomten? (m)","How long is a fence around the whole plot? (m)","كم يبلغ طول السياج حول القطعة كلها؟ (م)"),t3("Beräkna tomtens omkrets. Svara i meter.","Work out the perimeter of the plot. Answer in metres.","احسب محيط قطعة الأرض. أجب بالمتر.")])),400,122,32),...sqBox(300,170,170,"g"),A.tx(`${fmt(N)} m²`,385,268,36)],
    sol:[A.tx("x",385,385,36,"r"),...ex(`x = √{${N}}`,640,200,40,"r"),mark(A.tx(`x = ${n} m`,640,270,40,"b"),"cut"),...ansEx(`4 ${M} ${n} = ${4*n}`,640,355,44),A.tx(T(`${4*n} m staket`,`${4*n} m of fence`,`${4*n} م من السياج`),640,410,32,"g")]}}
 });
 
@@ -284,20 +302,34 @@ LESSONS.push({id:"sci8",subject:"math",grades:"8",kind:"wb",
   <text x="196" y="88" ${CV} font-size="44" fill="#1d2433">3 · 10</text><text x="262" y="62" ${CV} font-size="28" fill="#d63b2f">−6</text><text x="210" y="148" ${CV} font-size="40" fill="#2257c9">µ  m  n</text>`),
  steps:SC.steps,mount:wbMount(SC),
  gen(level){const M=MUL(),D=DIVS(),mant=()=>Math.random()<.55?String(rint(1,9)):`${rint(1,9)}.${rint(1,9)}`;
+  /* level 0: what a prefix means */
+  if(level===0&&Math.random()<.25){const P=pick(PFX),O=PFX.map(x=>`10${"⁻"+sup(-x[2])}`);
+   return{kind:"choice",opts:O,ans:PFX.indexOf(P),show:`${L(P[0])} = ${O[PFX.indexOf(P)]}`,
+    q:[A.wipe(),A.tx(T(`Prefixet ${L(P[0])} (${P[1]}) betyder`,`The prefix ${L(P[0])} (${P[1]}) means`,`البادئة ${L(P[0])} (${P[1]}) تعني`),400,90,44),
+     A.tx(T(`Exempel: 4 ${P[1]}m = 4 ${M} ? m`,`Example: 4 ${P[1]}m = 4 ${M} ? m`,`مثال: 4 ${P[1]}m = 4 ${M} ? m`),400,200,40,"b")],
+    sol:[...PFX.flatMap(([nm,sy,e,c],i)=>{const o=ex(`${L(nm)}: ${sy} = 10^{${ng(e)}}`,400,300+i*62,40,c);if(nm===P[0])o.unshift(A.hl(230,300+i*62-38,340,50));return o}).map((a,i)=>i?a:mark(a,"cut"))]}}
   if(level===0){const m=mant(),e=-rint(2,7),s=dec(m,e),dg=s.replace(".",""),q=dg.search(/[1-9]/)+1;
    const J=jRow(dg,1,q,400,240,dg.length>8?70:80);
    return{kind:"num",ans:e,signed:true,show:ng(e),
-    q:[A.wipe(),A.tx(T("Skriv i grundpotensform","Write in scientific notation","اكتب بالصيغة العلمية"),400,70,40),...J.dig,...ex(`= ${dd(m)} ${M} 10^{[r|?]}`,400,350,60)],
+    q:[A.wipe(),A.tx(L(pick([t3("Skriv i grundpotensform","Write in scientific notation","اكتب بالصيغة العلمية"),t3("Skriv i grundpotensform. Bestäm exponenten.","Write in scientific notation. Find the exponent.","اكتب بالصيغة العلمية. أوجد الأس.")])),400,70,40),...J.dig,...ex(`= ${dd(m)} ${M} 10^{[r|?]}`,400,350,60)],
     sol:[...J.neu,mark(J.arcs[0],"cut"),...J.arcs.slice(1),qt(T(`${-e} steg åt höger`,`${-e} steps to the right`,`${-e} خطوات إلى اليمين`),400,410,28,"r"),...ansEx(`${dd(s)} = ${dd(m)} ${M} 10^{${ng(e)}}`,400,465,40)]}}
+  /* level 1: which way of writing is scientific notation? (same value, three forms) */
+  if(level===1&&Math.random()<.3){const m=`${rint(1,9)}.${rint(1,9)}`,e=-rint(3,7),big=String(+(+m*10).toFixed(1)),sml=String(+(+m/10).toFixed(2)),
+    F=shuffle([[m,e],[big,e-1],[sml,e+1]]),w=([a,k])=>`${dd(a)} ${M} 10${"⁻"+sup(-k)}`,wx=([a,k])=>`${dd(a)} ${M} 10^{${ng(k)}}`,O=F.map(w);
+   return{kind:"choice",opts:O,ans:F.findIndex(f=>f[0]===m),show:w([m,e]),
+    q:[A.wipe(),A.tx(T("Alla tre har samma värde.","All three have the same value.","للأعداد الثلاثة القيمة نفسها."),400,70,34),
+     A.tx(T("Vilket är skrivet i grundpotensform?","Which one is written in scientific notation?","أيّها مكتوب بالصيغة العلمية؟"),400,122,36,"b"),
+     ...F.flatMap((f,i)=>ex(wx(f),400,212+i*60,44))],
+    sol:[mark(A.tx(T("talet framför: minst 1 och mindre än 10","the number in front: at least 1 and less than 10","العدد في المقدمة: 1 على الأقل وأصغر من 10"),400,420,30,"r"),"cut"),...ansEx(wx([m,e]),400,476,40)]}}
   if(level===1){let m,e;do{m=mant();e=-rint(1,5)}while(m.length>1&&e<-4);const s=dec(m,e),dg=s.replace(".",""),hasF=m.includes("."),p=-e+1;
    const J=jRow(dg,p,1,400,330,dg.length>6?66:74,-e);
    return{kind:"num",ans:+s,dec:true,show:dd(s),
-    q:[A.wipe(),A.tx(T("Skriv som decimaltal","Write as a decimal number","اكتب في صورة عدد عشري"),400,70,40),...ex(`${dd(m)} ${M} 10^{[r|${ng(e)}]}`,400,175,72)],
+    q:[A.wipe(),A.tx(L(pick([t3("Skriv som decimaltal","Write as a decimal number","اكتب في صورة عدد عشري"),t3("Skriv talet i decimalform","Write the number in decimal form","اكتب العدد في الصورة العشرية")])),400,70,40),...ex(`${dd(m)} ${M} 10^{[r|${ng(e)}]}`,400,175,72)],
     sol:[...J.dig.slice(-e),...J.arcs.slice(0,2),mark(J.dig[0],"cut"),...J.dig.slice(1,-e),...J.arcs.slice(2),...J.neu,...ansEx(`= ${dd(s)}`,400,462,46)]}}
   const ty=rint(0,2);
   if(ty===0){const P=pick(PFX),U=P[1]+"m",j=rint(1,2),n=j===1?rint(11,99):rint(10,99)*10,mt=String(n/10**j),a=j+P[2];
    return{kind:"num",ans:a,signed:true,show:ng(a),
-    q:[A.wipe(),A.tx(T("Skriv i grundpotensform","Write in scientific notation","اكتب بالصيغة العلمية"),400,80,40),...ex(`${n} ${U} = ${dd(mt)} ${M} 10^{[r|?]} m`,400,250,64)],
+    q:[A.wipe(),A.tx(L(pick([t3("Skriv i grundpotensform","Write in scientific notation","اكتب بالصيغة العلمية"),t3("Skriv längden i meter i grundpotensform","Write the length in metres in scientific notation","اكتب الطول بالمتر بالصيغة العلمية")])),400,80,40),...ex(`${n} ${U} = ${dd(mt)} ${M} 10^{[r|?]} m`,400,250,64)],
     sol:[...ex(`${n} ${U} = ${n} ${M} 10^{${ng(P[2])}} m`,400,345,42,P[3]),...mk1("cut",`= ${dd(mt)} ${M} 10^{${j}} ${M} 10^{${ng(P[2])}} m`,400,405,42),...ansEx(`= ${dd(mt)} ${M} 10^{${ng(a)}} m`,400,465,44)]}}
   if(ty===1){const v=pick([rint(2,9),rint(11,99),rint(101,950)]),s=(v/1000).toFixed(3);
    return{kind:"num",ans:v,show:`${v} ms`,
@@ -368,30 +400,39 @@ LESSONS.push({id:"speed8",subject:"math",grades:"8",kind:"wb",
   if(level===0){const V=pick([["car",[5,11],10,[2,5]],["train",[12,20],10,[2,4]],["bike",[12,22],1,[2,4]],["bus",[6,9],10,[2,5]]]),v=rint(...V[1])*V[2],t=rint(...V[3]),s=v*t;
    const lines={car:t3(`En bil kör ${s} km på ${t} h.`,`A car travels ${s} km in ${t} h.`,`تقطع سيارة ${s} كم في ${arH(t)}.`),train:t3(`Ett tåg kör ${s} km på ${t} h.`,`A train travels ${s} km in ${t} h.`,`يقطع قطار ${s} كم في ${arH(t)}.`),
     bike:t3(`En cyklist cyklar ${s} km på ${t} h.`,`A cyclist rides ${s} km in ${t} h.`,`يقطع دراج ${s} كم في ${arH(t)}.`),bus:t3(`En buss kör ${s} km på ${t} h.`,`A bus travels ${s} km in ${t} h.`,`تقطع حافلة ${s} كم في ${arH(t)}.`)};
-   const pic={car:car(110,150),train:train(80,140),bike:bike(110,200),bus:bus(80,140)}[V[0]];
+   const pic={car:car(110,150),train:train(80,140),bike:bike(110,200),bus:bus(80,140)}[V[0]],mode=rint(0,2);
+   /* distance (s = v · t) or time (t = s / v) in whole hours */
+   if(mode){const W={car:["En bil kör","A car drives","تسير سيارة","تقطع سيارة"],train:["Ett tåg kör","A train travels","يسير قطار","يقطع قطار"],bike:["En cyklist cyklar","A cyclist rides","يسير درّاج","يقطع درّاج"],bus:["En buss kör","A bus travels","تسير حافلة","تقطع حافلة"]}[V[0]],ds=mode===1;
+    const top=ds?t3(`${W[0]} i ${v} km/h i ${t} h.`,`${W[1]} at ${v} km/h for ${t} h.`,`${W[2]} بسرعة ${v} كم/ساعة لمدة ${arH(t)}.`):t3(`${W[0]} ${s} km i ${v} km/h.`,`${W[1]} ${s} km at ${v} km/h.`,`${W[3]} ${s} كم بسرعة ${v} كم/ساعة.`),
+     ask=ds?pick([t3("Hur lång är sträckan? (km)","How long is the distance? (km)","ما طول المسافة؟ (كم)"),t3("Beräkna sträckan i km.","Calculate the distance in km.","احسب المسافة بالكيلومتر.")]):pick([t3("Hur lång tid tar det? Svara i timmar.","How long does it take? Answer in hours.","كم يستغرق ذلك؟ أجب بالساعات."),t3("Beräkna tiden i timmar.","Calculate the time in hours.","احسب الزمن بالساعات.")]);
+    return{kind:"num",ans:ds?s:t,show:ds?`${s} km`:`${t} h`,
+     q:[A.wipe(),A.tx(L(top),400,70,40),A.tx(L(ask),400,122,32),A.p(pic,"b",3.5),
+      A.p(R.line(300,215,740,215,.3)+"M300,201v28M740,201v28","k",4),qt(ds?"? km":`${s} km`,520,190,30,ds?"r":"k"),qt(ds?`${t} h`:"? h",520,262,30,ds?"o":"r"),qt(`${v} km/h`,520,310,30,"b")],
+     sol:ds?[...ex(`s = v ${M} t`,400,365,44),...mk1("cut",`s = ${v} ${M} ${t}`,400,420,44),...ansEx(`s = ${s} km`,400,476,44)]
+      :[...ex(`t = s ${D} v`,400,365,44),...mk1("cut",`t = ${s} ${D} ${v}`,400,420,44),...ansEx(`t = ${t} h`,400,476,44)]}}
    return{kind:"num",ans:v,show:`${v} km/h`,
-    q:[A.wipe(),A.tx(L(lines[V[0]]),400,70,40),A.tx(T("Vilken är medelhastigheten i km/h?","What is the average speed in km/h?","ما متوسط السرعة بالكيلومتر في الساعة؟"),400,122,32),A.p(pic,"b",3.5),
+    q:[A.wipe(),A.tx(L(lines[V[0]]),400,70,40),A.tx(L(pick([t3("Vilken är medelhastigheten i km/h?","What is the average speed in km/h?","ما متوسط السرعة بالكيلومتر في الساعة؟"),t3("Beräkna medelhastigheten. Svara i km/h.","Calculate the average speed. Answer in km/h.","احسب متوسط السرعة. أجب بالكيلومتر في الساعة.")])),400,122,32),A.p(pic,"b",3.5),
      A.p(R.line(300,215,740,215,.3)+"M300,201v28M740,201v28","k",4),qt(`${s} km`,520,190,30),qt(`${t} h`,520,262,30,"o")],
     sol:[...ex(`v = s ${D} t`,400,335,44),...mk1("cut",`v = ${s} ${D} ${t}`,400,395,44),...ansEx(`v = ${v} km/h`,400,462,46)]}}
   const HRS={6:"0.1",12:"0.2",15:"0.25",24:"0.4",30:"0.5",36:"0.6",45:"0.75",48:"0.8",90:"1.5"};
   if(level===1){const dist=Math.random()<.5,tm=pick([6,12,15,24,30,36,45,48,90]),step={6:10,12:10,15:20,24:10,30:10,36:10,45:20,48:10,90:10}[tm];let v;do{v=step*rint(1,Math.floor(120/step))}while(v<(dist?10:40));const s=v*tm/60,h=HRS[tm];
    if(dist){
     return{kind:"num",ans:s,show:`${s} km`,
-     q:[A.wipe(),A.tx(T(`Du åker i ${v} km/h i ${tm} minuter.`,`You travel at ${v} km/h for ${tm} minutes.`,`تسير بسرعة ${v} كم/ساعة لمدة ${arMin(tm)}.`),400,80,38),A.tx(T("Hur långt kommer du? (km)","How far do you get? (km)","ما المسافة التي تقطعها؟ (كم)"),400,135,34),...(tm>60?[...clockHalf(330,250,56,1),...clockHalf(470,250,56,.5)]:clockHalf(400,250,62,tm/60))],
+     q:[A.wipe(),A.tx(T(`Du åker i ${v} km/h i ${tm} minuter.`,`You travel at ${v} km/h for ${tm} minutes.`,`تسير بسرعة ${v} كم/ساعة لمدة ${arMin(tm)}.`),400,80,38),A.tx(L(pick([t3("Hur långt kommer du? (km)","How far do you get? (km)","ما المسافة التي تقطعها؟ (كم)"),t3("Beräkna sträckan. Svara i km.","Calculate the distance. Answer in km.","احسب المسافة. أجب بالكيلومتر.")])),400,135,34),...(tm>60?[...clockHalf(330,250,56,1),...clockHalf(470,250,56,.5)]:clockHalf(400,250,62,tm/60))],
      sol:[...ex(`t = ${tm} min = ${dd(h)} h`,400,368,40,"o"),...mk1("cut",`s = v ${M} t = ${v} ${M} ${dd(h)}`,400,420,40),...ansEx(`s = ${s} km`,400,476,40)]}}
    return{kind:"num",ans:tm,show:`${tm} min`,
-    q:[A.wipe(),A.tx(T(`Ett tåg kör ${dd(s)} km med hastigheten ${v} km/h.`,`A train travels ${s} km at ${v} km/h.`,`يقطع قطار ${s} كم بسرعة ${v} كم/ساعة.`),400,80,38),A.tx(T("Hur många minuter tar det?","How many minutes does it take?","كم دقيقة تستغرق الرحلة؟"),400,135,34),A.p(train(330,190),"b",3.5),A.p(R.line(200,260,600,260,.3),"k",4)],
+    q:[A.wipe(),A.tx(T(`Ett tåg kör ${dd(s)} km med hastigheten ${v} km/h.`,`A train travels ${s} km at ${v} km/h.`,`يقطع قطار ${s} كم بسرعة ${v} كم/ساعة.`),400,80,38),A.tx(L(pick([t3("Hur många minuter tar det?","How many minutes does it take?","كم دقيقة تستغرق الرحلة؟"),t3("Beräkna tiden. Svara i hela minuter.","Calculate the time. Answer in whole minutes.","احسب الزمن. أجب بدقائق كاملة.")])),400,135,34),A.p(train(330,190),"b",3.5),A.p(R.line(200,260,600,260,.3),"k",4)],
     sol:[...ex(`t = s ${D} v = ${dd(s)} ${D} ${v}`,400,345,40),...mk1("cut",`t = ${dd(h)} h = ${dd(h)} ${M} 60 min`,400,405,40,"o"),...ansEx(`t = ${tm} min`,400,470,42)]}}
   const ty=rint(0,2),conv=y=>[A.p(R.rect(140,y,140,64,.3)+R.rect(520,y,140,64,.3),"k",3.5),A.tx("m/s",210,y+46,40,"b"),A.tx("km/h",590,y+46,40,"r"),A.arrow(292,y+8,508,y+8,"g",-26),qt(`${M} ${dd("3.6")}`,400,y-18,28,"g"),A.arrow(508,y+58,292,y+58,"o",-26),qt(`${D} ${dd("3.6")}`,400,y+108,28,"o")];
   if(ty===0){const k=rint(1,8)*5,v=k*18/5;
-   return{kind:"num",ans:k,show:`${k} m/s`,q:[A.wipe(),A.tx(T("Skriv hastigheten i m/s","Write the speed in m/s","اكتب السرعة بوحدة م/ث"),400,80,40),...ex(`${v} km/h = ? m/s`,400,200,64)],
+   return{kind:"num",ans:k,show:`${k} m/s`,q:[A.wipe(),A.tx(L(pick([t3("Skriv hastigheten i m/s","Write the speed in m/s","اكتب السرعة بوحدة م/ث"),t3("Omvandla hastigheten till m/s","Convert the speed to m/s","حوّل السرعة إلى م/ث")])),400,80,40),...ex(`${v} km/h = ? m/s`,400,200,64)],
     sol:[...conv(270),...ansEx(`${v} ${D} ${dd("3.6")} = ${k} m/s`,400,470,40)]}}
   if(ty===1){const k=rint(2,30),v=+(k*3.6).toFixed(1);
-   return{kind:"num",ans:v,dec:true,show:`${dfmt(v,v%1?1:0)} km/h`,q:[A.wipe(),A.tx(T("Skriv hastigheten i km/h","Write the speed in km/h","اكتب السرعة بوحدة كم/ساعة"),400,80,40),...ex(`${k} m/s = ? km/h`,400,200,64)],
+   return{kind:"num",ans:v,dec:true,show:`${dfmt(v,v%1?1:0)} km/h`,q:[A.wipe(),A.tx(L(pick([t3("Skriv hastigheten i km/h","Write the speed in km/h","اكتب السرعة بوحدة كم/ساعة"),t3("Omvandla hastigheten till km/h","Convert the speed to km/h","حوّل السرعة إلى كم/ساعة")])),400,80,40),...ex(`${k} m/s = ? km/h`,400,200,64)],
     sol:[...conv(270),...ansEx(`${k} ${M} ${dd("3.6")} = ${dfmt(v,v%1?1:0)} km/h`,400,470,40)]}}
   const [sm,vv]=pick([[100,[5,8,10]],[200,[4,5,8]],[400,[4,5,8]],[800,[4,5]]]),w=pick(vv),ts=sm/w,kh=+(w*3.6).toFixed(1);
   return{kind:"num",ans:kh,dec:true,show:`${dfmt(kh,kh%1?1:0)} km/h`,
-   q:[A.wipe(),A.tx(T(`En löpare springer ${sm} m på ${dd(ts)} s.`,`A runner runs ${sm} m in ${ts} s.`,`يركض عدّاء ${sm} م في ${ts} ثانية.`),400,80,38),A.tx(T("Vilken är hastigheten i km/h?","What is the speed in km/h?","ما السرعة بالكيلومتر في الساعة؟"),400,135,34),A.p(runner(400,180),"b",3.5)],
+   q:[A.wipe(),A.tx(T(`En löpare springer ${sm} m på ${dd(ts)} s.`,`A runner runs ${sm} m in ${ts} s.`,`يركض عدّاء ${sm} م في ${ts} ثانية.`),400,80,38),A.tx(L(pick([t3("Vilken är hastigheten i km/h?","What is the speed in km/h?","ما السرعة بالكيلومتر في الساعة؟"),t3("Beräkna hastigheten. Svara i km/h.","Calculate the speed. Answer in km/h.","احسب السرعة. أجب بالكيلومتر في الساعة.")])),400,135,34),A.p(runner(400,180),"b",3.5)],
    sol:[...ex(`v = ${sm} ${D} ${dd(ts)} = ${w} m/s`,400,345,42,"b"),...mk1("cut",`${w} m/s = ${w} ${M} ${dd("3.6")} km/h`,400,405,40),...ansEx(`v = ${dfmt(kh,kh%1?1:0)} km/h`,400,470,42)]}}
 });
 
@@ -443,16 +484,16 @@ Object.assign(HELPX,{
     o.push(...ex(`150 ${D} 3 = 50`,400,370,48),...hlEx("50 km/h",400,455,52));return o}}]
 });
 Object.assign(HINTSX,{
- pow8:[{say:t3("Multiplikation med samma bas: addera exponenterna. Division: subtrahera dem.","Multiplying with the same base: add the exponents. Dividing: subtract them.","عند الضرب مع الأساس نفسه نجمع الأسس، وعند القسمة نطرحها."),cut:upTo("ans")},
+ pow8:[{say:t3("Räkna faktorerna. Samma bas: vid multiplikation adderar du exponenterna, vid division subtraherar du dem.","Count the factors. Same base: when multiplying, add the exponents; when dividing, subtract them.","عُدّ العوامل. مع الأساس نفسه نجمع الأسس عند الضرب ونطرحها عند القسمة."),cut:upTo("ans")},
   {say:t3("Potens av en potens: multiplicera exponenterna. Ta en regel i taget.","A power of a power: multiply the exponents. Use one rule at a time.","في قوة القوة نضرب الأسس. طبّق قاعدة واحدة في كل مرة."),cut:upTo("ans")},
   {say:t3("Förenkla först till en enda potens. Räkna sedan ut värdet. Kom ihåg att a⁰ = 1.","First simplify to a single power. Then work out its value. Remember that a⁰ = 1.",`بسّط أولًا إلى قوة واحدة، ثم احسب قيمتها. وتذكّر أن ${ISO("a⁰ = 1")}.`),cut:upTo("e")}],
  root8:[{say:t3("Vilket tal gånger sig självt blir talet? Pröva dig fram. Kvadrera: talet gånger sig självt.","Which number times itself gives the number? Try your way forward. To square: the number times itself.","أي عدد إذا ضُرب في نفسه أعطى هذا العدد؟ جرّب حتى تجده. والتربيع هو ضرب العدد في نفسه."),cut:upTo("ans")},
-  {say:t3("Leta upp kvadrattalen närmast under och över talet under roten.","Find the square numbers just below and just above the number under the root.","ابحث عن العددين المربعين الأقرب أسفل العدد تحت الجذر وأعلاه."),cut:upTo("ineq")},
+  {say:t3("Leta upp kvadrattalen närmast under och över talet. Sidan i en kvadrat är roten ur arean.","Find the square numbers just below and just above the number. The side of a square is the square root of its area.","ابحث عن العددين المربعين الأقرب أسفل العدد وأعلاه. ضلع المربع هو الجذر التربيعي لمساحته."),cut:upTo("ineq")},
   {say:t3("Vilket kvadrattal ligger närmast talet? Sidan i en kvadrat är roten ur arean.","Which square number is closest to the number? The side of a square is the square root of its area.","أي عدد مربع هو الأقرب إلى العدد؟ ضلع المربع هو الجذر التربيعي لمساحته."),cut:upTo("cut")}],
- sci8:[{say:t3("Flytta kommat åt höger tills det står efter den första siffran som inte är noll. Räkna stegen.","Move the decimal point to the right until it is after the first digit that is not zero. Count the steps.","انقل الفاصلة إلى اليمين حتى تقع بعد أول رقم غير الصفر، وعُدّ الخطوات."),cut:upTo("cut")},
-  {say:t3("Negativ exponent: flytta kommat åt vänster lika många steg som exponenten säger. Fyll på med nollor framför.","A negative exponent: move the decimal point to the left as many steps as the exponent says. Fill in zeros in front.","الأس السالب: انقل الفاصلة إلى اليسار بعدد الخطوات الذي يحدده الأس، وأضف أصفارًا في المقدمة."),cut:upTo("cut")},
+ sci8:[{say:t3("Flytta kommat åt höger tills det står efter den första siffran som inte är noll. Räkna stegen. Prefix: tänk på millimeter, mikrometer och nanometer.","Move the decimal point to the right until it is after the first digit that is not zero. Count the steps. Prefixes: think of millimetres, micrometres and nanometres.","انقل الفاصلة إلى اليمين حتى تقع بعد أول رقم غير الصفر، وعُدّ الخطوات. وللبادئات: فكّر في المليمتر والميكرومتر والنانومتر."),cut:upTo("cut")},
+  {say:t3("Negativ exponent: flytta kommat åt vänster lika många steg som exponenten säger. I grundpotensform är talet framför minst 1 och mindre än 10.","A negative exponent: move the decimal point to the left as many steps as the exponent says. In scientific notation the number in front is at least 1 and less than 10.","الأس السالب: انقل الفاصلة إلى اليسار بعدد الخطوات الذي يحدده الأس. وفي الصيغة العلمية يكون العدد في المقدمة 1 على الأقل وأصغر من 10."),cut:upTo("cut")},
   {say:t3("Byt ut prefixet mot sin tiopotens: milli = 10⁻³, mikro = 10⁻⁶, nano = 10⁻⁹.","Replace the prefix with its power of ten: milli = 10⁻³, micro = 10⁻⁶, nano = 10⁻⁹.",`استبدل البادئة بقوة العشرة المقابلة لها: ملّي = ${ISO("10⁻³")}، ميكرو = ${ISO("10⁻⁶")}، نانو = ${ISO("10⁻⁹")}.`),cut:upTo("cut")}],
- speed8:[{say:t3("Hastighet = sträcka delat med tid.","Speed = distance divided by time.","السرعة = المسافة مقسومة على الزمن."),cut:upTo("cut")},
+ speed8:[{say:t3("Använd triangeln: s = v · t, v = s / t och t = s / v.","Use the triangle: s = v × t, v = s ÷ t and t = s ÷ v.","استخدم المثلث: s = v × t و v = s ÷ t و t = s ÷ v."),cut:upTo("cut")},
   {say:t3("Gör om minuterna till timmar först: 60 min = 1 h.","Turn the minutes into hours first: 60 min = 1 h.","حوّل الدقائق إلى ساعات أولًا: 60 دقيقة = ساعة واحدة."),cut:upTo("cut")},
   {say:t3("Från m/s till km/h: gånger 3,6. Från km/h till m/s: delat med 3,6.","From m/s to km/h: times 3.6. From km/h to m/s: divided by 3.6.","من م/ث إلى كم/ساعة نضرب في 3.6، ومن كم/ساعة إلى م/ث نقسم على 3.6."),cut:upTo("cut")}]
 });

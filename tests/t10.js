@@ -10,6 +10,7 @@ const mk=async(w,h)=>{const p=await b.newPage({viewport:{width:w,height:h},reduc
  await p.addInitScript(()=>{const t=setInterval(()=>{if(window.LESSONS&&LESSONS.length&&LESSONS.some(l=>l.gen)){clearInterval(t)}},5)});
  await p.goto('file://'+process.cwd()+'/build/test.html');await p.waitForTimeout(700);
  await p.evaluate(()=>LESSONS.forEach(l=>{if(l.gen){const g0=l.gen;l.gen=lv=>{const g=g0(lv);window.__g=g;return g}}}));
+ await p.evaluate(()=>{const w0=wordQ;wordQ=l=>{const r=w0(l);if(r)window.__g=r.g;return r}});
  return p};
 const closePop=async p=>{for(let k=0;k<5;k++){if(await p.$('#bpop:not([hidden])')){await p.click('#bpop');await p.waitForTimeout(300)}else break}};
 async function answer(p,right){const g=await p.evaluate(()=>{const g=window.__g;return{kind:g.kind,ans:g.ans,n:g.opts?g.opts.length:0}});
@@ -32,7 +33,7 @@ await closePop(p);await p.click('#mapb');await p.waitForTimeout(300);await shot(
 await p.click('.card[data-l="div"]');await p.waitForTimeout(200);
 for(let k=0;k<12&&!(await p.$('#chk')||await p.$('.ch'));k++){await p.keyboard.press('ArrowRight');await p.waitForTimeout(120)}
 await answer(p,false);await p.click('#nx');await p.waitForTimeout(150);await answer(p,true);await p.click('#nx');await p.waitForTimeout(150);
-await p.click('#help');await p.waitForTimeout(200);await answer(p,true);await p.click('#nx');await p.waitForTimeout(300);
+if(await p.$('#help:not([hidden]):not([disabled])'))await p.click('#help');await p.waitForTimeout(200);await answer(p,true);await p.click('#nx');await p.waitForTimeout(300);
 // practice now mixes in one question from an earlier lesson
 while(!(await p.$('#mapb'))&&(await p.$('#chk, .ch'))){await answer(p,true);await p.click('#nx');await p.waitForTimeout(300)}await closePop(p);
 s=await st(p);console.log('after div practice: mist',JSON.stringify(s.mist),'tot',JSON.stringify(s.tot),'div',JSON.stringify(s.lessons.div),'badges',Object.keys(s.badges));

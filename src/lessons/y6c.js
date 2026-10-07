@@ -106,14 +106,16 @@ LESSONS.push({id:"scale6",subject:"math",grades:"6",kind:"wb",
  gen(level){const M=MUL(),D=DIVS(),RC=625;
   const top=s=>para(s,400,52,32,46,40);
   if(level===0){const k=pick([50,100,100,200]),a=rint(2,9),b=rint(2,Math.min(5,a)),u=Math.min(70,340/a,230/b),w=a*u,h=b*u,x=250-w/2,y=140+(270-h)/2,ans=a*k/100,n=pick(PLN);
-   const q=[A.wipe(),...top(T(`Ritningen är i skala 1:${k}. Hur långt är ${n.sv} i verkligheten? Svara i meter.`,`The drawing is at a scale of 1:${k}. How long is ${n.en} in reality? Answer in metres.`,`الرسم بمقياس 1:${k}. كم طول ${n.ar} في الواقع؟ أجب بالمتر.`)),
+   const q=[A.wipe(),...top(rint(0,1)?T(`Ritningen är i skala 1:${k}. Hur långt är ${n.sv} i verkligheten? Svara i meter.`,`The drawing is at a scale of 1:${k}. How long is ${n.en} in reality? Answer in metres.`,`الرسم بمقياس 1:${k}. كم طول ${n.ar} في الواقع؟ أجب بالمتر.`)
+     :T(`Ritningen är en förminskning i skala 1:${k}. Beräkna längden i verkligheten i meter.`,`The drawing is a reduction at a scale of 1:${k}. Work out the real length in metres.`,`الرسم تصغير بمقياس 1:${k}. احسب الطول في الواقع بالمتر.`)),
     ...plan(x,y,w,h),A.tx(`${a} cm`,x+w/2,y+h+42,32,"b"),...tagBox(RC,180,SCL(k),32)];
    const l1=`${a} cm ${M} ${k} = ${fmt(a*k)} cm`,l2=`${fmt(a*k)} cm = ${nf(ans)} m`;
    return{kind:"num",dec:!Number.isInteger(ans),ans,show:`${nf(ans)} m`,q,
     sol:[tf(l1,RC,280,36,300),fin(A.hl(RC-150,320,300,62)),fin(tf(l2,RC,366,42,290,"g"))]}}
   if(level===1){const k=pick([10000,20000,25000,50000,100000]);let a;do{a=rint(2,10)}while(k===25000&&a%2);
    const u=Math.min(60,320/a),xa=250-a*u/2,xb=xa+a*u,Y=290,ans=a*k/100000;
-   const q=[A.wipe(),...top(T("Hur långt är det fågelvägen från stugan till tältet? Svara i km.","How far is it from the cabin to the tent in a straight line? Answer in km.","كم تبعد الخيمة عن الكوخ في خط مستقيم؟ أجب بالكيلومتر.")),
+   const q=[A.wipe(),...top(rint(0,1)?T("Hur långt är det fågelvägen från stugan till tältet? Svara i km.","How far is it from the cabin to the tent in a straight line? Answer in km.","كم تبعد الخيمة عن الكوخ في خط مستقيم؟ أجب بالكيلومتر.")
+     :T("Beräkna avståndet fågelvägen mellan stugan och tältet. Svara i km.","Work out the straight-line distance from the cabin to the tent. Answer in km.","احسب المسافة في خط مستقيم بين الكوخ والخيمة. أجب بالكيلومتر.")),
     ...mapBg(40,118,420,350,[250,170,62,30]),houseI(xa,Y-7,1.4),tentI(xb,Y-7,1.4),A.p(dots([[xa,Y],[xb,Y]]),"k",12),A.p(R.dashed(xa,Y,xb,Y,12),"r",4),...cmRul(xa,Y+24,a,u),...tagBox(RC,180,SCL(k),30)];
    return{kind:"num",dec:!Number.isInteger(ans),ans,show:`${nf(ans)} km`,q,
     sol:[tf(`1 cm → ${fmt(k/100)} m`,RC,270,36,300,"b"),fin(tf(`${a} ${M} ${fmt(k/100)} m = ${fmt(a*k/100)} m`,RC,340,34,300)),fin(A.hl(RC-130,372,260,62)),fin(A.tx(`= ${nf(ans)} km`,RC,418,44,"g"))]}}
@@ -124,13 +126,13 @@ LESSONS.push({id:"scale6",subject:"math",grades:"6",kind:"wb",
    return{kind:"num",dec:!Number.isInteger(d),ans:d,show:`${nf(d)} cm`,q,
     sol:[tf(`${L} m = ${fmt(L*100)} cm`,RC,270,36,300,"b"),fin(tf(`${fmt(L*100)} ${D} ${fmt(k)} = ${nf(d)}`,RC,340,36,300)),fin(A.hl(RC-110,372,220,62)),fin(A.tx(`${nf(d)} cm`,RC,418,46,"g"))]}}
   if(t===1){const k=pick([2,4,5,10]);let r;do{r=rint(3,12)}while(k*r>90||k*r<20);const P=k*r,R0=Math.min(95,Math.max(70,P*2.2));
-   const q=[A.wipe(),...top(T(`Bilden är i skala ${k}:1. På bilden är nyckelpigan ${P} mm lång. Hur lång är den i verkligheten? Svara i mm.`,`The picture is at a scale of ${k}:1. In the picture the ladybird is ${P} mm long. How long is it in reality? Answer in mm.`,`الصورة بمقياس ${k}:1. طول الدعسوقة في الصورة ${P} مم. كم طولها في الواقع؟ أجب بالمليمتر.`)),
+   const q=[A.wipe(),...top(rint(0,1)?T(`Bilden är en förstoring i skala ${k}:1. Nyckelpigan är ${P} mm lång på bilden. Hur lång är den i verkligheten?`,`The picture is an enlargement at a scale of ${k}:1. The ladybird is ${P} mm long in it. How long is it in reality?`,`الصورة تكبير بمقياس ${k}:1. طول الدعسوقة فيها ${P} مم. كم طولها في الواقع؟`):T(`Bilden är i skala ${k}:1. På bilden är nyckelpigan ${P} mm lång. Hur lång är den i verkligheten? Svara i mm.`,`The picture is at a scale of ${k}:1. In the picture the ladybird is ${P} mm long. How long is it in reality? Answer in mm.`,`الصورة بمقياس ${k}:1. طول الدعسوقة في الصورة ${P} مم. كم طولها في الواقع؟ أجب بالمليمتر.`)),
     ...bug(230-R0*.25,270,R0),...lenArrow(230-R0*1.25,230+R0*1.27,270+R0+28,`${P} mm`,"b",30),...tagBox(RC,180,T(`skala ${k}:1`,`scale ${k}:1`,`المقياس ${k}:1`),32)];
    return{kind:"num",ans:r,show:`${r} mm`,q,
     sol:[tf(T(`${k} gånger större`,`${k} times bigger`,`أكبر ${arTimes(k)}`),RC,270,32,300,"b"),fin(A.tx(`${P} ${D} ${k} = ${r}`,RC,340,38)),fin(A.hl(RC-100,372,200,62)),fin(A.tx(`${r} mm`,RC,418,46,"g"))]}}
   let d,k,Lm;do{d=rint(2,10);k=pick([20,25,50,100,200,500]);Lm=d*k/100}while(Lm<1||Lm>40||(Lm*10)%1);
   const n=pick(PLN),u=Math.min(52,340/d),w=d*u,h=Math.min(3,d-1)*u*.8+40,x=250-w/2,y=160+(250-h)/2;
-  const q=[A.wipe(),...top(T(`På ritningen är ${n.sv} ${d} cm långt. I verkligheten är det ${nf(Lm)} m. Vilken skala har ritningen?`,`On the drawing ${n.en} is ${d} cm long. In reality it is ${nf(Lm)} m. What is the scale of the drawing?`,`طول ${n.ar} في الرسم ${d} سم، وفي الواقع ${nf(Lm)} م. ما مقياس الرسم؟`)),
+  const q=[A.wipe(),...top(T(`På ritningen är ${n.sv} ${d} cm långt. I verkligheten är det ${nf(Lm)} m. ${rint(0,1)?"Vilken skala har ritningen?":"Bestäm ritningens skala."}`,`On the drawing ${n.en} is ${d} cm long. In reality it is ${nf(Lm)} m. What is the scale of the drawing?`,`طول ${n.ar} في الرسم ${d} سم، وفي الواقع ${nf(Lm)} م. ما مقياس الرسم؟`)),
    ...plan(x,y,w,h),A.tx(`${d} cm`,x+w/2,y+h+42,32,"b"),...tagBox(RC,190,T("skala 1:?","scale 1:?","المقياس 1:?"),32)];
   return{kind:"pair",sep:":",ans:[1,k],check:(p,s)=>p>0&&Math.abs(s-p*k)<1e-9,show:`1:${fmt(k)}`,q,
    sol:[tf(`${nf(Lm)} m = ${fmt(d*k)} cm`,RC,280,36,300,"b"),fin(tf(`${fmt(d*k)} ${D} ${d} = ${fmt(k)}`,RC,345,36,300)),fin(A.hl(RC-110,372,220,62)),fin(A.tx(`1:${fmt(k)}`,RC,418,46,"g"))]}}
@@ -207,7 +209,7 @@ LESSONS.push({id:"tri6",subject:"math",grades:"6",kind:"wb",
  title:t3("Area av triangel och parallellogram","Area of triangles and parallelograms","مساحة المثلث ومتوازي الأضلاع"),
  icon:ICO(`${[...Array(11)].map((_,i)=>`<path d="M${50+i*22} 40V140" stroke="#9aa8c4" stroke-width="1.2"/>`).join("")}${[...Array(6)].map((_,j)=>`<path d="M50 ${40+j*20}H270" stroke="#9aa8c4" stroke-width="1.2"/>`).join("")}<path d="M50 140L94 40V140Z" fill="#e07b00" fill-opacity=".3"/><path d="M226 140L270 40V140Z" fill="#e07b00" fill-opacity=".3" stroke="#e07b00" stroke-width="2.5"/><path d="M50 140H226L270 40H94Z" fill="none" stroke="#1d2433" stroke-width="5" stroke-linejoin="round"/><path d="M94 40V140" stroke="#d63b2f" stroke-width="3" stroke-dasharray="7 6"/><path d="M80 30Q160 0 240 30" fill="none" stroke="#e07b00" stroke-width="3"/><path d="M240 30l-14 -2M240 30l-8 -12" stroke="#e07b00" stroke-width="3"/>`),
  steps:TR6.steps,mount:wbMount(TR6),
- gen(level){const M=MUL(),D=DIVS(),RC=640,ask=A.tx(T("Vad är arean?","What is the area?","ما المساحة؟"),RC,90,38);
+ gen(level){const M=MUL(),D=DIVS(),RC=640,ask=A.tx(pick([()=>T("Vad är arean?","What is the area?","ما المساحة؟"),()=>T("Beräkna arean.","Calculate the area.","احسب المساحة."),()=>T("Bestäm arean.","Find the area.","أوجد المساحة.")])(),RC,90,38);
   if(level===0){const b=rint(3,8),h=rint(2,5),s=rint(1,3),u=Math.min(62,330/(b+s),260/h),x0=110+(350-(b+s)*u)/2,yb=120+(300+h*u)/2,G=pgram(b,h,s,u,x0,yb),yt=yb-h*u;
    const q=[A.wipe(),lgrid(x0,yt,b+s,h,u),A.p(poly([G.BL,G.BR,G.TR,G.TL]),"k",5),A.p(R.dashed(G.TL[0],yt,G.TL[0],yb),"r",3.5),ra(G.TL[0],yb,1,-1),
     A.tx(`${b} cm`,x0+b*u/2,yb+40,32),...vdim(x0-30,yt,yb,`${h} cm`,"r"),ask];
@@ -243,7 +245,7 @@ LESSONS.push({id:"tri6",subject:"math",grades:"6",kind:"wb",
   const b=rint(3,9),h=rint(2,7),s=rint(1,3),Ar=b*h,u=Math.min(46,320/(b+s),260/h),x0=110+(340-(b+s)*u)/2,yb=150+(280+h*u)/2,G=pgram(b,h,s,u,x0,yb),yt=yb-h*u;
   const q=[A.wipe(),A.p(poly([G.BL,G.BR,G.TR,G.TL]),"k",5),A.hatch(poly([G.BL,G.BR,G.TR,G.TL]),"b"),A.p(R.dashed(G.TL[0],yt,G.TL[0],yb),"r",3.5),ra(G.TL[0],yb,1,-1),A.tx(`${b} cm`,x0+b*u/2,yb+40,32),
    ...vdim(x0-30,yt,yb,"?","r"),A.p(R.dashed(x0-22,yt,G.TL[0]-10,yt),"#9aa8c4",2),
-   tf(T(`Arean är ${Ar} cm².`,`The area is ${Ar} cm².`,`المساحة ${Ar} سم²`),RC,90,36,290),tf(T("Hur lång är höjden?","How long is the height?","ما طول الارتفاع؟"),RC,145,34,290,"r")];
+   tf(T(`Arean är ${Ar} cm².`,`The area is ${Ar} cm².`,`المساحة ${Ar} سم²`),RC,90,36,290),tf(rint(0,1)?T("Hur lång är höjden?","How long is the height?","ما طول الارتفاع؟"):T("Beräkna höjden.","Work out the height.","احسب الارتفاع."),RC,145,34,290,"r")];
   return{kind:"num",ans:h,show:`${h} cm`,q,
    sol:[tf(ARPg(),RC,230,32,290),A.tx(`${b} ${M} ? = ${Ar}`,RC,295,40,"b"),fin(A.hl(RC-140,330,280,62)),fin(tf(`? = ${Ar} ${D} ${b} = ${h} cm`,RC,376,42,270,"g"))]}}
 });
@@ -325,20 +327,27 @@ LESSONS.push({id:"circle6",subject:"math",grades:"6",kind:"wb",
   const circ=(kind)=>[A.p(R.circ(cx,cy,R0),"k",5),...circDeco(kind,cx,cy,R0),A.p(dots([[cx,cy]]),"k",14)];
   const rLine=(lab)=>[A.p(R.line(cx,cy,cx+R0,cy,.2),"r",5),A.tx(lab,cx+R0*.4,cy-16,32,"r")];
   const dLine=(lab)=>[A.p(R.line(cx-R0,cy,cx+R0,cy,.3),"b",5),A.tx(lab,cx-R0*.3,cy-16,32,"b")];
-  const cq=n=>[A.tx(L(n),RC,78,36,"b"),...para(T("Hur lång är omkretsen?","How long is the circumference?","ما طول المحيط؟"),RC,130,32,18,40),A.tx(T(`Räkna med π ≈ ${PI()}`,`Use π ≈ ${PI()}`,`استخدم π ≈ ${PI()}`),RC,215,28,"o")];
+  /* the question; rnd = an extra test instruction such as "Avrunda till hela cm." */
+  const cq=(n,rnd)=>{const P=para((rint(0,1)?T("Hur lång är omkretsen?","How long is the circumference?","ما طول المحيط؟"):T("Beräkna omkretsen.","Calculate the circumference.","احسب المحيط."))+(rnd?" "+rnd:""),RC,124,30,20,36);
+   return[A.tx(L(n),RC,74,36,"b"),...P,A.tx(T(`Räkna med π ≈ ${PI()}`,`Use π ≈ ${PI()}`,`استخدم π ≈ ${PI()}`),RC,P[P.length-1].y+40,26,"o")]};
   if(level===0){const kind=pick(["plate","clock","wheel","pizza"]);
    if(rint(0,1)){const r=rint(2,30);return{kind:"num",ans:2*r,show:`${2*r} cm`,q:[A.wipe(),...circ(kind),...rLine(`r = ${r} cm`),...para(T("Hur lång är diametern?","How long is the diameter?","ما طول القطر؟"),RC,90,34,14,44)],
      sol:[A.p(R.dashed(cx-R0,cy,cx,cy,12),"b",4),A.tx(T("diametern = 2 radier","diameter = 2 radii","القطر = نصفا قطر"),RC,200,30,"b"),A.tx(`d = 2 ${M} r`,RC,265,38),fin(A.hl(RC-140,300,280,62)),fin(A.tx(`2 ${M} ${r} = ${2*r} cm`,RC,346,42,"g"))]}}
    const d=2*rint(2,30);return{kind:"num",ans:d/2,show:`${d/2} cm`,q:[A.wipe(),...circ(kind),...dLine(`d = ${d} cm`),...para(T("Hur lång är radien?","How long is the radius?","ما طول نصف القطر؟"),RC,90,34,14,44)],
     sol:[A.p(R.line(cx,cy,cx+R0,cy,.2),"r",7),A.tx(T("radien = halva diametern","radius = half the diameter","نصف القطر = نصف طول القطر"),RC,200,28,"r"),A.tx(`r = d ${D} 2`,RC,265,38),fin(A.hl(RC-140,300,280,62)),fin(A.tx(`${d} ${D} 2 = ${d/2} cm`,RC,346,42,"g"))]}}
-  if(level===1){const o=pick(CIRC),d=rint(o.d[0],o.d[1]),ans=Math.round(314*d)/100;
-   return{kind:"num",dec:true,ans,show:`${nf(ans)} cm`,q:[A.wipe(),...circ(o.k),...dLine(`d = ${d} cm`),
-     ...cq(o.n)],
-    sol:[tf(`${OSYM()} ≈ ${PI()} ${M} d`,RC,275,36,300),fin(A.tx(`${PI()} ${M} ${d}`,RC,335,40,"b")),fin(A.hl(RC-140,366,280,62)),fin(tf(`= ${nf(ans)} cm`,RC,412,42,270,"g"))]}}
-  const o=pick(CIRC2),r=rint(o.r[0],o.r[1]),ans=Math.round(314*2*r)/100;
-  return{kind:"num",dec:true,ans,show:`${nf(ans)} ${o.u}`,q:[A.wipe(),...circ(o.k),...rLine(`r = ${r} ${o.u}`),
-    ...cq(o.n)],
-   sol:[A.p(R.dashed(cx-R0,cy,cx,cy,12),"b",4),tf(`d = 2 ${M} ${r} = ${2*r} ${o.u}`,RC,275,36,300,"b"),fin(A.tx(`${PI()} ${M} ${2*r}`,RC,335,40)),fin(A.hl(RC-140,366,280,62)),fin(tf(`= ${nf(ans)} ${o.u}`,RC,412,42,270,"g"))]}}
+  if(level===1){const o=pick(CIRC);let d;do{d=rint(o.d[0],o.d[1])}while((314*d)%100===50);const ex=Math.round(314*d)/100,rnd=Math.random()<.4,ans=rnd?Math.round(ex):ex;
+   return{kind:"num",dec:true,ans,show:`${nf(ans)} cm`,nt:rnd?"round":"old",q:[A.wipe(),...circ(o.k),...dLine(`d = ${d} cm`),
+     ...cq(o.n,rnd?T("Avrunda till hela\u00a0cm.","Round to whole\u00a0cm.","قرّب إلى أقرب سنتيمتر."):"")],
+    sol:[tf(`${OSYM()} ≈ ${PI()} ${M} d`,RC,275,36,300),fin(A.tx(`${PI()} ${M} ${d}`,RC,335,40,"b")),fin(A.hl(RC-150,366,300,62)),fin(tf(`= ${nf(ex)} cm${rnd?` ≈ ${ans} cm`:""}`,RC,412,42,290,"g"))]}}
+  if(Math.random()<.3){/* NP style: how far does the bike roll in n turns? */
+   const d=pick([50,60,70]),n=pick([5,10,20,100]),C=314*d/100,tot=C*n,m=tot/100,wq=T(`Ett cykelhjul har diametern ${d} cm. Hur långt rullar cykeln på ${n} varv? Svara i meter.`,`A bike wheel has a diameter of ${d} cm. How far does the bike roll in ${n} turns? Answer in metres.`,`قطر عجلة دراجة ${d} سم. كم مترًا تقطع الدراجة في ${n} دورة؟ أجب بالمتر.`);
+   return{kind:"num",dec:true,ans:m,show:`${nf(m)} m`,nt:"wheel",hsay:t3("Ett varv är lika långt som omkretsen. Räkna ut omkretsen och gångra med antalet varv.","One turn is as long as the circumference. Work out the circumference and multiply by the number of turns.","الدورة الواحدة تساوي المحيط. احسب المحيط ثم اضربه في عدد الدورات."),
+    q:[A.wipe(),...circ("wheel"),...dLine(`d = ${d} cm`),...para(wq,RC,74,28,22,36),A.tx(T(`Räkna med π ≈ ${PI()}`,`Use π ≈ ${PI()}`,`استخدم π ≈ ${PI()}`),RC,260,26,"o")],
+    sol:[tf(`${PI()} ${M} ${d} = ${nf(C)} cm`,RC,310,32,330,"b"),fin(tf(`${n} ${M} ${nf(C)} = ${nf(tot)} cm`,RC,360,32,330)),fin(A.hl(RC-150,388,300,62)),fin(tf(`= ${nf(m)} m`,RC,434,42,290,"g"))]}}
+  const o=pick(CIRC2),r=rint(o.r[0],o.r[1]),ex=Math.round(314*2*r)/100,rnd=Math.random()<.4&&(628*r)%10!==0,ans=rnd?Math.round(ex*10)/10:ex;
+  return{kind:"num",dec:true,ans,show:`${nf(ans)} ${o.u}`,nt:rnd?"round":"old",q:[A.wipe(),...circ(o.k),...rLine(`r = ${r} ${o.u}`),
+    ...cq(o.n,rnd?T("Avrunda till en decimal.","Round to one decimal place.","قرّب إلى منزلة عشرية واحدة."):"")],
+   sol:[A.p(R.dashed(cx-R0,cy,cx,cy,12),"b",4),tf(`d = 2 ${M} ${r} = ${2*r} ${o.u}`,RC,275,36,300,"b"),fin(A.tx(`${PI()} ${M} ${2*r}`,RC,335,40)),fin(A.hl(RC-150,366,300,62)),fin(tf(`= ${nf(ex)} ${o.u}${rnd?` ≈ ${nf(ans)} ${o.u}`:""}`,RC,412,42,290,"g"))]}}
 });
 Object.assign(HELPX,{circle6:[
  {say:t3("Linda ett snöre runt en burk och lägg det rakt. Snöret räcker till tre burkbredder och lite till.",
@@ -420,14 +429,19 @@ LESSONS.push({id:"vol6",subject:"math",grades:"6",kind:"wb",
  steps:VO6.steps,mount:wbMount(VO6),
  gen(level){const M=MUL(),D=DIVS(),RC=640;
   if(level===0){const L=rint(2,6),W=rint(2,4),H=rint(1,4),F=cubFit(L,W,H,270,290,290,280,62),B=cub(F.x,F.y,L,W,H,F.u,{grid:true}),u=F.u,V=L*W*H;
-   const q=[A.wipe(),...B.o,...cubLab(B,F.x,F.y,`${L} cm`,`${W} cm`,`${H} cm`,"k",28),A.tx(T("Varje kub är 1 cm³","Each cube is 1 cm³","حجم كل مكعب 1 سم³"),RC,80,30,"b"),A.tx(T("Hur stor är volymen?","What is the volume?","ما الحجم الكلي؟"),RC,130,32)];
+   const q=[A.wipe(),...B.o,...cubLab(B,F.x,F.y,`${L} cm`,`${W} cm`,`${H} cm`,"k",28),A.tx(T("Varje kub är 1 cm³","Each cube is 1 cm³","حجم كل مكعب 1 سم³"),RC,80,30,"b"),A.tx(rint(0,1)?T("Hur stor är volymen?","What is the volume?","ما الحجم الكلي؟"):T("Beräkna volymen.","Calculate the volume.","احسب الحجم."),RC,130,32)];
    return{kind:"num",ans:V,show:`${V} cm³`,q,
     sol:[A.hatch(poly([[F.x,F.y],[F.x+B.w,F.y],[F.x+B.w,F.y-u],[F.x,F.y-u]]),"o"),A.hatch(poly([[F.x+B.w,F.y],[F.x+B.w+B.dx,F.y-B.dy],[F.x+B.w+B.dx,F.y-u-B.dy],[F.x+B.w,F.y-u]]),"o"),
      A.tx(`${L} ${M} ${W} = ${L*W}`,RC,230,40,"o"),A.tx(T("kuber i ett lager","cubes in one layer","مكعبًا في الطبقة"),RC,272,26,"o"),
      fin(A.tx(`${H} ${M} ${L*W} = ${V}`,RC,340,40)),fin(A.hl(RC-130,372,260,62)),fin(A.tx(`V = ${V} cm³`,RC,418,42,"g"))]}}
+  if(level===1&&Math.random()<.3){/* 1 cm³ = 1 ml: how many ml does a carton hold? */
+   const [L,W,H]=pick([[6,4,10],[8,5,20],[10,6,15],[7,7,20],[6,5,12],[9,6,15],[5,4,8]]),V=L*W*H,F=cubFit(L,W,H,270,290,290,270,40),B=cub(F.x,F.y,L,W,H,F.u,{fill:"g",hidden:true});
+   const q=[A.wipe(),...B.o,...cubLab(B,F.x,F.y,`${L} cm`,`${W} cm`,`${H} cm`,"k",28),...para(rint(0,1)?T("Hur många milliliter rymmer förpackningen?","How many millilitres does the carton hold?","كم مليلترًا تتّسع العلبة؟"):T("Beräkna förpackningens volym i ml.","Work out the volume of the carton in ml.","احسب حجم العلبة بالمليلتر."),RC,90,32,20,42)];
+   return{kind:"num",ans:V,show:`${fmt(V)} ml`,nt:"ml",hsay:t3("Räkna ut volymen i cm³. Varje cm³ rymmer 1 ml.","Work out the volume in cm³. Each cm³ holds 1 ml.","احسب الحجم بالسنتيمتر المكعب. كل 1 سم³ يتّسع لـ 1 مل."),q,
+    sol:[fin(tf(`${L} ${M} ${W} ${M} ${H} = ${fmt(V)} cm³`,RC,250,36,300,"b")),A.tx("1 cm³ = 1 ml",RC,310,34,"o"),fin(A.hl(RC-130,342,260,62)),fin(A.tx(`= ${fmt(V)} ml`,RC,388,44,"g"))]}}
   if(level===1){
    if(rint(0,1)){let L,W,H;do{L=rint(5,20);W=rint(2,12);H=rint(2,10)}while(W>L||L*W*H>2400);const V=L*W*H,F=cubFit(L,W,H,270,290,290,270,40),B=cub(F.x,F.y,L,W,H,F.u,{fill:"o",hidden:true});
-    const q=[A.wipe(),...B.o,...cubLab(B,F.x,F.y,`${L} cm`,`${W} cm`,`${H} cm`,"k",28),...para(T("Vad är lådans volym?","What is the volume of the box?","ما حجم الصندوق؟"),RC,90,32,20,42)];
+    const q=[A.wipe(),...B.o,...cubLab(B,F.x,F.y,`${L} cm`,`${W} cm`,`${H} cm`,"k",28),...para(rint(0,1)?T("Vad är lådans volym?","What is the volume of the box?","ما حجم الصندوق؟"):T("Beräkna lådans volym.","Calculate the volume of the box.","احسب حجم الصندوق."),RC,90,32,20,42)];
     return{kind:"num",ans:V,show:`${fmt(V)} cm³`,q,
      sol:[tf(T("V = längd · bredd · höjd","V = length × width × height","الطول × العرض × الارتفاع"),RC,220,30,300),fin(tf(`${L} ${M} ${W} ${M} ${H}`,RC,290,40,300,"b")),fin(A.hl(RC-140,322,280,62)),fin(tf(`= ${fmt(V)} cm³`,RC,368,42,270,"g"))]}}
    const L=rint(3,9),W=rint(2,5),H=rint(2,6),V=L*W*H;
@@ -435,7 +449,7 @@ LESSONS.push({id:"vol6",subject:"math",grades:"6",kind:"wb",
    return{kind:"num",ans:V,show:`${V} l`,q,
     sol:[A.tx("1 dm³ = 1 "+LU(),RC,220,34,"b"),fin(tf(`${L} ${M} ${W} ${M} ${H} = ${V} dm³`,RC,290,38,300)),fin(A.hl(RC-130,322,260,62)),fin(A.tx(`= ${V} ${LU()}`,RC,368,44,"g"))]}}
   const L=rint(3,8)*10,W=rint(2,4)*10,H=rint(2,5)*10,V=L*W*H/1000;
-  const q=[A.wipe(),...tank(L/10,W/10,H/10,270,290,290,260,[`${L} cm`,`${W} cm`,`${H} cm`]),...para(T("Hur många liter rymmer akvariet?","How many litres does the fish tank hold?","كم لترًا يسع حوض السمك؟"),RC,90,32,20,42)];
+  const q=[A.wipe(),...tank(L/10,W/10,H/10,270,290,290,260,[`${L} cm`,`${W} cm`,`${H} cm`]),...para(rint(0,1)?T("Hur många liter rymmer akvariet?","How many litres does the fish tank hold?","كم لترًا يسع حوض السمك؟"):T("Beräkna akvariets volym i liter.","Work out the volume of the fish tank in litres.","احسب حجم حوض السمك باللتر."),RC,90,32,20,42)];
   return{kind:"num",ans:V,show:`${V} l`,q,
    sol:[A.tx(T("Gör om till dm:","Change to dm:","نحوّل إلى الديسيمتر:"),RC,215,30,"b"),A.tx(`${L/10} dm ${M} ${W/10} dm ${M} ${H/10} dm`,RC,265,fitS(`${L/10} dm · ${W/10} dm · ${H/10} dm`,300,32),"b"),
     fin(A.tx(`= ${V} dm³`,RC,330,40)),fin(A.hl(RC-120,362,240,62)),fin(A.tx(`= ${V} ${LU()}`,RC,408,44,"g"))]}}
@@ -454,4 +468,7 @@ Object.assign(HINTSX,{vol6:[
  {say:t3("Räkna kuberna i ett lager. Multiplicera sedan med antalet lager.","Count the cubes in one layer. Then multiply by the number of layers.","عُدّ المكعبات في طبقة واحدة، ثم اضرب في عدد الطبقات."),cut:noFin},
  {say:t3("Volym = längd · bredd · höjd. Kom ihåg att 1 dm³ = 1 liter.","Volume = length × width × height. Remember that 1 dm³ = 1 litre.","الحجم = الطول × العرض × الارتفاع. وتذكّر أن 1 دسم³ = 1 لتر."),cut:noFin},
  {say:t3("Gör om alla mått till dm först. Då blir svaret i dm³, och 1 dm³ = 1 liter.","Change all the measurements to dm first. Then the answer is in dm³, and 1 dm³ = 1 litre.","حوّل كل الأبعاد إلى الديسيمتر أولًا، فيكون الناتج بالدسم³، و1 دسم³ = 1 لتر."),cut:noFin}]});
+/* a question type can bring its own hint text (g.hsay) and cut (g.hcut); the app calls cut(g) just before it reads say */
+for(const id of ["scale6","tri6","circle6","vol6"]){const H=HINTSX[id];if(H)HINTSX[id]=H.map(h=>{let cur=null;
+ return{cut:g=>{cur=g;return g.hcut?g.hcut(g):h.cut(g)},get say(){return cur&&cur.hsay||h.say}}})}
 }

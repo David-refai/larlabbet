@@ -87,7 +87,17 @@ LESSONS.push({id:"ang7",subject:"math",grades:"7",kind:"wb",
  icon:ICO(`<path d="M30 60H290M30 130H290" stroke="#1d2433" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M60 50l10 10l-10 10M60 120l10 10l-10 10" stroke="#1d2433" stroke-width="3" fill="none"/><path d="M110 165L210 25" stroke="#1d2433" stroke-width="5" stroke-linecap="round"/><path d="M215 60A30 30 0 0 0 202.4 35.6" stroke="#e07b00" stroke-width="5" fill="none"/><path d="M165 130A30 30 0 0 0 152.4 105.6" stroke="#e07b00" stroke-width="5" fill="none"/><path d="M155 60A30 30 0 0 0 167.6 84.4" stroke="#1e9e5a" stroke-width="5" fill="none"/><text x="262" y="112" ${CV} font-size="40" fill="#e07b00">=</text>`),
  steps:ANG7.steps,mount:wbMount(ANG7),
  gen(level){
-  const ask=(y=100)=>A.tx(T("Hur stor är vinkeln x?","How big is angle x?","ما قياس الزاوية x؟"),630,y,34);
+  const AQ=pick([t3("Hur stor är vinkeln x?","How big is angle x?","ما قياس الزاوية x؟"),t3("Bestäm vinkeln x.","Find angle x.","أوجد الزاوية x."),t3("Beräkna vinkeln x.","Calculate angle x.","احسب الزاوية x.")]),ask=(y=100)=>A.tx(L(AQ),630,y,34);
+  /* name the angle pair: the words a test uses */
+  if(level<2&&Math.random()<.3){const nq=[A.tx(T("Vad kallas","What are","ماذا تُسمّى"),630,90,32,"b"),A.tx(T("vinklarna a och b?","angles a and b called?","الزاويتان a و b؟"),630,130,32,"b")];let q,ty,why,fx;
+   if(level===0){const a=aRnd(35,145,12),X=xing(265,265,200,rint(-20,20),a),k=rint(0,3),opp=Math.random()<.5,j=opp?(k+2)%4:(k+1)%4;ty=opp?"vert":"side";
+    q=[A.wipe(),...nq,...X.o,...ang(265,265,X.s(k),"b","a",null,40),...ang(265,265,X.s(j),"r","b",null,40)];
+    why=opp?t3("mitt emot varandra","opposite each other","متقابلتان"):t3("bredvid varandra på en linje","next to each other on a line","متجاورتان على مستقيم");fx=opp?L(NM.eq):"a + b = 180°"}
+   else{const t=aRnd(45,135,12),F=par(t),c=rint(0,1),K=c?F.D:F.U,J=c?F.U:F.D,alt=Math.random()<.5;let k=rint(0,3);if(alt)k=c?rint(0,1):rint(2,3);const j=alt?(k+2)%4:k;ty=alt?"alt":"corr";
+    q=[A.wipe(),...nq,A.tx(T("Linjerna är parallella.","The lines are parallel.","المستقيمان متوازيان."),630,180,28),...F.o,...ang(...K,F.s(k),"b","a",null,40),...ang(...J,F.s(j),"r","b",null,40)];
+    why=alt?t3("var sin sida om linjen, Z-form","either side of the line, Z shape","على جانبي القاطع، شكل Z"):t3("samma plats vid varje korsning","same position at each crossing","الموقع نفسه عند كل تقاطع");fx=L(NM.eq)}
+   const keys=level?["corr","alt","vert"]:["side","vert","corr"],ord=shuffle(keys),nm=L(NM[ty]);
+   return{kind:"choice",opts:ord.map(k=>NM[k]),ans:ord.indexOf(ty),show:NM[ty],q,sol:[A.tx(L(why),630,240,28,"b"),fin(A.tx(fx,630,292,30)),...res(nm,630,400,300,36)],nt:"ang7-name"}}
   if(level===0){const a=aRnd(35,145,12),rot=rint(-20,20),X=xing(265,265,200,rot,a),k=rint(0,3),j=(k+rint(1,3))%4,kv=X.v(k),x=X.v(j),opp=(j-k+4)%4===2;
    return{kind:"num",ans:x,show:`${x}°`,q:[A.wipe(),ask(),...X.o,...ang(265,265,X.s(k),"b",`${kv}°`),...ang(265,265,X.s(j),"r","x",null,40)],
     sol:opp?[A.tx(L(NM.vert),630,230,34,"b"),fin(A.tx(L(NM.eq),630,285,30)),...res(`x = ${x}°`,630,400,240)]
@@ -215,12 +225,18 @@ LESSONS.push({id:"circ7",subject:"math",grades:"7",kind:"wb",
  icon:ICO(`<circle cx="105" cy="92" r="66" fill="#e07b00" fill-opacity=".12" stroke="#1d2433" stroke-width="5"/><path d="M105 92H171" stroke="#d63b2f" stroke-width="4"/><circle cx="105" cy="92" r="5" fill="#1d2433"/><text x="138" y="82" ${CV} font-size="28" fill="#d63b2f">r</text><text x="245" y="112" ${CV} font-size="84" fill="#2257c9">π</text><text x="245" y="160" ${CV} font-size="26" fill="#1e9e5a">≈ 3,14</text>`),
  steps:CIRC7.steps,mount:wbMount(CIRC7),
  gen(level){const M=MUL(),D=DIVS(),o=pick(COBJ),u=o.u;
+  const pk=(a,b)=>Math.random()<.4?b:a;
   if(level===0){const byR=rint(0,1);let d=rint(o.lo,o.hi);if(byR&&d%2)d++;const r=d/2,ans=r2(3.14*d);
    const s=[...(byR?[A.tx(`d = 2 ${M} ${nf(r)} = ${nf(d)} ${u}`,SX,195,fitS(`d = 2 · ${r} = ${d} ${u}`,320,32),"b")]:[]),A.tx(fO(),SX,byR?260:230,fitS(fO(),320,34)),A.tx(`${OL()} ≈ ${PI()} ${M} ${nf(d)}`,SX,byR?325:300,fitS(`${OL()} ≈ 3,14 · ${d}`,320,34)),...res(`${OL()} ≈ ${nf(ans)} ${u}`,SX,415,330,40)];
-   return{kind:"num",dec:true,ans,show:`${nf(ans)} ${u}`,q:cQ(o,byR?"r":"d",byR?r:d,askO()),sol:s}}
+   return{kind:"num",dec:true,ans,show:`${nf(ans)} ${u}`,q:cQ(o,byR?"r":"d",byR?r:d,pk(askO(),T("Beräkna omkretsen. Räkna med π ≈ 3,14.","Calculate the circumference. Use π ≈ 3.14.","احسب المحيط. استخدم π ≈ 3.14."))),sol:s}}
   if(level===1){const byD=rint(0,1);let d=rint(o.lo,o.hi);if(d%2)d++;const r=d/2,ans=r2(3.14*r*r);
    const s=[...(byD?[A.tx(`r = ${nf(d)} ${D} 2 = ${nf(r)} ${u}`,SX,195,fitS(`r = ${d} / 2 = ${r} ${u}`,320,32),"b")]:[]),A.tx(fA(),SX,byD?260:230,fitS(fA(),320,34)),A.tx(`${AL()} ≈ ${PI()} ${M} ${nf(r)} ${M} ${nf(r)}`,SX,byD?325:300,fitS(`${AL()} ≈ 3,14 · ${r} · ${r}`,320,34)),...res(`${AL()} ≈ ${nf(ans)} ${u}²`,SX,415,330,40)];
-   return{kind:"num",dec:true,ans,show:`${nf(ans)} ${u}²`,q:cQ(o,byD?"d":"r",byD?d:r,askA()),sol:s}}
+   return{kind:"num",dec:true,ans,show:`${nf(ans)} ${u}²`,q:cQ(o,byD?"d":"r",byD?d:r,pk(askA(),T("Beräkna arean. Räkna med π ≈ 3,14.","Calculate the area. Use π ≈ 3.14.","احسب المساحة. استخدم π ≈ 3.14."))),sol:s}}
+  /* double the diameter: four times the area */
+  if(Math.random()<.25){const k=rint(2,3),d1=pick([10,12,16,20]),d2=k*d1,r1=d1/2,R2=d2/2,A1=r2(3.14*r1*r1),A2=r2(3.14*R2*R2),c1=110,c2=340,s1=135/k;
+   const ctx=T(`Två pizzor har diametern ${d1} cm och ${d2} cm.`,`Two pizzas have diameters of ${d1} cm and ${d2} cm.`,`قطرا بيتزاوين ${d1} سم و${d2} سم.`),qq=T("Hur många gånger större är den stora pizzans area?","How many times bigger is the area of the big pizza?","كم مرة تكون مساحة البيتزا الكبيرة أكبر؟");
+   return{kind:"num",ans:k*k,show:String(k*k),q:[A.wipe(),A.tx(ctx,400,52,fitS(ctx,760,32)),A.tx(qq,400,98,fitS(qq,760,30),"b"),...pizza(c1,320,s1),...pizza(c2,300,135),A.tx(`${d1} cm`,c1,320+s1+40,30),A.tx(`${d2} cm`,c2,480,30)],
+    sol:[A.tx(`${PI()} ${M} ${r1} ${M} ${r1} = ${nf(A1)}`,650,190,fitS(`3,14 · ${r1} · ${r1} = ${A1}`,280,28)),A.tx(`${PI()} ${M} ${R2} ${M} ${R2} = ${nf(A2)}`,650,250,fitS(`3,14 · ${R2} · ${R2} = ${A2}`,280,28)),fin(A.tx(`${nf(A2)} ${D} ${nf(A1)}`,650,320,30,"b")),...res(`= ${k*k}  (${k} ${M} ${k})`,650,420,240,38)],nt:"circ7-scale"}}
   const t=rint(0,2);
   if(t===0){const d=rint(o.lo,o.hi),O=r2(3.14*d);
    return{kind:"num",dec:true,ans:d,show:`${d} ${u}`,q:cQ(o,"O",O,askD()),
@@ -304,12 +320,19 @@ LESSONS.push({id:"units7",subject:"math",grades:"7",kind:"wb",
  icon:ICO(`<path d="M40 70H130V160H40ZM40 70L80 40H170L130 70M170 40V130L130 160" fill="none" stroke="#1d2433" stroke-width="4" stroke-linejoin="round"/><path d="M40 70H130V160H40Z" fill="#2257c9" fill-opacity=".12"/>${[1,2,3,4].map(i=>`<path d="M${40+i*18} 70V160M40 ${70+i*18}H130" stroke="#9aa8c4" stroke-width="1.5"/>`).join("")}<text x="240" y="85" ${CV} font-size="36" fill="#2257c9">1 dm³</text><text x="240" y="125" ${CV} font-size="36" fill="#1d2433">=</text><text x="240" y="165" ${CV} font-size="36" fill="#1e9e5a">1 l</text>`),
  steps:UNI7.steps,mount:wbMount(UNI7),
  gen(level){const M=MUL(),D=DIVS();
+  /* NP style: a pool or a bathtub, m³ and litres */
+  if(level===1&&Math.random()<.3){const up=Math.random()<.5,v=up?pick([120,150,180,200,240,250,300]):rint(8,60),ans=up?v/1000:v*1000;
+   const ctx=up?T(`Ett badkar rymmer ${v} liter vatten. Hur många m³ är det?`,`A bathtub holds ${v} litres of water. How many m³ is that?`,`يتّسع حوض استحمام لـ ${v} لترًا من الماء. كم m³ هذا؟`):T(`En pool rymmer ${v} m³ vatten. Hur många liter är det?`,`A pool holds ${v} m³ of water. How many litres is that?`,`يتّسع مسبح لـ ${v} m³ من الماء. كم لترًا هذا؟`);
+   const pic=up?[A.hatch("M120,330h260v80h-260Z","b"),A.p("M100,300h300v-0M110,300q0,120 40,120h200q40,0 40,-120","k",4.5)]:[A.hatch("M90,300h340v110h-340Z","b"),A.p(R.rect(80,280,360,140,.3),"k",4.5),A.p(R.line(380,280,380,220,.2)+R.line(410,280,410,220,.2)+R.line(380,240,410,240,.2)+R.line(380,262,410,262,.2),"#9aa8c4",3)];
+   const l2=up?`${v} ${D} ${fmt(1000)} = ${nf(ans)}`:`${v} ${M} ${fmt(1000)} = ${fmt(ans)}`,l3=up?`${v} l = ${nf(ans)} m³`:`${v} m³ = ${fmt(ans)} l`;
+   return{kind:"num",dec:up,ans,show:up?`${nf(ans)} m³`:`${fmt(ans)} l`,q:[A.wipe(),...para(ctx,400,60,30,46,40),...pic],
+    sol:[A.tx(`1 m³ = ${fmt(1000)} l`,640,220,30,"b"),fin(A.tx(l2,640,300,fitS(l2,270,32))),...res(l3,640,400,280,36)],nt:"units7-pool"}}
   if(level<2){const fam=level?"v":"a",U=level?pick([["m³","dm³"],["m³","l"],["dm³","cm³"],["dm³","ml"],["l","cm³"],["l","ml"]]):pick([["m²","dm²"],["dm²","cm²"]]),down=Math.random()<.55;
    const from=down?U[0]:U[1],to=down?U[1]:U[0],f=level?1000:100;let v;
    if(down)v=Math.random()<.5?rint(2,12):pick(level?[0.5,0.25,0.75,1.5,2.5,1.2,0.3,0.05,3.6]:[0.5,1.5,2.5,0.25,3.2,0.75,1.2,4.5]);
    else v=level?pick([rint(2,9)*1000,rint(1,19)*50,rint(11,49)*100]):pick([rint(2,40)*100,rint(1,9)*10,rint(11,99)*10]);
-   const qs=`${nf(v)} ${from} = ? ${to}`,c=convert(fam,from,to,v,qs);
-   return{kind:"num",dec:!Number.isInteger(c.ans),ans:c.ans,show:`${nf(c.ans)} ${to}`,q:uQ(qs,fam),sol:c.sol}}
+   const qs=`${nf(v)} ${from} = ? ${to}`,c=convert(fam,from,to,v,qs),q0=uQ(qs,fam),tt=pick([t3(`Omvandla till ${to}.`,`Convert to ${to}.`,`حوّل إلى ${to}.`),t3(`Gör om till ${to}.`,`Change to ${to}.`,`حوّل إلى ${to}.`),t3(`Hur många ${to} är det?`,`How many ${to} is that?`,`كم ${to} يساوي ذلك؟`)]);
+   return{kind:"num",dec:!Number.isInteger(c.ans),ans:c.ans,show:`${nf(c.ans)} ${to}`,q:[q0[0],A.tx(L(tt),400,36,28,"b"),...q0.slice(1)],sol:c.sol}}
   const t=rint(0,2);
   if(t===0){const Lc=pick([40,50,60,80,100]),W=pick([20,30,40,50]),H=pick([30,40,50,60]),V=Lc*W*H/1000;
    const ctx=T(`Ett akvarium är ${Lc} cm långt, ${W} cm djupt och ${H} cm högt. Hur många liter rymmer det?`,`An aquarium is ${Lc} cm long, ${W} cm deep and ${H} cm high. How many litres does it hold?`,`حوض أسماك طوله ${Lc} سم وعمقه ${W} سم وارتفاعه ${H} سم. كم لترًا يتّسع؟`);
@@ -402,7 +425,7 @@ LESSONS.push({id:"comp7",subject:"math",grades:"7",kind:"wb",
  gen(level){const M=MUL(),D=DIVS();
   if(level<2&&(level===0||rint(0,1))){let W,H,w1,h1;do{W=rint(6,12);H=rint(5,10);w1=rint(2,W-3);h1=rint(2,H-2)}while(H>W+1);
    const mir=rint(0,1)===1,R0=LROLE(mir),u=Math.min(40,320/W,280/H),x0=85+(320-W*u)/2,y0=110+(290-H*u)/2,pp=lpts(W,H,w1,h1,mir).map(([x,y])=>[x0+x*u,y0+y*u]);
-   const q=[A.wipe(),A.tx(T("Golvet har formen av ett L.","The floor is L-shaped.","الأرضية على شكل حرف L."),625,100,28),A.tx(level?T("Hur lång är omkretsen?","How long is the perimeter?","ما طول المحيط؟"):T("Hur stor är arean?","What is the area?","ما المساحة؟"),625,150,34,"b"),A.p(plines(pp),"k",4.5)];
+   const q=[A.wipe(),A.tx(T("Golvet har formen av ett L.","The floor is L-shaped.","الأرضية على شكل حرف L."),625,100,28),A.tx(level?L(pick([t3("Hur lång är omkretsen?","How long is the perimeter?","ما طول المحيط؟"),t3("Bestäm figurens omkrets.","Find the perimeter of the shape.","أوجد محيط الشكل.")])):L(pick([t3("Hur stor är arean?","What is the area?","ما المساحة؟"),t3("Beräkna golvets area.","Calculate the area of the floor.","احسب مساحة الأرضية.")])),625,150,32,"b"),A.p(plines(pp),"k",4.5)];
    const xL=mir?x0+(W-w1)*u:x0,xR=xL+w1*u,yS=y0+h1*u;
    if(level===0){q.push(eLab(pp,R0.top,`${w1} m`),eLab(pp,R0.stepV,`${h1} m`),eLab(pp,R0.short,`${H-h1} m`),eLab(pp,R0.bottom,`${W} m`));
     const a1=w1*h1,a2=W*(H-h1),tot=a1+a2;
@@ -412,6 +435,11 @@ LESSONS.push({id:"comp7",subject:"math",grades:"7",kind:"wb",
    const sides=pp.map((p,k)=>{const n=pp[(k+1)%6];return Math.round((Math.abs(n[0]-p[0])+Math.abs(n[1]-p[1]))/u)}),tot=2*(W+H),sum=sides.join(" + ");
    return{kind:"num",ans:tot,show:`${tot} m`,q,sol:[A.p(plines(pp),"r",7),eLab(pp,R0.stepH,`${W-w1} m`,"o",30,true),eLab(pp,R0.short,`${H-h1} m`,"o"),A.tx(`${W} − ${w1} = ${W-w1}`,625,220,30,"o"),A.tx(`${H} − ${h1} = ${H-h1}`,625,265,30,"o"),
     A.tx(sum,625,325,fitS(sum,300,30)),...res(`= ${tot} m`,625,410,200,42)]}}
+  /* paint a wall, but not the door */
+  if(level===1&&Math.random()<.3){const W=rint(3,7),H=pick([2.4,2.5,2.6,2.8]),dw=pick([0.8,0.9,1]),dh=2,wall=r2(W*H),door=r2(dw*dh),ans=r2(wall-door),u=Math.min(330/W,240/H),x0=60+(340-W*u)/2,y0=150+(260-H*u)/2,dx=x0+W*u*.62,dy=y0+H*u-dh*u;
+   const q=[A.wipe(),A.tx(T("Du ska måla en vägg,","You are painting a wall,","ستطلي جدارًا،"),625,70,28),A.tx(T("men inte dörren.","but not the door.","لكن ليس الباب."),625,106,28),A.tx(T("Hur många m² ska målas?","How many m² must be painted?","كم m² يجب طلاؤها؟"),625,152,30,"b"),
+    A.p(R.rect(x0,y0,W*u,H*u,.4),"k",4.5),A.p(R.rect(dx,dy,dw*u,dh*u,.3),"r",4),A.tx(`${W} m`,x0+W*u/2,y0-14,30),A.tx(`${nf(H)} m`,x0-12,y0+H*u/2+10,28,"k","end"),A.tx(`${nf(dw)} m`,dx+dw*u/2,y0+H*u+32,26,"r"),A.tx(`${dh} m`,dx+dw*u+10,dy+dh*u/2+10,26,"r","start")];
+   return{kind:"num",dec:true,ans,show:`${nf(ans)} m²`,q,sol:[A.hatch(`M${f1(x0)},${f1(y0)}h${f1(W*u)}v${f1(H*u)}h${f1(-W*u)}ZM${f1(dx)},${f1(dy)}v${f1(dh*u)}h${f1(dw*u)}v${f1(-dh*u)}Z`,"b"),A.tx(T("väggen − dörren","wall − door","الجدار − الباب"),625,215,30,"r"),A.tx(`${W} ${M} ${nf(H)} = ${nf(wall)}`,625,270,32),A.tx(`${nf(dw)} ${M} ${dh} = ${nf(door)}`,625,325,32,"r"),...res(`${nf(wall)} − ${nf(door)} = ${nf(ans)} m²`,625,415,300,34)],nt:"comp7-wall"}}
   if(level===1){let a,b,w,u;do{a=pick([30,40,50,60]);b=pick([20,30,40,50].filter(v=>v<a));w=pick([2,3,4,5]);u=Math.min(300/a,270/b)}while((b-2*w)*u<95);const c=a-2*w,d=b-2*w,x0=100+(300-a*u)/2,y0=140+(270-b*u)/2,ab=a*b,cd=c*d;
    const q=[A.wipe(),A.tx(T("En tavla har en ram runt sig.","A picture has a frame round it.","لوحة حولها إطار."),625,100,28),A.tx(T("Hur stor area har ramen?","What is the area of the frame?","ما مساحة الإطار؟"),625,150,32,"b"),
     A.hatch(`M${f1(x0)},${f1(y0)}h${f1(a*u)}v${f1(b*u)}h${f1(-a*u)}ZM${f1(x0+w*u)},${f1(y0+w*u)}v${f1(d*u)}h${f1(c*u)}v${f1(-d*u)}Z`,"o"),A.p(R.rect(x0,y0,a*u,b*u,.3)+R.rect(x0+w*u,y0+w*u,c*u,d*u,.2),"k",4),

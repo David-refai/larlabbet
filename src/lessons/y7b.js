@@ -103,9 +103,15 @@ LESSONS.push({id:"frac7",subject:"math",grades:"7",kind:"wb",
   ${ITX("1/2 · 3/4",245,80,34)}${ITX("= 3/8",245,128,38,"#1e9e5a")}`),
  steps:FR7.steps,mount:wbMount(FR7),
  gen(level){const M=MUL(),D=DIVS();
+  /* the reciprocal: flip the fraction */
+  if(level===0&&Math.random()<.25){let a,b;do{b=rint(2,9);a=rint(1,9)}while(a===b||gcd(a,b)>1);const whole=Math.random()<.3;if(whole){a=rint(2,9);b=1}
+   const q=[A.wipe(),A.tx(TT("Vilket är det inverterade talet?","What is the reciprocal?","ما مقلوب العدد؟"),400,62,40),...(whole?[A.tx(String(a),400,250,96)]:A.frac(a,b,400,220,96))];
+   const r=row([["f",a,b],["t",M],["f",b,a,"g"],["t","="],["f",a*b,a*b],["t","="],["t","1"]],400,420,48),sol=[A.tx(whole?TT(`${a} = ${a}/1`,`${a} = ${a}/1`,`${a} = ${a}/1`):TT("Vänd bråket upp och ner.","Turn the fraction upside down.","اقلب الكسر."),400,330,32,"b")],hk=sol.length;
+   sol.push(hlR(r.pos[2]-r.ws[2]/2,r.pos[2]+r.ws[2]/2,420,48),...r.all);
+   return{kind:"frac",ans:[b,a],show:`${b}/${a}`,hk,q,sol,nt:"frac7-recip"}}
   if(level===0){let a,b,c,d;do{b=rint(2,6);d=rint(2,6);a=rint(1,b-1);c=rint(1,d-1)}while(gcd(a,b)>1||gcd(c,d)>1||b*d<6);
    const n=a*c,m=b*d,k=gcd(n,m),y1=300;
-   const q=[A.wipe(),A.tx(TT("Räkna ut:","Work it out:","احسب:"),400,62,40),...row([["f",a,b,"r"],["t",M],["f",c,d,"b"],["t","="],["t","?"]],400,160,72).all];
+   const q=[A.wipe(),A.tx(L(pick([t3("Räkna ut:","Work it out:","احسب:"),t3("Beräkna:","Calculate:","احسب:"),t3("Beräkna produkten:","Calculate the product:","احسب حاصل الضرب:")])),400,62,40),...row([["f",a,b,"r"],["t",M],["f",c,d,"b"],["t","="],["t","?"]],400,160,72).all];
    const r=row([["t","="],["f",`${a} ${M} ${c}`,`${b} ${M} ${d}`],["t","="],["f",n,m,k>1?"k":"g"]],590,y1,46);
    const cs=Math.min(50,260/d,160/b),gw=d*cs,gh=b*cs,gx=245-gw/2,gy=330-gh/2;
    let g=R.rect(gx,gy,gw,gh,.4);for(let i=1;i<d;i++)g+=R.line(gx+i*cs,gy,gx+i*cs,gy+gh,.2);for(let j=1;j<b;j++)g+=R.line(gx,gy+j*cs,gx+gw,gy+j*cs,.2);
@@ -114,6 +120,19 @@ LESSONS.push({id:"frac7",subject:"math",grades:"7",kind:"wb",
    if(k>1){const r2=row([["t","="],["f",n/k,m/k,"g"]],590,420,50);sol.push(...r.parts[2],...r.parts[3],hlR(r2.l,r2.r,420,50),...r2.all)}
    else sol.push(...r.parts[2],hlR(r.pos[3]-r.ws[3]/2,r.pos[3]+r.ws[3]/2,y1,46),...r.parts[3]);
    return{kind:"frac",ans:[n,m],show:`${n/k}/${m/k}`,hk,q,sol}}
+  /* "of" means times: a fraction of what is left */
+  if(level===1&&Math.random()<.35){let a,b,c,d;do{b=rint(2,6);a=rint(1,b-1);d=rint(2,5);c=rint(1,d-1)}while(gcd(a,b)>1||gcd(c,d)>1||b*d<6);
+   const n=a*c,m=b*d,k=gcd(n,m),O=pick([["pizza","pizzan","a pizza","the whole pizza","بيتزا","البيتزا كلها"],["chokladkaka","chokladkakan","a chocolate bar","the whole bar","لوح شوكولاتة","اللوح كله"],["tårta","tårtan","a cake","the whole cake","كعكة","الكعكة كلها"]]);
+   const sit=t3(`Du har ${a}/${b} av en ${O[0]} kvar. Du äter ${c}/${d} av det som är kvar.`,`You have ${a}/${b} of ${O[2]} left. You eat ${c}/${d} of what is left.`,`بقي معك ${a}/${b} ${O[4]}، وأكلت ${c}/${d} مما بقي.`),
+    qq=t3(`Hur stor del av hela ${O[1]} äter du?`,`How much of ${O[3]} do you eat?`,`ما الجزء الذي أكلته من ${O[5]}؟`);
+   const lines=bwrap(L(sit),lang==="ar"?48:54),W=330,H=150,x0=180,y0=212,cw=W/b,rh=H/d,yq=50+lines.length*38;
+   let gv=R.rect(x0,y0,W,H,.4);for(let i=1;i<b;i++)gv+=R.line(x0+i*cw,y0,x0+i*cw,y0+H,.3);let gh="";for(let j=1;j<d;j++)gh+=R.line(x0,y0+j*rh,x0+W,y0+j*rh,.3);
+   const q=[A.wipe(),...lines.map((t,i)=>A.tx(t,400,46+i*38,29)),A.tx(L(qq),400,yq+4,31,"b"),A.tx(TT("Förkorta svaret så långt det går.","Simplify the answer as far as you can.","اختصر الناتج قدر الإمكان."),400,yq+44,26,"o"),
+    A.p(gv,CHOC,4),A.hatch(box(x0,y0,a*cw,H),"b"),...A.frac(a,b,x0+W+80,y0+H/2,40,"b")];
+   const sol=[A.p(gh,CHOC,4),...A.frac(c,d,x0-60,y0+H/2,40,"r")],hk=sol.length,items=[["f",c,d,"r"],["t",M],["f",a,b,"b"],["t","="],["f",n,m,k>1?"k":"g"]];if(k>1)items.push(["t","="],["f",n/k,m/k,"g"]);
+   const r=row(items,400,430,44),last=items.length-1;
+   sol.push(A.hatch(box(x0,y0,a*cw,c*rh),"r"),A.p(R.rect(x0,y0,a*cw,c*rh,.3),"g",5),...r.parts.slice(0,last).flat(),hlR(r.pos[last]-r.ws[last]/2,r.pos[last]+r.ws[last]/2,430,44),...r.parts[last]);
+   return{kind:"frac",ans:[n/k,m/k],simplest:true,show:`${n/k}/${m/k}`,hk,q,sol,nt:"frac7-of"}}
   if(level===1){let n,a,b,k;do{b=rint(2,6);a=rint(1,b-1);n=rint(2,8);k=n*b/a}while(gcd(a,b)>1||!Number.isInteger(k)||k<3||k>12||n*b>36);
    const C=pick(FCTX),f=`${a}/${b}`,lines=bwrap(L(C.t(n,f)),lang==="ar"?48:54),y=280,NL=fline(n,b,y);
    const q=[A.wipe(),...lines.map((s,i)=>A.tx(s,400,50+i*40,30)),A.tx(L(C.q),400,50+lines.length*40+8,32,"b"),...NL.o,A.tx(L(C.u),400,y+86,28)];
@@ -124,7 +143,7 @@ LESSONS.push({id:"frac7",subject:"math",grades:"7",kind:"wb",
    return{kind:"num",ans:k,show:String(k),hk,q,sol}}
   let a,b,c,d,p,qq;do{b=rint(2,9);d=rint(2,9);a=rint(1,b-1);c=rint(1,d-1);const k=gcd(a*d,b*c);p=a*d/k;qq=b*c/k}while(gcd(a,b)>1||gcd(c,d)>1||qq===1||a*d===b*c);
   const n=a*d,m=b*c,k=gcd(n,m),y=360;
-  const q=[A.wipe(),A.tx(TT("Räkna ut:","Work it out:","احسب:"),400,62,40),...row([["f",a,b],["t",D],["f",c,d,"b"],["t","="],["t","?"]],400,170,72).all];
+  const q=[A.wipe(),A.tx(L(pick([t3("Räkna ut:","Work it out:","احسب:"),t3("Beräkna:","Calculate:","احسب:"),t3("Beräkna kvoten:","Calculate the quotient:","احسب خارج القسمة:")])),400,62,40),...row([["f",a,b],["t",D],["f",c,d,"b"],["t","="],["t","?"]],400,170,72).all];
   const items=[["t","="],["f",a,b],["t",M],["f",d,c,"r"],["t","="],["f",`${a} ${M} ${d}`,`${b} ${M} ${c}`],["t","="],["f",n,m,k>1?"k":"g"]];
   if(k>1)items.push(["t","="],["f",p,qq,"g"]);
   const r=row(items,400,y,50),last=items.length-1,sol=[...r.parts.slice(0,4).flat(),A.tx(TT("vänd","flip","اقلب"),r.pos[3],y-.82*50-16,28,"r"),...r.parts[4],...r.parts[5]],hk=sol.length;
@@ -211,7 +230,16 @@ LESSONS.push({id:"pct7",subject:"math",grades:"7",kind:"wb",
   const am=(v,u)=>`${fmt(v)} ${u}`;
   do{C=pick(PCTX);W=C.lo+C.st*rint(0,(C.hi-C.lo)/C.st);p=pick(PSET);P=p*W/100}
   while(!Number.isInteger(P)||P<11||!fits("0",level===0?"?":am(P,C.u),level===2?"?":am(W,C.u),PB.x0+(PB.x1-PB.x0)*p/100)||!fits(PC(0),PC(p),PC(100),PB.x0+(PB.x1-PB.x0)*p/100));
-  const [sit,qq]=C.f(level,fmt(W),fmt(P),p),u=C.u,lim=lang==="ar"?50:52,ss=L(sit).split(/(?<=[.،!?])\s+/),lines=ss.length>1&&ss.length<4&&ss.every(x=>x.length<=lim)?ss:bwrap(L(sit),lim);
+  /* new price after a discount: work with the percentage that is left */
+  if(level===1&&Math.random()<.3){const it=pick(SALE);let W2,d,xp;do{d=pick([10,15,20,25,30,40,50,60]);W2=50*rint(4,30);xp=PB.x0+(PB.x1-PB.x0)*(100-d)/100}while(W2*(100-d)%100||!fits("0","?",am(W2,"kr"),xp));
+   const N2=W2*(100-d)/100,sit=t3(`${cap(it.sv)}: ordinarie pris ${fmt(W2)} kr. Nu är det ${PC(d)} rabatt.`,`${cap(it.en)}: original price ${fmt(W2)} kr. Now there is ${PC(d)} off.`,`${it.ar}: السعر الأصلي ${fmt(W2)} كرونة، والآن عليها خصم ${PC(d)}.`),qq=t3("Vad är det nya priset?","What is the new price?","ما السعر الجديد؟");
+   const lines=bwrap(L(sit),lang==="ar"?50:52),q=[A.wipe(),...lines.map((t,i)=>A.tx(t,400,44+i*38,29)),A.tx(L(qq),400,44+lines.length*38+6,31,"b"),...pbar(100-d,"?",am(W2,"kr"),PC(100-d),"g"),A.tx(TT("rabatt","discount","الخصم"),(xp+PB.x1)/2,PB.y+PB.h/2+10,28,"r")];
+   const sol=[A.tx(`${PC(100)} − ${PC(d)} = ${PC(100-d)}`,400,340,32,"b")],hk=sol.length,s2=`${DEC((100-d)/100)} ${M} ${fmt(W2)} = ${am(N2,"kr")}`,w=tw(s2,46);
+   sol.push(A.tx(TT("kvar att betala","left to pay","المتبقّي للدفع"),400,394,28),A.hl(400-w/2-16,422,w+32,64),A.tx(s2,400,468,46,"g"));
+   return{kind:"num",ans:N2,show:am(N2,"kr"),hk,q,sol,nt:"pct7-newprice"}}
+  const [sit,qq0]=C.f(level,fmt(W),fmt(P),p),u=C.u,uA=lang==="ar"?{kr:"كرونة",min:"دقيقة"}[u]||u:u,
+   qq=level===0&&Math.random()<.4?t3(`Beräkna ${PC(p)} av ${fmt(W)} ${u}.`,`Calculate ${PC(p)} of ${fmt(W)} ${u}.`,`احسب ${PC(p)} من ${fmt(W)} ${uA}.`)
+    :level===1&&Math.random()<.5?t3(`Hur stor andel är ${fmt(P)} ${u} av ${fmt(W)} ${u}? Svara i procent.`,`What proportion of ${fmt(W)} ${u} is ${fmt(P)} ${u}? Answer in percent.`,`ما نسبة ${fmt(P)} ${uA} من ${fmt(W)} ${uA}؟ أجب بالنسبة المئوية.`):qq0,lim=lang==="ar"?50:52,ss=L(sit).split(/(?<=[.،!?])\s+/),lines=ss.length>1&&ss.length<4&&ss.every(x=>x.length<=lim)?ss:bwrap(L(sit),lim);
   const head=[A.wipe(),...lines.map((s,i)=>A.tx(s,400,44+i*38,29)),A.tx(L(qq),400,44+lines.length*38+6,31,"b")];
   const amt=v=>`${fmt(v)} ${u}`,dp=DEC(p/100);
   if(level===0){const q=[...head,...pbar(p,"?",amt(W),PC(p))],sol=[A.tx(RULE.part(),400,340,28,"b"),A.tx(`${PC(p)} = ${dp}`,400,400,40)],hk=sol.length,s=`${dp} ${M} ${fmt(W)} = ${amt(P)}`,w=tw(s,46);
@@ -309,10 +337,19 @@ LESSONS.push({id:"alg7",subject:"math",grades:"7",kind:"wb",
    const q=[A.wipe(),...lines.map((s,i)=>A.tx(s,400,46+i*38,29)),A.tx(L(qq),400,46+lines.length*38+8,31,"b"),...boxes(parts,196)];
    const xi=pieces.findIndex(p=>p[1]==="b"),sol=[...r.parts[xi]],hk=sol.length,w=tw(ok,52);r.parts.forEach((p,i)=>{if(i!==xi)sol.push(...p)});sol.push(A.hl(400-w/2-18,420,w+36,68),A.tx(ok,400,470,52,"g"));
    return{kind:"choice",opts,ans:opts.indexOf(ok),show:ok,hk,q,sol}}
+  /* use a formula: put the numbers in place of the letters */
+  if(level===1&&Math.random()<.3){const O=lang==="sv"?"O":"P",T=rint(0,2);let ctx,f,vals,sub,mid,ans,u;
+   if(T===0){const a=rint(6,40),b=rint(3,a-1);ctx=t3("Omkretsen av en rektangel är","The perimeter of a rectangle is","محيط المستطيل هو");f=`${O} = 2a + 2b`;vals=`a = ${a},  b = ${b}`;sub=`${O} = 2 ${M} ${a} + 2 ${M} ${b}`;mid=`${O} = ${2*a} + ${2*b}`;ans=2*a+2*b;u=" cm"}
+   else if(T===1){const b=2*rint(2,12),h=rint(3,15);ctx=t3("Arean av en triangel är","The area of a triangle is","مساحة المثلث هي");f=`A = b ${M} h / 2`;vals=`b = ${b},  h = ${h}`;sub=`A = ${b} ${M} ${h} / 2`;mid=`A = ${b*h} / 2`;ans=b*h/2;u=" cm²"}
+   else{const F=pick([39,45,49,55]),k=pick([11,12,13,14,15]),x=rint(3,20);ctx=t3("En taxiresa på x km kostar P kr, där","A taxi ride of x km costs P kr, where","أجرة سيارة الأجرة لمسافة x كم هي P كرونة، حيث");f=`P = ${F} + ${k}x`;vals=`x = ${x}`;sub=`P = ${F} + ${k} ${M} ${x}`;mid=`P = ${F} + ${k*x}`;ans=F+k*x;u=" kr"}
+   const fin=`${mid.split(" = ")[0]} = ${ans}${u}`,w=tw(fin,46);
+   const q=[A.wipe(),A.tx(TT("Använd formeln","Use the formula","استخدم الصيغة"),400,56,38,"b"),A.tx(L(ctx),400,110,30),A.tx(f,400,186,58),A.tx(TT("Beräkna värdet när","Find the value when","احسب القيمة عندما"),400,248,30),A.tx(vals,400,300,40,"o")];
+   const sol=[A.tx(sub,400,362,40)],hk=sol.length;sol.push(A.tx(mid,400,412,38),A.hl(400-w/2-16,424,w+32,58),A.tx(fin,400,468,46,"g"));
+   return{kind:"num",ans,show:`${ans}${u}`,hk,q,sol,nt:"alg7-formula"}}
   if(level===1){const v=pick(SIMV);let a,c,b,d;do{a=rint(2,9);c=pick([-1,1])*rint(1,8);b=rint(1,15);d=pick([-1,1])*rint(1,12)}while(a+c<2||b+d<1||(c>0&&d>0)||a+c>15);
    const T=[{k:a,v},{k:c,v},{k:b,v:""},{k:d,v:""}],first=pick([0,2]),rest=shuffle([0,1,2,3].filter(i=>i!==first)),ord=[first,...rest];
    const r=row(ord.map((i,j)=>["t",termStr(T[i].k,T[i].v,j===0),T[i].v?"b":"o"]),400,180,62),A1=a+c,B1=b+d;
-   const q=[A.wipe(),A.tx(TT("Förenkla uttrycket","Simplify the expression","بسّط المقدار"),400,66,40),...r.all,A.tx(`= □${v} + □`,400,290,48,"k")];
+   const q=[A.wipe(),A.tx(L(pick([t3("Förenkla uttrycket","Simplify the expression","بسّط المقدار"),t3("Förenkla så långt som möjligt","Simplify as far as possible","بسّط قدر الإمكان")])),400,66,40),...r.all,A.tx(`= □${v} + □`,400,290,48,"k")];
    const vt=`${termStr(a,v,true)} ${termStr(c,v,false)}`,ct=`${termStr(b,"",false)} ${termStr(d,"",false)}`,r2=row([["t","="],["t",vt,"b"],["t",ct,"o"]],400,375,46),r3=row([["t","="],["t",termStr(A1,v,true),"b"],["t",`+ ${B1}`,"o"]],400,458,50);
    const sol=[...ord.map((i,j)=>A.p(R.line(r.pos[j]-r.ws[j]/2,218,r.pos[j]+r.ws[j]/2,218,.2),T[i].v?"b":"o",5)),...r2.all],hk=sol.length;sol.push(hlR(r3.l,r3.r,458,50,16),...r3.all);
    return{kind:"pair",ans:[A1,B1],sep:`${v} +`,show:`${A1}${v} + ${B1}`,hk,q,sol}}
@@ -321,7 +358,7 @@ LESSONS.push({id:"alg7",subject:"math",grades:"7",kind:"wb",
   else if(F===1){const b=rint(5,40),a=rint(2,9),k=rint(1,6);expr=`${b} − ${a}x`;vals=`x = −${k}`;sub=`${b} − ${a} ${M} (−${k})`;mid=`${b} + ${a*k}`;ans=b+a*k}
   else{const a=rint(2,6),b=rint(2,6),x=rint(1,8),k=rint(1,6);expr=`${a}x − ${b}y`;vals=`x = ${x},  y = −${k}`;sub=`${a} ${M} ${x} − ${b} ${M} (−${k})`;mid=`${a*x} + ${b*k}`;ans=a*x+b*k}
   const fin=`= ${mid} = ${MN(ans)}`,w=tw(fin,50);
-  const q=[A.wipe(),A.tx(TT("Beräkna uttryckets värde","Find the value of the expression","احسب قيمة المقدار"),400,66,40),A.tx(expr,400,180,70),A.tx(vals,400,272,44,"o"),A.loop(400,256,tw(vals,44)/2+24,36,"o")];
+  const q=[A.wipe(),A.tx(L(pick([t3("Beräkna uttryckets värde","Find the value of the expression","احسب قيمة المقدار"),t3("Bestäm värdet av uttrycket","Find the value of the expression","أوجد قيمة المقدار")])),400,66,40),A.tx(expr,400,180,70),A.tx(vals,400,272,44,"o"),A.loop(400,256,tw(vals,44)/2+24,36,"o")];
   const sol=[A.tx(`= ${sub}`,400,370,46)],hk=sol.length;sol.push(A.hl(400-w/2-16,410,w+32,66),A.tx(fin,400,458,50,"g"));
   return{kind:"num",ans,signed:true,show:MN(ans),hk,q,sol}}
 });
@@ -401,17 +438,24 @@ LESSONS.push({id:"eq7",subject:"math",grades:"7",kind:"wb",
  gen(level){const D=DIVS(),M=MUL();
   if(level===0){let a,c,x,b,d;do{a=rint(2,3);c=rint(1,a-1);x=rint(2,5);b=rint(0,4);d=(a-c)*x+b}while(d>15||d<1);
    const L1=pan7(BL,a,b,2),R1=pan7(BR,c,d,c===1?5:4),k=a-c,left=b?`${cx(a)} + ${b}`:cx(a);
-   const q=[A.wipe(),A.tx(`${left} = ${cx(c)} + ${d}`,400,70,56),...scale7(),...L1.o,...R1.o];
+   const q=[A.wipe(),A.tx(`${left} = ${cx(c)} + ${d}`,400,70,56),...scale7(),...L1.o,...R1.o,A.tx(TT("Lös ekvationen.","Solve the equation.","حلّ المعادلة."),190,470,32,"b")];
    const sol=[xBags(L1.B.slice(a-c)),xBags(R1.B),A.tx(`− ${cx(c)}`,BL,120,40,"r"),A.tx(`− ${cx(c)}`,BR,120,40,"r")],hk=sol.length;
    if(b)sol.push(xBlocks(L1.C),xBlocks(R1.C.slice(d-b)),A.tx(`− ${b}`,BL,165,40,"r"),A.tx(`− ${b}`,BR,165,40,"r"));
    if(k>1)sol.push(A.tx(`${k}x = ${d-b}`,560,470,44));
    sol.push(A.hl(640,424,130,62),A.tx(`x = ${x}`,705,470,46,"g"));
    return{kind:"num",ans:x,show:`x = ${x}`,hk,q,sol}}
+  /* test the options: which x makes the left side equal to the right side? */
+  if(level===1&&Math.random()<.3){const c=rint(1,4),k=rint(1,4),a=c+k,x=rint(2,9),b=rint(1,15),d=k*x+b,lhs=`${cx(a)} + ${b}`,rhs=`${cx(c)} + ${d}`,ord=shuffle([x,x+1,x-1]),Y=[300,360,420];
+   const q=[A.wipe(),A.tx(TT("Vilket värde på x är lösningen till ekvationen?","Which value of x is the solution of the equation?","أي قيمة لـ x هي حل المعادلة؟"),400,62,32,"b"),A.tx(`${lhs} = ${rhs}`,400,150,58),
+    A.tx(TT("Pröva: när är vänsterledet lika med högerledet?","Test: when is the left side equal to the right side?","جرّب: متى يساوي الطرف الأيسر الطرف الأيمن؟"),400,222,28,"o")];
+   const sol=[A.tx(TT("VL","LS","الأيسر"),470,262,28,"b"),A.tx(TT("HL","RS","الأيمن"),640,262,28,"b")],hk=sol.length;
+   ord.forEach((v,i)=>{const L1=a*v+b,R1=c*v+d,ok=L1===R1;sol.push(A.tx(`x = ${v}`,200,Y[i],36,ok?"g":"k"),A.tx(String(L1),470,Y[i],36,ok?"g":"k"),A.tx(String(R1),640,Y[i],36,ok?"g":"k"),A.tx(ok?"=":"≠",555,Y[i],36,ok?"g":"r"));if(ok)sol.push(A.loop(400,Y[i]-12,330,30,"g"))});
+   return{kind:"choice",opts:ord.map(v=>`x = ${v}`),ans:ord.indexOf(x),show:`x = ${x}`,hk,q,sol,nt:"eq7-test"}}
   if(level===1){let a,c,x,b,sb,d,k;do{c=rint(1,6);k=rint(1,5);a=c+k;x=rint(2,12);b=rint(1,20);sb=pick([1,-1]);d=k*x+sb*b}while(d<1||d>60||(k===1&&sb===1&&b<3));
    const lhs=`${cx(a)} ${sb>0?"+":"−"} ${b}`,rhs=`${cx(c)} + ${d}`,swap=Math.random()<.4,kx=cx(k),op1=`− ${cx(c)}`,op2=sb>0?`− ${b}`:`+ ${b}`;
    const st=swap?[[rhs,lhs,op1],[`${d}`,`${kx} ${sb>0?"+":"−"} ${b}`,op2],[`${k*x}`,kx,k>1?`${D} ${k}`:null]]:[[lhs,rhs,op1],[`${kx} ${sb>0?"+":"−"} ${b}`,`${d}`,op2],[kx,`${k*x}`,k>1?`${D} ${k}`:null]];
    if(k>1)st.push(["x",`${x}`]);else st[st.length-1]=["x",`${x}`];
-   const Ls=eqLinesX(st,150,76,46),val=a*x+sb*b,q=[A.wipe(),A.tx(TT("Lös ekvationen","Solve the equation","حلّ المعادلة"),400,62,38),...eqR(st[0][0],st[0][1],150,46)];
+   const Ls=eqLinesX(st,150,76,46),val=a*x+sb*b,q=[A.wipe(),A.tx(L(pick([t3("Lös ekvationen","Solve the equation","حلّ المعادلة"),t3("Lös ekvationen","Solve the equation","حلّ المعادلة"),t3("Bestäm x","Find x","أوجد x")])),400,62,38),...eqR(st[0][0],st[0][1],150,46)];
    const sol=[...Ls[0].slice(2),...Ls[1]],hk=sol.length;Ls.slice(2).forEach(l=>sol.push(...l));
    const yc=150+st.length*76+(st.length<4?10:-2);
    sol.push(A.tx(`${a} ${M} ${x} ${sb>0?"+":"−"} ${b} = ${val}`,swap?560:230,yc,32,"b"),A.tx(`${c===1?x:`${c} ${M} ${x}`} + ${d} = ${val} ✓`,swap?230:560,yc,32,"b"));
@@ -469,17 +513,17 @@ Object.assign(HELPX,{
    A.tx(TT("2 kuvert = 40 kr","2 envelopes = 40 kr","مظروفان = 40 كرونة"),400,320,40),A.hl(230,360,340,70),A.tx(TT("1 kuvert = 20 kr","1 envelope = 20 kr","مظروف واحد = 20 كرونة"),400,410,46,"g")]}]
 });
 Object.assign(HINTSX,{
- frac7:[{say:t3("Multiplicera täljare med täljare och nämnare med nämnare.","Multiply numerator by numerator and denominator by denominator.","اضرب البسط في البسط، والمقام في المقام."),cut:g=>g.sol.slice(0,g.hk)},
-  {say:t3("Hur många gånger ryms bråket i talet? Att dela med ett bråk är att multiplicera med det inverterade bråket.","How many times does the fraction fit into the number? Dividing by a fraction means multiplying by its reciprocal.","كم مرة يتّسع الكسر في العدد؟ القسمة على كسر هي الضرب في مقلوبه."),cut:g=>g.sol.slice(0,g.hk)},
+ frac7:[{say:t3("Multiplicera täljare med täljare och nämnare med nämnare. Det inverterade talet får du om du vänder bråket.","Multiply numerator by numerator and denominator by denominator. You get the reciprocal by turning the fraction over.","اضرب البسط في البسط، والمقام في المقام. ونحصل على مقلوب العدد بقلب الكسر."),cut:g=>g.sol.slice(0,g.hk)},
+  {say:t3("”Av” betyder gånger. Hur många gånger ryms bråket i talet? Att dela med ett bråk är att multiplicera med det inverterade bråket.","“Of” means times. How many times does the fraction fit into the number? Dividing by a fraction means multiplying by its reciprocal.","«من» تعني الضرب. كم مرة يتّسع الكسر في العدد؟ القسمة على كسر هي الضرب في مقلوبه."),cut:g=>g.sol.slice(0,g.hk)},
   {say:t3("Vänd på det andra bråket och multiplicera. Förkorta svaret om det går.","Flip the second fraction and multiply. Simplify the answer if you can.","اقلب الكسر الثاني ثم اضرب، واختصر الناتج إن أمكن."),cut:g=>g.sol.slice(0,g.hk)}],
  pct7:[{say:t3("Skriv procenten i decimalform och multiplicera med det hela.","Write the percentage as a decimal and multiply by the whole.","اكتب النسبة المئوية عددًا عشريًا واضربها في الكل."),cut:g=>g.sol.slice(0,g.hk)},
-  {say:t3("Dela delen med det hela. Skriv sedan svaret i procent.","Divide the part by the whole. Then write the answer as a percentage.","اقسم الجزء على الكل، ثم اكتب الناتج نسبةً مئوية."),cut:g=>g.sol.slice(0,g.hk)},
+  {say:t3("Andelen: dela delen med det hela och skriv svaret i procent. Nytt pris: räkna med procenten som är kvar efter rabatten.","The percentage: divide the part by the whole and write it in percent. New price: use the percentage that is left after the discount.","النسبة: اقسم الجزء على الكل واكتب الناتج نسبةً مئوية. السعر الجديد: احسب بالنسبة المتبقّية بعد الخصم."),cut:g=>g.sol.slice(0,g.hk)},
   {say:t3("Räkna ut hur mycket 1 % är. Gånger 100 ger det hela.","Work out what 1% is. Times 100 gives the whole.","احسب قيمة 1%، ثم اضربها في 100 لتحصل على الكل."),cut:g=>g.sol.slice(0,g.hk)}],
  alg7:[{say:t3("Det som upprepas x gånger skrivs som tal · x. Det som bara finns en gång skrivs som ett tal.","What is repeated x times is written as number × x. What happens only once is just a number.","ما يتكرّر x مرة نكتبه عددًا × x، وما يحدث مرة واحدة نكتبه عددًا فقط."),cut:g=>g.sol.slice(0,g.hk)},
-  {say:t3("Samla termerna med bokstaven för sig och talen för sig. Tecknet framför en term följer med.","Put the letter terms together and the numbers together. The sign in front of each term goes with it.","اجمع الحدود التي فيها الحرف معًا، والأعداد معًا. الإشارة التي أمام الحد تنتقل معه."),cut:g=>g.sol.slice(0,g.hk)},
+  {say:t3("Samla termerna med bokstaven för sig och talen för sig. Tecknet framför en term följer med. En formel: sätt in talen i stället för bokstäverna.","Put the letter terms together and the numbers together. The sign in front of each term goes with it. A formula: put the numbers in place of the letters.","اجمع الحدود التي فيها الحرف معًا، والأعداد معًا، والإشارة تنتقل مع الحد. وفي الصيغة: ضع الأعداد مكان الحروف."),cut:g=>g.sol.slice(0,g.hk)},
   {say:t3("Sätt in talet inom parentes där bokstaven står. Räkna multiplikationen först.","Put the number in brackets where the letter is. Do the multiplication first.","ضع العدد بين قوسين مكان الحرف، واحسب الضرب أولًا."),cut:g=>g.sol.slice(0,g.hk)}],
  eq7:[{say:t3("Ta bort lika många påsar från båda sidor.","Take the same number of bags off both sides.","أزل العدد نفسه من الأكياس من الكفّتين."),cut:g=>g.sol.slice(0,g.hk)},
-  {say:t3("Dra bort den minsta x-termen från båda sidor. Sedan talet. Sist delar du.","Subtract the smaller x term from both sides. Then the number. Divide last.","اطرح حدّ x الأصغر من الطرفين، ثم العدد، ثم اقسم في النهاية."),cut:g=>g.sol.slice(0,g.hk)},
+  {say:t3("Dra bort den minsta x-termen från båda sidor. Sedan talet. Sist delar du. Eller pröva: sätt in x i vänsterledet och högerledet.","Subtract the smaller x term from both sides. Then the number. Divide last. Or test: put x into the left side and the right side.","اطرح حدّ x الأصغر من الطرفين، ثم العدد، ثم اقسم في النهاية. أو جرّب: عوّض x في الطرفين الأيسر والأيمن."),cut:g=>g.sol.slice(0,g.hk)},
   {say:t3("Skriv ett uttryck med x för var och en och sätt dem lika med varandra.","Write an expression with x for each one and set them equal to each other.","اكتب مقدارًا فيه x لكل منهما، واجعل المقدارين متساويين."),cut:g=>g.sol.slice(0,g.hk)}]
 });
 }

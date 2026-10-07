@@ -17,6 +17,8 @@ const okM=(x,y,c="g")=>A.p(`M${x-13},${y-1}L${x-4},${y+10}L${x+14},${y-14}`,c,5.
 const noM=(x,y,c="r")=>A.p(R.line(x-11,y-11,x+11,y+11,.2)+R.line(x+11,y-11,x-11,y+11,.2),c,5);
 const ellP=(cx,cy,rx,ry)=>{let d="";for(let i=0;i<=40;i++){const t=i/40*Math.PI*2,k=1+jit(i,cx+cy)*.03;d+=(i?"L":"M")+f1(cx+Math.cos(t)*rx*k)+","+f1(cy+Math.sin(t)*ry*k)}return d};
 const kidP=(cx,base,h)=>{const hr=h*.13,top=base-h;return R.circ(cx,top+hr,hr)+R.line(cx,top+2*hr,cx,base-h*.42,.2)+R.line(cx,base-h*.42,cx-h*.14,base,.2)+R.line(cx,base-h*.42,cx+h*.14,base,.2)+R.line(cx-h*.2,top+h*.42,cx+h*.2,top+h*.42,.2)};
+const fitT=(s,max,size)=>Math.min(size,max/(String(s).length*(/[؀-ۿ]/.test(s)?.5:.47)));   /* font size so a line fits in max px */
+const wrapT=(s,max)=>{const o=[];let cur="";String(s).split(" ").forEach(w=>{if(cur&&(cur+" "+w).length>max){o.push(cur);cur=w}else cur=cur?cur+" "+w:w});if(cur)o.push(cur);return o};
 const DAR=n=>n===1?"درجة واحدة":n===2?"درجتين":n<=10?`${n} درجات`:`${n} درجة`;
 
 /* --- formulas drawn token by token, so underlines sit exactly under a part --- */
@@ -122,7 +124,9 @@ LESSONS.push({id:"prime6",subject:"math",grades:"6",kind:"wb",
     while(bad.length<2){let b=d===3?rint(100,999):rint(12,999);if(d===10&&!bad.length&&Math.random()<.6)b=rint(2,99)*10+5;if(b%d&&b!==good&&!bad.includes(b))bad.push(b)}
     opts=shuffle([good,...bad])}while(d===3&&opts.some(n=>n<100));
    const ans=opts.findIndex(n=>n%d===0),X=[170,400,630],n=opts[ans];
-   const q=[A.wipe(),A.tx(L(t3(`Vilket tal är delbart med ${d}?`,`Which number is divisible by ${d}?`,`أي عدد يقبل القسمة على ${d}؟`)),400,90,44),...opts.map((v,i)=>A.tx(v,X[i],250,84))];
+   const tt=L(pick([t3(`Vilket tal är delbart med ${d}?`,`Which number is divisible by ${d}?`,`أي عدد يقبل القسمة على ${d}؟`),t3(`Vilket av talen är delbart med ${d}?`,`Which of the numbers is divisible by ${d}?`,`أيّ الأعداد يقبل القسمة على ${d}؟`),
+    t3(`Vilket tal kan delas med ${d} utan rest?`,`Which number divides by ${d} with no remainder?`,`أي عدد يقبل القسمة على ${d} دون باقٍ؟`)]));
+   const q=[A.wipe(),A.tx(tt,400,90,fitT(tt,740,44)),...opts.map((v,i)=>A.tx(v,X[i],250,84))];
    const sol=[];let hc;
    if(d===3){const w=opts.findIndex(v=>v%3);[w,...opts.keys()].filter((i,k,a)=>a.indexOf(i)===k).forEach(i=>{const v=opts[i];sol.push(A.tx(String(v).split("").join(" + ")+` = ${dsum(v)}`,X[i],340,32,"b"))});hc=1;
     opts.forEach((v,i)=>sol.push(v%3?noM(X[i],392):okM(X[i],392)))}
@@ -130,14 +134,14 @@ LESSONS.push({id:"prime6",subject:"math",grades:"6",kind:"wb",
    sol.push(A.loop(X[ans],222,tw(String(n),84)/2+26,58,"g"),A.hl(210,412,380,66),A.tx(`${n} ${D} ${d} = ${n/d}`,400,462,50,"g"));
    return{kind:"choice",opts:opts.map(String),ans,show:String(n),hc,q,sol}}
   if(level===1&&Math.random()<.5){const p=pick(PRIMES2),C=shuffle(COMPO).slice(0,3),opts=shuffle([p,...C]),ans=opts.indexOf(p),X=[130,310,490,670];
-   const q=[A.wipe(),A.tx(L(t3("Vilket tal är ett primtal?","Which number is a prime number?","أيّ هذه الأعداد عدد أولي؟")),400,90,44),...opts.map((v,i)=>A.tx(v,X[i],250,80))];
+   const q=[A.wipe(),A.tx(L(pick([t3("Vilket tal är ett primtal?","Which number is a prime number?","أيّ هذه الأعداد عدد أولي؟"),t3("Vilket av talen är ett primtal?","Which of the numbers is a prime?","أيّ الأعداد التالية عدد أولي؟")])),400,90,44),...opts.map((v,i)=>A.tx(v,X[i],250,80))];
    const sol=[];opts.forEach((v,i)=>{if(v!==p){const a=pfac(v)[0];sol.push(A.tx(`${a} ${M} ${v/a}`,X[i],340,34,"r"),noM(X[i],392))}});
    sol.push(A.loop(X[ans],222,46,58,"g"),A.tx(`1 ${M} ${p}`,X[ans],340,34,"g"),okM(X[ans],392),
     A.hl(220,418,360,62),A.tx(L(t3(`${p} är ett primtal`,`${p} is a prime number`,`${p} عدد أولي`)),400,462,40,"g"));
    return{kind:"choice",opts:opts.map(String),ans,show:String(p),hc:1,q,sol}}
   if(level===1){const n=pick(DIVN),P=pairsOf(n),Dv=[...new Set(P.flat())].sort((a,b)=>a-b),m=Dv.length,np=P.length;
-   const title=L(t3(`Hur många delare har ${n}?`,`How many divisors does ${n} have?`,`كم قاسمًا للعدد ${n}؟`));
-   const q=[A.wipe(),A.tx(title,400,80,44),A.tx(n,400,290,140,"b")];
+   const title=L(pick([t3(`Hur många delare har ${n}?`,`How many divisors does ${n} have?`,`كم قاسمًا للعدد ${n}؟`),t3(`Bestäm antalet delare till ${n}.`,`Find the number of divisors of ${n}.`,`أوجد عدد قواسم العدد ${n}.`)]));
+   const q=[A.wipe(),A.tx(title,400,80,fitT(title,740,44)),A.tx(n,400,290,140,"b")];
    const sol=[A.wipe(),A.tx(title,400,52,36)];P.forEach(([a,b],i)=>sol.push(A.tx(`${a} ${M} ${b}`,400+(i-(np-1)/2)*145,130,34,MCOLS[i])));
    const sp=Math.min(78,620/(m-1)),XD=i=>400+(i-(m-1)/2)*sp,Y=360;
    sol.push(...Dv.map((v,i)=>A.tx(v,XD(i),Y,34)));
@@ -149,7 +153,7 @@ LESSONS.push({id:"prime6",subject:"math",grades:"6",kind:"wb",
   do{const i=rint(0,f.length-2),d1=[...f.slice(0,i),f[i]*f[i+1],...f.slice(i+2)],j=rint(0,f.length-1),d2=f.map((p,k)=>k===j?pick([2,3,5,7].filter(x=>x!==p)):p),
     d3=Math.random()<.5?f.slice(1):[2,...f];opts=[right,PSTR(d1),PSTR(d2),PSTR(d3)]}while(new Set(opts).size<4);
   const order=shuffle([0,1,2,3]),O=order.map(k=>opts[k]),ans=order.indexOf(0),t=mkTree(n),nl=nLeaf(t),sp=Math.min(130,560/(nl-1));
-  const T=treeAct(n,400,130,85,sp,44),title=L(t3(`Vilken är primtalsfaktoriseringen av ${n}?`,`What is the prime factorisation of ${n}?`,`ما تحليل العدد ${n} إلى عوامل أولية؟`));
+  const T=treeAct(n,400,130,85,sp,44),title=L(pick([t3(`Vilken är primtalsfaktoriseringen av ${n}?`,`What is the prime factorisation of ${n}?`,`ما تحليل العدد ${n} إلى عوامل أولية؟`),t3(`Skriv ${n} som en produkt av primtal.`,`Write ${n} as a product of primes.`,`اكتب ${n} حاصلَ ضرب أعداد أولية.`)]));
   const sol=[...T.splits.flat(),...T.circles,A.hl(400-tw(`${n} = ${right}`,48)/2-24,414,tw(`${n} = ${right}`,48)+48,64),A.tx(`${n} = ${right}`,400,462,48,"g")];
   return{kind:"choice",opts:O,ans,show:right,hc:4,q:[A.wipe(),A.tx(title,400,52,34),T.root],sol}}
 });
@@ -184,6 +188,11 @@ const OFORM=[
   ["(a-b)/c+d*e",{a:[10,60],b:[2,30],c:[2,9],d:[2,9],e:[2,9]}],["a*b-(c+d)/e",{a:[2,9],b:[2,9],c:[2,40],d:[2,40],e:[2,9]}],["(a+b)*(c-d)",{a:[2,9],b:[2,9],c:[5,15],d:[2,12]}],
   ["a-b/c*d",{a:[20,90],b:[4,60],c:[2,9],d:[2,9]}],["a*(b+c)-d*e",{a:[2,6],b:[2,9],c:[2,9],d:[2,9],e:[2,9]}]]];
 const OD=[t3("Max","Max","ماكس"),t3("Elin","Elin","إلين")];
+const OCTX1=[{p:[13,19],a:[6,12],t:(n,p,a)=>t3(`Du köper ${n} biobiljetter för ${p} kr styck och popcorn för ${a} kr.`,`You buy ${n} cinema tickets at ${p} kr each and popcorn for ${a} kr.`,`تشتري تذاكر سينما عددها ${n} بسعر ${p} كرونة للتذكرة، وفشارًا بـ ${a} كرونة.`)},
+ {p:[4,9],a:[3,8],t:(n,p,a)=>t3(`Du köper ${n} glassar för ${p} kr styck och en dricka för ${a} kr.`,`You buy ${n} ice creams at ${p} kr each and a drink for ${a} kr.`,`تشتري بوظات عددها ${n} بسعر ${p} كرونة للواحدة، ومشروبًا بـ ${a} كرونة.`)},
+ {p:[8,20],a:[4,10],t:(n,p,a)=>t3(`Du köper ${n} t-shirts för ${p} kr styck och en keps för ${a} kr.`,`You buy ${n} T-shirts at ${p} kr each and a cap for ${a} kr.`,`تشتري قمصانًا عددها ${n} بسعر ${p} كرونة للقميص، وقبعة بـ ${a} كرونة.`)}];
+const OCTX2=[{p:[10,15],q:[3,5],t:(n,p,q)=>t3(`${n} kompisar köper var sin burgare för ${p} kr och en dricka för ${q} kr.`,`${n} friends each buy a burger for ${p} kr and a drink for ${q} kr.`,`أصدقاء عددهم ${n}، يشتري كلٌّ منهم برغر بـ ${p} كرونة ومشروبًا بـ ${q} كرونة.`)},
+ {p:[16,24],q:[3,6],t:(n,p,q)=>t3(`${n} personer köper var sin biljett för ${p} kr och en korv för ${q} kr.`,`${n} people each buy a ticket for ${p} kr and a hot dog for ${q} kr.`,`أشخاص عددهم ${n}، يشتري كلٌّ منهم تذكرة بـ ${p} كرونة وشطيرة نقانق بـ ${q} كرونة.`)}];
 const ORD={steps:[
  {say:t3("Elin och Max räknar 2 + 3 · 4. Elin räknar från vänster och får 20. Max räknar gånger först och får 14. Max har rätt: multiplikation går före addition.",
    "Elin and Max work out 2 + 3 × 4. Elin goes from the left and gets 20. Max multiplies first and gets 14. Max is right: multiplication comes before addition.",
@@ -229,9 +238,17 @@ LESSONS.push({id:"order6",subject:"math",grades:"6",kind:"wb",
  title:t3("Prioriteringsregler","Order of operations","ترتيب العمليات الحسابية"),
  icon:ICO(`<text x="62" y="86" ${CV} font-size="54" fill="#1d2433">2 +</text><text x="166" y="86" ${CV} font-size="54" fill="#1d2433">3·4</text><path d="M134 98H198" stroke="#d63b2f" stroke-width="4" stroke-linecap="round"/><text x="250" y="86" ${CV} font-size="54" fill="#e07b00">( )</text><text x="160" y="152" ${CV} font-size="46" fill="#1e9e5a">= 2 + 12 = 14</text>`),
  steps:ORD.steps,mount:wbMount(ORD),
- gen(level){let T;do{const [f,R0]=pick(OFORM[level]);T=parseT(f,R0)}while(!validT(T));
+ gen(level){
+  /* NP-style word problems: level 1 a + n · p, level 2 n · (p + q) */
+  if(level>0&&Math.random()<.4){const n=rint(2,6);let T,txt,hs;
+   if(level===1){const C=pick(OCTX1),p=rint(C.p[0],C.p[1])*5,a=rint(C.a[0],C.a[1])*5;T=[a,"+",n,"*",p];txt=C.t(n,p,a);
+    hs=t3("Skriv ett uttryck. Gånger före plus: räkna först ut vad de lika sakerna kostar.","Write an expression. Times before plus: first work out what the equal items cost.","اكتب تعبيرًا. الضرب قبل الجمع: احسب أولًا ثمن الأشياء المتماثلة.")}
+   else{const C=pick(OCTX2),p=rint(C.p[0],C.p[1])*5,q=rint(C.q[0],C.q[1])*5;T=[n,"*","(",p,"+",q,")"];txt=C.t(n,p,q)}
+   const W=oWork(T,400,262,62,100,"kr"),ask=pick([t3("Hur mycket kostar det sammanlagt?","How much does it cost altogether?","كم الثمن المجموع؟"),t3("Skriv ett uttryck och beräkna kostnaden.","Write an expression and work out the cost.","اكتب تعبيرًا واحسب التكلفة.")]),l1=L(txt);
+   return{kind:"num",ans:oAll(T).pop().v,show:fmt(oAll(T).pop().v)+" kr",hc:1,hsay:hs,nt:"word",q:[A.wipe(),...wrapT(l1,lang==="ar"?44:40).slice(0,2).map((t,i)=>A.tx(t,400,48+i*42,32)),A.tx(L(ask),400,148,34,"b"),...W.first],sol:W.steps.flat()}}
+  let T;do{const [f,R0]=pick(OFORM[level]);T=parseT(f,R0)}while(!validT(T));
   const st=oAll(T),n=st.length,gap=n<=2?100:n===3?90:78,s=n<=2?64:58,W=oWork(T,400,Math.round(285-n*gap/2),s,gap),ans=st[n-1].v;
-  return{kind:"num",ans,show:fmt(ans),hc:1,q:[A.wipe(),A.tx(L(t3("Räkna ut","Work it out","احسب")),400,58,38,"b"),...W.first],sol:W.steps.flat()}}
+  return{kind:"num",ans,show:fmt(ans),hc:1,q:[A.wipe(),A.tx(L(pick([t3("Räkna ut","Work it out","احسب"),t3("Beräkna","Calculate","احسب"),t3("Beräkna uttrycket","Calculate the expression","احسب قيمة التعبير")])),400,58,38,"b"),...W.first],sol:W.steps.flat()}}
 });
 
 /* ---------------------------------------------------------------
@@ -306,17 +323,33 @@ LESSONS.push({id:"negcalc6",subject:"math",grades:"6",kind:"wb",
  gen(level){
   if(level===0){let a,b,op,r;do{a=rint(-9,9);b=rint(2,12);op=Math.random()<.5?"+":"−";r=op==="+"?a+b:a-b}while(!a||!r||Math.abs(r)>12||(a>0&&r>0)||Math.max(a,r,0)-Math.min(a,r,0)>14);
    const S=nlSol(a,op==="+"?b:-b,330),T=[ng(a),op,String(b)];
-   return{kind:"num",ans:r,show:ng(r),signed:true,hk:S.k,q:[A.wipe(),A.tx(L(t3("Räkna ut","Work it out","احسب")),400,58,38,"b"),...rowC([...T,"=","?"],400,170,72)],
+   /* sometimes as a game score: you win or lose points */
+   const game=Math.random()<.35,head=game?[A.tx(L(t3(`I ett spel har du ${ng(a)} poäng.`,`In a game you have ${ng(a)} points.`,`في لعبة معك ${LRI(ng(a))} نقطة.`)),400,52,34),
+     A.tx(L(op==="+"?t3(`Du vinner ${b} poäng till. Hur många poäng har du nu?`,`You win ${b} more points. How many points do you have now?`,`تربح ${b} نقطة أخرى. كم نقطة معك الآن؟`)
+      :t3(`Du förlorar ${b} poäng. Hur många poäng har du nu?`,`You lose ${b} points. How many points do you have now?`,`تخسر ${b} نقطة. كم نقطة معك الآن؟`)),400,100,30,"b"),...rowC([...T,"=","?"],400,196,56)]
+    :[A.tx(L(pick([t3("Räkna ut","Work it out","احسب"),t3("Beräkna","Calculate","احسب")])),400,58,38,"b"),...rowC([...T,"=","?"],400,170,72)];
+   return{kind:"num",ans:r,show:ng(r),signed:true,hk:S.k,nt:game?"game":"old",q:[A.wipe(),...head],
     sol:[...S.o,A.hl(400-tw(`${T.join(" ")} = ${ng(r)}`,50)/2-20,416,tw(`${T.join(" ")} = ${ng(r)}`,50)+40,62),...rowC([...T,"=",ng(r)],400,462,50,"g")]}}
+  if(level===1&&Math.random()<.35){/* NP style: how many degrees has it risen / fallen? */
+   let lo,hi;do{lo=rint(-9,-1);hi=rint(1,9)}while(hi-lo<4||hi-lo>14);const up=Math.random()<.5,a=up?lo:hi,b=up?hi:lo,dd=hi-lo,ct=pick(TEMPC),dg=v=>ng(v)+" °C";
+   const S=nlSol(a,b-a,350),F=[ng(hi),"−","(",ng(lo),")","=",String(dd)];
+   const ask=up?pick([t3("Hur många grader har temperaturen stigit?","How many degrees has the temperature risen?","كم درجة ارتفعت درجة الحرارة؟"),t3("Hur mycket har det blivit varmare?","How much warmer has it got?","كم درجة صار الجو أدفأ؟")])
+    :pick([t3("Hur många grader har temperaturen sjunkit?","How many degrees has the temperature fallen?","كم درجة انخفضت درجة الحرارة؟"),t3("Hur mycket har det blivit kallare?","How much colder has it got?","كم درجة صار الجو أبرد؟")]);
+   const q=[A.wipe(),...lab2(L(t3(`Temperatur ${ct[0].sv}:`,`Temperature ${ct[0].en}:`,`درجة الحرارة ${ct[0].ar}:`)),dg(a),62,34,"k","o"),
+    ...lab2(L(t3(`Temperatur ${ct[1].sv}:`,`Temperature ${ct[1].en}:`,`درجة الحرارة ${ct[1].ar}:`)),dg(b),116,34,"k","o"),A.tx(L(ask),400,184,34,"b")];
+   const fw=tw(F.join(" "),48);
+   return{kind:"num",ans:dd,show:`${dd} °C`,hk:S.k,nt:"tdiff",hsay:t3("Räkna stegen på tallinjen från den ena temperaturen till den andra. Gå via 0.","Count the steps on the number line from one temperature to the other. Go via 0.","عُدّ الخطوات على خط الأعداد من درجة إلى الأخرى، مرورًا بالصفر."),q,
+    sol:[...S.o,A.hl(400-fw/2-30,422,fw+60,62),...rowC(F,400,466,48,"g")]}}
   if(level===1){let a,b,op,r;do{a=rint(-9,9);b=rint(2,9);op=Math.random()<.5?"+":"−";r=op==="+"?a-b:a+b}while(!a||!r||Math.abs(r)>12||Math.max(a,r,0)-Math.min(a,r,0)>14);
    const T=[ng(a),op,"(",ng(-b),")"],T2=[ng(a),op==="+"?"−":"+",String(b)],S=nlSol(a,op==="+"?-b:b,355);
    const RW=rowC([...T,"=",...T2],400,236,44,"b");
-   return{kind:"num",ans:r,show:ng(r),signed:true,hk:RW.length,q:[A.wipe(),A.tx(L(t3("Räkna ut","Work it out","احسب")),400,58,38,"b"),...rowC([...T,"=","?"],400,150,66)],
+   return{kind:"num",ans:r,show:ng(r),signed:true,hk:RW.length,q:[A.wipe(),A.tx(L(pick([t3("Räkna ut","Work it out","احسب"),t3("Beräkna","Calculate","احسب")])),400,58,38,"b"),...rowC([...T,"=","?"],400,150,66)],
     sol:[...RW,...S.o,A.hl(400-tw(`${T.join(" ")} = ${ng(r)}`,50)/2-20,418,tw(`${T.join(" ")} = ${ng(r)}`,50)+40,62),...rowC([...T,"=",ng(r)],400,464,50,"g")]}}
   if(Math.random()<.4){let a,b,c,r;do{a=rint(-12,6);b=rint(2,12);c=rint(3,14);r=a+b-c}while(!a||!r||Math.abs(r)>20||a+b===0||(a>0&&r>0)||Math.max(a,a+b,0)-Math.min(a,r,0)>26);
    const ct=pick(TEMPC),dg=v=>ng(v)+" °C";
    const q=[A.wipe(),...lab2(L(t3(`Temperatur ${ct[0].sv}:`,`Temperature ${ct[0].en}:`,`درجة الحرارة ${ct[0].ar}:`)),dg(a),72,36,"k","o"),
-    A.tx(L(t3(`Det blir ${b} grader varmare, sedan ${c} grader kallare.`,`It gets ${b} degrees warmer, then ${c} degrees colder.`,`ترتفع ${DAR(b)}، ثم تنخفض ${DAR(c)}.`)),400,130,32),
+    A.tx(L(pick([t3(`Det blir ${b} grader varmare, sedan ${c} grader kallare.`,`It gets ${b} degrees warmer, then ${c} degrees colder.`,`ترتفع ${DAR(b)}، ثم تنخفض ${DAR(c)}.`),
+     t3(`Den stiger ${b} grader och sjunker sedan ${c} grader.`,`It rises ${b} degrees and then falls ${c} degrees.`,`ترتفع ${DAR(b)}، ثم تنخفض ${DAR(c)}.`)])),400,130,32),
     A.tx(L(t3(`Vilken temperatur blir det ${ct[1].sv}?`,`What is the temperature ${ct[1].en}?`,`كم تصبح درجة الحرارة ${ct[1].ar}؟`)),400,188,36,"b")];
    const W=aligned([[ng(a),"+",String(b),"−",String(c)],[ng(a+b),"−",String(c)],[ng(r)]],300,280,52,88,"°C");
    /* thermometer: a vertical scale with the two changes */
@@ -332,7 +365,7 @@ LESSONS.push({id:"negcalc6",subject:"math",grades:"6",kind:"wb",
   const term=v=>v<0?["(",ng(v),")"]:[String(v)],simp=(o,v)=>{const s=(o==="+")===(v>0);return[s?"+":"−",String(Math.abs(v))]};
   const T0=[ng(a),o1,...term(v1),o2,...term(v2)],T1=[ng(a),...simp(o1,v1),...simp(o2,v2)],m=a+(o1==="+"?v1:-v1);
   const W=aligned([T0,T1,[ng(m),...simp(o2,v2)],[ng(r)]],400,150,56,92);
-  return{kind:"num",ans:r,show:ng(r),signed:true,hk:W.rest[0].length,q:[A.wipe(),A.tx(L(t3("Räkna ut","Work it out","احسب")),400,58,38,"b"),...W.first],sol:W.rest.flat()}}
+  return{kind:"num",ans:r,show:ng(r),signed:true,hk:W.rest[0].length,q:[A.wipe(),A.tx(L(pick([t3("Räkna ut","Work it out","احسب"),t3("Beräkna","Calculate","احسب")])),400,58,38,"b"),...W.first],sol:W.rest.flat()}}
 });
 
 /* ---------------------------------------------------------------
@@ -369,6 +402,9 @@ const DCTX={
   [n=>t3(`${n} bussbiljetter`,`${n} bus tickets`,`عدد تذاكر الحافلة ${n}`),p=>t3(`${p} kr styck`,`${p} kr each`,`سعر التذكرة ${p} كرونة`)]],
  other:[[n=>t3(`${n} flaskor saft`,`${n} bottles of juice`,`عدد زجاجات العصير ${n}`),p=>t3(`${p} liter i varje`,`${p} litres in each`,`في كل زجاجة ${p} لتر`),"l",t3("Hur många liter blir det?","How many litres is that?","كم لترًا في المجموع؟")],
   [n=>t3(`${n} brädor`,`${n} planks`,`عدد الألواح ${n}`),p=>t3(`${p} m långa`,`${p} m long each`,`طول كل لوح ${p} م`),"m",t3("Hur många meter blir det?","How many metres is that?","كم مترًا في المجموع؟")]]};
+const DKG=[{p:[5,11],t:(p,w)=>t3(`Lösgodis kostar ${p} kr per kg. Du köper ${w} kg.`,`Pick and mix costs ${p} kr per kg. You buy ${w} kg.`,`سعر الحلوى السائبة ${p} كرونة للكيلوغرام. تشتري ${w} كغ.`)},
+ {p:[9,16],t:(p,w)=>t3(`Osten kostar ${p} kr per kg. Du köper ${w} kg.`,`The cheese costs ${p} kr per kg. You buy ${w} kg.`,`سعر الجبن ${p} كرونة للكيلوغرام. تشتري ${w} كغ.`)},
+ {p:[2,4],t:(p,w)=>t3(`Äpplen kostar ${p} kr per kg. Du köper ${w} kg.`,`Apples cost ${p} kr per kg. You buy ${w} kg.`,`سعر التفاح ${p} كرونة للكيلوغرام. تشتري ${w} كغ.`)}];
 const DEC={steps:[
  {say:t3("Gånger 10 gör varje siffra tio gånger större, så den flyttar ett steg åt vänster: 3,45 · 10 = 34,5. Gånger 100 är två steg och gånger 1000 tre steg: 3 450.",
    "Times 10 makes every digit ten times bigger, so it moves one place to the left: 3.45 × 10 = 34.5. Times 100 is two places and times 1000 three places: 3,450.",
@@ -416,13 +452,22 @@ LESSONS.push({id:"decmd6",subject:"math",grades:"6",kind:"wb",
   if(level===0){let v,r,k,mul;do{let sig;do{sig=rint(11,999)}while(sig%10===0);v=sig*10**rint(0,3);k=rint(1,3);mul=Math.random()<.5;r=mul?v*10**k:v/10**k}
     while(!Number.isInteger(r)||r>=1000000||v>=1000000||r<1||(v%100===0&&r%100===0));
    const f=`${tnum(v,2)} ${mul?M:D} ${fmt(10**k)}`,ex=`${f} = ${tnum(r,2)}`;
-   const q=[A.wipe(),A.tx(`${f} = ?`,400,56,50),...pvChart(84,300)];
+   const q=[A.wipe(),...(Math.random()<.5?lab2(L(t3("Beräkna:","Calculate:","احسب:")),`${f} = ?`,56,46,"b","k"):[A.tx(`${f} = ?`,400,56,50)]),...pvChart(84,300)];
    const keep=pvRow(v,200,56).cols.map(c=>c-(mul?k:-k)),R1=pvRow(r,310,56,"k",keep),S0=pvRow(v,200,56,"b");
    const sol=[...S0.o,A.arrow(640,186,640,280,"b",-26),qx(`${mul?M:D} ${fmt(10**k)}`,712,240,30,"b"),mark(A.tx(L(mul?t3(`${k} steg åt vänster`,`${k} ${k>1?"places":"place"} left`,k===1?"منزلة واحدة يسارًا":k===2?"منزلتان يسارًا":"3 منازل يسارًا"):t3(`${k} steg åt höger`,`${k} ${k>1?"places":"place"} right`,k===1?"منزلة واحدة يمينًا":k===2?"منزلتان يمينًا":"3 منازل يمينًا")),712,150,26,"r"),"h"),
     ...S0.cols.filter(c=>c+(mul?-k:k)<=5).map(c=>A.arrow(PX(c),214,PX(c+(mul?-k:k)),266,"#9aa8c4")),...R1.o,A.hl(400-tw(ex,48)/2-20,418,tw(ex,48)+40,62),A.tx(ex,400,462,48,"g")];
    return{kind:"num",dec:true,ans:r/100,show:tnum(r,2),q,sol}}
+  if(level===1&&Math.random()<.35){/* price per kg × a decimal weight, answer in whole kronor (NP style) */
+   const it=pick(DKG);let p,w;do{p=rint(it.p[0],it.p[1])*10+9;w=pick([3,4,6,7,8,12,15,25])}while((p*w)%10===0||(p*w)%10===5);   /* p ends in 9, so the price always has öre and is never a tie */
+   const W=dnum(w,1),R=Math.round(p*w/10),pe=Math.round(p/10)*10,ex=`${p} ${M} ${W} = ${dnum(p*w,1)} kr`;
+   const ask=pick([t3("Vad kostar det? Svara i hela kronor.","What does it cost? Answer in whole kronor.","كم الثمن؟ أجب بالكرونات الكاملة."),t3("Beräkna priset. Avrunda till hela kronor.","Work out the price. Round to whole kronor.","احسب الثمن، وقرّبه إلى كرونات كاملة.")]);
+   const q=[A.wipe(),A.tx(L(it.t(p,W)),400,64,34),A.tx(L(ask),400,118,34,"b"),A.tx(`${p} ${M} ${W} = ?`,400,206,62)];
+   const sol=[...lab2(L(t3("Överslag:","Estimate:","التقدير:")),`${pe} ${M} ${W} = ${tnum(pe*w,1)}`,282,34,"o"),...lab2(L(t3("Utan komma:","Without the point:","دون فاصلة:")),`${p} ${M} ${w} = ${fmt(p*w)}`,340,34,"b"),
+    A.tx(L(t3(`${W} har en decimal, så även svaret`,`${W} has one decimal place, so the answer does too`,`في ${W} منزلة عشرية واحدة، وكذلك في الناتج`)),400,392,28,"r"),
+    A.hl(400-tw(`${ex} ≈ ${R} kr`,46)/2-20,420,tw(`${ex} ≈ ${R} kr`,46)+40,62),A.tx(`${ex} ≈ ${R} kr`,400,464,46,"g")];
+   return{kind:"num",ans:R,show:`${R} kr`,hc:2,nt:"kg",q,sol}}
   if(level===1){const money=Math.random()<.6;let n,p,d,ctx,unit,ask;
-   if(money){n=rint(2,9);p=rint(2,29)*100+pick([50,90,95,25,75,45,20]);d=2;ctx=pick(DCTX.money);unit="kr";ask=t3("Vad kostar det tillsammans?","How much is that altogether?","كم الثمن الإجمالي؟")}
+   if(money){n=rint(2,9);p=rint(2,29)*100+pick([50,90,95,25,75,45,20]);d=2;ctx=pick(DCTX.money);unit="kr";ask=pick([t3("Vad kostar det tillsammans?","How much is that altogether?","كم الثمن الإجمالي؟"),t3("Hur mycket kostar det sammanlagt?","How much does it cost in total?","كم الثمن المجموع؟"),t3("Beräkna den totala kostnaden.","Work out the total cost.","احسب التكلفة الكلية.")])}
    else{n=rint(3,9);do{p=rint(3,45)}while(p%10===0);d=1;const c=pick(DCTX.other);ctx=c;unit=c[2]==="l"?LU():c[2];ask=c[3]}
    const P=dnum(p,d),tot=p*n,est=money?Math.round(p/100):Math.max(1,Math.round(p/10)),exact=money?dnum(tot,2):tnum(tot,1);
    const q=[A.wipe(),A.tx(`${L(ctx[0](n))}${lang==="ar"?"،":","} ${L(ctx[1](P))}.`,400,64,36),A.tx(L(ask),400,118,34,"b"),A.tx(`${n} ${M} ${P} = ?`,400,206,62)];
@@ -495,4 +540,8 @@ Object.assign(HINTSX,{
   {say:t3("Gör ett överslag. Räkna sedan utan komma och sätt tillbaka lika många decimaler.","Make an estimate. Then work without the decimal point and put back the same number of decimal places.","قدّر الناتج أولًا، ثم احسب دون فاصلة، وأعد العدد نفسه من المنازل العشرية."),cut:g=>g.sol.slice(0,g.hc)},
   {say:t3("Dela siffra för siffra från vänster. Kommat i svaret hamnar rakt ovanför kommat.","Divide digit by digit from the left. The point in the answer goes straight above the point.","اقسم رقمًا رقمًا من اليسار، وضع الفاصلة في الناتج فوق الفاصلة تمامًا."),cut:g=>g.sol.slice(0,g.hc)}]
 });
+/* a question type can bring its own hint text (g.hsay) and cut (g.hcut); the level's hint is the fallback.
+   The app calls cut(g) just before it reads say, so say can follow the question. */
+for(const id of ["prime6","order6","negcalc6","decmd6"]){const H=HINTSX[id];if(H)HINTSX[id]=H.map(h=>{let cur=null;
+ return{cut:g=>{cur=g;return g.hcut?g.hcut(g):h.cut(g)},get say(){return cur&&cur.hsay||h.say}}})}
 }

@@ -11,4 +11,3 @@ TERM("vardesiffra",{sv:"värdesiffra",m:new RegExp(B+"värdesiffr(a|or|an|orna)"
 TERM("overslag",{sv:"överslag",m:new RegExp(B+"överslag(et|sräkning)?"+E,"i"),d:t3("En snabb ungefärlig uträkning med avrundade tal.","A quick rough calculation with rounded numbers.","حساب تقريبي سريع بأعداد مقرّبة."),ex:"48 · 21 ≈ 50 · 20 = 1000",tr:{en:"estimate",ar:"تقدير"}});
 TERM("ungefar",{sv:"ungefär (≈)",m:new RegExp(B+"ungefär"+E,"i"),d:t3("Nästan, inte exakt. Tecknet ≈ betyder ungefär lika med.","Almost, not exact. The sign ≈ means approximately equal.","تقريبًا، ليس بالضبط. الرمز ≈ يعني يساوي تقريبًا."),ex:"9,8 ≈ 10",tr:{en:"about",ar:"تقريبًا"}});
 }
-WORDS.round7=["avrunda","tiondel","hundradel","decimal","heltal","tiotal","vardesiffra","overslag"];

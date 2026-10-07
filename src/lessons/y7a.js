@@ -101,12 +101,26 @@ LESSONS.push({id:"int7",subject:"math",grades:"7",kind:"wb",
  title:t3("Multiplikation och division med negativa tal","Multiplying and dividing negative numbers","ضرب الأعداد السالبة وقسمتها"),
  icon:ICO(`<path d="M30 130H290" stroke="#1d2433" stroke-width="3.5"/>${[0,1,2,3,4,5,6,7,8].map(i=>`<path d="M${40+i*30} ${i===6?120:124}V${i===6?140:136}" stroke="#1d2433" stroke-width="2.5"/>`).join("")}<path d="M218 118Q190 90 162 118M158 118Q130 90 102 118" fill="none" stroke="#d63b2f" stroke-width="3.5"/><text x="220" y="166" ${CV} font-size="24" fill="#1d2433">0</text><text x="100" y="166" ${CV} font-size="24" fill="#2257c9">−4</text><text x="160" y="70" ${CV} font-size="54" fill="#1d2433">− · − = <tspan fill="#1e9e5a">+</tspan></text>`),
  steps:INT.steps,mount:wbMount(INT),
- gen(level){const M=MUL(),D=DIVS(),title=A.tx(L(WORK),400,80,40,"b");
+ gen(level){const M=MUL(),D=DIVS();let title=A.tx(L(pick([WORK,WORK,t3("Beräkna","Calculate","احسب")])),400,80,40,"b");
+  /* NP-style word problem: a temperature or a score that keeps going down */
+  if(level===1&&Math.random()<.3){const k=rint(3,8),n=rint(3,8),T=k*n,cx=rint(0,2),div=cx===1;
+   const C=[[t3(`Temperaturen sjunker ${k} grader varje timme.`,`The temperature falls ${k} degrees every hour.`,`تنخفض درجة الحرارة ${k} درجات كل ساعة.`),t3(`Hur stor är förändringen efter ${n} timmar?`,`What is the change after ${n} hours?`,`ما مقدار التغيّر بعد ${n} ساعات؟`),"°C"],
+    [t3(`Temperaturen sjönk ${T} grader på ${n} timmar.`,`The temperature fell ${T} degrees in ${n} hours.`,`انخفضت درجة الحرارة ${T} ${T>10?"درجة":"درجات"} خلال ${n} ساعات.`),t3("Hur stor var förändringen per timme?","What was the change per hour?","ما مقدار التغيّر في الساعة؟"),"°C"],
+    [t3(`I ett spel tappar du ${k} poäng varje runda.`,`In a game you lose ${k} points every round.`,`في لعبة تخسر ${k} نقاط في كل جولة.`),t3(`Hur har poängen ändrats efter ${n} rundor?`,`How has your score changed after ${n} rounds?`,`كيف تغيّرت نقاطك بعد ${n} جولات؟`),L(t3("poäng","points","نقطة"))]][cx];
+   const ans=div?-k:-T,expr=div?`(−${T}) ${D} ${n}`:`${n} ${M} (−${k})`,fin=`${expr} = ${ng(ans)}`,l2=mx(div?`${T} ${D} ${n} = ${k}`:`${n} ${M} ${k} = ${T}`,400,360,44);
+   return{kind:"num",ans,signed:true,show:`${ng(ans)} ${C[2]}`,q:[A.wipe(),A.tx(L(C[0]),400,110,34),A.tx(L(C[1]),400,170,34,"b"),A.tx(L(t3("Svara med ett negativt tal om det minskar.","Answer with a negative number if it goes down.","أجب بعدد سالب إذا كان هناك نقصان.")),400,226,26,"o")],
+    sol:[A.tx(L(t3("minskar → negativt tal","goes down → negative number","نقصان → عدد سالب")),400,292,30,"r"),mark(l2[0],"ans"),...l2.slice(1),hlc(400,mxw(fin,50),456,50),...mx(fin,400,456,50,"g")],nt:"int7-word"}}
   if(level<2){const hi=level?12:9,sg=level?pick([[-1,1],[1,-1],[-1,-1],[-1,-1]]):pick([[-1,1],[1,-1]]),div=Math.random()<.5,a=rint(2,hi),b=rint(2,hi);
    let x,y,ans;if(div){x=sg[0]*a*b;y=sg[1]*b;ans=x/y}else{x=sg[0]*a;y=sg[1]*b;ans=x*y}
+   if(Math.random()<.35)title=A.tx(L(div?t3("Beräkna kvoten","Calculate the quotient","احسب خارج القسمة"):t3("Beräkna produkten","Calculate the product","احسب حاصل الضرب")),400,80,40,"b");
    const op=div?D:M,expr=`${pn(x)} ${op} ${pn(y)}`,same=sg[0]===sg[1],fin=`${expr} = ${ng(ans)}`,ab=mx(`${Math.abs(x)} ${op} ${Math.abs(y)} = ${Math.abs(ans)}`,400,374,40);
    return{kind:"num",ans,signed:true,show:ng(ans),q:[A.wipe(),title,...mx(expr,400,220,80)],
     sol:[A.tx(L(same?SAME:DIFF),400,300,34,same?"g":"r"),mark(ab[0],"ans"),...ab.slice(1),hlc(400,mxw(fin,50),456,50),...mx(fin,400,456,50,"g")]}}
+  /* a missing factor: (−4) · ? = 28, solved with the opposite operation */
+  if(Math.random()<.34){let a,x;do{a=rint(2,9)*pick([-1,1]);x=rint(2,9)*pick([-1,1])}while(a>0&&x>0);const p=a*x,dv=Math.random()<.4;
+   const qs=dv?`? ${D} ${pn(a)} = ${ng(x)}`:`${pn(a)} ${M} ? = ${ng(p)}`,ans=dv?p:x,inv=dv?`${ng(x)} ${M} ${pn(a)} = ${ng(p)}`:`${ng(p)} ${D} ${pn(a)} = ${ng(x)}`,fin=dv?`${pn(p)} ${D} ${pn(a)} = ${ng(x)}`:`${pn(a)} ${M} ${pn(x)} = ${ng(p)}`,l2=mx(inv,400,350,46);
+   return{kind:"num",ans,signed:true,show:ng(ans),q:[A.wipe(),A.tx(L(t3("Vilket tal ska stå i stället för frågetecknet?","Which number should replace the question mark?","ما العدد الذي يوضع مكان علامة الاستفهام؟")),400,80,34,"b"),...mx(qs,400,230,76,"k","middle","o")],
+    sol:[A.tx(L(dv?t3("Räkna baklänges: gånger i stället för delat.","Work backwards: times instead of divide.","احسب بالعكس: الضرب بدل القسمة."):t3("Räkna baklänges: delat i stället för gånger.","Work backwards: divide instead of times.","احسب بالعكس: القسمة بدل الضرب.")),400,296,30,"b"),mark(l2[0],"ans"),...l2.slice(1),hlc(400,mxw(fin,50),456,50),...mx(fin,400,456,50,"g")],nt:"int7-missing"}}
   if(Math.random()<.5){let v;do{v=[0,0,0].map(()=>rint(2,6)*(Math.random()<.5?-1:1))}while(v.every(t=>t>0));
    const k=v.filter(t=>t<0).length,p=v[0]*v[1],ans=p*v[2],expr=v.map(pn).join(` ${M} `),odd=k%2===1;
    const cnt=t3(`${k} minustecken: ${odd?"udda":"jämnt"} antal → ${odd?"minus":"plus"}`,`${k} minus sign${k>1?"s":""}: ${odd?"odd":"even"} number → ${odd?"minus":"plus"}`,
@@ -167,9 +181,15 @@ LESSONS.push({id:"pow7",subject:"math",grades:"7",kind:"wb",
  title:t3("Potenser och tiopotenser","Powers and powers of ten","القوى وقوى العشرة"),
  icon:ICO(`<text x="72" y="132" ${CV} font-size="120" fill="#2257c9">2</text><text x="118" y="70" ${CV} font-size="60" fill="#e07b00">5</text>${(()=>{let d="",c="";const Y=k=>34+k*36,X=(k,i)=>232+(i-(2**k-1)/2)*72/2**k;for(let k=0;k<4;k++)for(let i=0;i<2**k;i++){c+=`<circle cx="${X(k,i)}" cy="${Y(k)}" r="6" fill="${["#1d2433","#2257c9","#e07b00","#1e9e5a"][k]}"/>`;if(k<3)for(const j of[2*i,2*i+1])d+=`M${X(k,i)} ${Y(k)}L${X(k+1,j)} ${Y(k+1)}`}return`<path d="${d}" stroke="#9aa8c4" stroke-width="2"/>${c}`})()}<text x="232" y="172" ${CV} font-size="26" fill="#1e9e5a">= 32</text>`),
  steps:POW.steps,mount:wbMount(POW),
- gen(level){const M=MUL(),title=A.tx(L(WORK),400,80,40,"b");
+ gen(level){const M=MUL(),title=A.tx(L(pick([WORK,t3("Beräkna","Calculate","احسب")])),400,80,40,"b");
+  /* write repeated multiplication as a power: 3 · 3 · 3 · 3 = 3^? */
+  if(level===0&&Math.random()<.3){const b=rint(2,9),n=rint(3,6),ch=Array(n).fill(b).join(` ${M} `),qs=`${ch} = ${b}^?`,z=Math.min(72,700/mxw(qs,1)),ql=mx(qs,400,240,z,"k","middle","o"),fin=`${ch} = ${b}^${n}`;
+   const cnt=Array.from({length:n},(_,i)=>qt(i+1,chX(ch,i*4,ql.x0,z),240+z*.75,26,"o"));
+   return{kind:"num",ans:n,show:String(n),q:[A.wipe(),A.tx(L(t3("Skriv som en potens. Vilken är exponenten?","Write it as a power. What is the exponent?","اكتبه على صورة قوة. ما الأس؟")),400,80,34,"b"),...ql],
+    sol:[A.tx(L(t3("Räkna faktorerna.","Count the factors.","عُدّ العوامل.")),400,350,30,"b"),mark(cnt[0],"ans"),...cnt.slice(1),hlc(400,mxw(fin,46),452,46),...mx(fin,400,452,46,"g")],nt:"pow7-write"}}
   if(level===0){const [b,n]=pick([[2,rint(3,6)],[3,rint(2,4)],[4,rint(2,3)],[5,rint(2,3)],[pick([6,7,8,9,11,12]),2],[pick([6,7,8,9,11,12]),2]]),ans=b**n,fin=`${b}^${n} = ${fmt(ans)}`;
-   return{kind:"num",ans,show:fmt(ans),q:[A.wipe(),title,...mx(`${b}^${n}`,400,250,120)],
+   const rd=n===2?t3(`kvadraten av ${b}`,`the square of ${b}`,`مربّع ${b}`):t3(`${b} upphöjt till ${n}`,`${b} to the power of ${n}`,`${b} أُس ${n}`);
+   return{kind:"num",ans,show:fmt(ans),q:[A.wipe(),title,...mx(`${b}^${n}`,400,250,120),A.tx(L(rd),400,310,32,"o")],
     sol:[...mx(`= ${Array(n).fill(b).join(` ${M} `)}`,400,352,46),mark(hlc(400,mxw(fin,52),452,52),"ans"),...mx(fin,400,452,52,"g")]}}
   if(level===1){const t=rint(0,2);
    if(t===0){const n=rint(2,7),ans=10**n,fin=`10^${n} = ${fmt(ans)}`;
@@ -190,6 +210,12 @@ LESSONS.push({id:"pow7",subject:"math",grades:"7",kind:"wb",
    const l2=mx(`= ${s} ${M} ${s}`,400,376,46);
    return{kind:"num",ans,show:String(ans),q:[A.wipe(),title,...mx(`(${a} ${plus?"+":"−"} ${b})^2`,400,200,84)],
     sol:[...mx(`= ${s}^2`,400,300,46),mark(l2[0],"ans"),...l2.slice(1),hlc(400,mxw(f,54),456,54),...mx(f,400,456,54,"g")]}}
+  /* which is biggest: 2^5, 5^2 or 2 · 5 ? */
+  if(Math.random()<.3){const [a,b]=pick([[2,5],[2,6],[3,4],[3,5],[2,7]]),E=[`${a}^${b}`,`${b}^${a}`,`${a} ${M} ${b}`],V=[a**b,b**a,a*b],ord=shuffle([0,1,2]),X=[160,400,640],big=V.indexOf(Math.max(...V));
+   const q=[A.wipe(),A.tx(L(t3("Vilket tal är störst?","Which number is the biggest?","أي عدد هو الأكبر؟")),400,80,40,"b"),...ord.flatMap((k,i)=>mx(E[k],X[i],240,72))];
+   const sol=[A.tx(L(t3("Potens: basen gånger sig själv","Power: the base times itself","القوة: الأساس مضروب في نفسه")),400,456,30,"b"),...ord.flatMap((k,i)=>{const l=mx(`= ${fmt(V[k])}`,X[i],340,40,k===big?"g":"k");return i===0?[mark(l[0],"ans"),...l.slice(1)]:l})];
+   sol.push(A.loop(X[ord.indexOf(big)],270,110,100,"g"));
+   return{kind:"choice",opts:ord.map(k=>E[k].replace(/\^(\d)/,(_,d)=>SUP(d))),ans:ord.indexOf(big),show:E[big].replace(/\^(\d)/,(_,d)=>SUP(d)),q,sol,nt:"pow7-biggest"}}
   const [b,n]=pick([[2,rint(4,9)],[3,rint(3,6)],[4,rint(3,5)],[5,rint(3,4)]]),v=b**n,ch=`${Array(n).fill(b).join(` ${M} `)} = ${fmt(v)}`,z=Math.min(44,640/(mxw(ch,1))),x0=400-mxw(ch,z)/2,fin=`${b}^${n} = ${fmt(v)}`;
   const cl=mx(ch,400,370,z);
   return{kind:"num",ans:n,show:String(n),q:[A.wipe(),A.tx(L(t3("Vilken exponent fattas?","Which exponent is missing?","ما الأس الناقص؟")),400,80,40,"b"),...mx(`${b}^? = ${fmt(v)}`,400,210,84,"k","middle","o")],
@@ -251,10 +277,24 @@ LESSONS.push({id:"sci7",subject:"math",grades:"7",kind:"wb",
   const toSci=({dec,aInt,n,a,N},y0)=>{const ds=[...String(N)],D=drow(ds,y0,56,Math.min(64,620/ds.length)),f=`${fmt(N)} = ${dfmt(a,dec)} ${M} 10^${n}`,h=hops(D.B,ds.length,1,y0+16,false);
    return[...D.o,sepAt(D.B(ds.length),y0+6,56,"#9aa8c4"),mark(h[0],"ans"),...h.slice(1),sepAt(D.B(1),y0+6,56,"r"),hlc(400,mxw(f,44),458,44),...mx(f,400,458,44,"g")]};
   if(level===0){const v=mk(1,3,8),{dec,aInt,n,a}=v,F=toFull(aInt,n,dec,306,56),f=`${dfmt(a,dec)} ${M} 10^${n} = ${fmt(v.N)}`;
-   return{kind:"num",ans:v.N,show:fmt(v.N),q:[A.wipe(),A.tx(L(t3("Skriv talet utan tiopotens","Write the number without a power of ten","اكتب العدد دون قوة العشرة")),400,66,38,"b"),...mx(`${dfmt(a,dec)} ${M} 10^${n}`,400,170,84)],
+   return{kind:"num",ans:v.N,show:fmt(v.N),q:[A.wipe(),A.tx(L(pick([t3("Skriv talet utan tiopotens","Write the number without a power of ten","اكتب العدد دون قوة العشرة"),t3("Skriv som ett vanligt tal","Write it as an ordinary number","اكتبه عددًا عاديًا")])),400,66,38,"b"),...mx(`${dfmt(a,dec)} ${M} 10^${n}`,400,170,84)],
     sol:[txe(L(MOVE(n,true)),400,234,30,"b"),mark(F.R1.o[0],"ans"),...F.R1.o.slice(1),sepAt(F.R1.B(1),312,56,"#9aa8c4"),...hops(F.R1.B,1,F.ds.length,322,false),hlc(400,mxw(f,44),458,44),...mx(f,400,458,44,"g")]}}
+  /* which one is written correctly in scientific notation? */
+  if(level===1&&Math.random()<.3){const v=mk(1,4,8),{dec,aInt,n,a}=v,E=[[a,n,dec],[a*10,n-1,dec-1],[a/10,n+1,dec+1]],ord=shuffle([0,1,2]),Y=[190,270,350];
+   const ex=([m,e,d])=>`${dfmt(m,Math.max(0,d))} ${M} 10^${e}`,sx=([m,e,d])=>`${dfmt(m,Math.max(0,d))} ${M} 10${SUP(e)}`;
+   const why=[[0,""],[1,`${dfmt(a*10,Math.max(0,dec-1))} > 10`],[2,`${dfmt(a/10,dec+1)} < 1`]];
+   const q=[A.wipe(),A.tx(L(t3("Vilket tal är skrivet i grundpotensform?","Which number is written in scientific notation?","أي عدد مكتوب بالصيغة العلمية؟")),400,66,36,"b"),A.tx(L(t3("Alla tre har samma värde.","All three have the same value.","للأعداد الثلاثة القيمة نفسها.")),400,116,28),...ord.flatMap((k,i)=>mx(ex(E[k]),330,Y[i],52))];
+   const sol=[A.tx(L(t3("minst 1 men mindre än 10","at least 1 but less than 10","1 على الأقل وأصغر من 10")),400,446,30,"b")];
+   ord.forEach((k,i)=>{const t=k===0?tick(560,Y[i]-16):cross(560,Y[i]-16);sol.push(i===0?mark(t,"ans"):t);if(why[k][1])sol.push(...mx(why[k][1],680,Y[i],32,"r"))});
+   return{kind:"choice",opts:ord.map(k=>sx(E[k])),ans:ord.indexOf(0),show:sx(E[0]),q,sol,nt:"sci7-which"}}
   if(level===1){const v=mk(0,4,9);
    return{kind:"num",ans:v.n,show:String(v.n),q:[A.wipe(),A.tx(L(SCIW),400,62,38,"b"),...mx(fmt(v.N),400,146,66),...mx(`= ${dfmt(v.a,v.dec)} ${M} 10^?`,400,226,56,"k","middle","o")],sol:toSci(v,316)}}
+  /* "3,5 miljoner" in scientific notation */
+  if(Math.random()<.35){const big=Math.random()<.4,m=pick(big?[1.5,2.5,4.2,8,12,45,120]:[2.5,3.5,4.8,6.2,12,25,45,150,350]),N=Math.round(m*10**(big?9:6)),n=String(N).length-1,a=N/10**n,dec=String(a).includes(".")?String(a).split(".")[1].length:0,v={dec,aInt:Math.round(a*10**dec),n,a,N};
+   const ms=dfmt(m,Number.isInteger(m)?0:1),C=pick(big?[t3(`Jorden har ungefär ${ms} miljarder invånare.`,`The Earth has about ${ms} billion people.`,`يعيش على الأرض نحو ${ms} مليار إنسان.`),t3(`En video har visats ${ms} miljarder gånger.`,`A video has been watched ${ms} billion times.`,`شوهد مقطع فيديو ${ms} مليار مرة.`)]
+    :[t3(`En stad har ${ms} miljoner invånare.`,`A city has ${ms} million inhabitants.`,`عدد سكان مدينة ${ms} مليون نسمة.`),t3(`En låt har spelats ${ms} miljoner gånger.`,`A song has been played ${ms} million times.`,`شُغّلت أغنية ${ms} مليون مرة.`)]);
+   return{kind:"pair",ans:[v.a,v.n],dec:true,sep:`${M} 10^`,check:(x,d)=>Math.abs(x-v.a)<1e-9&&d===v.n,show:`${dfmt(v.a,v.dec)} ${M} 10${SUP(v.n)}`,
+    q:[A.wipe(),A.tx(L(C),400,62,34,"b"),A.tx(L(t3("Skriv talet i grundpotensform.","Write the number in scientific notation.","اكتب العدد بالصيغة العلمية.")),400,116,32),A.tx(L(big?t3(`1 miljard = ${fmt(1e9)}`,`1 billion = ${fmt(1e9)}`,`مليار = ${fmt(1e9)}`):t3(`1 miljon = ${fmt(1e6)}`,`1 million = ${fmt(1e6)}`,`مليون = ${fmt(1e6)}`)),400,176,30,"o"),...mx(`? ${M} 10^?`,400,246,60,"k","middle","o")],sol:toSci(v,346),nt:"sci7-million"}}
   if(Math.random()<.5){const [C,n1,n2]=pick([[t3("Antal visningar av en video:","Views of a video:","عدد مشاهدات مقطع فيديو:"),5,9],[t3("Antal invånare i ett land:","Population of a country:","عدد سكان بلد:"),5,8],[t3("Avstånd från solen till en komet (km):","Distance from the Sun to a comet (km):","المسافة من الشمس إلى مذنّب (بالكيلومتر):"),7,9]]),v=mk(0,n1,n2);
    return{kind:"pair",ans:[v.a,v.n],dec:true,sep:`${M} 10^`,check:(x,d)=>Math.abs(x-v.a)<1e-9&&d===v.n,show:`${dfmt(v.a,v.dec)} ${M} 10${SUP(v.n)}`,
     q:[A.wipe(),A.tx(L(C),400,62,34,"b"),...mx(`${fmt(v.N)} = ? ${M} 10^?`,400,150,60,"k","middle","o"),A.tx(L(t3("Skriv i grundpotensform.","Write it in scientific notation.","اكتبه بالصيغة العلمية.")),400,222,32)],sol:toSci(v,316)}}
@@ -323,11 +363,35 @@ LESSONS.push({id:"round7",subject:"math",grades:"7",kind:"wb",
  icon:ICO(`<ellipse cx="104" cy="58" rx="54" ry="36" fill="none" stroke="#1e9e5a" stroke-width="3.5"/><text x="160" y="80" ${CV} font-size="58" fill="#1d2433"><tspan fill="#1e9e5a">52</tspan> 384</text><text x="160" y="152" ${CV} font-size="50" fill="#1e9e5a">≈ 52 000</text>`),
  steps:RND7.steps,mount:wbMount(RND7),
  gen(level){const M=MUL(),D=DIVS();
+  /* number line from lo to hi with v marked; fl formats the ends, fv the value */
+  const zl=(lo,hi,v,fl,fv,Y=330,x1=130,x2=670)=>{let d=R.line(x1-12,Y,x2+12,Y,.4);for(let i=0;i<=10;i++){const x=x1+(x2-x1)*i/10,l=i%10===0?16:i===5?12:7;d+=`M${f1(x)},${Y-l}v${2*l}`}
+   const px=x1+(x2-x1)*(v-lo)/(hi-lo),up=(v-lo)*2>=hi-lo,ex=up?x2:x1;
+   return{up,line:[A.p(d,"k",3.5),qt(fl(lo),x1,Y+44,28),qt(fl(hi),x2,Y+44,28)],pt:[A.p(dots([[px,Y]]),"r",16),qt(fv(v),px,Y-50,28,"r")],arr:A.arrow(px+(up?6:-6),Y-14,ex+(up?-4:4),Y-14,"g",up?-26:26)}};
+  if(level===0&&Math.random()<.45){const r0=Math.random(),ttl=x=>pick(x);let q0,lo,hi,v,fl,fv,res,ttlT,u="";
+   if(r0<.55){/* whole numbers to tens, hundreds or thousands */
+    const pl=pick([[10,t3("närmaste tiotal","the nearest ten","أقرب عشرة"),t3("tiotal","tens","العشرات"),t3("hela tiotal","whole tens","عشرات كاملة")],[100,t3("närmaste hundratal","the nearest hundred","أقرب مئة"),t3("hundratal","hundreds","المئات"),t3("hela hundratal","whole hundreds","مئات كاملة")],[1000,t3("närmaste tusental","the nearest thousand","أقرب ألف"),t3("tusental","thousands","الآلاف"),t3("hela tusental","whole thousands","آلاف كاملة")]]),P=pl[0];
+    let rem;do{rem=rint(1,P-1)}while(P>10&&rem%(P/10)===0&&Math.random()<.7);v=rint(P===1000?2:1,P===1000?49:P===100?99:99)*P+rem;lo=Math.floor(v/P)*P;hi=lo+P;fl=fmt;fv=fmt;
+    const w=ttl([pl[1],pl[2],pl[3]]);ttlT=t3(`Avrunda till ${w.sv}`,`Round to ${w.en}`,`قرّب إلى ${w.ar}`)}
+   else{/* two decimals = hundredths */
+    let h;do{h=rint(1,99)*1000+rint(1,999)}while(h%10===0||h%1000<10);v=h;lo=Math.floor(h/10)*10;hi=lo+10;fl=x=>dfmt(x/1000,2);fv=x=>dfmt(x/1000,3);u=pick(["","kg","m","km"]);
+    ttlT=pick([t3("Avrunda till två decimaler","Round to two decimal places","قرّب إلى منزلتين عشريتين"),t3("Avrunda till hundradelar","Round to hundredths","قرّب إلى أجزاء المئة"),t3("Avrunda till närmaste hundradel","Round to the nearest hundredth","قرّب إلى أقرب جزء من مئة")])}
+   const Z=zl(lo,hi,v,fl,fv),R0=Z.up?hi:lo,ans=r0<.55?R0:R0/1000,rs=r0<.55?fmt(R0):dfmt(R0/1000,2),us=u?` ${u}`:"",fin=`${fv(v)}${us} ≈ ${rs}${us}`;
+   return{kind:"num",dec:r0>=.55,ans,show:rs+us,q:[A.wipe(),A.tx(L(ttlT),400,76,40,"b"),A.tx(fv(v)+us,400,206,96)],
+    sol:[...Z.line,mark(Z.pt[0],"ans"),Z.pt[1],Z.arr,hlc(400,mxw(fin,50),456,50),...mx(fin,400,456,50,"g")],nt:r0<.55?"round7-int":"round7-hundredths"}}
   if(level===0){const [u,a,b]=pick([["kr",12,999],["km",2,99],["s",10,59]]);let d;do{d=non10(1,99)}while(d<8||d>92);const h=rint(a,b)*100+d,to=rint(0,1);
    const lo=to?Math.floor(h/10)*10:Math.floor(h/100)*100,hi=lo+(to?10:100),Z=zoom(lo,hi,h,to,330),res=Z.up?hi:lo,ans=res/100,fin=`${dfmt(h/100,2)} ≈ ${dfmt(ans,to)} ${u}`;
    const ttl=to?pick([t3("Avrunda till en decimal","Round to one decimal place","قرّب إلى منزلة عشرية واحدة"),t3("Avrunda till tiondelar","Round to tenths","قرّب إلى الأعشار"),t3("Avrunda till närmaste tiondel","Round to the nearest tenth","قرّب إلى أقرب عُشر")]):u==="kr"?t3("Avrunda till hela kronor","Round to whole kronor","قرّب إلى أقرب كرونة"):t3("Avrunda till heltal","Round to a whole number","قرّب إلى أقرب عدد صحيح");
    return{kind:"num",dec:true,ans,show:`${dfmt(ans,to)} ${u}`,q:[A.wipe(),A.tx(L(ttl),400,76,40,"b"),A.tx(`${dfmt(h/100,2)} ${u}`,400,206,96)],
     sol:[...Z.line,mark(Z.pt[0],"ans"),Z.pt[1],Z.arr,hlc(400,mxw(fin,50),456,50),...mx(fin,400,456,50,"g")]}}
+  /* NP word problem: "Svara i hela kronor" */
+  if(level===1&&Math.random()<.3){let C,ex,k;
+   if(Math.random()<.5){const n=pick([4,5]);let T;do{T=rint(150,990)}while(T%n===0);ex=T/n;
+    C=[t3(`${n} kompisar delar lika på en nota på ${T} kr.`,`${n} friends split a bill of ${T} kr equally.`,`يتقاسم ${n} أصدقاء فاتورة قيمتها ${T} كرونة بالتساوي.`),t3("Hur mycket betalar var och en? Svara i hela kronor.","How much does each one pay? Answer in whole kronor.","كم يدفع كل واحد؟ أجب بكرونات كاملة.")];k=`${T} ${D} ${n}`}
+   else{let pr,l;do{pr=rint(1600,2299)/100;l=rint(12,45)}while(Math.round(pr*l*100)%100===0);ex=pr*l;
+    C=[t3(`Bensinen kostar ${dfmt(pr,2)} kr/liter. Du tankar ${l} liter.`,`Petrol costs ${dfmt(pr,2)} kr/litre. You fill up ${l} litres.`,`سعر البنزين ${dfmt(pr,2)} كرونة للتر، وتملأ ${l} لترًا.`),t3("Vad kostar det? Svara i hela kronor.","What does it cost? Answer in whole kronor.","كم التكلفة؟ أجب بكرونات كاملة.")];k=`${l} ${M} ${dfmt(pr,2)}`}
+   const e2=Math.round(ex*100)/100,ans=Math.round(e2),dg=Math.floor(Math.round(e2*100)/10)%10,up=dg>=5,exS2=dfmt(e2,2),l1=mx(`${k} = ${exS2}`,400,300,46),fin=`${exS2} kr ≈ ${fmt(ans)} kr`;
+   return{kind:"num",ans,show:`${fmt(ans)} kr`,q:[A.wipe(),A.tx(L(C[0]),400,150,32),A.tx(L(C[1]),400,206,32,"b")],
+    sol:[...l1,mark(txe(L(t3(`tiondelar: ${dg} → ${up?"uppåt":"nedåt"}`,`tenths: ${dg} → round ${up?"up":"down"}`,`الأعشار: ${dg} ← ${up?"للأعلى":"للأسفل"}`)),400,370,30,up?"r":"b"),"ans"),hlc(400,mxw(fin,50),456,50),...mx(fin,400,456,50,"g")],nt:"round7-kronor"}}
   if(level===1){let str,res,resS,k,isDec=Math.random()<.4;
    if(!isDec){const len=rint(4,6);k=rint(1,2);let N;do{N=rint(10**(len-1),10**len-1)}while(N%10===0);const p=10**(len-k);res=Math.round(N/p)*p;str=fmt(N);resS=fmt(res)}
    else{const z0=rint(1,2);let m,K;k=rint(1,2);do{m=non10(101,999);K=Math.round(m/10**(3-k))}while(K>=10**k);str=dfmt(m/10**(z0+3),z0+3);res=K/10**(z0+k);resS=dfmt(res,z0+k)}
@@ -344,6 +408,12 @@ LESSONS.push({id:"round7",subject:"math",grades:"7",kind:"wb",
    return{kind:"num",ans,show:fmt(ans),q:[A.wipe(),A.tx(L(t3("Gör ett överslag","Make an estimate","قدّر الناتج")),400,66,40,"b"),A.tx(L(t3("Avrunda båda talen till en värdesiffra.","Round both numbers to one significant figure.","قرّب العددين إلى رقم معنوي واحد.")),400,124,30),
      ...mx(`${fmt(a)} ${M} ${fmt(b)} ≈ ?`,400,246,80)],
     sol:[...mx(`≈ ${fmt(ra)} ${M} ${fmt(rb)}`,400,346,50,"o"),mark(hlc(400,mxw(f,54),452,54),"ans"),...mx(f,400,452,54,"g")]}}
+  /* estimate a division: share a cost */
+  if(Math.random()<.35){const n=rint(3,8),per=rint(2,9)*100;let T;do{T=n*per+rint(-45,45)}while(T%10===0||T===n*per);const o3=[per/10,per,per*10],sh=shuffle([0,1,2]),f=`= ${fmt(per)} kr`;
+   return{kind:"choice",opts:sh.map(i=>`${fmt(o3[i])} kr`),ans:sh.indexOf(1),show:`${fmt(per)} kr`,
+    q:[A.wipe(),A.tx(L(t3("Gör ett överslag","Make an estimate","قدّر الناتج")),400,66,40,"b"),A.tx(L(t3(`Resan kostar ${fmt(T)} kr och delas av ${n} kompisar.`,`The trip costs ${fmt(T)} kr and is shared by ${n} friends.`,`تكلّف الرحلة ${fmt(T)} كرونة يتقاسمها ${n} أصدقاء.`)),400,150,34),
+     A.tx(L(t3("Ungefär hur mycket betalar var och en?","About how much does each one pay?","كم يدفع كل واحد تقريبًا؟")),400,206,34),A.p([...Array(n)].map((_,i)=>head(400+(i-(n-1)/2)*84,300,26)).join(""),"k",3.5)],
+    sol:[A.tx(L(t3("Välj ett tal som är lätt att dela.","Choose a number that is easy to divide.","اختر عددًا تسهل قسمته.")),400,370,30,"b"),...(l=>[mark(l[0],"ans"),...l.slice(1)])(mx(`${fmt(T)} ${D} ${n} ≈ ${fmt(n*per)} ${D} ${n}`,400,416,40,"o")),...mx(f,400,468,44,"g")],nt:"round7-divest"}}
   const n=rint(3,9),p=non10(101,999),rp=r1(p),est=n*rp,f=`= ${fmt(est)} kr`,o3=[est/10,est,est*10],sh=shuffle([0,1,2]);
   const w=58,gap=14,x0=400-(n*(w+gap)-gap)/2;
   return{kind:"choice",opts:sh.map(i=>`${fmt(o3[i])} kr`),ans:sh.indexOf(1),show:`${fmt(est)} kr`,
@@ -403,7 +473,7 @@ Object.assign(HELPX,{
 Object.assign(HINTSX,{
  int7:[{say:t3("Bestäm tecknet först: lika tecken ger plus, olika tecken ger minus. Räkna sedan utan tecken.","Decide the sign first: same signs give plus, different signs give minus. Then calculate without the signs.","حدّد الإشارة أولًا: الإشارتان المتماثلتان تعطيان موجبًا والمختلفتان سالبًا. ثم احسب دون الإشارات."),cut:upTo("ans")},
   {say:t3("Division följer samma teckenregler som multiplikation. Bestäm tecknet först.","Division follows the same sign rules as multiplication. Decide the sign first.","القسمة تتبع قواعد الإشارات نفسها في الضرب. حدّد الإشارة أولًا."),cut:upTo("ans")},
-  {say:t3("Räkna två faktorer i taget, eller varje multiplikation för sig. Håll koll på tecknen.","Work with two factors at a time, or each multiplication on its own. Keep track of the signs.","احسب عاملين في كل مرة، أو كل عملية ضرب وحدها، وانتبه إلى الإشارات."),cut:upTo("ans")}],
+  {say:t3("Räkna två faktorer i taget och håll koll på tecknen. Saknas ett tal? Räkna baklänges med det motsatta räknesättet.","Work with two factors at a time and keep track of the signs. Is a number missing? Work backwards with the opposite operation.","احسب عاملين في كل مرة وانتبه إلى الإشارات. هل هناك عدد ناقص؟ احسب بالعكس بالعملية المعاكسة."),cut:upTo("ans")}],
  pow7:[{say:t3("Exponenten säger hur många gånger basen ska multipliceras med sig själv.","The exponent tells you how many times to multiply the base by itself.","الأس يبيّن كم مرة نضرب الأساس في نفسه."),cut:upTo("ans")},
   {say:t3("För tiopotenser är exponenten lika med antalet nollor efter ettan.","For powers of ten, the exponent equals the number of zeros after the 1.","في قوى العشرة يساوي الأس عدد الأصفار بعد الواحد."),cut:upTo("ans")},
   {say:t3("Räkna parenteser först, sedan potenser, sedan gånger och sist plus. Söker du exponenten: multiplicera basen med sig själv tills du når talet.","Do brackets first, then powers, then times and last plus. Looking for the exponent? Multiply the base by itself until you reach the number.","احسب الأقواس أولًا، ثم القوى، ثم الضرب، وأخيرًا الجمع. وإذا كنت تبحث عن الأس فاضرب الأساس في نفسه حتى تصل إلى العدد."),cut:upTo("ans")}],
@@ -411,7 +481,7 @@ Object.assign(HINTSX,{
   {say:t3("Flytta decimaltecknet åt vänster tills det bara står en siffra före det. Räkna stegen.","Move the decimal point to the left until there is only one digit in front of it. Count the steps.","حرّك الفاصلة العشرية إلى اليسار حتى يبقى رقم واحد قبلها، وعُدّ الخطوات."),cut:upTo("ans")},
   {say:t3("Första talet ska vara minst 1 men mindre än 10. Jämför stora tal genom att titta på exponenten först.","The first number must be at least 1 but less than 10. To compare big numbers, look at the exponent first.","يجب أن يكون العدد الأول 1 على الأقل وأصغر من 10. ولمقارنة الأعداد الكبيرة انظر إلى الأس أولًا."),cut:upTo("ans")}],
  round7:[{say:t3("Titta på siffran direkt efter den plats du avrundar till. 0–4: nedåt. 5–9: uppåt.","Look at the digit right after the place you round to. 0–4: round down. 5–9: round up.","انظر إلى الرقم الذي يلي المنزلة التي تقرّب إليها مباشرة. من 0 إلى 4: للأسفل. من 5 إلى 9: للأعلى."),cut:upTo("ans")},
-  {say:t3("Börja räkna vid första siffran som inte är 0. Titta sedan på nästa siffra: 5 eller mer betyder uppåt.","Start counting at the first digit that is not 0. Then look at the next digit: 5 or more means round up.","ابدأ العدّ من أول رقم ليس صفرًا، ثم انظر إلى الرقم التالي: 5 أو أكثر يعني للأعلى."),cut:upTo("ans")},
+  {say:t3("Värdesiffror: börja räkna vid första siffran som inte är 0. Hela kronor: titta på tiondelarna. 5 eller mer betyder uppåt.","Significant figures: start counting at the first digit that is not 0. Whole kronor: look at the tenths. 5 or more means round up.","الأرقام المعنوية: ابدأ العدّ من أول رقم ليس صفرًا. الكرونات الكاملة: انظر إلى رقم الأعشار. 5 أو أكثر يعني للأعلى."),cut:upTo("ans")},
   {say:t3("Avrunda talen till enkla tal med en värdesiffra och räkna med dem.","Round the numbers to easy numbers with one significant figure and calculate with those.","قرّب الأعداد إلى أعداد سهلة برقم معنوي واحد، ثم احسب بها."),cut:upTo("ans")}]
 });
 }

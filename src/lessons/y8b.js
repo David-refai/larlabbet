@@ -117,6 +117,14 @@ LESSONS.push({id:"pct8",subject:"math",grades:"8",kind:"wb",
   <text x="129" y="56" ${CV} font-size="30" fill="#2257c9">100%</text><text x="248" y="56" ${CV} font-size="30" fill="#d63b2f">+25%</text><path d="M34 132H272M34 124V140M272 124V140" stroke="#1d2433" stroke-width="2.5"/><text x="153" y="168" ${CV} font-size="34" fill="#1e9e5a">× 1.25</text>`),
  steps:PCT8.steps,mount:wbMount(PCT8),
  gen(level){const M=MUL(),D=DIVS();
+  /* level 0: what does a change factor mean? (1,05 is +5 %, not +50 %) */
+  if(level===0&&Math.random()<.3){const f=pick([1.05,1.5,.95,.5,1.2,.8,1.08,.92,1.25,.75,1.02,.98,1.3,.7]),up=f>1,p=Math.round(Math.abs(f-1)*100),F=Math.round(f*100);
+   const lab=(u,n)=>u?t3(`ökning med ${pc(n)}`,`an increase of ${pc(n)}`,`زيادة بنسبة ${pc(n)}`):t3(`minskning med ${pc(n)}`,`a decrease of ${pc(n)}`,`نقصان بنسبة ${pc(n)}`);
+   const O=[[up,p],[!up,p],[up,F]];if(p<10)O.push([up,p*10]);else if(p%10===0&&p>=20)O.push([up,p/10]);
+   const S=shuffle(O.filter((o,i)=>O.findIndex(z=>z[0]===o[0]&&z[1]===o[1])===i)),opts=S.map(([u,n])=>lab(u,n));
+   return{kind:"choice",opts,ans:S.findIndex(o=>o[0]===up&&o[1]===p),show:L(lab(up,p)),hk:1,
+    q:[A.wipe(),A.tx(T3("Förändringsfaktorn är","The change factor is","معامل التغيّر هو"),400,80,40),A.tx(dfmt(f,2),400,200,96,"b"),A.tx(T3("Vad betyder det?","What does that mean?","ماذا يعني ذلك؟"),400,280,38)],
+    sol:[A.tx(`${dfmt(f,2)} = ${pc(F)}`,400,360,44,"b"),A.hl(150,394,500,70),A.tx(up?`${pc(F)} = ${pc(100)} + ${pc(p)}`:`${pc(F)} = ${pc(100)} − ${pc(p)}`,400,446,48,"g")]}}
   if(level===0){const up=Math.random()<.5,p=up?pick([5,8,10,12,15,20,25,30,40,50,60,75]):pick([5,10,15,20,25,30,40,45,60,75,80]),f=(100+(up?p:-p))/100,y=180,W0=480,x0d=160;
    const head=up?T3(`Priset höjs med ${pc(p)}.`,`The price goes up by ${pc(p)}.`,`يرتفع السعر بنسبة ${pc(p)}.`):T3(`Priset sänks med ${pc(p)}.`,`The price goes down by ${pc(p)}.`,`ينخفض السعر بنسبة ${pc(p)}.`);
    let bar,lab;
@@ -125,17 +133,19 @@ LESSONS.push({id:"pct8",subject:"math",grades:"8",kind:"wb",
    else{const W=W0,x0=x0d,k=1-p/100;bar=[A.p(R.rect(x0,y,W,64,.3)+R.line(x0+W*k,y,x0+W*k,y+64,.3),"k",4),A.hatch(rp(x0,y,W*k,64),"g"),A.hatch(rp(x0+W*k,y,W*p/100,64),"r")];
     lab=[A.p(R.line(x0,y+82,x0+W,y+82,.3)+R.line(x0,y+72,x0,y+92,.2)+R.line(x0+W,y+72,x0+W,y+92,.2),"k",3),qt(pc(100),400,y+120,28),qt(`−${pc(p)}`,x0+W*(1-p/200),y-14,28,"r")]}
    const sol=[...lab,...(up?[]:[qt(pc(100-p),x0d+W0*(1-p/100)/2,y-14,30,"g")]),A.tx(up?`${pc(100)} + ${pc(p)} = ${pc(100+p)}`:`${pc(100)} − ${pc(p)} = ${pc(100-p)}`,400,358,44),A.hl(240,386,320,70),A.tx(`${pc(100+(up?p:-p))} = ${dfmt(f,2)}`,400,438,52,"g")];
-   return{kind:"num",dec:true,ans:f,show:dfmt(f,2),hk:lab.length,q:[A.wipe(),A.tx(head,400,68,42),A.tx(T3("Vilken är förändringsfaktorn?","What is the change factor?","ما معامل التغيّر؟"),400,130,38,"b"),...bar],sol}}
+   return{kind:"num",dec:true,ans:f,show:dfmt(f,2),hk:lab.length,q:[A.wipe(),A.tx(head,400,68,42),A.tx(L(pick([t3("Vilken är förändringsfaktorn?","What is the change factor?","ما معامل التغيّر؟"),t3("Bestäm förändringsfaktorn.","Find the change factor.","أوجد معامل التغيّر.")])),400,130,38,"b"),...bar],sol}}
   if(level===1){const it=pick(IT8),up=Math.random()<.5,p=up?pick([5,10,15,20,25,30,40]):pick([10,15,20,25,30,35,40,50,60]),P=Math.max(it.lo,Math.round(rint(it.lo,it.hi)/20)*20),f=(100+(up?p:-p))/100,ans=Math.round(P*f);
    const head=up?L(t3(`Priset på ${it.n.sv} höjs med ${pc(p)}.`,`The price of ${it.n.en} goes up by ${pc(p)}.`,`يرتفع سعر ${it.n.ar} بنسبة ${pc(p)}.`))
     :L(t3(`Priset på ${it.n.sv} sänks med ${pc(p)}.`,`The price of ${it.n.en} goes down by ${pc(p)}.`,`ينخفض سعر ${it.n.ar} بنسبة ${pc(p)}.`));
    const q=[A.wipe(),A.tx(head,400,62,Math.min(38,740/tw(head,1))),A.p(tagP(100,116,290,100),"k",4.5),A.tx(`${fmt(P)} kr`,226,184,54),A.p(R.circ(590,166,66),"r",4.5),
     ...(up?[A.tx(`+${pc(p)}`,590,182,44,"r")]:[A.tx(T3("REA","SALE","تخفيض"),590,152,30,"r"),A.tx(`−${pc(p)}`,590,196,40,"r")]),
-    A.tx(T3("Vad blir det nya priset?","What is the new price?","ما السعر الجديد؟"),400,296,40,"b")];
+    A.tx(L(pick([t3("Vad blir det nya priset?","What is the new price?","ما السعر الجديد؟"),t3("Beräkna det nya priset i hela kronor.","Work out the new price in whole kronor.","احسب السعر الجديد بالكرونات الكاملة.")])),400,296,40,"b")];
    const sol=[A.tx(`${pc(100)} ${up?"+":"−"} ${pc(p)} = ${pc(100+(up?p:-p))} = ${dfmt(f,2)}`,400,364,40,"b"),A.hl(170,394,460,70),A.tx(`${fmt(P)} ${M} ${dfmt(f,2)} = ${fmt(ans)} kr`,400,446,50,"g")];
    return{kind:"num",ans,show:`${fmt(ans)} kr`,hk:1,q,sol}}
   if(Math.random()<.5){const old=rint(10,100)*20,up=Math.random()<.4,p=up?pick([5,10,15,20,25,30,40,50]):pick([5,10,15,20,25,30,35,40,50,60]),nw=old*(100+(up?p:-p))/100,P2=100+(up?p:-p);
-   const q=[A.wipe(),A.tx(L(t3(`Hur många procent ${up?"höjdes":"sänktes"} priset?`,`By what percent did the price go ${up?"up":"down"}?`,`بكم في المئة ${up?"ارتفع":"انخفض"} السعر؟`)),400,62,40,"b"),
+   const q=[A.wipe(),A.tx(L(pick([t3(`Hur många procent ${up?"höjdes":"sänktes"} priset?`,`By what percent did the price go ${up?"up":"down"}?`,`بكم في المئة ${up?"ارتفع":"انخفض"} السعر؟`),
+     t3(`Med hur många procent har priset ${up?"ökat":"minskat"}?`,`By how many percent has the price ${up?"increased":"decreased"}?`,`بكم في المئة ${up?"زاد":"نقص"} السعر؟`),
+     t3(`Beräkna den procentuella ${up?"ökningen":"minskningen"}.`,`Calculate the percentage ${up?"increase":"decrease"}.`,`احسب نسبة ${up?"الزيادة":"النقصان"} المئوية.`)])),400,62,40,"b"),
     A.p(tagP(80,120,260,96),"k",4.5),A.tx(`${fmt(old)} kr`,196,184,50),A.arrow(352,168,438,168,up?"r":"g"),A.p(tagP(450,120,260,96),"k",4.5),A.tx(`${fmt(nw)} kr`,566,184,50,up?"r":"g"),
     A.tx(T3("före","before","قبل"),196,262,32),A.tx(T3("nu","now","الآن"),566,262,32,up?"r":"g")];
    const sol=[A.tx(T3("nytt / gammalt","new ÷ old","الجديد ÷ القديم"),400,320,32,"b"),A.tx(`${fmt(nw)} ${D} ${fmt(old)} = ${dfmt(P2/100,2)} = ${pc(P2)}`,400,376,42),
@@ -202,13 +212,29 @@ LESSONS.push({id:"interest8",subject:"math",grades:"8",kind:"wb",
   const top=(save,K,r,extra)=>[A.wipe(),A.p(save==="loan"?bank(140,150,.85):save==="debt"?card(140,140,.95):piggy(140,160,.75),"k",4.5),
    A.tx(save==="loan"?T3("Lån","Loan","القرض"):save==="debt"?T3("Skuld på kortet","Card debt","دين البطاقة"):save==="fund"?T3("Fond","Fund","صندوق استثمار"):T3("Sparkonto","Savings account","حساب توفير"),520,62,36,"b"),
    A.tx(`${fmt(K)} kr`,520,130,58),...seq([[pc(r),"r"],[save==="debt"?T3("mer per år","more per year","زيادة سنويًا"):save==="fund"?T3("ökning per år","growth per year","نمو سنويًا"):T3("ränta per år","interest per year","فائدة سنويًا"),"r"]],520,192,36),...(extra||[])];
+  /* level 0: find the interest rate from the interest */
+  if(level===0&&Math.random()<.3){const r=pick([1,2,3,4,5,6]),K=rint(2,40)*500,I=K*r/100;
+   const q=[A.wipe(),A.p(piggy(140,160,.75),"k",4.5),A.tx(T3("Sparkonto","Savings account","حساب توفير"),520,62,36,"b"),A.tx(`${fmt(K)} kr`,520,130,58),
+    A.tx(T3(`Efter ett år: ${fmt(I)} kr i ränta`,`After one year: ${fmt(I)} kr interest`,`بعد سنة: ${I} كرونة فائدة`),520,192,34,"g"),
+    A.tx(L(pick([t3("Vilken är räntesatsen? (%)","What is the interest rate? (%)","ما سعر الفائدة؟ (%)"),t3("Bestäm räntesatsen i procent.","Find the interest rate in percent.","أوجد سعر الفائدة بالنسبة المئوية.")])),400,296,36)];
+   const sol=[A.tx(T3("ränta / belopp","interest ÷ amount","الفائدة ÷ المبلغ"),400,350,32,"b"),A.hl(150,388,500,70),A.tx(`${fmt(I)} ${DIVS()} ${fmt(K)} = ${dfmt(r/100,2)} = ${pc(r)}`,400,440,46,"g")];
+   return{kind:"num",ans:r,show:pc(r),hk:1,q,sol}}
   if(level===0){const loan=Math.random()<.45,K=rint(4,100)*500,r=loan?pick([3,4,5,6,8,10,12]):pick([1,2,3,4,5]),ans=K*r/100;
-   const q=[...top(loan?"loan":"save",K,r),A.tx(loan?T3("Hur mycket ränta betalar du första året?","How much interest do you pay in the first year?","كم تدفع فائدة في السنة الأولى؟")
-    :T3("Hur mycket ränta får du efter ett år?","How much interest do you get after one year?","كم تحصل على فائدة بعد سنة؟"),400,296,36)];
+   const q=[...top(loan?"loan":"save",K,r),A.tx(loan?L(pick([t3("Hur mycket ränta betalar du första året?","How much interest do you pay in the first year?","كم تدفع فائدة في السنة الأولى؟"),t3("Beräkna räntan för första året.","Calculate the interest for the first year.","احسب الفائدة للسنة الأولى.")]))
+    :L(pick([t3("Hur mycket ränta får du efter ett år?","How much interest do you get after one year?","كم تحصل على فائدة بعد سنة؟"),t3("Beräkna räntan efter ett år. Svara i kronor.","Calculate the interest after one year. Answer in kronor.","احسب الفائدة بعد سنة. أجب بالكرونة.")])),400,296,36)];
    const sol=[A.tx(`${pc(r)} = ${dfmt(r/100,2)}`,400,362,40,"b"),A.hl(190,394,420,68),A.tx(`${dfmt(r/100,2)} ${M} ${fmt(K)} = ${fmt(ans)} kr`,400,444,48,"g")];
    return{kind:"num",ans,show:`${fmt(ans)} kr`,hk:1,q,sol}}
+  /* level 1: paying in instalments compared with paying straight away */
+  if(level===1&&Math.random()<.35){const it=pick([t3("Mobilen","The phone","الهاتف"),t3("Datorn","The computer","الحاسوب"),t3("Tv:n","The TV","التلفاز")]),n=pick([12,18,24,36]),C=rint(4,15)*1000-10,m=Math.ceil(C*(1+rint(5,15)/100)/n/10)*10-1,tot=n*m,extra=tot-C,askX=Math.random()<.6,ans=askX?extra:tot;
+   const q=[A.wipe(),A.p(phone(70,90,110,190),"k",4.5),A.tx(L(t3(`${it.sv} kostar ${fmt(C)} kr kontant.`,`${it.en} costs ${fmt(C)} kr cash.`,`يكلّف ${it.ar} ${C} كرونة نقدًا.`)),470,100,38),
+    A.tx(T3("På avbetalning:","In instalments:","بالتقسيط:"),470,170,34,"b"),A.tx(T3(`${m} kr/månad i ${n} månader`,`${m} kr/month for ${n} months`,`${m} كرونة شهريًا لمدة ${n} شهرًا`),470,222,36,"b"),
+    A.tx(askX?L(pick([t3("Hur mycket dyrare blir det på avbetalning?","How much more does it cost in instalments?","كم يزيد الثمن بالتقسيط؟"),t3("Beräkna skillnaden i pris.","Work out the difference in price.","احسب الفرق في السعر.")]))
+     :L(pick([t3("Hur mycket betalar du totalt på avbetalning?","How much do you pay in total in instalments?","كم تدفع إجمالًا بالتقسيط؟"),t3("Beräkna det totala beloppet på avbetalning.","Work out the total amount in instalments.","احسب المبلغ الإجمالي بالتقسيط.")])),400,320,36)];
+   const sol=askX?[A.tx(`${n} ${M} ${m} = ${fmt(tot)} kr`,400,384,42),A.hl(170,410,460,66),A.tx(`${fmt(tot)} − ${fmt(C)} = ${fmt(extra)} kr`,400,460,46,"g")]
+    :[A.tx(T3("månader · kr per månad","months × kr per month","الأشهر × الكرونات في الشهر"),400,380,32,"b"),A.hl(190,410,420,66),A.tx(`${n} ${M} ${m} = ${fmt(tot)} kr`,400,460,46,"g")];
+   return{kind:"num",ans,show:`${fmt(ans)} kr`,hk:1,q,sol}}
   if(level===1){let K,r;do{r=pick([2,3,4,5,6]);K=rint(10,300)*100}while((K*(100+r)*(100+r))%10000);const f=(100+r)/100,v1=K*(100+r)/100,v2=K*(100+r)*(100+r)/10000;
-   const q=[...top("save",K,r),A.tx(T3("Hur mycket finns på kontot efter 2 år?","How much is in the account after 2 years?","كم يصبح في الحساب بعد سنتين؟"),400,296,36)];
+   const q=[...top("save",K,r),A.tx(L(pick([t3("Hur mycket finns på kontot efter 2 år?","How much is in the account after 2 years?","كم يصبح في الحساب بعد سنتين؟"),t3("Beräkna beloppet på kontot efter 2 år.","Calculate the amount in the account after 2 years.","احسب المبلغ في الحساب بعد سنتين.")])),400,296,36)];
    const l2=`${fmt(v1)} ${M} ${dfmt(f,2)} = ${fmt(v2)} kr`,hw=tw(`${yr(2)}:`,44)+tw(l2,44)+14+40;
    const sol=[...seq([[`${yr(1)}:`,"b"],[`${fmt(K)} ${M} ${dfmt(f,2)} = ${fmt(v1)} kr`,"k"]],400,362,38),A.hl(400-hw/2,394,hw,68),...seq([[`${yr(2)}:`,"b"],[l2,"g"]],400,444,44)];
    return{kind:"num",ans:v2,show:`${fmt(v2)} kr`,hk:2,q,sol}}
@@ -272,12 +298,20 @@ LESSONS.push({id:"paren8",subject:"math",grades:"8",kind:"wb",
   <text x="160" y="158" ${CV} font-size="48" fill="#1e9e5a">= 3x + 12</text>`),
  steps:PAR8.steps,mount:wbMount(PAR8),
  gen(level){const M=MUL();
+  /* level 0, word problem: the cinema bill n(x + c) written without brackets */
+  if(level===0&&Math.random()<.3){let n,c;do{n=rint(3,6);c=pick([12,15,18,20,25,30])}while(n*c>99);const qv=n*c;
+   const E=toks([[String(n)],["("],["x","b"],[" + "],[String(c),"r"],[")"]],400,196,72),Tp=tmpl("x","+",300);
+   const sol=[...arcs(E,196,72,0,[2,4]),A.tx(`= ${n} ${M} x + ${n} ${M} ${c}`,400,386,46),A.hl(240,416,320,66),A.tx(`= ${n}x + ${qv}`,400,464,52,"g"),
+    A.tx(n,Tp.bx[0],300,46,"g"),A.tx(qv,Tp.bx[1],300,46,"g")];
+   return{kind:"pair",ans:[n,qv],...pairUI("x","+"),show:lang==="ar"?LRI(`${n}x + ${qv}`):`${n}x + ${qv}`,hk:2,
+    q:[A.wipe(),A.tx(T3(`${n} kompisar köper var sin biobiljett för x kr`,`${n} friends each buy a cinema ticket for x kr`,`${n} أصدقاء يشتري كل منهم تذكرة سينما بسعر x كرونة`),400,50,32),
+     A.tx(T3(`och popcorn för ${c} kr. Skriv notan utan parentes.`,`and popcorn for ${c} kr. Write the bill without brackets.`,`وفشارًا بسعر ${c} كرونة. اكتب الفاتورة دون أقواس.`),400,96,32,"b"),...E,...Tp],sol}}
   if(level===0){const V=pick(["x","x","y","a"]),a=rint(2,9),b=rint(1,6),c=rint(1,12),sg=Math.random()<.4?"−":"+",p=a*b,qv=a*c;
    const E=toks([[String(a)],["("],[T1(b,V),"b"],[` ${sg} `],[String(c),"r"],[")"]],400,190,76),Tp=tmpl(V,sg,300);
    const sol=[...arcs(E,190,76,0,[2,4]),A.tx(`= ${a} ${M} ${T1(b,V)} ${sg} ${a} ${M} ${c}`,400,386,46),A.hl(240,416,320,66),A.tx(`= ${T1(p,V)} ${sg} ${qv}`,400,464,52,"g"),
     A.tx(p,Tp.bx[0],300,46,"g"),A.tx(qv,Tp.bx[1],300,46,"g")];
    return{kind:"pair",ans:[p,qv],...pairUI(V,sg),show:lang==="ar"?LRI(`${T1(p,V)} ${sg} ${qv}`):`${T1(p,V)} ${sg} ${qv}`,hk:2,
-    q:[A.wipe(),A.tx(T3("Multiplicera in","Expand the brackets","فكّ القوس"),400,62,40,"b"),...E,...Tp],sol}}
+    q:[A.wipe(),A.tx(L(pick([t3("Multiplicera in","Expand the brackets","فكّ القوس"),t3("Skriv utan parentes","Write without brackets","اكتب دون أقواس"),t3("Förenkla genom att multiplicera in","Simplify by expanding the brackets","بسّط بفكّ القوس")])),400,62,40,"b"),...E,...Tp],sol}}
   if(level===1){let a,b,c,d,s1,s2,so,p,qv;do{a=rint(2,7);c=rint(2,6);b=rint(1,9);d=rint(1,9);s1=Math.random()<.5?1:-1;s2=Math.random()<.5?1:-1;so=Math.random()<.65?-1:1;
     p=a+so*c;qv=a*s1*b+so*c*s2*d}while(p<2||!qv||Math.abs(qv)>60||c===a);
    const sg=qv<0?"−":"+",ex=`${a}(x ${sgn(s1)} ${b}) ${sgn(so)} ${c}(x ${sgn(s2)} ${d})`;
@@ -286,7 +320,7 @@ LESSONS.push({id:"paren8",subject:"math",grades:"8",kind:"wb",
    const Tp=tmpl("x",sg,290);
    const sol=[...E,A.hl(240,408,320,66),A.tx(`= ${T1(p,"x")} ${sg} ${Math.abs(qv)}`,400,456,52,"g"),A.tx(p,Tp.bx[0],290,46,"g"),A.tx(Math.abs(qv),Tp.bx[1],290,46,"g")];
    return{kind:"pair",ans:[p,Math.abs(qv)],...pairUI("x",sg),show:lang==="ar"?LRI(`${T1(p,"x")} ${sg} ${Math.abs(qv)}`):`${T1(p,"x")} ${sg} ${Math.abs(qv)}`,hk:E.length,
-    q:[A.wipe(),A.tx(T3("Förenkla","Simplify","بسّط"),400,62,40,"b"),A.tx(ex,400,182,60),...Tp],sol}}
+    q:[A.wipe(),A.tx(L(pick([t3("Förenkla","Simplify","بسّط"),t3("Förenkla uttrycket så långt som möjligt","Simplify the expression as far as possible","بسّط العبارة قدر الإمكان"),t3("Multiplicera in och förenkla","Expand and simplify","فكّ الأقواس وبسّط")])),400,62,40,"b"),A.tx(ex,400,182,60),...Tp],sol}}
   const sq=Math.random()<.35,sg=Math.random()<.3?"−":"+";let g,m,n;
   const gcd=(x,y)=>y?gcd(y,x%y):x;
   do{g=sq?pick([2,3,4,5,6]):pick([2,3,4,5,6,8,9,10]);m=rint(1,sq?4:5);n=rint(1,9)}while(gcd(m,n)>1||g*m>60||g*n>90||(m===1&&n===1));
@@ -302,7 +336,7 @@ LESSONS.push({id:"paren8",subject:"math",grades:"8",kind:"wb",
    ...seq([[T3("största gemensamma faktor:","greatest common factor:","العامل المشترك الأكبر:"),"b"],[G,"b"]],400,282,36),
    A.tx(`${t1} ${sg} ${t2} = ${G} ${M} ${sq?T1(m,"x"):T1(m,v)} ${sg} ${G} ${M} ${n}`,400,352,40),A.hl(220,386,360,68),A.tx(`= ${right}`,400,436,54,"g")];
   return{kind:"choice",opts:all.map(s=>t3(s,s,LRI(s))),ans,show:lang==="ar"?LRI(right):right,hk:2,
-   q:[A.wipe(),A.tx(T3("Faktorisera så långt det går","Factorise fully","حلّل إلى عوامل بأكبر قدر ممكن"),400,66,40,"b"),...E],sol}}
+   q:[A.wipe(),A.tx(L(pick([t3("Faktorisera så långt det går","Factorise fully","حلّل إلى عوامل بأكبر قدر ممكن"),t3("Bryt ut största möjliga gemensamma faktor","Take out the greatest common factor","أخرج العامل المشترك الأكبر")])),400,66,40,"b"),...E],sol}}
 });
 
 /* =====================================================================
@@ -350,8 +384,26 @@ LESSONS.push({id:"eq8",subject:"math",grades:"8",kind:"wb",
  icon:ICO(`<text x="160" y="70" ${CV} font-size="48" fill="#1d2433">2(x − 3) = 8</text><text x="96" y="122" ${CV} font-size="40" fill="#2257c9">x</text><path d="M80 132H112" stroke="#2257c9" stroke-width="3"/><text x="96" y="166" ${CV} font-size="40" fill="#2257c9">4</text>
   <text x="152" y="146" ${CV} font-size="40" fill="#2257c9">= 5</text><text x="250" y="146" ${CV} font-size="42" fill="#1e9e5a">x = 20</text>`),
  steps:EQ8.steps,mount:wbMount(EQ8),
- gen(level){const M=MUL(),D=DIVS(),head=A.tx(T3("Lös ekvationen","Solve the equation","حلّ المعادلة"),400,58,38,"b"),
+ gen(level){const M=MUL(),D=DIVS(),head=A.tx(L(pick([t3("Lös ekvationen","Solve the equation","حلّ المعادلة"),t3("Lös ekvationen","Solve the equation","حلّ المعادلة"),t3("Bestäm x","Find x","أوجد x")])),400,58,38,"b"),
   chk=(f,y)=>seq([[T3("Kontroll:","Check:","تحقّق:"),"b"],[f,"b"]],400,y,36);
+  /* level 1, word problem: a(x + b) = T, tickets with a fee */
+  if(level===1&&Math.random()<.3){const a=rint(3,5),b=rint(4,12)*5,x=rint(15,50)*10,T=a*(x+b);
+   const sol=[...eqn(`${a}(x + ${b})`,fmt(T),220,48),...ann(`${D} ${a}`,220),...eqn(`x + ${b}`,x+b,300,48),...ann(`− ${b}`,300),...eqn("x",x,380,52,"g"),A.loop(410,362,96,38,"g"),
+    A.tx(T3(`En biljett kostar ${x} kr.`,`A ticket costs ${x} kr.`,`سعر التذكرة ${x} كرونة.`),400,456,34,"g")];
+   return{kind:"num",ans:x,show:`${x} kr`,hk:2,
+    q:[A.wipe(),A.tx(T3(`${a} kompisar köper var sin konsertbiljett för x kr`,`${a} friends each buy a concert ticket for x kr`,`${a} أصدقاء يشتري كل منهم تذكرة حفلة بسعر x كرونة`),400,56,32),
+     A.tx(T3(`och betalar ${b} kr var i avgift. Totalt: ${fmt(T)} kr.`,`and each pays a ${b} kr fee. In total: ${fmt(T)} kr.`,`ويدفع كل منهم ${b} كرونة رسومًا. المجموع ${T} كرونة.`),400,102,32),
+     A.tx(T3("Ställ upp en ekvation och beräkna x.","Set up an equation and work out x.","كوّن معادلة واحسب x."),400,152,34,"b")],sol}}
+  /* level 2, word problem with two fractions: x/a + x/b = T */
+  if(level===2&&Math.random()<.3){const [a,b]=pick([[2,3],[2,5],[3,4],[4,5],[3,5],[2,6],[4,6]]),gcd=(u,v)=>v?gcd(v,u%v):u,m=a*b/gcd(a,b),pa=m/a,pb=m/b,k=pa+pb;
+   let t;do{t=rint(1,250)}while(m*t<300||m*t>1500||(m*t)%10);const x=m*t,T=x/a+x/b;
+   const FS={2:"hälften",3:"en tredjedel",4:"en fjärdedel",5:"en femtedel",6:"en sjättedel"},FE={2:"half",3:"a third",4:"a quarter",5:"a fifth",6:"a sixth"},FA={2:"نصف",3:"ثلث",4:"ربع",5:"خمس",6:"سدس"};
+   const sol=[...frow([["f","x",a],["t","+"],["f","x",b],["t",`= ${fmt(T)}`]],400,214,46),...ann(`${M} ${m}`,226),...eqn(`${T1(pa,"x")} + ${T1(pb,"x")}`,fmt(m*T),316,46),
+    ...eqn(`${k}x`,fmt(m*T),388,46),...ann(`${D} ${k}`,388),...eqn("x",fmt(x),462,52,"g"),A.loop(395+tw(fmt(x),52)/2,444,50+tw(fmt(x),52)/2,38,"g")];
+   return{kind:"num",ans:x,show:`${fmt(x)} kr`,hk:3,
+    q:[A.wipe(),A.tx(T3(`Lisa lägger ${FS[a]} av månadspengen på kläder`,`Lisa spends ${FE[a]} of her allowance on clothes`,`تنفق ليزا ${FA[a]} مصروفها الشهري على الملابس`),400,50,32),
+     A.tx(T3(`och ${FS[b]} på gaming. Det blir ${fmt(T)} kr totalt.`,`and ${FE[b]} on gaming. That is ${fmt(T)} kr in total.`,`و${FA[b]}ه على الألعاب. المجموع ${T} كرونة.`),400,96,32),
+     A.tx(T3("Beräkna hur stor månadspengen är.","Work out how big her allowance is.","احسب مقدار المصروف الشهري."),400,144,34,"b")],sol}}
   if(level===0){const a=rint(2,8),minus=Math.random()<.4,b=rint(1,15),x=minus?rint(b+1,b+20):rint(1,20),s=minus?"−":"+",inner=minus?x-b:x+b,c=a*inner;
    const sol=[...ann(`${D} ${a}`,170),...eqn(`x ${s} ${b}`,inner,255,54),...ann(`${minus?"+":"−"} ${b}`,255),...eqn("x",x,340,56,"g"),A.loop(410,321,96,40,"g"),
     ...chk(`${a}(${x} ${s} ${b}) = ${a} ${M} ${inner} = ${fmt(c)} ✓`,440)];
@@ -413,8 +465,8 @@ Object.assign(HINTSX,{
  pct8:[{say:t3("Utgå från 100 %. Lägg till ökningen eller dra bort minskningen. Skriv sedan procenten som decimaltal.","Start from 100%. Add the increase or take away the decrease. Then write the percent as a decimal.","ابدأ من 100%. أضف الزيادة أو اطرح النقصان، ثم اكتب النسبة المئوية عددًا عشريًا."),cut:g=>g.sol.slice(0,g.hk)},
   {say:t3("Gör om förändringen till en förändringsfaktor. Multiplicera sedan det gamla priset med faktorn.","Turn the change into a change factor. Then multiply the old price by the factor.","حوّل التغيّر إلى معامل تغيّر، ثم اضرب السعر القديم في المعامل."),cut:g=>g.sol.slice(0,g.hk)},
   {say:t3("Procentenheter är skillnaden mellan procentsatserna. Procent räknar du med förändringen delat med det gamla värdet.","Percentage points are the difference between the two percentages. For percent, divide the change by the old value.","النقاط المئوية هي الفرق بين النسبتين. أما النسبة المئوية فتحسبها بقسمة التغيّر على القيمة القديمة."),cut:g=>g.sol.slice(0,g.hk)}],
- interest8:[{say:t3("Skriv räntan som decimaltal, till exempel 4 % = 0,04. Multiplicera sedan med beloppet.","Write the interest rate as a decimal, for example 4% = 0.04. Then multiply by the amount.","اكتب سعر الفائدة عددًا عشريًا، مثلًا 4% = 0.04، ثم اضربه في المبلغ."),cut:g=>g.sol.slice(0,g.hk)},
-  {say:t3("Varje år multiplicerar du med förändringsfaktorn. Räkna år 1 först och sedan år 2 på det nya beloppet.","Every year you multiply by the change factor. Work out year 1 first, then year 2 on the new amount.","في كل سنة تضرب في معامل التغيّر. احسب السنة الأولى أولًا، ثم السنة الثانية على المبلغ الجديد."),cut:g=>g.sol.slice(0,g.hk)},
+ interest8:[{say:t3("Skriv räntan som decimaltal, till exempel 4 % = 0,04. Multiplicera sedan med beloppet. Söks räntesatsen: dela räntan med beloppet.","Write the interest rate as a decimal, for example 4% = 0.04. Then multiply by the amount. Looking for the rate: divide the interest by the amount.","اكتب سعر الفائدة عددًا عشريًا، مثلًا 4% = 0.04، ثم اضربه في المبلغ. وإذا كان المطلوب سعر الفائدة فاقسم الفائدة على المبلغ."),cut:g=>g.sol.slice(0,g.hk)},
+  {say:t3("Varje år multiplicerar du med förändringsfaktorn. Räkna år 1 först och sedan år 2 på det nya beloppet. Avbetalning: kronor per månad gånger antalet månader.","Every year you multiply by the change factor. Work out year 1 first, then year 2 on the new amount. Instalments: kronor per month times the number of months.","في كل سنة تضرب في معامل التغيّر. احسب السنة الأولى أولًا، ثم السنة الثانية على المبلغ الجديد. وفي التقسيط: الكرونات في الشهر × عدد الأشهر."),cut:g=>g.sol.slice(0,g.hk)},
   {say:t3("Multiplicera med faktorn en gång för varje år. Frågas det efter ökningen, dra bort startbeloppet på slutet.","Multiply by the factor once for every year. If the question asks for the growth, subtract the starting amount at the end.","اضرب في المعامل مرة لكل سنة. وإذا كان السؤال عن الزيادة فاطرح المبلغ الأولي في النهاية."),cut:g=>g.sol.slice(0,g.hk)}],
  paren8:[{say:t3("Talet framför parentesen ska multipliceras med båda termerna inuti.","The number in front of the brackets multiplies both terms inside.","العدد الذي أمام القوس يُضرب في الحدّين اللذين داخله."),cut:g=>g.sol.slice(0,g.hk)},
   {say:t3("Multiplicera in i båda parenteserna, och se upp med minus framför en parentes. Samla sedan x-termer för sig och tal för sig.","Expand both brackets, and watch out for a minus in front of a bracket. Then collect the x terms and the numbers separately.","فكّ القوسين وانتبه إلى السالب أمام القوس، ثم اجمع حدود x معًا والأعداد معًا."),cut:g=>g.sol.slice(0,g.hk)},

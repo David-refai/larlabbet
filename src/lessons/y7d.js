@@ -116,6 +116,13 @@ LESSONS.push({id:"prop7",subject:"math",grades:"7",kind:"wb",
    const sol=[A.tx(`k = ${fmt(ys[0])} ${D} ${fmt(xs[0])} = ${fmt(k)}`,400,368,40,"b"),A.loop(pcx(m),275,48,30,"g"),
     ...hlT(`? = ${fmt(k)} ${M} ${fmt(xs[m])} = ${fmt(ans)}`,400,450,44)];
    return{kind:"num",ans,show:fmt(ans),hc:1,q,sol}}
+  /* is y proportional to x? divide y by x in every column */
+  if(level===1&&Math.random()<.35){const c=pick(PCTX),k=pick(c.k),xs=shuffle(c.xs).slice(0,4).sort((a,b)=>a-b),pr=Math.random()<.5,m=pr?0:pick([10,20,30,50]),ys=xs.map(x=>k*x+m),YN=t3(["Ja","Nej"],["Yes","No"],["نعم","لا"]);
+   const q=[A.wipe(),A.tx(L(c.t),400,52,38,"b"),A.tx(L(t3("Är y proportionell mot x?","Is y proportional to x?","هل y متناسب طرديًا مع x؟")),400,104,32),
+    ...ptab(150,64,[{lab:c.xl,vals:xs.map(fmt),c:"o"},{lab:c.yl,vals:ys.map(fmt),c:"b"},{lab:`y ${D} x`,vals:["","","",""],c:"g",ls:30}],32)];
+   const sol=[A.tx(L(t3("Dela y med x i varje kolumn.","Divide y by x in every column.","اقسم y على x في كل عمود.")),400,380,28,"b"),...ys.map((y,j)=>qe(nf(y/xs[j]),pcx(j),150+2*64+64*.66,30,"g")),
+    ...hlT(L(pr?t3(`Samma kvot: k = ${nf(k)}. Ja!`,`The same ratio: k = ${nf(k)}. Yes!`,`النسبة نفسها: k = ${nf(k)}. نعم!`):t3("Olika kvoter. Nej!","Different ratios. No!","نِسَب مختلفة. لا!")),400,440,36,pr?"g":"r")];
+   return{kind:"choice",opts:[0,1].map(i=>t3(YN.sv[i],YN.en[i],YN.ar[i])),ans:pr?0:1,show:t3(YN.sv[pr?0:1],YN.en[pr?0:1],YN.ar[pr?0:1]),hc:1,q,sol,nt:"prop7-check"}}
   if(level===1){const [k,ys]=pick(PK),ymax=Math.ceil(k*8/ys-1e-9)*ys,cand=[2,3,4,5,6,7].filter(x=>Math.abs(k*x/ys-Math.round(k*x/ys))<1e-9&&k*x<ymax),xp=pick(cand),yp=k*xp;
    const G=axes(120,430,50,300/ymax,8,ymax,1,ys,"x","y");
    const q=[A.wipe(),A.tx(L(t3("Linjen visar y = k · x. Vad är k?","The line shows y = k × x. What is k?",`يمثّل المستقيم ${LRI(" y = k × x ")}. ما قيمة k؟`)),400,48,34),...G.o,
@@ -124,6 +131,14 @@ LESSONS.push({id:"prop7",subject:"math",grades:"7",kind:"wb",
     A.tx(`x = ${xp}`,680,170,40,"o"),A.tx(`y = ${nf(yp)}`,680,230,40,"b"),
     A.tx(`k = ${nf(yp)} ${D} ${xp}`,680,320,40),...hlT(`k = ${nf(k)}`,680,400,46)];
    return{kind:"num",ans:k,dec:true,show:nf(k),hc:4,q,sol}}
+  /* NP: the unit price (jämförpris) in kr/kg or kr/l */
+  if(Math.random()<.35){const it=pick([[t3("kaffe","coffee","البن"),"g","kg"],[t3("ost","cheese","الجبن"),"g","kg"],[t3("lösgodis","pick-and-mix sweets","الحلوى السائبة"),"g","kg"],[t3("juice","juice","العصير"),"ml","l"]]);let g,kp,pr;
+   do{g=pick([250,400,500,750,1500,2000]);kp=pick([40,48,60,80,96,120,150,200]);pr=kp*g/1000}while(Math.abs(pr*100-Math.round(pr*100))>1e-9);
+   const U=it[2],gs=`${fmt(g)} ${it[1]}`,kgS=nf(g/1000),nm=L(it[0]);
+   const q=[A.wipe(),A.tx(L(t3("Jämförpris","Unit price","سعر الوحدة")),400,60,40,"b"),A.tx(L(t3(`${gs} ${nm} kostar ${nf(pr)} kr.`,`${gs} of ${nm} costs ${nf(pr)} kr.`,`ثمن ${gs} من ${nm} هو ${nf(pr)} كرونة.`)),400,140,36),
+    A.tx(L(t3(`Vad är jämförpriset i kr/${U}?`,`What is the unit price in kr/${U}?`,`ما سعر الوحدة بالكرونة لكل ${U}؟`)),400,200,34,"b"),A.p(R.rect(300,240,200,110,.3),"o",4),A.tx(gs,400,290,36,"o"),A.tx(`${nf(pr)} kr`,400,334,32)];
+   const sol=[A.tx(`${gs} = ${kgS} ${U}`,400,388,34,"b"),A.tx(`${nf(pr)} ${D} ${kgS} = ${nf(kp)}`,400,428,32),...hlT(`${nf(kp)} kr/${U}`,400,478,36)];
+   return{kind:"num",ans:kp,dec:true,show:`${nf(kp)} kr/${U}`,hc:1,q,sol,nt:"prop7-unitprice"}}
   const c=pick(P2);let k,a,cc;do{k=pick(c.k);a=pick(c.a);cc=pick(c.c)}while(cc===a||Math.abs(k*a-Math.round(k*a))>1e-9);
   const b=k*a,ans=k*cc,U=L(c.u),Q=L(c.q(a,nf(b),cc));
   const cx1=320,cx2=480,X1=240,X2=560,T=150,rh=56;
@@ -239,6 +254,12 @@ LESSONS.push({id:"stat7",subject:"math",grades:"7",kind:"wb",
  icon:ICO(`<path d="M28 152H152M28 152V28" stroke="#1d2433" stroke-width="3" fill="none"/>${[[42,62,"#2257c9"],[78,100,"#1e9e5a"],[114,44,"#e07b00"]].map(([x,h,c])=>`<rect x="${x}" y="${152-h}" width="26" height="${h}" fill="${c}" fill-opacity=".3" stroke="${c}" stroke-width="3"/>`).join("")}<circle cx="236" cy="92" r="60" fill="#2257c9" fill-opacity=".25" stroke="#1d2433" stroke-width="3"/><path d="M236 92V32A60 60 0 0 1 296 92Z" fill="#1e9e5a" fill-opacity=".45" stroke="#1d2433" stroke-width="3"/><path d="M236 92H296A60 60 0 0 1 206 144Z" fill="#e07b00" fill-opacity=".4" stroke="#1d2433" stroke-width="3"/>`),
  steps:STAT.steps,mount:wbMount(STAT),
  gen(level){const M=MUL();
+  /* read a bar chart: how many more? */
+  if(level===0&&Math.random()<.35){const N=L(TRV);let v,i,j;do{v=[0,0,0,0].map(()=>rint(1,10)*5);i=rint(0,3);j=rint(0,3)}while(i===j||v[i]<=v[j]);
+   const B=bars(150,420,560,270,v,0,50,10,N,SC,84,28),d=v[i]-v[j];
+   const q=[A.wipe(),A.tx(L(t3("Stapeldiagrammet visar hur elever tar sig till skolan.","The bar chart shows how students get to school.","يبيّن المخطط بالأعمدة كيف يذهب الطلاب إلى المدرسة.")),400,50,30,"b"),A.tx(L(t3(`Hur många fler svarade ”${N[i]}” än ”${N[j]}”?`,`How many more answered “${N[i]}” than “${N[j]}”?`,`كم طالبًا يختار «${N[i]}» أكثر من «${N[j]}»؟`)),400,98,32),...B.o];
+   const sol=[A.p(R.dashed(150,B.Y(v[i]),B.X(i),B.Y(v[i]),9),"o",3.5),A.p(R.dashed(150,B.Y(v[j]),B.X(j),B.Y(v[j]),9),"o",3.5),qe(v[i],B.X(i),B.Y(v[i])-12,28,"b"),qe(v[j],B.X(j),B.Y(v[j])-12,28,"b"),...hlT(`${v[i]} − ${v[j]} = ${d}`,560,140,34)];
+   return{kind:"num",ans:d,show:String(d),hc:2,q,sol,nt:"stat7-bar"}}
   if(level===0){const c=pick(LCX),n=7;let v,i,j;
    do{v=[rint(c.lo/c.st,c.hi/c.st)*c.st];while(v.length<n){const x=v[v.length-1]+rint(-3,3)*c.st;if(x>=c.lo&&x<=c.hi)v.push(x)}i=rint(0,n-3);j=rint(i+2,n-1)}while(v[i]===v[j]||new Set(v).size<4);
    const labs=c.time?[8,10,12,14,16,18,20].map(h=>lang==="sv"?`kl ${h}`:`${h}:00`):L(MON),hr=[8,10,12,14,16,18,20],MF=L(MONF);
@@ -257,6 +278,12 @@ LESSONS.push({id:"stat7",subject:"math",grades:"7",kind:"wb",
    const sol=[A.p(arcP(220,290,150,pi.ang[k][0],pi.ang[k][1]),"g",6),A.tx(`${pc(P[k])} ${L(t3("av","of","من"))} ${fmt(N)}`,615,398,34),
     ...hlT(`${nf(P[k]/100)} ${M} ${fmt(N)} = ${fmt(ans)}`,615,458,38)];
    return{kind:"num",ans,show:fmt(ans),hc:2,q,sol}}
+  /* a pie chart sector in degrees: 100 % = 360° */
+  if(Math.random()<.3){const n=rint(3,4),P=pcts(n),k=rint(0,n-1),names=L(DATA).slice(0,n),deg=P[k]*3.6,pi=pie(220,300,150,P,SC);
+   const q=[A.wipe(),A.tx(L(t3("Cirkeldiagrammet visar Noras mobildata.","The pie chart shows Nora's mobile data.","يبيّن المخطط الدائري بيانات نورا للهاتف.")),400,50,32,"b"),A.tx(L(t3(`Hur många grader är sektorn för ${names[k]}?`,`How many degrees is the sector for ${names[k]}?`,`كم درجة قياس قطاع «${names[k]}»؟`)),400,98,30),...pi.o,...P.map((p,i)=>qe(pc(p),...pi.lab(i),26)),
+    ...names.flatMap((t,i)=>[A.p(dots([[455,185+i*52]]),SC[i],24),A.tx(`${t}: ${pc(P[i])}`,478,195+i*52,30,SC[i],"lead")])];
+   const sol=[A.tx(`${pc(100)} = 360°`,615,398,32,"b"),A.p(arcP(220,300,150,pi.ang[k][0],pi.ang[k][1]),"g",6),...hlT(`${nf(P[k]/100)} ${M} 360° = ${nf(deg)}°`,615,458,36)];
+   return{kind:"num",ans:deg,dec:true,show:`${nf(deg)}°`,hc:1,q,sol,nt:"stat7-degrees"}}
   const [ans0,s]=pick(SIT),ord=shuffle([0,1,2]),N=L(CHN),U=L(CHU),X=[160,400,640],ans=ord.indexOf(ans0);
   const q=[A.wipe(),A.tx(L(t3("Vilket diagram passar bäst?","Which chart fits best?","أي مخطط هو الأنسب؟")),400,52,36),...txLines(wrap(L(s),52),400,104,40,32,"b"),
    ...ord.flatMap((t,i)=>[...MINI[t](X[i],262),A.tx(N[t],X[i],388,30,SC[t])])];
@@ -346,14 +373,20 @@ LESSONS.push({id:"prob7",subject:"math",grades:"7",kind:"wb",
  icon:ICO(`<rect x="28" y="38" width="72" height="72" rx="10" fill="#d63b2f" fill-opacity=".1" stroke="#d63b2f" stroke-width="3.5"/>${[[46,56],[64,74],[82,92]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="6.5" fill="#d63b2f"/>`).join("")}<rect x="96" y="80" width="72" height="72" rx="10" fill="#2257c9" fill-opacity=".1" stroke="#2257c9" stroke-width="3.5"/>${[[114,98],[150,98],[114,134],[150,134]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="6.5" fill="#2257c9"/>`).join("")}${[0,1,2,3,4,5].map(i=>[0,1,2,3,4,5].map(j=>`<rect x="${190+j*19}" y="${30+i*19}" width="19" height="19" fill="${i+j===5?"#1e9e5a":"#fff"}" fill-opacity="${i+j===5?.45:1}" stroke="#1d2433" stroke-width="1.5"/>`).join("")).join("")}<text x="247" y="168" ${CV} font-size="30" fill="#1e9e5a">6/36</text>`),
  steps:PROB.steps,mount:wbMount(PROB),
  gen(level){const M=MUL();
+  const FR=()=>L(pick([t3("Svara med ett bråk.","Answer with a fraction.","أجب بكسر."),t3("Svara i bråkform.","Answer as a fraction.","أجب على صورة كسر.")]));
   if(level===0){let s;do{s=rint(2,12)}while(s===7);const f=(r,b)=>r+b===s,c=countCells(f);
    const Q=t3(wrap(`Hur stor är sannolikheten att summan blir ${s}?`,22),wrap(`What is the probability that the sum is ${s}?`,22),wrap(`ما احتمال أن يكون المجموع ${s}؟`,20));
-   const q=[A.wipe(),...dgrid(true),A.tx(L(t3("Två tärningar","Two dice","حجرا نرد")),RC,110,36,"b"),...txLines(L(Q),RC,165,42,30),A.tx(L(t3("Svara med ett bråk.","Answer with a fraction.","أجب بكسر.")),RC,300,28,"o")];
+   const q=[A.wipe(),...dgrid(true),A.tx(L(t3("Två tärningar","Two dice","حجرا نرد")),RC,110,36,"b"),...txLines(L(Q),RC,165,42,30),A.tx(FR(),RC,300,28,"o")];
    const H=hatchCells(f);return{kind:"frac",ans:[c,36],show:`${c}/36`,hc:c>=3?1:0,q,sol:[...H,A.tx(UTF(c),RC,370,30,"g"),...pFrac("P =",c,36,600,430,"g",40)]}}
   if(level===1){const e=pick(EV),c=countCells(e.f);
    const Q=t3(wrap(`Hur stor är sannolikheten att ${e.t.sv}?`,22),wrap(`What is the probability that ${e.t.en}?`,22),wrap(`ما احتمال أن ${e.t.ar}؟`,20));
-   const q=[A.wipe(),...dgrid(false),A.tx(L(t3("Två tärningar","Two dice","حجرا نرد")),RC,110,36,"b"),...txLines(L(Q),RC,165,40,30),A.tx(L(t3("Svara med ett bråk.","Answer with a fraction.","أجب بكسر.")),RC,330,28,"o")];
+   const q=[A.wipe(),...dgrid(false),A.tx(L(t3("Två tärningar","Two dice","حجرا نرد")),RC,110,36,"b"),...txLines(L(Q),RC,165,40,30),A.tx(FR(),RC,330,28,"o")];
    const H=hatchCells(e.f);return{kind:"frac",ans:[c,36],show:`${c}/36`,hc:c>=3?1:0,q,sol:[...H,A.tx(UTF(c),RC,386,30,"g"),...pFrac("P =",c,36,600,440,"g",40)]}}
+  /* the probability in percent, rounded to a whole number */
+  if(Math.random()<.25){let s;do{s=rint(2,12)}while(s===7);const f=(r,b)=>r+b===s,c=countCells(f),ans=Math.round(c*100/36);
+   const Q=t3(wrap(`Hur stor är sannolikheten att summan blir ${s}?`,22),wrap(`What is the probability that the sum is ${s}?`,22),wrap(`ما احتمال أن يكون المجموع ${s}؟`,20));
+   const q=[A.wipe(),...dgrid(true),A.tx(L(t3("Två tärningar","Two dice","حجرا نرد")),RC,110,36,"b"),...txLines(L(Q),RC,165,42,30),A.tx(L(t3("Svara i procent.","Answer in percent.","أجب بالنسبة المئوية.")),RC,300,28,"o"),A.tx(L(t3("Avrunda till heltal.","Round to a whole number.","قرّب إلى عدد صحيح.")),RC,336,28,"o")];
+   const H=hatchCells(f);return{kind:"num",ans,show:pc(ans),hc:H.length,q,sol:[...H,...pFrac("P =",c,36,580,400,"g",34),...hlT(`≈ ${nf(Math.round(c*1000/36)/1000)} ≈ ${pc(ans)}`,RC,470,30)],nt:"prob7-percent"}}
   if(Math.random()<.5){let s;do{s=rint(2,12)}while(s===7);const N=pick([72,108,144,180,216,360]),f=(r,b)=>r+b===s,c=countCells(f),ans=N*c/36;
    const Q=t3(wrap(`Du slår två tärningar ${N} gånger. Ungefär hur många gånger blir summan ${s}?`,22),wrap(`You roll two dice ${N} times. About how many times is the sum ${s}?`,22),wrap(`ترمي حجرَي نرد ${N} مرة. كم مرة تقريبًا يكون المجموع ${s}؟`,20));
    const q=[A.wipe(),...dgrid(true),...txLines(L(Q),RC,110,40,30,"b")];
@@ -433,7 +466,12 @@ LESSONS.push({id:"prog7",subject:"math",grades:"7",kind:"wb",
  title:t3("Programmering: variabler, villkor och loopar","Programming: variables, conditions and loops","البرمجة: المتغيّرات والشروط والحلقات"),
  icon:ICO(`<rect x="26" y="22" width="268" height="136" rx="12" fill="#2257c9" fill-opacity=".08" stroke="#2257c9" stroke-width="3"/>${[["x = 0",0,58],["for i in range(3):",0,94],["x = x + 5",1,130]].map(([s,ind,y])=>`<text x="${48+ind*30}" y="${y}" font-family="Caveat,cursive" font-weight="700" font-size="30" fill="#1d2433" direction="ltr">${s}</text>`).join("")}<path d="M262 124Q292 104 262 84" stroke="#e07b00" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M262 84L276 82M262 84L270 96" stroke="#e07b00" stroke-width="4" stroke-linecap="round"/>`),
  steps:PROG.steps,mount:wbMount(PROG),
- gen(level){const S=TF(),TQ=()=>A.tx(L(t3("Vad skriver programmet ut?","What does the program print?","ماذا يطبع البرنامج؟")),400,48,34);
+ gen(level){const S=TF(),TQT=pick([t3("Vad skriver programmet ut?","What does the program print?","ماذا يطبع البرنامج؟"),t3("Vad blir utskriften?","What is the output?","ما المُخرَج؟"),t3("Vilket tal skrivs ut?","Which number is printed?","أي عدد يُطبع؟")]),TQ=()=>A.tx(L(TQT),400,48,34);
+  /* how many times does the loop run? range stops before the last number */
+  if(level===1&&Math.random()<.3){const two=Math.random()<.6,a=two?rint(1,5):0,b=a+rint(3,7),n=b-a,K=rint(2,9),rg=two?`range(${a}, ${b})`:`range(${b})`,ls=["s = 0",`for i in ${rg}:`,[1,`s = s + ${K}`],"print(s)"];
+   const iv=Array.from({length:n},(_,i)=>a+i).join(", ");
+   return{kind:"num",ans:n,show:String(n),hc:1,q:[A.wipe(),A.tx(L(t3("Hur många gånger körs loopen?","How many times does the loop run?","كم مرة تُنفَّذ الحلقة؟")),400,48,34),...code(ls)],
+    sol:[A.tx(L(t3("range slutar före sista talet","range stops before the last number","range يتوقف قبل العدد الأخير")),615,150,26,"o"),A.tx(`i = ${iv}`,615,230,Math.min(32,560/iv.length),"b"),lineHL(2),...out(n*K,615,330,32),...hlT(L(t3(`${n} gånger`,`${n} times`,`${n} مرات`)),615,430,40)],nt:"prog7-count"}}
   if(level===0){const [a,b]=pick([["a","b"],["x","y"],["m","n"]]);let L3,L4,rows,ans,expr,ls;
    for(;;){const va=rint(2,9),k1=rint(2,6),o1=pick(["+","*"]),vb=o1==="+"?va+k1:va*k1,t=rint(0,3);let va2=va,vb2=vb;
     if(t===0){va2=vb-va;L3=`${a} = ${b} - ${a}`}else if(t===1){va2=va+vb;L3=`${a} = ${a} + ${b}`}else if(t===2){vb2=vb*2;L3=`${b} = ${b} * 2`}else{const k=rint(1,Math.max(1,vb-1));vb2=vb-k;L3=`${b} = ${b} - ${k}`}

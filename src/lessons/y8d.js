@@ -100,6 +100,20 @@ LESSONS.push({id:"lin8",subject:"math",grades:"8",kind:"wb",
  icon:ICO8(`<path d="${[60,85,110,135,160,185,210,235,260,285].map(x=>`M${x} 15V160`).join("")}${[20,45,70,95,120,145].map(y=>`M45 ${y}H290`).join("")}" stroke="#dfe5f0" stroke-width="1.5"/><path d="M40 140H292M85 165V12" stroke="#1d2433" stroke-width="3.5" fill="none"/><path d="M62 142L228 17" stroke="#d63b2f" stroke-width="5" stroke-linecap="round"/><path d="M125 95H165" stroke="#e07b00" stroke-width="4.5"/><path d="M165 95V65" stroke="#2257c9" stroke-width="4.5"/><circle cx="85" cy="125" r="7" fill="#1e9e5a"/><text ${CV8} x="236" y="122" font-size="32" fill="#1d2433">y = kx + m</text>`),
  steps:LIN.steps,mount:wbMount(LIN),
  gen(level){let k,m;
+  /* level 0: the value of the function for a given x */
+  if(level===0&&Math.random()<.25){const k=rint(2,5),m=rint(-5,9),x=rint(2,10),y=k*x+m,M=MUL(),eq=eqS(k,m,lang);
+   return{kind:"num",ans:y,show:String(y),hc:1,q:[A.wipe(),A.tx(L(t3("En linjär funktion har formeln","A linear function has the formula","دالة خطية صيغتها")),400,80,36),A.tx(eq,400,180,64,"b"),
+     A.tx(L(pick([t3(`Beräkna y när x = ${x}.`,`Calculate y when x = ${x}.`,`احسب y عندما x = ${x}.`),t3(`Vilket värde har y när x = ${x}?`,`What is the value of y when x = ${x}?`,`ما قيمة y عندما x = ${x}؟`)])),400,270,36)],
+    sol:[A.tx(`y = ${k} ${M} ${x}${m?(m>0?" + "+m:" − "+(-m)):""}`,400,350,44),hlC(400,440,240,64),A.tx(`y = ${y}`,400,440,50,"g")]}}
+  /* level 1, word problem: a phone plan as y = kx + m (fixed fee m, k kr per GB) */
+  if(level===1&&Math.random()<.3){const m=pick([39,49,59,79,99,129]),k=pick([5,8,10,12,15,20]),x=rint(2,15),asK=Math.random()<.5;
+   const q=[A.wipe(),A.tx(L(t3(`Ett mobilabonnemang kostar ${m} kr i månaden`,`A phone plan costs ${m} kr a month`,`يكلّف اشتراك هاتف ${m} كرونة في الشهر`)),400,70,36),
+    A.tx(L(t3(`plus ${k} kr per GB surf.`,`plus ${k} kr per GB of data.`,`إضافةً إلى ${k} كرونة لكل GB.`)),400,120,36),
+    A.tx(L(asK?t3("Skriv kostnaden y för x GB som y = kx + m.","Write the cost y for x GB as y = kx + m.","اكتب التكلفة y لعدد x من GB على الصورة y = kx + m."):t3(`Vad kostar en månad med ${x} GB?`,`What does a month with ${x} GB cost?`,`كم تكلّف شهرًا فيه ${x} GB؟`)),400,200,34,"b")];
+   if(asK){const s=`k = ${k}, m = ${m}`;
+    return{kind:"pair",ans:[k,m],sep:",",labels:["k","m"],show:t3(s,s,ISO8(s)),hc:2,q,sol:[A.tx(L(t3(`fast avgift: m = ${m}`,`fixed fee: m = ${m}`,`الرسم الثابت: m = ${m}`)),400,290,38,"g"),A.tx(L(t3(`per GB: k = ${k}`,`per GB: k = ${k}`,`لكل GB: k = ${k}`)),400,350,38,"b"),hlC(400,440,300,64),A.tx(eqS(k,m,lang),400,440,48,"g")]}}
+   const y=k*x+m,M=MUL();
+   return{kind:"num",ans:y,show:`${y} kr`,hc:1,q,sol:[A.tx(eqS(k,m,lang),400,290,42),A.tx(`y = ${k} ${M} ${x} + ${m}`,400,360,42),hlC(400,440,260,64),A.tx(`y = ${y} kr`,400,440,48,"g")]}}
   if(level===0){k=rint(1,3);m=rint(0,k===3?3:4)}
   else if(level===1){k=-rint(1,3);m=rint(2,7)}
   else{k=pick([.5,-.5,1.5,-1.5,2,-2,3,-3,1,-1]);m=k>0?pick([-3,-2,-1,1,2,3]):rint(1,4)}
@@ -107,7 +121,7 @@ LESSONS.push({id:"lin8",subject:"math",grades:"8",kind:"wb",
   for(const c of dx===2?[2,0]:[1,2,0,3]){x0=c;o=lfit(k,m,x0,dx);G=cgrid(o);T=stepT(G,x0,k,m,dx);if(!T.bad)break}
   const D=DIVS();
   const kTxt=dx===1?`k = ${mn(k)}`:`k = ${mn(k*dx)} ${D} ${dx} = ${dn(k)}`;
-  const q=[A.wipe(),...paraC(L(level<2?t3("Läs av k och m för den räta linjen.","Read off k and m for the straight line.","اقرأ قيمتَي k وm للخط المستقيم."):t3("Vilken ekvation har linjen?","Which equation does the line have?","ما معادلة هذا الخط؟")),PC,70,32,20,42),
+  const q=[A.wipe(),...paraC(L(level<2?pick([t3("Läs av k och m för den räta linjen.","Read off k and m for the straight line.","اقرأ قيمتَي k وm للخط المستقيم."),t3("Bestäm k och m för den räta linjen.","Find k and m for the straight line.","أوجد k وm للخط المستقيم.")]):pick([t3("Vilken ekvation har linjen?","Which equation does the line have?","ما معادلة هذا الخط؟"),t3("Bestäm linjens ekvation.","Find the equation of the line.","أوجد معادلة الخط.")])),PC,70,32,20,42),
    ...G.o,kline(G,k,m,o),A.tx("y = kx + m",PC,172,40)];
   const sol=[mLoop(G,m),T.arr[0],T.arr[1],A.tx(`m = ${mn(m)}`,PC,246,40,"g"),...T.labs,A.tx(kTxt,PC,312,dx===1?40:32,"b"),hlC(PC,410,270),A.tx(eqS(k,m,lang),PC,410,42,"g")];
   if(level<2){const s=`k = ${mn(k)}, m = ${mn(m)}`;
@@ -182,16 +196,30 @@ LESSONS.push({id:"seq8",subject:"math",grades:"8",kind:"wb",
  icon:ICO8(`${[[30,1],[88,2],[176,3]].map(([x,n])=>{let d="";for(let i=0;i<n;i++)d+=`M${x+i*28+3} 52H${x+i*28+25}M${x+i*28+3} 80H${x+i*28+25}`;for(let i=0;i<=n;i++)d+=`M${x+i*28} 55V77`;return`<path d="${d}" stroke="#b07a2a" stroke-width="4.5" stroke-linecap="round"/>`}).join("")}${[[44,"4"],[116,"7"],[218,"10"]].map(([x,t])=>`<text ${CV8} x="${x}" y="128" font-size="34" fill="#2257c9">${t}</text>`).join("")}<path d="M60 140Q80 156 100 140M135 140Q170 156 205 140" stroke="#e07b00" stroke-width="3" fill="none"/><text ${CV8} x="80" y="172" font-size="22" fill="#e07b00">+3</text><text ${CV8} x="170" y="172" font-size="22" fill="#e07b00">+3</text><text ${CV8} x="282" y="128" font-size="28" fill="#1d2433">3n+1</text>`),
  steps:SEQ.steps,mount:wbMount(SEQ),
  gen(level){const M=MUL();
+  /* level 0: the next term (the sequence grows or shrinks by the same number each time) */
+  if(level===0&&Math.random()<.25){const d=pick([2,3,4,5,6,7,-2,-3,-4,-5]),a1=d>0?rint(1,15):rint(30,60),T=[0,1,2,3,4].map(i=>a1+i*d),CX=i=>160+i*120;
+   const q=[A.wipe(),A.tx(L(pick([t3("Vilket är nästa tal i talföljden?","What is the next term in the sequence?","ما الحد التالي في المتتالية؟"),t3("Talföljden fortsätter på samma sätt. Bestäm nästa tal.","The sequence carries on the same way. Find the next term.","تستمر المتتالية بالطريقة نفسها. أوجد الحد التالي.")])),400,70,34),
+    A.p(T.map((v,i)=>R.rect(CX(i)-48,150,96,64,.3)).join(""),"b",3.5),...T.slice(0,4).map((v,i)=>tq(mn(v),CX(i),196,38,"b")),tq("?",CX(4),196,42,"r")];
+   const diff=[0,1,2,3].flatMap(i=>[A.arrow(CX(i)+30,224,CX(i+1)-30,224,"o",18),tq((d>0?"+":"−")+Math.abs(d),(CX(i)+CX(i+1))/2,268,26,"o")]);
+   return{kind:"num",ans:T[4],show:String(T[4]),signed:T[4]<0,hc:diff.length-2,q,sol:[...diff,hlC(400,400,280,64),A.tx(`${mn(T[3])} ${d>0?"+":"−"} ${Math.abs(d)} = ${mn(T[4])}`,400,400,46,"g")]}}
+  /* level 2, word problem: saving the same amount every week, a·n + start = goal */
+  if(level===2&&Math.random()<.3){const S=rint(2,6)*50,w=pick([25,50,75,100]),n=rint(8,40),T=S+w*n;
+   const q=[A.wipe(),A.tx(L(t3(`Moa har ${S} kr och sparar ${w} kr i veckan.`,`Moa has ${S} kr and saves ${w} kr a week.`,`لدى مُوا ${S} كرونة وتدّخر ${w} كرونة كل أسبوع.`)),400,70,36),
+    A.tx(L(t3(`Efter hur många veckor har hon ${fmt(T)} kr?`,`After how many weeks does she have ${fmt(T)} kr?`,`بعد كم أسبوعًا يصبح لديها ${T} كرونة؟`)),400,124,36,"b"),
+    A.tx(L(t3("Ställ upp en ekvation och lös den.","Set up an equation and solve it.","كوّن معادلة وحلّها.")),400,178,30)];
+   const sol=[A.tx(`${w}n + ${S} = ${fmt(T)}`,400,270,44),A.tx(`${w}n = ${fmt(T-S)}`,400,340,44),hlC(400,420,240,64),A.tx(`n = ${n}`,400,420,50,"g"),
+    A.tx(L(t3(`${n} veckor`,`${n} weeks`,`${n} أسبوعًا`)),400,476,30,"g")];
+   return{kind:"num",ans:n,show:L(t3(`${n} veckor`,`${n} weeks`,`${n} أسبوعًا`)),hc:1,q,sol}}
   if(level===0){const d=rint(2,9),c=rint(-9,12),N=pick([10,12,15,20,25,30,40,50,100]),ans=d*N+c;
    const q=[A.wipe(),A.tx(L(t3("En talföljd har formeln","A sequence has the formula","صيغة الحد العام لمتتالية هي")),400,86,36),...aeqC("n",fS(d,c),400,176,58),
-    A.tx(L(t3(`Vilket är tal nummer ${N} i talföljden?`,`What is term number ${N} in the sequence?`,`ما الحد رقم ${N} في المتتالية؟`)),400,262,34)];
+    A.tx(L(pick([t3(`Vilket är tal nummer ${N} i talföljden?`,`What is term number ${N} in the sequence?`,`ما الحد رقم ${N} في المتتالية؟`),t3(`Bestäm tal nummer ${N} i talföljden.`,`Find term number ${N} in the sequence.`,`أوجد الحد رقم ${N} في المتتالية.`)])),400,262,34)];
    return{kind:"num",ans,show:String(ans),hc:3,q,sol:[...aeqC(N,fSn(d,c,N),400,350,44),hlC(400,440,280,64),...aeqC(N,ans,400,440,50,"g")]}}
   if(level===1){const d=rint(2,9),c=rint(Math.max(-5,1-d),9),t=seqTab(d,c);
    const pool=[[d,d+c],[d+1,c-1],[d,-c],[c,d],[d-1,c+1],[d,c+1]],key=([a,b])=>fS(a,b),seen=new Set([key([d,c])]),wrong=[];
    shuffle(pool).forEach(p=>{if(p[0]>0&&!seen.has(key(p))&&wrong.length<3){seen.add(key(p));wrong.push(p)}});
    const all=shuffle([[d,c],...wrong]),ans=all.findIndex(p=>p[0]===d&&p[1]===c),opts=all.map(([a,b])=>{const s=`aₙ = ${fS(a,b)}`;return t3(s,s,ISO8(s))});
    const sol=[...t.diff,...t.dnr,...t.plus,hlC(400,446,320,66),...aeqC("n",fS(d,c),400,446,50,"g")];
-   return{kind:"choice",opts,ans,show:opts[ans],hc:t.diff.length,q:[A.wipe(),A.tx(L(t3("Vilken formel passar talföljden?","Which formula fits the sequence?","أي صيغة تناسب هذه المتتالية؟")),400,44,32),...t.head],sol}}
+   return{kind:"choice",opts,ans,show:opts[ans],hc:t.diff.length,q:[A.wipe(),A.tx(L(pick([t3("Vilken formel passar talföljden?","Which formula fits the sequence?","أي صيغة تناسب هذه المتتالية؟"),t3("Vilken formel beskriver det n:te talet?","Which formula describes term n?","أي صيغة تصف الحد النوني؟")])),400,44,32),...t.head],sol}}
   let d,a1,N;if(Math.random()<.6){d=rint(2,9);a1=rint(-5,20);N=rint(12,40)}else{d=-rint(2,7);a1=rint(40,90);N=rint(10,30)}
   const c=a1-d,X=d*N+c,T=[1,2,3,4].map(n=>d*n+c),CX=i=>220+i*120;
   const q=[A.wipe(),...paraT(L(t3(`Talföljden fortsätter på samma sätt. Vilket nummer i talföljden är talet ${mn(X)}?`,`The sequence carries on in the same way. Which term number is ${mn(X)}?`,`تستمر المتتالية بالطريقة نفسها. ما رتبة العدد ${mn(X)} فيها؟`)),46,32,46,40),
@@ -285,21 +313,23 @@ LESSONS.push({id:"spread8",subject:"math",grades:"8",kind:"wb",
    const sol=[A.loop(X(ix),190,42,42,"r"),A.loop(X(ii),190,42,42,"b"),tq(L(MAXV),X(ix),262,24,"r"),tq(L(MINV),X(ii),262,24,"b"),
     A.tx(L(t3("variationsbredd = största − minsta","range = largest − smallest","المدى = أكبر قيمة − أصغر قيمة")),400,336,30),
     hlC(400,420,330,64),A.tx(`${mn(mx)} − ${mi<0?`(${mn(mi)})`:mi} = ${r}`,400,420,44,"g")];
-   return{kind:"num",ans:r,show:String(r),hc:4,q:[A.wipe(),A.tx(L(t3("Vad är variationsbredden?","What is the range?","ما المدى؟")),400,50,36),A.tx(L(ctx.t),400,98,28,"b"),...cardR(v,X,190,"k",72,30)],sol}}
+   return{kind:"num",ans:r,show:String(r),hc:4,q:[A.wipe(),A.tx(L(pick([t3("Vad är variationsbredden?","What is the range?","ما المدى؟"),t3("Bestäm variationsbredden.","Find the range.","أوجد المدى."),t3("Beräkna variationsbredden.","Calculate the range.","احسب المدى.")])),400,50,36),A.tx(L(ctx.t),400,98,28,"b"),...cardR(v,X,190,"k",72,30)],sol}}
   if(level===1){const ctx=pick(QCX),n=pick([7,11]),set=new Set();while(set.size<n)set.add(rint(ctx.lo,ctx.hi));
-   const v=shuffle([...set]),s=v.slice().sort((a,b)=>a-b),Q=quart(s),gap=n===7?92:66,X=i=>400+(i-(n-1)/2)*gap,w=n===7?66:56,typ=rint(0,2);
-   const qq=[t3("Vad är den nedre kvartilen?","What is the lower quartile?","ما الربيع الأدنى؟"),t3("Vad är den övre kvartilen?","What is the upper quartile?","ما الربيع الأعلى؟"),t3("Vad är kvartilavståndet?","What is the interquartile range?","ما المدى الربيعي؟")][typ];
-   const ans=typ===0?Q.q1:typ===1?Q.q3:Q.q3-Q.q1;
+   const v=shuffle([...set]),s=v.slice().sort((a,b)=>a-b),Q=quart(s),gap=n===7?92:66,X=i=>400+(i-(n-1)/2)*gap,w=n===7?66:56,typ=rint(0,3),bst=Math.random()<.4;
+   const qq=bst?[t3("Bestäm den nedre kvartilen.","Find the lower quartile.","أوجد الربيع الأدنى."),t3("Bestäm den övre kvartilen.","Find the upper quartile.","أوجد الربيع الأعلى."),t3("Beräkna kvartilavståndet.","Calculate the interquartile range.","احسب المدى الربيعي."),t3("Bestäm medianen.","Find the median.","أوجد الوسيط.")][typ]
+    :[t3("Vad är den nedre kvartilen?","What is the lower quartile?","ما الربيع الأدنى؟"),t3("Vad är den övre kvartilen?","What is the upper quartile?","ما الربيع الأعلى؟"),t3("Vad är kvartilavståndet?","What is the interquartile range?","ما المدى الربيعي؟"),t3("Vad är medianen?","What is the median?","ما الوسيط؟")][typ];
+   const ans=typ===0?Q.q1:typ===1?Q.q3:typ===3?Q.md:Q.q3-Q.q1;
    const sol=[A.arrow(400,196,400,236,"k"),A.tx(L(t3("sortera","sort","رتّب")),416,224,24,"b","start"),...cardR(s,X,275,"k",w,30),A.loop(X(Q.mi),275,w*.7,w*.7,"g"),
     brk(X(0)-w/2,X(Q.mi-1)+w/2,322,"o",true),brk(X(Q.mi+1)-w/2,X(n-1)+w/2,322,"b",true),
     A.loop(X(Q.q1i),275,w*.66,w*.66,"o"),A.loop(X(Q.q3i),275,w*.66,w*.66,"b"),tq(L(QL),X(Q.q1i),362,24,"o"),tq(L(MEDI),X(Q.mi),362,24,"g"),tq(L(QU),X(Q.q3i),362,24,"b"),
-    hlC(400,440,typ===2?440:300,62),A.tx(typ===0?`${L(QL)} = ${Q.q1}`:typ===1?`${L(QU)} = ${Q.q3}`:`${L(IQR)} = ${Q.q3} − ${Q.q1} = ${ans}`,400,440,typ===2?34:38,"g")];
+    hlC(400,440,typ===2?440:300,62),A.tx(typ===0?`${L(QL)} = ${Q.q1}`:typ===1?`${L(QU)} = ${Q.q3}`:typ===3?`${L(MEDI)} = ${Q.md}`:`${L(IQR)} = ${Q.q3} − ${Q.q1} = ${ans}`,400,440,typ===2?34:38,"g")];
    return{kind:"num",ans,show:String(ans),hc:3+n,q:[A.wipe(),A.tx(L(qq),400,48,34),A.tx(L(ctx.t),400,92,28,"b"),...cardR(v,X,155,"k",w,30)],sol}}
   const ctx=pick(BCX),st=ctx.step,idx=[];let pool=[...Array(13).keys()];
   while(true){const c=shuffle(pool).slice(0,5).sort((a,b)=>a-b);if(c[4]-c[0]>=6){idx.push(...c);break}}
-  const V=idx.map(i=>i*st),hi=12*st,X=v=>100+v/hi*600,typ=rint(0,6);let ans,qs,mk,cut;
+  const V=idx.map(i=>i*st),hi=12*st,X=v=>100+v/hi*600,typ=rint(0,7);let ans,qs,mk,cut;
   if(typ===0){ans=V[3]-V[1];mk=[1,3];qs=t3("Vad är kvartilavståndet?","What is the interquartile range?","ما المدى الربيعي؟")}
   else if(typ===1){ans=V[4]-V[0];mk=[0,4];qs=t3("Vad är variationsbredden?","What is the range?","ما المدى؟")}
+  else if(typ===7){ans=V[2];mk=[2];qs=pick([t3("Vad är medianen?","What is the median?","ما الوسيط؟"),t3("Läs av medianen i lådagrammet.","Read off the median in the box plot.","اقرأ الوسيط من المخطط الصندوقي.")])}
   else{const P=[[3,">",25],[2,">",50],[1,">",75],[1,"<",25],[2,"<",50],[3,"<",75],[-1,"",50]][rint(0,6)];ans=P[2];
    if(P[0]<0){mk=[1,3];cut=[1,3];qs=t3(`Ungefär hur många procent av värdena ligger mellan ${V[1]} och ${V[3]}?`,`About what percentage of the values lie between ${V[1]} and ${V[3]}?`,`تقريبًا، ما النسبة المئوية للقيم الواقعة بين ${V[1]} و${V[3]}؟`)}
    else{const v=V[P[0]];mk=[P[0]];cut=P[1]===">"?[P[0],4]:[0,P[0]];
@@ -308,10 +338,11 @@ LESSONS.push({id:"spread8",subject:"math",grades:"8",kind:"wb",
   const q=[A.wipe(),...paraT(L(qs),46,28,56,36),A.tx(L(ctx.t),400,wrapT(L(qs),56).length>1?122:92,26,"b"),...axisV(0,hi,st,1,X,400),...boxP(V,X,300)];
   const drops=mk.map(i=>A.p(R.dashed(X(V[i]),300-(i===2?36:i%4?36:16),X(V[i]),394,9),"o",3.5));
   let sol;
-  if(typ<2){sol=[...drops,...mk.map(i=>A.loop(X(V[i]),422,22,20,"o")),hlC(400,200,440,60),A.tx(`${L(typ?RNG:IQR)} = ${V[mk[1]]} − ${V[mk[0]]} = ${ans}`,400,200,32,"g")]}
+  if(typ===7){sol=[...drops,A.loop(X(V[2]),422,22,20,"o"),hlC(400,200,260,60),A.tx(`${L(MEDI)} = ${ans}`,400,200,36,"g")]}
+  else if(typ<2){sol=[...drops,...mk.map(i=>A.loop(X(V[i]),422,22,20,"o")),hlC(400,200,440,60),A.tx(`${L(typ?RNG:IQR)} = ${V[mk[1]]} − ${V[mk[0]]} = ${ans}`,400,200,32,"g")]}
   else{const mids=[0,1,2,3].map(i=>(V[i]+V[i+1])/2),ly=[];
    sol=[...drops,A.hatch(`M${f1(X(V[cut[0]]))},258H${f1(X(V[cut[1]]))}V342H${f1(X(V[cut[0]]))}Z`,"o"),...mids.map((m,i)=>{ly[i]=i&&X(m)-X(mids[i-1])<62&&ly[i-1]===240?214:240;return tq(pc(25),X(m),ly[i],24,"k")}),hlC(400,182,170,56),A.tx(`≈ ${pc(ans)}`,400,182,40,"g")]}
-  return{kind:"num",ans,show:typ<2?String(ans):t3(`${ans} %`,`${ans}%`,`${ans} %`),hc:drops.length,q,sol}}
+  return{kind:"num",ans,show:typ<2||typ===7?String(ans):t3(`${ans} %`,`${ans}%`,`${ans} %`),hc:drops.length,q,sol}}
 });
 
 /* =====================================================================
@@ -391,12 +422,17 @@ const TC2=[
 const PRQ=t3("Hur stor är sannolikheten","What is the probability","ما احتمال");
 const r4=x=>Math.round(x*10000)/10000;
 const pT=x=>({sv:dnl(x,"sv"),en:dnl(x,"en"),ar:dnl(x,"ar")});
-const head2=(intro,qq)=>{const s=`${L(intro)} ${L(PRQ)} ${L(qq)}`;return paraT(s,36,26,60,32)};
+const head2=(intro,qq)=>{const s=Math.random()<.35?`${L(intro)} ${L(t3("Beräkna sannolikheten","Calculate the probability","احسب احتمال"))} ${L(qq).replace(/[?؟]$/,".")}`:`${L(intro)} ${L(PRQ)} ${L(qq)}`;return paraT(s,36,26,60,32)};
 LESSONS.push({id:"tree8",subject:"math",grades:"8",kind:"wb",
  title:t3("Träddiagram","Tree diagrams","المخططات الشجرية"),
  icon:ICO8(`<path d="M40 90L125 48M40 90L125 132M150 48L225 26M150 48L225 70M150 132L225 110M150 132L225 154" stroke="#1d2433" stroke-width="3.5" stroke-linecap="round"/><path d="M40 90L125 48M150 48L225 26" stroke="#1e9e5a" stroke-width="6" stroke-linecap="round" opacity=".7"/><circle cx="40" cy="90" r="6" fill="#1d2433"/>${[[138,54],[138,138]].map(([x,y])=>`<circle cx="${x}" cy="${y-6}" r="9" fill="none" stroke="#e07b00" stroke-width="3"/>`).join("")}${[26,70,110,154].map((y,i)=>`<circle cx="236" cy="${y}" r="7" fill="${i%2?"#d63b2f":"#1e9e5a"}"/>`).join("")}<text ${CV8} x="68" y="58" font-size="22" fill="#2257c9">0,8</text><text ${CV8} x="68" y="138" font-size="22" fill="#2257c9">0,2</text><text ${CV8} x="285" y="34" font-size="22" fill="#1e9e5a">0,64</text>`),
  steps:TRE.steps,mount:wbMount(TRE),
  gen(level){const M=MUL(),L0=TP,PX=550;
+  /* level 0: the complement, the branches from one point add up to 1 */
+  if(level===0&&Math.random()<.25){const p=pick([.1,.2,.3,.4,.6,.7,.75,.8,.85,.9,.95]),ans=r4(1-p),lab=L(LABP),[x1,y1,x2,y2]=brP(L0,1);
+   const q=[A.wipe(),...paraT(L(t3(`Ali sätter en straff med sannolikheten ${dn(p)}. Hur stor är sannolikheten att han missar?`,`Ali scores a penalty with probability ${dn(p)}. What is the probability that he misses?`,`يسجّل علي ركلة الجزاء باحتمال ${dn(p)}. ما احتمال أن يُخطئ؟`)),36,28,56,34),
+    A.p(dots([[L0.X[0],L0.Y0]]),"k",14),...branch(L0,0,null,p),nodeT(L0,0,null,lab[0],"g"),A.p(R.line(x1,y1,x2,y2,.3),"k",3.5),tq("?",(x1+x2)/2-14,(y1+y2)/2+34,34,"r"),nodeT(L0,1,null,lab[1],"r")];
+   return{kind:"num",dec:true,ans,show:t3n(l=>dnl(ans,l)),hc:1,q,sol:[A.tx(L(t3("Grenarna från samma punkt blir 1 tillsammans.","The branches from one point add up to 1.","مجموع الفروع من النقطة نفسها يساوي 1.")),560,250,26,"b"),hlC(560,340,260,60),A.tx(`1 − ${dn(p)} = ${dn(ans)}`,560,340,40,"g")]}}
   if(level===0){const ctx=pick(TC1),fr=pick([[1,2],[1,3],[2,3],[1,4],[3,4],[1,5],[2,5],[3,5],[4,5]]),t=rint(0,1),lab=L(ctx.lab);
    const p=fr,pq=t?[fr[1]-fr[0],fr[1]]:fr,N=pq[0]*pq[0],D=pq[1]*pq[1],ps={sv:`${p[0]}/${p[1]}`,en:`${p[0]}/${p[1]}`,ar:`${p[0]}/${p[1]}`};
    const q=[A.wipe(),...head2(ctx.i(ps),ctx.q[t]),...treeAll(L0,p,p,lab,L(ctx.h))],y=t?L0.Y2[3]-8:L0.Y2[0]+2;
@@ -455,16 +491,16 @@ Object.assign(HELPX,{
     A.p(R.circ(640,330,46)+R.circ(640,330,36),"o",4),tq("1 kr",640,342,30,"o")]}}]
 });
 Object.assign(HINTSX,{
- lin8:[{say:t3("m är där linjen skär y-axeln. Gå sedan ett steg åt höger: hur många steg går linjen upp? Det är k.","m is where the line crosses the y-axis. Then go one step right: how many steps does the line go up? That is k.","m هو المكان الذي يقطع فيه الخط محور y. ثم تحرّك خطوة واحدة إلى اليمين: كم خطوة يصعد الخط؟ هذا هو k."),cut:g=>g.sol.slice(0,g.hc)},
-  {say:t3("Linjen lutar nedåt, så k är negativt. Räkna hur många steg den går ned för ett steg åt höger.","The line slopes down, so k is negative. Count how many steps it goes down for one step right.","الخط ينحدر، إذن k سالب. عُدّ كم خطوة ينزل مقابل خطوة واحدة إلى اليمين."),cut:g=>g.sol.slice(0,g.hc)},
+ lin8:[{say:t3("m är där linjen skär y-axeln. Gå sedan ett steg åt höger: hur många steg går linjen upp? Det är k. Har du en formel: byt ut x mot talet.","m is where the line crosses the y-axis. Then go one step right: how many steps does the line go up? That is k. If you have a formula: replace x with the number.","m هو المكان الذي يقطع فيه الخط محور y. ثم تحرّك خطوة واحدة إلى اليمين: كم خطوة يصعد الخط؟ هذا هو k. إذا كانت لديك صيغة: ضع العدد مكان x."),cut:g=>g.sol.slice(0,g.hc)},
+  {say:t3("Linjen lutar nedåt, så k är negativt. Räkna hur många steg den går ned för ett steg åt höger. Abonnemang: den fasta avgiften är m och priset per GB är k.","The line slopes down, so k is negative. Count how many steps it goes down for one step right. Phone plan: the fixed fee is m and the price per GB is k.","الخط ينحدر، إذن k سالب. عُدّ كم خطوة ينزل مقابل خطوة واحدة إلى اليمين. في الاشتراك: الرسم الثابت هو m وسعر كل GB هو k."),cut:g=>g.sol.slice(0,g.hc)},
   {say:t3("Läs av m vid y-axeln. Räkna sedan steg i sidled och i höjdled: k = höjd delat med sidled.","Read m at the y-axis. Then count the steps across and up or down: k = rise divided by run.","اقرأ m عند محور y، ثم عُدّ الخطوات أفقيًا ورأسيًا: k = التغيّر الرأسي ÷ التغيّر الأفقي."),cut:g=>g.sol.slice(0,g.hc)}],
- seq8:[{say:t3("Byt ut n mot talets nummer. Räkna gånger först, sedan plus eller minus.","Replace n with the term number. Multiply first, then add or subtract.","ضع رقم الحد مكان n. اضرب أولًا، ثم اجمع أو اطرح."),cut:g=>g.sol.slice(0,g.hc)},
+ seq8:[{say:t3("Byt ut n mot talets nummer. Räkna gånger först, sedan plus eller minus. Nästa tal: lägg till samma steg en gång till.","Replace n with the term number. Multiply first, then add or subtract. Next term: add the same step once more.","ضع رقم الحد مكان n. اضرب أولًا، ثم اجمع أو اطرح. الحد التالي: أضف الخطوة نفسها مرة أخرى."),cut:g=>g.sol.slice(0,g.hc)},
   {say:t3("Hur mycket ökar talen varje gång? Det talet står framför n. Jämför sedan med talföljden.","How much do the terms go up each time? That number goes in front of n. Then compare with the sequence.","بكم تزداد الحدود في كل مرة؟ هذا العدد يُكتب أمام n. ثم قارن بالمتتالية."),cut:g=>g.sol.slice(0,g.hc)},
   {say:t3("Ta fram formeln för aₙ först. Sätt den sedan lika med talet och lös ekvationen.","Find the formula for aₙ first. Then set it equal to the number and solve the equation.","أوجد صيغة الحد العام أولًا، ثم اجعلها تساوي العدد وحلّ المعادلة."),cut:g=>g.sol.slice(0,g.hc)}],
  spread8:[{say:t3("Leta upp det största och det minsta värdet. Ta största minus minsta.","Find the largest and the smallest value. Take largest minus smallest.","ابحث عن أكبر قيمة وأصغر قيمة، ثم اطرح الصغرى من الكبرى."),cut:g=>g.sol.slice(0,g.hc)},
   {say:t3("Sortera värdena och hitta medianen. Kvartilerna är mitten av den nedre och den övre halvan.","Sort the values and find the median. The quartiles are the middle of the lower and the upper half.","رتّب القيم وأوجد الوسيط. الربيعان هما منتصف النصف الأدنى ومنتصف النصف الأعلى."),cut:g=>g.sol.slice(0,g.hc)},
   {say:t3("Läs av värdena på skalan. Varje del av lådagrammet rymmer ungefär 25 % av värdena.","Read the values off the scale. Each part of the box plot holds about 25% of the values.","اقرأ القيم من التدريج. كل جزء من المخطط الصندوقي يحوي نحو 25 % من القيم."),cut:g=>g.sol.slice(0,g.hc)}],
- tree8:[{say:t3("Följ grenarna till rätt utfall och multiplicera sannolikheterna längs vägen.","Follow the branches to the right outcome and multiply the probabilities along the way.","اتبع الفروع حتى الناتج المطلوب، واضرب الاحتمالات على طول الطريق."),cut:g=>g.sol.slice(0,g.hc)},
+ tree8:[{say:t3("Följ grenarna till rätt utfall och multiplicera sannolikheterna längs vägen. Grenarna från samma punkt blir 1 tillsammans.","Follow the branches to the right outcome and multiply the probabilities along the way. The branches from one point add up to 1.","اتبع الفروع حتى الناتج المطلوب، واضرب الاحتمالات على طول الطريق. مجموع الفروع من النقطة نفسها يساوي 1."),cut:g=>g.sol.slice(0,g.hc)},
   {say:t3("Multiplicera längs varje väg som ger rätt utfall. Finns det flera vägar, addera dem.","Multiply along each path that gives the outcome. If there are several paths, add them.","اضرب على طول كل مسار يعطي الناتج المطلوب. وإذا وُجد أكثر من مسار فاجمعها."),cut:g=>g.sol.slice(0,g.hc)},
   {say:t3("Exakt ett: addera två vägar. Minst ett: räkna 1 minus sannolikheten att inget händer.","Exactly one: add two paths. At least one: work out 1 minus the probability that neither happens.","واحد فقط: اجمع مسارين. واحد على الأقل: احسب 1 ناقص احتمال ألا يحدث أي منهما."),cut:g=>g.sol.slice(0,g.hc)}]
 });
