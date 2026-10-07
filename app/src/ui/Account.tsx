@@ -27,7 +27,6 @@ function KidLogin() {
   const fam0: string = aget(AKEY.fam) || "";
   const [err, setErr] = useState("");
   const code = useRef<HTMLInputElement>(null), name = useRef<HTMLInputElement>(null), pin = useRef<HTMLInputElement>(null);
-  useEffect(() => { const t = setTimeout(() => (fam0 ? name : code).current?.focus(), 30); return () => clearTimeout(t); }, []);
   async function submit(e: FormEvent) {
     e.preventDefault(); setErr("");
     const c = code.current!.value.trim().toUpperCase(), n = name.current!.value.trim(), pn = pin.current!.value.trim();
@@ -41,8 +40,8 @@ function KidLogin() {
   }
   return <div className="stack acc"><Back to={startScreen} title={"🎒 " + AT("imKid")} />
     <form className="panel stack" id="kf" autoComplete="on" onSubmit={submit}>
-      <label htmlFor="kc">{AT("famCode")}</label><input type="text" id="kc" ref={code} maxLength={8} placeholder={AT("famPh")} autoCapitalize="characters" defaultValue={fam0} />
-      <label htmlFor="kn">{AT("yourName")}</label><input type="text" id="kn" ref={name} maxLength={30} autoComplete="given-name" />
+      <label htmlFor="kc">{AT("famCode")}</label><input type="text" id="kc" ref={code} maxLength={8} placeholder={AT("famPh")} autoCapitalize="characters" defaultValue={fam0} autoFocus={!fam0} />
+      <label htmlFor="kn">{AT("yourName")}</label><input type="text" id="kn" ref={name} maxLength={30} autoComplete="given-name" autoFocus={!!fam0} />
       <label htmlFor="kp">{AT("pin")}</label><input type="password" id="kp" ref={pin} inputMode="numeric" maxLength={4} autoComplete="current-password" />
       <p className="err" id="ke">{err}</p><div className="row"><button className="btn" type="submit">{AT("login")}</button></div>
     </form></div>;
