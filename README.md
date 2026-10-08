@@ -1,6 +1,6 @@
 # Lärlabbet
 
-A learning app for school years 4–9, in Swedish, English and Arabic. Maths comes first: Years 4 to 9 are done, following the Swedish curriculum Lgr22. Svenska Years 4–7 are complete with 12 units each (plans in `docs/plan-swedish-g4-6.md` and `docs/plan-swedish-g7.md`). Science and English are planned on the same base.
+A learning app for school years 4–9, in Swedish, English and Arabic. Maths comes first: Years 4 to 9 are done, following the Swedish curriculum Lgr22. Svenska Years 4–9 are complete with 12 units each (plans in `docs/plan-swedish-g4-6.md`, `docs/plan-swedish-g7.md` and `docs/plan-swedish-g8-9.md`). Year 1 has its own page (tracing letters and digits, drawing, balloon and counting games: `app/src/ui/Little.tsx`). Science and English are planned on the same base.
 
 Each lesson is a whiteboard animation. A hand draws every step in marker, and Olle the owl explains in a line or two underneath. After the lesson the pupil practises on fresh problems at three levels, with hints that show the method but never the answer.
 
