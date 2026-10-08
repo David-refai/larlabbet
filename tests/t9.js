@@ -8,7 +8,7 @@ await p.route(/fonts\.googleapis/,r=>r.fulfill({body:fs.readFileSync('tests/font
 await p.route(/fonts\.gstatic/,r=>{const f=fmap[r.request().url()];f?r.fulfill({body:fs.readFileSync(f),contentType:'font/woff2'}):r.abort()});
 await p.goto('file://'+process.cwd()+'/build/test.html');await p.waitForTimeout(800);
 await p.click(`#langs button[data-l="${LANG}"]`);await p.fill('#nm','Test');await p.click('#gr button[data-g="4"]');await p.click('#go');
-const ids=await p.evaluate(()=>LESSONS.filter(l=>l.year===4).sort((a,b)=>a.ord-b.ord).map(l=>l.id));
+const ids=await p.evaluate(()=>LESSONS.filter(l=>l.year===4&&l.subject==='math').sort((a,b)=>a.ord-b.ord).map(l=>l.id));
 for(const id of ids){await p.click(`.card[data-l="${id}"]`);await p.waitForTimeout(300);
  await p.click('#help');await p.waitForTimeout(400);let h=0;
  while(true){await (await p.$('#stage')).screenshot({path:`${D}/${LANG}-${id}-h${h}.png`});if(h===0&&id==='pv4')await p.screenshot({path:`${D}/${LANG}-help-full.png`});const m=await p.$('#hmore');if(!m)break;await m.click();await p.waitForTimeout(300);h++}

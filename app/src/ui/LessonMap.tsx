@@ -30,12 +30,16 @@ function Card({l, here}: {l: Lesson; here: boolean}) {
   </button>;
 }
 
+/* year picked on a non-maths tab; kept while the app is open */
+const subPick: Record<string, number> = {};
+
 function LessonMap() {
   const math = tabNow === "math", Y: number = yearNow();
   const subAll: Lesson[] = LESSONS.filter((l: Lesson) => l.subject === tabNow);
   const subYs = [...new Set(subAll.map(l => l.year).filter(Boolean) as number[])].sort((a, b) => a - b);
   /* other subjects: the child's own year, else the nearest year below it, else the first year that has lessons */
-  const sY = subYs.includes(S.grade) ? S.grade : subYs.filter(y => y <= (S.grade || 4)).pop() || subYs[0];
+  const own = subYs.includes(S.grade), pk = tabNow + ":" + S.name + ":" + S.grade, pickY = subPick[pk];
+  const sY = pickY && subYs.includes(pickY) ? pickY : own ? S.grade : subYs.filter(y => y <= (S.grade || 4)).pop() || subYs[0];
   const list: Lesson[] = math ? courseOf(Y) : subAll.filter(l => !sY || l.year === sY).sort((a, b) => (a.ord || 99) - (b.ord || 99));
   const course = list.filter(l => l.ord), done = course.filter(l => isDone(l.id)).length;
   const nx: Lesson | null = !course.length ? null : math ? nextLesson() : course.find(l => !isDone(l.id)) || null;
@@ -69,10 +73,14 @@ function LessonMap() {
           <span className="bmini">{BADGES.filter((b: {id: string}) => S.badges[b.id]).map((b: {icon: string}) => b.icon).join("")}</span></span></button>
     </div>}
 
+    {!math && S.grade && !own && subYs.length > 0 && <div className="empty" id="subsoon">🚧 {T("subSoon")(T("subj")[tabNow], S.grade)}</div>}
+
     {course.length > 0 && <div className="course">
       <div className="stack" style={{gap: 6}}>
         <h2>{math ? T("courseY")(Y) : T("courseS")(T("subj")[tabNow], sY)}</h2>
-        <p className="muted">{T("courseNote")}</p>{math && <YearSeg again={map} />}</div>
+        <p className="muted">{T("courseNote")}</p>{math ? <YearSeg again={map} /> : subYs.length > 1 &&
+          <div className="seg yseg" id="syears" role="group">{subYs.map(y =>
+            <button key={y} data-y={y} aria-pressed={y === sY} onClick={() => { subPick[pk] = y; map(); }}>{T("gradeChip")(y)}</button>)}</div>}</div>
       <div className="cprog"><span>{T("courseDone")(done, course.length)}</span><i><b style={{width: pct + "%"}} /></i></div>
     </div>}
 
