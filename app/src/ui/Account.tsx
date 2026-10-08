@@ -123,7 +123,7 @@ function AddKid({move}: {move: LocalKid | null}) {
   return <form className="panel stack" id="af" onSubmit={submit}><h3>{AT("addKid")}</h3>
     <label htmlFor="an2">{AT("kidName")}</label><input type="text" id="an2" ref={name} maxLength={30} />
     <span className="label">{AT("kidGrade")}</span>
-    <div className="grades" id="ag">{[4, 5, 6, 7, 8, 9].map(g => <button key={g} type="button" data-g={g} aria-pressed={grade === g} onClick={() => setGrade(g)}>{g}</button>)}</div>
+    <div className="grades" id="ag">{[1, 4, 5, 6, 7, 8, 9].map(g => <button key={g} type="button" data-g={g} aria-pressed={grade === g} onClick={() => setGrade(g)}>{g}</button>)}</div>
     <label htmlFor="ap2">{AT("pin")}</label><input type="password" id="ap2" ref={pin} inputMode="numeric" maxLength={4} autoComplete="new-password" />
     <p className="err" id="ae">{err}</p><div className="row"><button className="btn" type="submit">{AT("add")}</button></div>
   </form>;

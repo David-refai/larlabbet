@@ -44,7 +44,7 @@ button.chip{border:0;cursor:pointer;color:var(--ink)}button.chip:hover{box-shado
 .kids{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}.kid{display:flex;flex-direction:column;align-items:center;gap:6px;padding:20px 12px;border:0;border-radius:20px;background:var(--surface);box-shadow:var(--shadow);cursor:pointer;color:var(--ink);font:inherit;transition:transform .15s}.kid:hover{transform:translateY(-3px)}.kid.on{box-shadow:0 0 0 3px var(--teal),var(--shadow)}.kid b{font-size:1.15rem;max-width:100%;overflow:hidden;text-overflow:ellipsis}.kav{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:1.8rem;font-weight:800}.kid.add{background:none;box-shadow:0 0 0 2px var(--line) inset}.kid.add .kav{background:var(--bg);color:var(--muted)}
 .hello{display:grid;grid-template-columns:140px 1fr;gap:24px;align-items:center;background:var(--surface);border-radius:24px;padding:24px;box-shadow:var(--shadow)}
 .panel{background:var(--surface);border-radius:24px;padding:24px;box-shadow:var(--shadow)}
-.grades{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.grades{display:grid;grid-template-columns:repeat(7,1fr);gap:8px}
 .grades button{border:0;box-shadow:0 0 0 1.5px var(--line) inset;border-radius:12px;padding:8px 0;background:var(--bg);font-family:var(--display);font-weight:700;font-size:1.15rem}
 .grades button[aria-pressed=true]{background:var(--ink);color:var(--bg);box-shadow:none}
 input[type=text].bad{box-shadow:0 0 0 2.5px var(--bad) inset;animation:shake .35s}@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
@@ -197,3 +197,77 @@ body.inles .wrap{max-width:1500px;padding-block:8px}body.inles .top{padding-bloc
   .hero{grid-template-columns:1fr;padding:18px}.hero .avatar{width:72px;height:72px}.opts{grid-template-columns:1fr} h1{font-size:1.6rem}.grades{grid-template-columns:repeat(3,1fr)}.panel{padding:18px}
 }
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;animation-iteration-count:1!important;transition:none!important}}
+
+/* ---- Lilla labbet (Year 1) ---- */
+.lhome{display:flex;flex-direction:column;gap:18px}
+.lhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.lhead h1{margin:0;flex:1;font-size:clamp(1.6rem,6vw,2.4rem)}
+.lwave{display:inline-block;animation:lwave 1.6s ease-in-out infinite;transform-origin:70% 70%}
+@keyframes lwave{0%,60%,100%{transform:rotate(0)}20%{transform:rotate(18deg)}40%{transform:rotate(-10deg)}}
+.lstars{font-weight:800;font-size:1.3rem;background:#fff7d6;color:#92400e;border-radius:999px;padding:6px 14px}
+.ltiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.ltile{border:0;border-radius:24px;min-height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  font-family:var(--display);font-weight:800;font-size:1.05rem;color:#1f2937;cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.12);transition:transform .15s}
+.ltile:hover{transform:translateY(-3px) rotate(-1deg)}.ltile:active{transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.12)}
+.lbigt{font-size:3rem;line-height:1.1}
+.lstage{direction:ltr;position:relative;display:flex;flex-direction:column;gap:10px;align-items:stretch;user-select:none;-webkit-user-select:none}
+.ltop{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+.lbtn{border:0;border-radius:16px;min-width:52px;min-height:52px;font-size:1.5rem;background:var(--ink);color:var(--bg);cursor:pointer;padding:0 14px;font-weight:800}
+.lbtn.ghost{background:var(--card,#fff);color:var(--ink);box-shadow:0 0 0 2px var(--line) inset}
+.lbtn.on{box-shadow:0 0 0 3px #6366f1 inset}
+.lbig{font-family:var(--display);font-size:2.6rem;font-weight:800;min-width:80px;text-align:center}
+.lpaper{width:100%;max-height:min(68vh,640px);background:#fffdf5;border-radius:24px;box-shadow:0 0 0 2px #f3e8c8 inset;touch-action:none;cursor:crosshair}
+.lrule{stroke:#bfdbfe;stroke-width:.8}.lrule.dash{stroke-dasharray:3 3}.lrule.base{stroke:#f87171;stroke-width:1}
+.ldot{fill:none;stroke:#cbd5e1;stroke-width:5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:.1 7}
+.ldot.now{stroke:#64748b}
+.ldone{fill:none;stroke-width:9;stroke-linecap:round;stroke-linejoin:round;animation:lin .3s ease-out}
+@keyframes lin{from{stroke-width:14;opacity:.4}}
+.link{fill:none;stroke:#f97316;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;opacity:.85}
+.lstart{fill:#22c55e;stroke:#fff;stroke-width:2;animation:lpulse 1.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+.lstart.far{fill:#f59e0b}
+@keyframes lpulse{50%{transform:scale(1.25)}}
+.lnum{font:800 9px var(--display),sans-serif;fill:#fff;text-anchor:middle;pointer-events:none}
+.larrow{fill:none;stroke:#22c55e;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.lbug{font-size:13px;text-anchor:middle;pointer-events:none}
+.lstrip{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding:4px 2px 8px}
+.lchip{flex:0 0 auto;border:0;border-radius:12px;min-width:44px;height:44px;font:800 1.3rem var(--display);background:var(--card,#fff);color:var(--ink);box-shadow:0 0 0 2px var(--line) inset;cursor:pointer;position:relative}
+.lchip.on{background:#6366f1;color:#fff;box-shadow:none}
+.lchip.ok::after{content:"★";position:absolute;top:-6px;right:-4px;font-size:.8rem;color:#f59e0b}
+.lparty{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.55);overflow:hidden}
+.lball{position:absolute;bottom:-90px;width:46px;height:58px;border-radius:50% 50% 48% 48%;animation:lfly linear forwards;opacity:.9}
+.lball::after{content:"";position:absolute;left:50%;top:100%;width:1px;height:40px;background:#94a3b8}
+@keyframes lfly{to{transform:translateY(-120vh) translateX(20px)}}
+.lwin{position:relative;background:#fff;border-radius:28px;padding:22px 30px;box-shadow:0 20px 60px rgba(0,0,0,.2);display:flex;flex-direction:column;align-items:center;gap:8px;animation:lpopin .4s cubic-bezier(.2,1.6,.4,1)}
+@keyframes lpopin{from{transform:scale(.3);opacity:0}}
+.lstar{font-size:3.5rem;animation:lspin 1.2s ease-out}
+@keyframes lspin{from{transform:rotate(-180deg) scale(.2)}}
+.ljump{font-size:4.5rem;animation:ljump .6s ease-in-out infinite alternate}
+@keyframes ljump{from{transform:translateY(0) rotate(-6deg)}to{transform:translateY(-22px) rotate(6deg)}}
+.lpal{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.lcol{width:44px;height:44px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--line);cursor:pointer;font-size:1.2rem}
+.lcol.on{box-shadow:0 0 0 4px #111827;transform:scale(1.1)}
+.lsz{display:inline-block;border-radius:50%;background:currentColor}
+.lcanvas{width:100%;height:min(62vh,560px);border-radius:24px;background:#fff;box-shadow:0 0 0 2px var(--line) inset;touch-action:none;cursor:crosshair}
+.ltarget{font:800 1.6rem var(--display);background:#fff7d6;border-radius:18px;padding:6px 18px;color:#1f2937}
+.ltarget b{font-size:2.4rem}
+.lgot{display:flex;gap:2px;font-size:1.4rem}.lgot i{font-style:normal;opacity:.25;filter:grayscale(1)}.lgot i.on{opacity:1;filter:none}
+.lsky{position:relative;height:min(64vh,560px);border-radius:24px;overflow:hidden;background:linear-gradient(#bae6fd,#e0f2fe 70%,#bbf7d0 70%,#86efac);touch-action:manipulation}
+.lballoon{position:absolute;bottom:-110px;width:78px;height:96px;border:0;padding:0;border-radius:50% 50% 47% 47%;background:radial-gradient(circle at 30% 28%,rgba(255,255,255,.7),transparent 30%),var(--bc);
+  color:#fff;font:800 2.2rem var(--display);text-shadow:0 2px 3px rgba(0,0,0,.35);cursor:pointer;animation:lrise linear forwards}
+.lballoon::after{content:"";position:absolute;left:50%;top:100%;width:1.5px;height:46px;background:#64748b}
+.lballoon span{pointer-events:none}
+@keyframes lrise{to{transform:translateY(calc(-1 * min(64vh,560px) - 220px))}}
+.lballoon.popped{animation:lpop .25s ease-out forwards}
+@keyframes lpop{to{transform:scale(1.8);opacity:0}}
+.shake{animation:lshake .45s ease-in-out}
+.lballoon.shake{animation:lrise linear forwards,lshake .45s}
+@keyframes lshake{20%,60%{translate:-8px 0}40%,80%{translate:8px 0}}
+.lfarm{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;align-content:center;min-height:min(46vh,380px);border-radius:24px;padding:16px;background:linear-gradient(#e0f2fe 55%,#bbf7d0 55%)}
+.lanimal{position:relative;border:0;background:none;font-size:clamp(3rem,10vw,4.5rem);cursor:pointer;animation:lhop .5s cubic-bezier(.2,1.6,.4,1) backwards}
+@keyframes lhop{from{transform:translateY(-60px) scale(.3);opacity:0}}
+.lfarm.dance .lanimal{animation:ljump .45s ease-in-out infinite alternate}
+.lmark{position:absolute;top:-4px;right:-6px;background:#6366f1;color:#fff;border-radius:999px;font:800 1rem var(--display);min-width:28px;height:28px;display:flex;align-items:center;justify-content:center}
+.lopts{display:flex;gap:14px;justify-content:center}
+.lnumbtn{border:0;border-radius:22px;width:88px;height:88px;font:800 2.8rem var(--display);background:#fde68a;color:#1f2937;cursor:pointer;box-shadow:0 6px 0 #f59e0b}
+.lnumbtn:active{transform:translateY(4px);box-shadow:0 2px 0 #f59e0b}
+@media (prefers-reduced-motion:reduce){.lballoon{animation-duration:14s!important}.lanimal,.ljump,.lwave,.lstart{animation:none}}

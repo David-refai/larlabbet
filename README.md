@@ -53,6 +53,7 @@ node tests/t17.js                      # a lesson fits one screen (laptop, table
 node tests/t18.js                      # words to know: chips, word cards, word check
 node tests/t19.js                      # accounts against a fake Supabase
 node tests/t20.js                      # Svenska units (SV_IDS=sv7c,sv7d to test only some)
+node tests/t21.js                      # Year 1 page: tracing, balloons, counting, drawing
 node tests/t13.js                      # Year 5 flow
 node tests/t10.js                      # placement, notebook, daily, badges, parents page
 node tests/t11.js                      # sync between two devices (mock db)

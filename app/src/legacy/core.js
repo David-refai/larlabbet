@@ -2,7 +2,7 @@ import LAND from "./land.json";
 /* screens drawn with React; this module keeps the navigation (screen, leave) */
 import {showWho,showWelcome} from "../ui/Profiles.tsx";
 import {showMap} from "../ui/LessonMap.tsx";
-import {showBadges,showParents} from "../ui/Progress.tsx";
+import {showBadges,showParents} from "../ui/Progress.tsx"; import {showLittle} from "../ui/Little.tsx";
 import {showStart,showKidLogin,showParLogin,showParentHome} from "../ui/Account.tsx";
 
 const $=(s,r=document)=>r.querySelector(s);
@@ -3361,6 +3361,8 @@ let tabNow="math";
 /* the lesson map is React (app/src/ui/LessonMap.tsx) */
 function map(){
   if(!S.name||!S.grade){welcome();return}
+  /* Year 1 has its own playful page (tracing, drawing, games) */
+  if(S.grade===1){screen=map;leave();hud();showLittle();return}
   screen=map;leave();revFill();hud();showMap()}
 
 function lesson(id){

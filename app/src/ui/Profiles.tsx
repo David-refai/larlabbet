@@ -50,7 +50,7 @@ function Welcome() {
       <input type="text" id="nm" maxLength={30} placeholder={T("ph")} defaultValue={S.name} ref={nm}
         className={bad ? "bad" : undefined} onInput={() => setBad(false)} onKeyDown={e => { if (e.key === "Enter") go(); }} />
       <span className="label">{T("grade")}</span>
-      <div className="grades" id="gr">{[4, 5, 6, 7, 8, 9].map(g =>
+      <div className="grades" id="gr">{[1, 4, 5, 6, 7, 8, 9].map(g =>
         <button key={g} data-g={g} aria-pressed={grade === g} onClick={() => { setGrade(g); S.grade = g; }}>{g}</button>)}</div>
       <div className="row">
         <button className="btn" id="go" onClick={go}>{T("start")}</button>
