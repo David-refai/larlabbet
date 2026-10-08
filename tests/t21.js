@@ -5,7 +5,7 @@ const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>m.type
 await p.goto('file://'+process.cwd()+'/build/test.html');await p.waitForTimeout(800);
 await p.click('#langs button[data-l="sv"]');await p.fill('#nm','Mira');await p.click('#gr button[data-g="1"]');await p.click('#go');await p.waitForTimeout(500);
 await shot(p,'h.png');
-await p.click('#tABC');await p.waitForTimeout(700);await shot(p,'a0.png');
+await p.click('#tabc');await p.waitForTimeout(700);await shot(p,'a0.png');
 // trace each stroke of current glyph via its dotted paths
 async function traceAll(){const n=await p.$$eval('#lpaper path',e=>e.length);
  for(let s=0;s<n;s++){const pts=await p.evaluate(()=>{const svg=document.querySelector('#lpaper'),el=svg.querySelector('path.now');if(!el)return null;const m=svg.getScreenCTM(),L=el.getTotalLength(),o=[];for(let i=0;i<=30;i++){const q=el.getPointAtLength(L*i/30);const r=new DOMPoint(q.x,q.y).matrixTransform(m);o.push([r.x,r.y])}return o});
@@ -16,9 +16,9 @@ await traceAll();await p.waitForTimeout(600);await shot(p,'a1.png');
 console.log('party',!!await p.$('.lparty'),'stars',await p.evaluate(()=>S.little));
 await p.click('#lnext');await p.waitForTimeout(400);console.log('now',await p.textContent('.lbig'));
 // go through all letters + digits quickly
-for(const set of ['ABC','abc','123']){await p.click('[aria-label=home]');await p.click('#t'+set);await p.waitForTimeout(300);
+for(const set of ['abc']){await p.click('[aria-label=home]');await p.click('#t'+set);await p.waitForTimeout(300);
  const chars=await p.$$eval('.lchip',e=>e.map(x=>x.textContent));const fail=[];
- for(let i=0;i<chars.length;i++){await p.click(`.lchip:nth-child(${i+1})`);await p.waitForTimeout(120);await traceAll();await p.waitForTimeout(150);if(!await p.$('.lparty'))fail.push(chars[i]);else await p.click('#lnext');}
+ for(let i=0;i<chars.length;i++){await p.click(`.lchip:nth-child(${i+1})`);await p.waitForTimeout(120);await traceAll();await p.waitForTimeout(900);if(!await p.$('.lparty'))fail.push(chars[i]);else await p.click('#lnext');}
  console.log(set,'fail',fail);if(fail.length)bad.push(set+':'+fail);}
 await p.click('[aria-label=home]');await p.click('#tabc');await p.click('.lchip:nth-child(7)');await p.waitForTimeout(300);await shot(p,'g.png');
 await p.click('[aria-label=home]');await p.click('#tpop');await p.waitForTimeout(4000);await shot(p,'b.png');

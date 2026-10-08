@@ -4,12 +4,12 @@ import {useEffect, useMemo, useRef, useState} from "react";
 import {showReact} from "./mount";
 import {S, save, lang, REDUCED, welcome} from "../legacy/core.js";
 import {SETS, type SetId} from "../little/glyphs";
-import {say, sayNum, LETTER_WORD, NUM_WORD, ALL_KEYS, keyOf, putClip, dropClip, clipKeys, hasDeviceVoice} from "../little/voice";
+import {say, sayNum, sayText, LETTER_WORD, NUM_WORD, ALL_KEYS, keyOf, putClip, dropClip, clipKeys, hasDeviceVoice} from "../little/voice";
 
 const TX: Record<string, Record<string, string>> = {
-  sv: {title: "Lilla labbet", hi: "Hej", trace: "Spåra", draw: "Rita", balloons: "Ballonger", count: "Räkna djur", find: "Hitta", clear: "Sudda", again: "Igen", next: "Nästa", stars: "stjärnor", howMany: "Hur många?", rec: "Spela in rösten", recHelp: "Tryck på 🎙, säg ljudet tydligt och tryck igen. Barnet hör sedan din röst.", say: "Säg", voice: "Röst", vAuto: "Inspelad eller enhetens röst", vRec: "Bara inspelad", vOff: "Av", noMic: "Mikrofonen gick inte att öppna. Välj en ljudfil i stället.", noVoice: "Den här enheten har ingen svensk röst. Spela in din egen."},
-  en: {title: "Little lab", hi: "Hi", trace: "Trace", draw: "Draw", balloons: "Balloons", count: "Count animals", find: "Find", clear: "Clear", again: "Again", next: "Next", stars: "stars", howMany: "How many?", rec: "Record the voice", recHelp: "Tap 🎙, say the sound clearly and tap again. Your child then hears your voice.", say: "Say", voice: "Voice", vAuto: "Recorded or device voice", vRec: "Recorded only", vOff: "Off", noMic: "Could not open the microphone. Pick a sound file instead.", noVoice: "This device has no Swedish voice. Record your own."},
-  ar: {title: "المختبر الصغير", hi: "مرحبًا", trace: "تتبّع", draw: "ارسم", balloons: "بالونات", count: "عُدّ الحيوانات", find: "ابحث عن", clear: "امسح", again: "مرة أخرى", next: "التالي", stars: "نجوم", howMany: "كم عددها؟", rec: "سجّل الصوت", recHelp: "اضغط 🎙 وانطق الصوت بوضوح ثم اضغط مرة أخرى. سيسمع الطفل صوتك.", say: "قل", voice: "الصوت", vAuto: "المسجَّل أو صوت الجهاز", vRec: "المسجَّل فقط", vOff: "مطفأ", noMic: "تعذّر فتح الميكروفون. اختر ملفًا صوتيًا بدلًا من ذلك.", noVoice: "لا يوجد صوت سويدي على هذا الجهاز. سجّل صوتك."},
+  sv: {title: "Lilla labbet", hi: "Hej", trace: "Spåra", letters: "Bokstäver", numbers: "Siffror", words: "Ord", draw: "Rita", balloons: "Ballonger", count: "Räkna djur", find: "Hitta", clear: "Sudda", again: "Igen", next: "Nästa", stars: "stjärnor", howMany: "Hur många?", rec: "Spela in rösten", recHelp: "Tryck på 🎙, säg ljudet tydligt och tryck igen. Barnet hör sedan din röst.", say: "Säg", voice: "Röst", vAuto: "Inspelad eller enhetens röst", vRec: "Bara inspelad", vOff: "Av", noMic: "Mikrofonen gick inte att öppna. Välj en ljudfil i stället.", noVoice: "Den här enheten har ingen svensk röst. Spela in din egen."},
+  en: {title: "Little lab", hi: "Hi", trace: "Trace", letters: "Letters", numbers: "Numbers", words: "Words", draw: "Draw", balloons: "Balloons", count: "Count animals", find: "Find", clear: "Clear", again: "Again", next: "Next", stars: "stars", howMany: "How many?", rec: "Record the voice", recHelp: "Tap 🎙, say the sound clearly and tap again. Your child then hears your voice.", say: "Say", voice: "Voice", vAuto: "Recorded or device voice", vRec: "Recorded only", vOff: "Off", noMic: "Could not open the microphone. Pick a sound file instead.", noVoice: "This device has no Swedish voice. Record your own."},
+  ar: {title: "المختبر الصغير", hi: "مرحبًا", trace: "تتبّع", letters: "الحروف", numbers: "الأرقام", words: "الكلمات", draw: "ارسم", balloons: "بالونات", count: "عُدّ الحيوانات", find: "ابحث عن", clear: "امسح", again: "مرة أخرى", next: "التالي", stars: "نجوم", howMany: "كم عددها؟", rec: "سجّل الصوت", recHelp: "اضغط 🎙 وانطق الصوت بوضوح ثم اضغط مرة أخرى. سيسمع الطفل صوتك.", say: "قل", voice: "الصوت", vAuto: "المسجَّل أو صوت الجهاز", vRec: "المسجَّل فقط", vOff: "مطفأ", noMic: "تعذّر فتح الميكروفون. اختر ملفًا صوتيًا بدلًا من ذلك.", noVoice: "لا يوجد صوت سويدي على هذا الجهاز. سجّل صوتك."},
 };
 const tx = (k: string) => (TX[lang] || TX.sv)[k];
 
@@ -40,7 +40,7 @@ const COLORS = ["#ef4444", "#f97316", "#facc15", "#22c55e", "#06b6d4", "#3b82f6"
 const rnd = (n: number) => Math.floor(Math.random() * n);
 const pickOne = <X,>(a: readonly X[]) => a[rnd(a.length)];
 
-type Mode = {m: "rec"} | {m: "home"} | {m: "trace"; set: SetId} | {m: "draw"} | {m: "balloons"} | {m: "count"};
+type Mode = {m: "rec"} | {m: "lesson"; set: "ABC" | "123"} | {m: "words"} | {m: "home"} | {m: "trace"; set: SetId} | {m: "draw"} | {m: "balloons"} | {m: "count"};
 
 function Party({animal, word, onNext, onAgain}: {animal: string; word?: string; onNext?: () => void; onAgain?: () => void}) {
   const balls = useMemo(() => Array.from({length: 14}, (_, i) => ({i, x: rnd(92), d: 2.2 + Math.random() * 2, c: pickOne(COLORS), w: Math.random() * .8})), []);
@@ -66,20 +66,18 @@ function sample(d: string): {pts: Smp; len: number} {
   return {pts, len};
 }
 
-function Trace({set, home}: {set: SetId; home: () => void}) {
-  const {chars, glyphs} = SETS[set];
-  const [idx, setIdx] = useState(() => Math.max(0, chars.findIndex(c => !LS().t[set + c])));
-  const ch = chars[idx], strokes = (glyphs as Record<string, string[]>)[ch];
-  const smp = useMemo(() => strokes.map(sample), [ch]);
-  const [cur, setCur] = useState(0), [ink, setInk] = useState<Smp[]>([]), [won, setWon] = useState(false), [far, setFar] = useState(false);
+/* one tracing sheet. level 0: dotted line and a ladybug that shows the way; 1: dotted line only;
+   2: a faint line and just the start dot, so the child writes it almost alone */
+function TracePad({strokes, level, onDone}: {strokes: string[]; level: number; onDone: () => void}) {
+  const smp = useMemo(() => strokes.map(sample), [strokes]);
+  const [cur, setCur] = useState(0), [ink, setInk] = useState<Smp[]>([]), [far, setFar] = useState(false);
   const reach = useRef(-1), live = useRef<Smp | null>(null), svg = useRef<SVGSVGElement>(null), [bug, setBug] = useState<{x: number; y: number} | null>(null);
   const [, force] = useState(0);
-  const animal = useMemo(() => pickOne(ANIMALS), [ch]);
+  const done = cur >= smp.length;
 
-  useEffect(() => { setCur(0); setInk([]); setWon(false); reach.current = -1; talk(ch); }, [ch]);
   /* a ladybug walks along the stroke to show where to start and which way to go */
   useEffect(() => {
-    if (won || cur >= smp.length) { setBug(null); return; }
+    if (done || level > 0) { setBug(null); return; }
     const pts = smp[cur].pts; if (REDUCED || pts.length < 2) { setBug(pts[0]); return; }
     let raf = 0; const t0 = performance.now(), dur = Math.max(900, smp[cur].len * 14);
     const step = (t: number) => {
@@ -88,7 +86,7 @@ function Trace({set, home}: {set: SetId; home: () => void}) {
       raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step); return () => cancelAnimationFrame(raf);
-  }, [cur, smp, won]);
+  }, [cur, smp, done, level]);
 
   const toBox = (e: React.PointerEvent) => {
     const m = svg.current!.getScreenCTM()!.inverse(), p = new DOMPoint(e.clientX, e.clientY).matrixTransform(m);
@@ -96,7 +94,7 @@ function Trace({set, home}: {set: SetId; home: () => void}) {
   };
   /* follow the finger: a point of the line counts only when the line before it is done, so start and direction matter */
   function feed(p: {x: number; y: number}) {
-    if (cur >= smp.length) return;
+    if (done) return;
     const pts = smp[cur].pts; let moved = true;
     while (moved) {
       moved = false;
@@ -105,53 +103,166 @@ function Trace({set, home}: {set: SetId; home: () => void}) {
     }
     if (reach.current >= pts.length - 2) {
       reach.current = -1; const nx = cur + 1; setCur(nx); live.current = null; setInk([]);
-      if (nx >= smp.length) { setWon(true); yay(); addStar(set + ch); setTimeout(() => talk(ch, true), 700); } else ding();
+      if (nx >= smp.length) { ding(); setTimeout(onDone, 650); } else tone([700], 0.07);
     }
   }
   function down(e: React.PointerEvent) {
-    if (won) return; (e.target as Element).setPointerCapture?.(e.pointerId);
+    if (done) return; (e.target as Element).setPointerCapture?.(e.pointerId);
     const p = toBox(e); live.current = [p]; setInk(k => [...k, live.current!]);
-    const s0 = smp[cur]?.pts[0]; setFar(!!s0 && reach.current < 0 && Math.hypot(s0.x - p.x, s0.y - p.y) > R * 1.6);
+    const s0 = smp[cur].pts[0]; setFar(reach.current < 0 && Math.hypot(s0.x - p.x, s0.y - p.y) > R * 1.6);
     feed(p);
   }
   function move(e: React.PointerEvent) {
     if (!live.current) return; const p = toBox(e); live.current.push(p); force(n => n + 1); feed(p);
   }
   const up = () => { live.current = null; };
-  const go = (d: number) => setIdx(i => (i + d + chars.length) % chars.length);
   const arrow = (pts: Smp) => {
     if (pts.length < 4) return null;
     const a = pts[0], b = pts[3], ang = Math.atan2(b.y - a.y, b.x - a.x), ox = a.x + Math.cos(ang) * 16, oy = a.y + Math.sin(ang) * 16;
     const w = (s: number) => `${ox + Math.cos(ang + s) * -8},${oy + Math.sin(ang + s) * -8}`;
     return <polyline points={`${w(0.6)} ${ox},${oy} ${w(-0.6)}`} className="larrow" />;
   };
-  const doneCol = "#6366f1";
+  return <svg ref={svg} className={"lpaper lv" + level} id="lpaper" viewBox="-10 -38 120 205" onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}>
+    <line x1="-10" x2="110" y1="10" y2="10" className="lrule" /><line x1="-10" x2="110" y1="55" y2="55" className="lrule dash" />
+    <line x1="-10" x2="110" y1="120" y2="120" className="lrule base" />
+    {smp.map((_, i) => i < cur
+      ? <path key={i} d={strokes[i]} className="ldone" stroke={["#6366f1", "#ec4899", "#16a34a"][level]} />
+      : <path key={i} d={strokes[i]} className={(level === 2 ? "lghost" : "ldot") + (i === cur ? " now" : "")} />)}
+    {ink.map((k, i) => <polyline key={i} points={k.map(p => p.x + "," + p.y).join(" ")} className="link" />)}
+    {!done && <g>
+      {level < 2 && arrow(smp[cur].pts)}
+      <circle cx={smp[cur].pts[0].x} cy={smp[cur].pts[0].y} r="7" className={"lstart" + (far ? " far" : "")} />
+      <text x={smp[cur].pts[0].x} y={smp[cur].pts[0].y + 3.5} className="lnum">{cur + 1}</text>
+      {bug && <text x={bug.x} y={bug.y + 5} className="lbug">🐞</text>}
+    </g>}
+  </svg>;
+}
 
+/* the word under a picture, with the letter it starts with in colour */
+const Word = ({w, ch}: {w: string; ch: string}) =>
+  <span className="lwordbig"><b>{w.slice(0, 1).toUpperCase() === ch ? w[0] : ""}</b>{w.slice(0, 1).toUpperCase() === ch ? w.slice(1) : w}</span>;
+
+/* a letter (or a number) from start to end: meet it, trace the capital three times, the small letter three times,
+   then meet its animal. Numbers: trace three times, then count that many animals. */
+const REPS = 3;
+function Lesson({set, home}: {set: "ABC" | "123"; home: () => void}) {
+  const {chars, glyphs} = SETS[set], num = set === "123";
+  const [idx, setIdx] = useState(() => Math.max(0, chars.findIndex(c => !LS().t[set + c])));
+  const ch = chars[idx], K = keyOf(ch), lw = LETTER_WORD[K];
+  const sheets = useMemo(() => {
+    const up = (glyphs as Record<string, string[]>)[ch], lo = num ? null : SETS.abc.glyphs[ch.toLowerCase() as keyof typeof SETS.abc.glyphs] as string[];
+    const out: {c: string; strokes: string[]; level: number}[] = [];
+    for (let l = 0; l < REPS; l++) out.push({c: ch, strokes: up, level: l});
+    if (lo) for (let l = 0; l < REPS; l++) out.push({c: ch.toLowerCase(), strokes: lo, level: l});
+    return out;
+  }, [ch]);
+  const last = sheets.length + 1, [step, setStep] = useState(0), [shown, setShown] = useState(0);
+  useEffect(() => { setStep(0); }, [ch]);
+  useEffect(() => {
+    if (step === 0) talk(ch, true);
+    else if (step <= sheets.length) { if (sheets[step - 1].level === 0) talk(sheets[step - 1].c); }
+    else if (step === last) {
+      yay(); addStar(set + ch);
+      if (!num) setTimeout(() => talk(ch, true), 600);
+      else { /* count the animals out loud, one by one */
+        setShown(0); const n = +ch, ts: number[] = [];
+        for (let i = 1; i <= n; i++) ts.push(window.setTimeout(() => { setShown(i); sayNum(i, vo()); }, 500 + i * 900));
+        if (!n) ts.push(window.setTimeout(() => sayNum(0, vo()), 500));
+        return () => ts.forEach(clearTimeout);
+      }
+    }
+  }, [step, ch]);
+  const go = (d: number) => setIdx(i => (i + d + chars.length) % chars.length);
+  const animal = num ? ANIMALS[+ch % ANIMALS.length] : lw?.[1] || "⭐";
+  const sheet = step >= 1 && step <= sheets.length ? sheets[step - 1] : null;
+
+  return <div className="lstage">
+    <div className="ltop">
+      <button className="lbtn ghost" onClick={home} aria-label="home">🏠</button>
+      <button className="lbtn ghost" onClick={() => go(-1)} aria-label="prev">◀</button>
+      <button className="lbig" id="lsay" onClick={() => talk(sheet ? sheet.c : ch, !sheet)} aria-label={tx("say")}>{sheet ? sheet.c : num ? ch : ch + ch.toLowerCase()} <small>🔊</small></button>
+      <button className="lbtn ghost" onClick={() => go(1)} aria-label={tx("next")}>▶</button>
+    </div>
+    <div className="lsteps" id="lsteps">{Array.from({length: last + 1}, (_, i) => <i key={i} className={i < step ? "on" : i === step ? "now" : ""} />)}</div>
+    {step === 0 && <div className="lintro" id="lintro">
+      <div className="lpair"><span>{ch}</span>{!num && <span>{ch.toLowerCase()}</span>}</div>
+      {num ? <div className="lcountrow">{Array.from({length: +ch}, (_, i) => <span key={i}>{animal}</span>)}{ch === "0" && <span className="muted">∅</span>}</div>
+        : <button className="lanimalbig" onClick={() => talk(ch, true)}>{animal}<Word w={lw[0]} ch={ch} /></button>}
+      <button className="lbtn" id="lstart" onClick={() => setStep(1)}>✏️ ➜</button>
+    </div>}
+    {sheet && <TracePad key={step} strokes={sheet.strokes} level={sheet.level} onDone={() => setStep(s => s + 1)} />}
+    {step === last && (num
+      ? <div className="lintro"><div className="lcountrow big">{Array.from({length: +ch}, (_, i) =>
+          <span key={i} className={i < shown ? "in" : "out"}>{animal}{i < shown && <b className="lmark">{i + 1}</b>}</span>)}</div>
+          <div className="lpair"><span>{ch}</span></div>
+          <div className="row" style={{justifyContent: "center"}}><button className="lbtn ghost" onClick={() => setStep(0)}>↻</button><button className="lbtn" id="lnext" onClick={() => go(1)}>➜</button></div></div>
+      : <Party animal={animal} word={lw ? ch + " som " + lw[0] : ""} onAgain={() => setStep(0)} onNext={() => go(1)} />)}
+    <div className="lstrip">{chars.map((c, i) =>
+      <button key={c} className={"lchip" + (i === idx ? " on" : "") + (LS().t[set + c] ? " ok" : "")} onClick={() => setIdx(i)}>{c}</button>)}</div>
+  </div>;
+}
+
+/* free tracing of any letter, small letter or number (one sheet, then the next) */
+function Trace({set, home}: {set: SetId; home: () => void}) {
+  const {chars, glyphs} = SETS[set];
+  const [idx, setIdx] = useState(0), [won, setWon] = useState(false), [n, setN] = useState(0);
+  const ch = chars[idx], strokes = (glyphs as Record<string, string[]>)[ch];
+  useEffect(() => { setWon(false); talk(ch); }, [ch]);
+  const go = (d: number) => setIdx(i => (i + d + chars.length) % chars.length);
   return <div className="lstage">
     <div className="ltop">
       <button className="lbtn ghost" onClick={home} aria-label="home">🏠</button>
       <button className="lbtn ghost" onClick={() => go(-1)} aria-label="prev">◀</button>
       <button className="lbig" id="lsay" onClick={() => talk(ch, true)} aria-label={tx("say")}>{ch} <small>🔊</small></button>
       <button className="lbtn ghost" onClick={() => go(1)} aria-label={tx("next")}>▶</button>
-      <button className="lbtn ghost" onClick={() => { setCur(0); setInk([]); reach.current = -1; }} aria-label={tx("again")}>↻</button>
     </div>
-    <svg ref={svg} className="lpaper" id="lpaper" viewBox="-10 -38 120 205" onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up}>
-      <line x1="-10" x2="110" y1="10" y2="10" className="lrule" /><line x1="-10" x2="110" y1="55" y2="55" className="lrule dash" />
-      <line x1="-10" x2="110" y1="120" y2="120" className="lrule base" />
-      {smp.map((s, i) => i < cur
-        ? <path key={i} d={strokes[i]} className="ldone" stroke={doneCol} />
-        : <path key={i} d={strokes[i]} className={"ldot" + (i === cur ? " now" : "")} />)}
-      {ink.map((k, i) => <polyline key={i} points={k.map(p => p.x + "," + p.y).join(" ")} className="link" />)}
-      {!won && cur < smp.length && <g>
-        {arrow(smp[cur].pts)}
-        <circle cx={smp[cur].pts[0].x} cy={smp[cur].pts[0].y} r="7" className={"lstart" + (far ? " far" : "")} />
-        <text x={smp[cur].pts[0].x} y={smp[cur].pts[0].y + 3.5} className="lnum">{cur + 1}</text>
-        {bug && <text x={bug.x} y={bug.y + 5} className="lbug">🐞</text>}
-      </g>}
-    </svg>
+    <TracePad key={ch + n} strokes={strokes} level={0} onDone={() => { setWon(true); yay(); addStar(set + ch); }} />
     <div className="lstrip">{chars.map((c, i) =>
       <button key={c} className={"lchip" + (i === idx ? " on" : "") + (LS().t[set + c] ? " ok" : "")} onClick={() => setIdx(i)}>{c}</button>)}</div>
-    {won && <Party animal={LETTER_WORD[keyOf(ch)]?.[1] || animal} word={LETTER_WORD[keyOf(ch)] ? ch + " som " + LETTER_WORD[keyOf(ch)][0] : NUM_WORD[+ch]} onAgain={() => { setCur(0); setInk([]); setWon(false); }} onNext={() => go(1)} />}
+    {won && <Party animal={LETTER_WORD[keyOf(ch)]?.[1] || "⭐"} onAgain={() => { setWon(false); setN(x => x + 1); }} onNext={() => go(1)} />}
+  </div>;
+}
+
+/* ---------- words: drag each animal's name to the animal ---------- */
+function Words({home}: {home: () => void}) {
+  const pool = useMemo(() => {
+    const ks = Object.keys(LETTER_WORD).filter(k => /^[A-ZÅÄÖ]$/.test(k) && !["Q", "X", "Y", "W", "C"].includes(k));
+    const known = ks.filter(k => LS().t["ABC" + k]);
+    return known.length >= 4 ? known : ks.slice(0, Math.max(6, known.length));
+  }, []);
+  const [round, setRound] = useState(0), [placed, setPlaced] = useState<string[]>([]), [pick, setPick] = useState<string | null>(null), [won, setWon] = useState(false);
+  const [drag, setDrag] = useState<{k: string; x: number; y: number} | null>(null), [bad, setBad] = useState<string | null>(null);
+  const items = useMemo(() => { const a = [...pool].sort(() => Math.random() - .5).slice(0, 3); return {animals: a, words: [...a].sort(() => Math.random() - .5)}; }, [round]);
+  function drop(word: string, on: string | null) {
+    if (on === word) {
+      const p = [...placed, word]; setPlaced(p); setPick(null); sayText("W:" + LETTER_WORD[word][0], LETTER_WORD[word][0], vo());
+      if (p.length === items.animals.length) setTimeout(() => { setWon(true); yay(); addStar("words"); }, 700);
+    } else if (on) { oops(); setBad(word); setTimeout(() => setBad(null), 500); }
+  }
+  function down(e: React.PointerEvent, k: string) {
+    (e.target as Element).setPointerCapture?.(e.pointerId); setDrag({k, x: e.clientX, y: e.clientY});
+  }
+  const move = (e: React.PointerEvent) => { if (drag) setDrag({...drag, x: e.clientX, y: e.clientY}); };
+  function up(e: React.PointerEvent) {
+    if (!drag) return;
+    const el = document.elementsFromPoint(e.clientX, e.clientY).find(x => (x as HTMLElement).dataset?.animal) as HTMLElement | undefined;
+    const moved = Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 0;
+    setDrag(null);
+    if (el) drop(drag.k, el.dataset.animal!); else if (!moved || !el) setPick(pick === drag.k ? null : drag.k);
+  }
+  const next = () => { setRound(r => r + 1); setPlaced([]); setWon(false); setPick(null); };
+  return <div className="lstage">
+    <div className="ltop"><button className="lbtn ghost" onClick={home} aria-label="home">🏠</button><span className="ltarget">🐾 ➜ 🔤</span></div>
+    <div className="lzoo" id="lzoo">{items.animals.map(k =>
+      <button key={k} className={"lzooa" + (placed.includes(k) ? " ok" : "")} data-animal={k}
+        onClick={() => pick ? drop(pick, k) : sayText("W:" + LETTER_WORD[k][0], LETTER_WORD[k][0], vo())}>
+        <span className="lzooe" data-animal={k}>{LETTER_WORD[k][1]}</span>
+        <span className="lslot" data-animal={k}>{placed.includes(k) ? LETTER_WORD[k][0] : ""}</span></button>)}</div>
+    <div className="lwords" id="lwords">{items.words.filter(k => !placed.includes(k)).map(k =>
+      <span key={k} className={"lwcard" + (pick === k ? " on" : "") + (bad === k ? " shake" : "") + (drag?.k === k ? " drag" : "")} data-w={k}
+        style={drag?.k === k ? {position: "fixed", left: drag.x, top: drag.y, transform: "translate(-50%,-50%)", pointerEvents: "none"} : undefined}
+        onPointerDown={e => down(e, k)} onPointerMove={move} onPointerUp={up}>{LETTER_WORD[k][0]}</span>)}</div>
+    {won && <Party animal={LETTER_WORD[items.animals[0]][1]} onNext={next} />}
   </div>;
 }
 
@@ -268,14 +379,17 @@ function Little() {
   const [mode, setMode] = useState<Mode>({m: "home"});
   const home = () => setMode({m: "home"});
   if (mode.m === "trace") return <Trace set={mode.set} home={home} />;
+  if (mode.m === "lesson") return <Lesson set={mode.set} home={home} />;
+  if (mode.m === "words") return <Words home={home} />;
   if (mode.m === "draw") return <Draw home={home} />;
   if (mode.m === "balloons") return <Balloons home={home} />;
   if (mode.m === "count") return <Count home={home} />;
   if (mode.m === "rec") return <Record home={home} />;
   const tiles: {id: string; big: string; label: string; go: () => void; c: string}[] = [
-    {id: "tABC", big: "ABC", label: tx("trace"), go: () => setMode({m: "trace", set: "ABC"}), c: "#fde68a"},
-    {id: "tabc", big: "abc", label: tx("trace"), go: () => setMode({m: "trace", set: "abc"}), c: "#bbf7d0"},
-    {id: "t123", big: "123", label: tx("trace"), go: () => setMode({m: "trace", set: "123"}), c: "#bfdbfe"},
+    {id: "tABC", big: "Aa", label: tx("letters"), go: () => setMode({m: "lesson", set: "ABC"}), c: "#fde68a"},
+    {id: "t123", big: "123", label: tx("numbers"), go: () => setMode({m: "lesson", set: "123"}), c: "#bfdbfe"},
+    {id: "twords", big: "🐻 ➜ björn", label: tx("words"), go: () => setMode({m: "words"}), c: "#bbf7d0"},
+    {id: "tabc", big: "✏️", label: tx("trace"), go: () => setMode({m: "trace", set: "abc"}), c: "#fed7aa"},
     {id: "tdraw", big: "🎨", label: tx("draw"), go: () => setMode({m: "draw"}), c: "#fbcfe8"},
     {id: "tpop", big: "🎈", label: tx("balloons"), go: () => setMode({m: "balloons"}), c: "#fecaca"},
     {id: "tcount", big: "🐾", label: tx("count"), go: () => setMode({m: "count"}), c: "#ddd6fe"},

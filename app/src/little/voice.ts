@@ -1,13 +1,15 @@
 /* Year 1 voice: a parent's own recordings first (kept on this device in IndexedDB),
    otherwise the device's Swedish voice. Letters are said as "A … som apa". */
 
+import {CLIPS} from "./clips";
+
 /* a word and picture for each letter; digits are said by name */
 export const LETTER_WORD: Record<string, [string, string]> = {
-  A: ["apa", "🐒"], B: ["banan", "🍌"], C: ["citron", "🍋"], D: ["delfin", "🐬"], E: ["elefant", "🐘"], F: ["fisk", "🐟"],
-  G: ["gris", "🐷"], H: ["häst", "🐴"], I: ["igelkott", "🦔"], J: ["jordgubbe", "🍓"], K: ["katt", "🐱"], L: ["lejon", "🦁"],
-  M: ["mus", "🐭"], N: ["noshörning", "🦏"], O: ["orm", "🐍"], P: ["pingvin", "🐧"], Q: ["quiz", "❓"], R: ["räv", "🦊"],
-  S: ["sol", "☀️"], T: ["tåg", "🚂"], U: ["uggla", "🦉"], V: ["val", "🐋"], W: ["wok", "🥘"], X: ["xylofon", "🎶"],
-  Y: ["yxa", "🪓"], Z: ["zebra", "🦓"], "Å": ["åra", "🚣"], "Ä": ["ägg", "🥚"], "Ö": ["örn", "🦅"],
+  A: ["apa", "🐒"], B: ["björn", "🐻"], C: ["cikada", "🦗"], D: ["delfin", "🐬"], E: ["elefant", "🐘"], F: ["fisk", "🐟"],
+  G: ["giraff", "🦒"], H: ["häst", "🐴"], I: ["igelkott", "🦔"], J: ["jaguar", "🐆"], K: ["katt", "🐱"], L: ["lejon", "🦁"],
+  M: ["mus", "🐭"], N: ["noshörning", "🦏"], O: ["orm", "🐍"], P: ["pingvin", "🐧"], Q: ["quetzal", "🦜"], R: ["räv", "🦊"],
+  S: ["säl", "🦭"], T: ["tiger", "🐯"], U: ["uggla", "🦉"], V: ["val", "🐋"], W: ["wapiti", "🦌"], X: ["xylofon", "🎶"],
+  Y: ["yxa", "🪓"], Z: ["zebra", "🦓"], "Å": ["åsna", "🫏"], "Ä": ["älg", "🫎"], "Ö": ["örn", "🦅"],
 };
 export const NUM_WORD = ["noll", "ett", "två", "tre", "fyra", "fem", "sex", "sju", "åtta", "nio", "tio"];
 
@@ -57,17 +59,40 @@ if ("speechSynthesis" in window) speechSynthesis.onvoiceschanged = () => { voice
 export const hasDeviceVoice = () => { if (voice === undefined) voice = pickVoice(); return !!voice; };
 
 let playing: HTMLAudioElement | null = null;
+/* play bundled clips one after another ("L:A", "W:apa", "N:3", "P:bra") */
+function playSeq(keys: string[]) {
+  const urls = keys.map(k => CLIPS[k]).filter(Boolean);
+  if (!urls.length) return false;
+  let i = 0;
+  const next = () => { if (i >= urls.length) return; playing = new Audio(urls[i++]); playing.onended = () => setTimeout(next, 180); playing.play().catch(() => {}); };
+  next(); return true;
+}
+function stopAll() { try { playing?.pause(); speechSynthesis?.cancel(); } catch { /* ignore */ } }
+function device(text: string) {
+  if (!hasDeviceVoice()) return;
+  const u = new SpeechSynthesisUtterance(text);
+  u.voice = voice!; u.lang = voice!.lang; u.rate = 0.8; u.pitch = 1.1;
+  speechSynthesis.speak(u);
+}
+/* a word or short phrase: bundled clip, else the device voice */
+export function sayText(key: string, text: string, opts: {mode?: string; muted?: boolean} = {}) {
+  const mode = opts.mode || "auto";
+  if (opts.muted || mode === "off") return;
+  stopAll();
+  if (playSeq([key])) return;
+  if (mode !== "rec") device(text);
+}
 /* mode: "auto" = recording, else device voice; "rec" = recordings only; "off" */
 export async function say(ch: string, opts: {withWord?: boolean; mode?: string; muted?: boolean} = {}) {
   const mode = opts.mode || "auto";
   if (opts.muted || mode === "off") return;
   const k = keyOf(ch), clip = await getClip(k);
-  try { playing?.pause(); speechSynthesis?.cancel(); } catch { /* ignore */ }
+  stopAll();
   if (clip) { playing = new Audio(URL.createObjectURL(clip)); playing.play().catch(() => {}); return; }
-  if (mode === "rec" || !hasDeviceVoice()) return;
-  const u = new SpeechSynthesisUtterance(spoken(k, !!opts.withWord));
-  u.voice = voice!; u.lang = voice!.lang; u.rate = 0.8; u.pitch = 1.1;
-  speechSynthesis.speak(u);
+  if (mode === "rec") return;
+  const num = /^\d+$/.test(k), w = LETTER_WORD[k];
+  if (playSeq(num ? ["N:" + k] : opts.withWord && w ? ["L:" + k, "W:" + w[0]] : ["L:" + k])) return;
+  device(spoken(k, !!opts.withWord));
 }
 /* a plain number while counting (1–10), from a recording when there is one */
 export const sayNum = (n: number, o: {mode?: string; muted?: boolean} = {}) => say(String(n), o);
