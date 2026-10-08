@@ -30,7 +30,7 @@ function svWire(el){el.querySelectorAll("[data-w]").forEach(b=>b.onclick=()=>wor
 function svMark(text,newKeys){const hits=[];
   Object.keys(TERMS).forEach(k=>{const w=TERMS[k];if(!w.m||!(newKeys.includes(k)||w.sw))return;const re=new RegExp(w.m.source,"gi");let m;
     while((m=re.exec(text))){if(!m[0].length){re.lastIndex++;continue}hits.push({s:m.index,e:m.index+m[0].length,k})}});
-  hits.sort((a,b)=>a.s-b.s||b.e-a.e);let out="",pos=0;
+  hits.sort((a,b)=>a.s-b.s||b.e-a.e||newKeys.includes(b.k)-newKeys.includes(a.k));let out="",pos=0;
   hits.forEach(h=>{if(h.s<pos)return;out+=esc(text.slice(pos,h.s))+`<button class="svw${newKeys.includes(h.k)?" new":""}" data-w="${h.k}">${esc(text.slice(h.s,h.e))}</button>`;pos=h.e});
   return out+esc(text.slice(pos))}
 function svPage(U,part){const p=U.story[part];return`<div class="svpage"><div class="svpic">${p.pic||U.pic}</div><div class="svtext">
