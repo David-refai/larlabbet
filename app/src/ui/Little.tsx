@@ -4,16 +4,19 @@ import {useEffect, useMemo, useRef, useState} from "react";
 import {showReact} from "./mount";
 import {S, save, lang, REDUCED, welcome} from "../legacy/core.js";
 import {SETS, type SetId} from "../little/glyphs";
+import {say, sayNum, LETTER_WORD, NUM_WORD, ALL_KEYS, keyOf, putClip, dropClip, clipKeys, hasDeviceVoice} from "../little/voice";
 
 const TX: Record<string, Record<string, string>> = {
-  sv: {title: "Lilla labbet", hi: "Hej", trace: "Spåra", draw: "Rita", balloons: "Ballonger", count: "Räkna djur", find: "Hitta", clear: "Sudda", again: "Igen", next: "Nästa", stars: "stjärnor", howMany: "Hur många?"},
-  en: {title: "Little lab", hi: "Hi", trace: "Trace", draw: "Draw", balloons: "Balloons", count: "Count animals", find: "Find", clear: "Clear", again: "Again", next: "Next", stars: "stars", howMany: "How many?"},
-  ar: {title: "المختبر الصغير", hi: "مرحبًا", trace: "تتبّع", draw: "ارسم", balloons: "بالونات", count: "عُدّ الحيوانات", find: "ابحث عن", clear: "امسح", again: "مرة أخرى", next: "التالي", stars: "نجوم", howMany: "كم عددها؟"},
+  sv: {title: "Lilla labbet", hi: "Hej", trace: "Spåra", draw: "Rita", balloons: "Ballonger", count: "Räkna djur", find: "Hitta", clear: "Sudda", again: "Igen", next: "Nästa", stars: "stjärnor", howMany: "Hur många?", rec: "Spela in rösten", recHelp: "Tryck på 🎙, säg ljudet tydligt och tryck igen. Barnet hör sedan din röst.", say: "Säg", voice: "Röst", vAuto: "Inspelad eller enhetens röst", vRec: "Bara inspelad", vOff: "Av", noMic: "Mikrofonen gick inte att öppna. Välj en ljudfil i stället.", noVoice: "Den här enheten har ingen svensk röst. Spela in din egen."},
+  en: {title: "Little lab", hi: "Hi", trace: "Trace", draw: "Draw", balloons: "Balloons", count: "Count animals", find: "Find", clear: "Clear", again: "Again", next: "Next", stars: "stars", howMany: "How many?", rec: "Record the voice", recHelp: "Tap 🎙, say the sound clearly and tap again. Your child then hears your voice.", say: "Say", voice: "Voice", vAuto: "Recorded or device voice", vRec: "Recorded only", vOff: "Off", noMic: "Could not open the microphone. Pick a sound file instead.", noVoice: "This device has no Swedish voice. Record your own."},
+  ar: {title: "المختبر الصغير", hi: "مرحبًا", trace: "تتبّع", draw: "ارسم", balloons: "بالونات", count: "عُدّ الحيوانات", find: "ابحث عن", clear: "امسح", again: "مرة أخرى", next: "التالي", stars: "نجوم", howMany: "كم عددها؟", rec: "سجّل الصوت", recHelp: "اضغط 🎙 وانطق الصوت بوضوح ثم اضغط مرة أخرى. سيسمع الطفل صوتك.", say: "قل", voice: "الصوت", vAuto: "المسجَّل أو صوت الجهاز", vRec: "المسجَّل فقط", vOff: "مطفأ", noMic: "تعذّر فتح الميكروفون. اختر ملفًا صوتيًا بدلًا من ذلك.", noVoice: "لا يوجد صوت سويدي على هذا الجهاز. سجّل صوتك."},
 };
 const tx = (k: string) => (TX[lang] || TX.sv)[k];
 
-type Little = {stars: number; t: Record<string, number>};
+type Little = {stars: number; t: Record<string, number>; voice?: string};
 const LS = (): Little => { if (!S.little) S.little = {stars: 0, t: {}}; return S.little; };
+const vo = () => ({mode: LS().voice || "auto", muted: S.sound === false});
+const talk = (ch: string, withWord = false) => { say(ch, {...vo(), withWord}); };
 function addStar(key?: string) { const l = LS(); l.stars++; if (key) l.t[key] = (l.t[key] || 0) + 1; save(); }
 
 /* small cheerful tones (no voice); follows the app's sound switch */
@@ -37,13 +40,13 @@ const COLORS = ["#ef4444", "#f97316", "#facc15", "#22c55e", "#06b6d4", "#3b82f6"
 const rnd = (n: number) => Math.floor(Math.random() * n);
 const pickOne = <X,>(a: readonly X[]) => a[rnd(a.length)];
 
-type Mode = {m: "home"} | {m: "trace"; set: SetId} | {m: "draw"} | {m: "balloons"} | {m: "count"};
+type Mode = {m: "rec"} | {m: "home"} | {m: "trace"; set: SetId} | {m: "draw"} | {m: "balloons"} | {m: "count"};
 
-function Party({animal, onNext, onAgain}: {animal: string; onNext?: () => void; onAgain?: () => void}) {
+function Party({animal, word, onNext, onAgain}: {animal: string; word?: string; onNext?: () => void; onAgain?: () => void}) {
   const balls = useMemo(() => Array.from({length: 14}, (_, i) => ({i, x: rnd(92), d: 2.2 + Math.random() * 2, c: pickOne(COLORS), w: Math.random() * .8})), []);
   return <div className="lparty" role="status">
     {balls.map(b => <span key={b.i} className="lball" style={{left: b.x + "%", background: b.c, animationDuration: b.d + "s", animationDelay: b.w + "s"}} />)}
-    <div className="lwin"><span className="lstar">⭐</span><span className="ljump">{animal}</span>
+    <div className="lwin"><span className="lstar">⭐</span><span className="ljump">{animal}</span>{word && <b className="lword">{word}</b>}
       <div className="row" style={{justifyContent: "center"}}>
         {onAgain && <button className="lbtn ghost" onClick={onAgain} aria-label={tx("again")}>↻</button>}
         {onNext && <button className="lbtn" id="lnext" onClick={onNext} aria-label={tx("next")}>➜</button>}
@@ -73,7 +76,7 @@ function Trace({set, home}: {set: SetId; home: () => void}) {
   const [, force] = useState(0);
   const animal = useMemo(() => pickOne(ANIMALS), [ch]);
 
-  useEffect(() => { setCur(0); setInk([]); setWon(false); reach.current = -1; }, [ch]);
+  useEffect(() => { setCur(0); setInk([]); setWon(false); reach.current = -1; talk(ch); }, [ch]);
   /* a ladybug walks along the stroke to show where to start and which way to go */
   useEffect(() => {
     if (won || cur >= smp.length) { setBug(null); return; }
@@ -102,7 +105,7 @@ function Trace({set, home}: {set: SetId; home: () => void}) {
     }
     if (reach.current >= pts.length - 2) {
       reach.current = -1; const nx = cur + 1; setCur(nx); live.current = null; setInk([]);
-      if (nx >= smp.length) { setWon(true); yay(); addStar(set + ch); } else ding();
+      if (nx >= smp.length) { setWon(true); yay(); addStar(set + ch); setTimeout(() => talk(ch, true), 700); } else ding();
     }
   }
   function down(e: React.PointerEvent) {
@@ -128,7 +131,7 @@ function Trace({set, home}: {set: SetId; home: () => void}) {
     <div className="ltop">
       <button className="lbtn ghost" onClick={home} aria-label="home">🏠</button>
       <button className="lbtn ghost" onClick={() => go(-1)} aria-label="prev">◀</button>
-      <span className="lbig">{ch}</span>
+      <button className="lbig" id="lsay" onClick={() => talk(ch, true)} aria-label={tx("say")}>{ch} <small>🔊</small></button>
       <button className="lbtn ghost" onClick={() => go(1)} aria-label={tx("next")}>▶</button>
       <button className="lbtn ghost" onClick={() => { setCur(0); setInk([]); reach.current = -1; }} aria-label={tx("again")}>↻</button>
     </div>
@@ -148,7 +151,7 @@ function Trace({set, home}: {set: SetId; home: () => void}) {
     </svg>
     <div className="lstrip">{chars.map((c, i) =>
       <button key={c} className={"lchip" + (i === idx ? " on" : "") + (LS().t[set + c] ? " ok" : "")} onClick={() => setIdx(i)}>{c}</button>)}</div>
-    {won && <Party animal={animal} onAgain={() => { setCur(0); setInk([]); setWon(false); }} onNext={() => go(1)} />}
+    {won && <Party animal={LETTER_WORD[keyOf(ch)]?.[1] || animal} word={LETTER_WORD[keyOf(ch)] ? ch + " som " + LETTER_WORD[keyOf(ch)][0] : NUM_WORD[+ch]} onAgain={() => { setCur(0); setInk([]); setWon(false); }} onNext={() => go(1)} />}
   </div>;
 }
 
@@ -198,7 +201,7 @@ function Balloons({home}: {home: () => void}) {
   const idn = useRef(0), animal = useMemo(() => pickOne(ANIMALS), [won]);
   function round() {
     const kinds = ["ABC", "abc", "123"] as const, k = pickOne(kinds); pool.current = k;
-    setTarget(pickOne(SETS[k].chars)); setGot(0); setWon(false); setBalls([]);
+    const t = pickOne(SETS[k].chars); setTarget(t); setGot(0); setWon(false); setBalls([]); setTimeout(() => talk(t), 300);
   }
   useEffect(round, []);
   useEffect(() => {
@@ -214,13 +217,13 @@ function Balloons({home}: {home: () => void}) {
   function tap(b: Ball) {
     if (b.popped) return;
     if (b.ch === target) {
-      pop(); setBalls(bs => bs.map(x => x.id === b.id ? {...x, popped: true} : x));
+      pop(); talk(target); setBalls(bs => bs.map(x => x.id === b.id ? {...x, popped: true} : x));
       const n = got + 1; setGot(n); if (n >= GOAL) { setWon(true); yay(); addStar("pop" + target); }
     } else { oops(); setBalls(bs => bs.map(x => x.id === b.id ? {...x, shake: true} : x)); setTimeout(() => setBalls(bs => bs.map(x => x.id === b.id ? {...x, shake: false} : x)), 500); }
   }
   return <div className="lstage">
     <div className="ltop"><button className="lbtn ghost" onClick={home} aria-label="home">🏠</button>
-      <span className="ltarget">🎯 <b id="ltarget">{target}</b></span>
+      <button className="ltarget" onClick={() => talk(target)} aria-label={tx("say")}>🎯 <b id="ltarget">{target}</b> 🔊</button>
       <span className="lgot">{Array.from({length: GOAL}, (_, i) => <i key={i} className={i < got ? "on" : ""}>🎈</i>)}</span></div>
     <div className="lsky" id="lsky">{balls.map(b =>
       <button key={b.id} className={"lballoon" + (b.popped ? " popped" : "") + (b.shake ? " shake" : "")} data-ch={b.ch}
@@ -243,12 +246,12 @@ function Count({home}: {home: () => void}) {
   const next = () => { setQ(mk(max)); setMarks([]); setWon(false); setBad(null); };
   function answer(o: number) {
     if (o === q.n) {
-      yay(); setWon(true); addStar("count"); streak.current++;
+      yay(); setWon(true); addStar("count"); setTimeout(() => sayNum(q.n, vo()), 500); streak.current++;
       if (streak.current >= 3 && max < 10) { setMax(max + 1); streak.current = 0; }
     } else { oops(); setBad(o); streak.current = 0; setTimeout(() => setBad(null), 600); }
   }
   /* tapping an animal puts the next number on it, so counting is one tap per animal */
-  const mark = (i: number) => { if (!marks.includes(i)) { setMarks([...marks, i]); tone([500 + marks.length * 60], 0.08); } };
+  const mark = (i: number) => { if (!marks.includes(i)) { setMarks([...marks, i]); sayNum(marks.length + 1, vo()); } };
   return <div className="lstage">
     <div className="ltop"><button className="lbtn ghost" onClick={home} aria-label="home">🏠</button><span className="ltarget">{tx("howMany")}</span></div>
     <div className={"lfarm" + (won ? " dance" : "")} id="lfarm">{Array.from({length: q.n}, (_, i) =>
@@ -268,6 +271,7 @@ function Little() {
   if (mode.m === "draw") return <Draw home={home} />;
   if (mode.m === "balloons") return <Balloons home={home} />;
   if (mode.m === "count") return <Count home={home} />;
+  if (mode.m === "rec") return <Record home={home} />;
   const tiles: {id: string; big: string; label: string; go: () => void; c: string}[] = [
     {id: "tABC", big: "ABC", label: tx("trace"), go: () => setMode({m: "trace", set: "ABC"}), c: "#fde68a"},
     {id: "tabc", big: "abc", label: tx("trace"), go: () => setMode({m: "trace", set: "abc"}), c: "#bbf7d0"},
@@ -283,6 +287,44 @@ function Little() {
     <div className="ltiles">{tiles.map(t =>
       <button key={t.id} id={t.id} className="ltile" style={{background: t.c}} onClick={t.go}>
         <span className="lbigt">{t.big}</span><span>{t.label}</span></button>)}</div>
+    <div className="lparent">
+      <button className="btn ghost" id="lrec" onClick={() => setMode({m: "rec"})}>🎙 {tx("rec")}</button>
+    </div>
+  </div>;
+}
+
+/* ---------- for the parent: record each letter and number in their own voice ---------- */
+function Record({home}: {home: () => void}) {
+  const [have, setHave] = useState<string[]>([]), [on, setOn] = useState<string | null>(null), [mode, setMode] = useState(LS().voice || "auto"), [err, setErr] = useState("");
+  const rec = useRef<MediaRecorder | null>(null), file = useRef<HTMLInputElement>(null), fileKey = useRef("");
+  useEffect(() => { clipKeys().then(setHave); }, []);
+  const done = async (k: string, b: Blob) => { await putClip(k, b); setHave(await clipKeys()); say(k, {mode: "rec"}); };
+  async function toggle(k: string) {
+    if (on) { rec.current?.stop(); return; }
+    try {
+      const st = await navigator.mediaDevices.getUserMedia({audio: true}), r = new MediaRecorder(st), parts: Blob[] = [];
+      r.ondataavailable = e => parts.push(e.data);
+      r.onstop = () => { st.getTracks().forEach(t => t.stop()); setOn(null); done(k, new Blob(parts, {type: r.mimeType || "audio/webm"})); };
+      rec.current = r; r.start(); setOn(k); setErr("");
+    } catch { setErr(tx("noMic")); fileKey.current = k; file.current?.click(); }
+  }
+  const setV = (v: string) => { LS().voice = v; save(); setMode(v); };
+  const phrase = (k: string) => /\d/.test(k) ? NUM_WORD[+k] : `${k} som ${LETTER_WORD[k][0]} ${LETTER_WORD[k][1]}`;
+  return <div className="stack" style={{direction: "ltr"}}>
+    <div className="ltop" style={{justifyContent: "flex-start"}}><button className="lbtn ghost" onClick={home} aria-label="home">🏠</button><h2 style={{margin: 0}}>🎙 {tx("rec")}</h2></div>
+    <p className="muted">{tx("recHelp")}</p>
+    {!hasDeviceVoice() && <p className="muted">ℹ️ {tx("noVoice")}</p>}
+    <div className="seg" role="group" id="lvoice">{[["auto", tx("vAuto")], ["rec", tx("vRec")], ["off", tx("vOff")]].map(([v, l]) =>
+      <button key={v} aria-pressed={mode === v} onClick={() => setV(v)}>{l}</button>)}</div>
+    {err && <p className="err">{err}</p>}
+    <input ref={file} type="file" accept="audio/*" capture="user" hidden onChange={e => { const f = e.target.files?.[0]; if (f) done(fileKey.current, f); e.target.value = ""; }} />
+    <div className="lrecs">{ALL_KEYS.map(k =>
+      <div key={k} className={"lrecrow" + (have.includes(k) ? " ok" : "")}>
+        <b className="lreck">{k}</b><span className="lrecp">{phrase(k)}</span>
+        <button className={"lbtn" + (on === k ? " recording" : " ghost")} disabled={!!on && on !== k} onClick={() => toggle(k)} aria-label="record">{on === k ? "⏹" : "🎙"}</button>
+        <button className="lbtn ghost" onClick={() => say(k, {mode: have.includes(k) ? "rec" : "auto", withWord: true})} aria-label="play">▶</button>
+        {have.includes(k) && <button className="lbtn ghost" onClick={async () => { await dropClip(k); setHave(await clipKeys()); }} aria-label="delete">🗑</button>}
+      </div>)}</div>
   </div>;
 }
 
