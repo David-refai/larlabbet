@@ -1,11 +1,21 @@
 #!/usr/bin/env python3
 """Make the Year 1 voice clips with Piper (Swedish voice sv_SE-nst-medium) and write app/src/little/clips.ts.
-Usage: python3 tools/make-voice-piper.py path/to/sv_SE-nst-medium.onnx   (the .onnx.json must sit next to it)
+Usage: python3 tools/make-voice-piper.py path/to/sv_SE-nst-medium.onnx   (uses the .onnx.json next to it, else the standard config)
 Needs: pip install piper-tts; ffmpeg optional (mp3, smaller), else wav."""
-import base64, io, json, re, shutil, subprocess, sys, wave
+import base64, io, json, os, re, shutil, subprocess, sys, tempfile, wave
 from piper import PiperVoice
+from piper.phoneme_ids import DEFAULT_PHONEME_ID_MAP
 
-voice = PiperVoice.load(sys.argv[1])
+model = sys.argv[1]
+cfg = model + ".json"
+if not os.path.exists(cfg):  # the standard config of Piper's espeak voices (sv_SE-nst-medium: 22 050 Hz, one speaker)
+    cfg = os.path.join(tempfile.mkdtemp(), "sv.json")
+    json.dump({"audio": {"sample_rate": 22050}, "espeak": {"voice": "sv"}, "phoneme_type": "espeak", "num_symbols": 256,
+               "num_speakers": 1, "inference": {"noise_scale": 0.667, "length_scale": 1, "noise_w": 0.8},
+               "phoneme_id_map": DEFAULT_PHONEME_ID_MAP}, open(cfg, "w"))
+voice = PiperVoice.load(model, config_path=cfg)
+from piper import SynthesisConfig
+SLOW = SynthesisConfig(length_scale=1.25)  # a little slower and clearer for children
 src = open("app/src/little/voice.ts", encoding="utf8").read()
 letters = re.findall(r'"?([A-ZÅÄÖ])"?: \["([^"]+)"', src)
 nums = ["noll", "ett", "två", "tre", "fyra", "fem", "sex", "sju", "åtta", "nio", "tio"]
@@ -17,7 +27,7 @@ NAME = {"A": "a", "B": "be", "C": "se", "D": "de", "E": "e", "F": "eff", "G": "g
 def clip(text):
     buf = io.BytesIO()
     with wave.open(buf, "wb") as w:
-        voice.synthesize_wav(text, w) if hasattr(voice, "synthesize_wav") else voice.synthesize(text, w)
+        voice.synthesize_wav(text, w, syn_config=SLOW)
     raw = buf.getvalue()
     if shutil.which("ffmpeg"):
         mp3 = subprocess.run(["ffmpeg", "-loglevel", "error", "-i", "-", "-ac", "1", "-b:a", "40k", "-f", "mp3", "-"],

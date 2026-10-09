@@ -4,7 +4,7 @@ import {useEffect, useMemo, useRef, useState} from "react";
 import {showReact} from "./mount";
 import {S, save, lang, REDUCED, welcome} from "../legacy/core.js";
 import {SETS, type SetId} from "../little/glyphs";
-import {say, sayNum, sayText, LETTER_WORD, NUM_WORD, ALL_KEYS, keyOf, putClip, dropClip, clipKeys, hasDeviceVoice} from "../little/voice";
+import {say, sayNum, sayText, LETTER_WORD, NUM_WORD, ALL_KEYS, keyOf, putClip, dropClip, clipKeys, hasVoice} from "../little/voice";
 
 const TX: Record<string, Record<string, string>> = {
   sv: {title: "Lilla labbet", hi: "Hej", trace: "Spåra", letters: "Bokstäver", numbers: "Siffror", words: "Ord", draw: "Rita", balloons: "Ballonger", count: "Räkna djur", find: "Hitta", clear: "Sudda", again: "Igen", next: "Nästa", stars: "stjärnor", howMany: "Hur många?", rec: "Spela in rösten", recHelp: "Tryck på 🎙, säg ljudet tydligt och tryck igen. Barnet hör sedan din röst.", say: "Säg", voice: "Röst", vAuto: "Inspelad eller enhetens röst", vRec: "Bara inspelad", vOff: "Av", noMic: "Mikrofonen gick inte att öppna. Välj en ljudfil i stället.", noVoice: "Den här enheten har ingen svensk röst. Spela in din egen."},
@@ -427,7 +427,7 @@ function Record({home}: {home: () => void}) {
   return <div className="stack" style={{direction: "ltr"}}>
     <div className="ltop" style={{justifyContent: "flex-start"}}><button className="lbtn ghost" onClick={home} aria-label="home">🏠</button><h2 style={{margin: 0}}>🎙 {tx("rec")}</h2></div>
     <p className="muted">{tx("recHelp")}</p>
-    {!hasDeviceVoice() && <p className="muted">ℹ️ {tx("noVoice")}</p>}
+    {!hasVoice() && <p className="muted">ℹ️ {tx("noVoice")}</p>}
     <div className="seg" role="group" id="lvoice">{[["auto", tx("vAuto")], ["rec", tx("vRec")], ["off", tx("vOff")]].map(([v, l]) =>
       <button key={v} aria-pressed={mode === v} onClick={() => setV(v)}>{l}</button>)}</div>
     {err && <p className="err">{err}</p>}

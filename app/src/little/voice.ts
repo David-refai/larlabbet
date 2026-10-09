@@ -96,3 +96,5 @@ export async function say(ch: string, opts: {withWord?: boolean; mode?: string; 
 }
 /* a plain number while counting (1–10), from a recording when there is one */
 export const sayNum = (n: number, o: {mode?: string; muted?: boolean} = {}) => say(String(n), o);
+/* true when letters can be heard without a recording (bundled clips or a device voice) */
+export const hasVoice = () => Object.keys(CLIPS).length > 0 || hasDeviceVoice();
