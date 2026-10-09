@@ -2,7 +2,7 @@
    pop balloons with the right letter, and count animals. Few words: big pictures and buttons. */
 import {useEffect, useMemo, useRef, useState} from "react";
 import {showReact} from "./mount";
-import {S, save, lang, REDUCED, welcome} from "../legacy/core.js";
+import {S, save, lang, REDUCED, welcome, ACC, T, parents} from "../legacy/core.js";
 import {SETS, type SetId} from "../little/glyphs";
 import {say, sayNum, sayText, LETTER_WORD, NUM_WORD, ALL_KEYS, keyOf, putClip, dropClip, clipKeys, hasVoice} from "../little/voice";
 
@@ -401,9 +401,11 @@ function Little() {
     <div className="ltiles">{tiles.map(t =>
       <button key={t.id} id={t.id} className="ltile" style={{background: t.c}} onClick={t.go}>
         <span className="lbigt">{t.big}</span><span>{t.label}</span></button>)}</div>
-    <div className="lparent">
+    {/* grown-up buttons; a child signed in with their own login does not see them */}
+    {!ACC.kid && <div className="lparent">
+      <button className="btn ghost" id="lpar" onClick={parents}>👪 {T("parentsT")}</button>
       <button className="btn ghost" id="lrec" onClick={() => setMode({m: "rec"})}>🎙 {tx("rec")}</button>
-    </div>
+    </div>}
   </div>;
 }
 

@@ -17,7 +17,7 @@ let toastT;function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;
 
 /* ---------- language ---------- */
 const UI={
- sv:{help:"🤔 Jag förstår inte",helpEasy:"enklare förklaring",helpMore:"Visa mer →",helpAgain:"Vi tittar en gång till, lugnt och steg för steg.",backToLesson:"Tillbaka till lektionen →",prev:"← Förra",keyNext:"eller tryck på piltangenten →",keyPrev:"eller tryck på piltangenten ←",course:"Matematik för årskurs 4",courseY:y=>`Matematik för årskurs ${y}`,courseS:(n,y)=>`${n} för årskurs ${y}`,subSoon:(n,y)=>`${n} för årskurs ${y} kommer snart. Du kan öva tidigare årskurser här under.`,courseDone:(a,b)=>`${a} av ${b} lektioner klara`,courseNote:"Gör lektionerna i ordning. Varje lektion slutar med egna övningar.",hello:"Hej! Jag är Olle.",intro:"Här läser vi inte bara. Vi ser saker röra sig, rör vid dem och testar själva. Berätta lite om dig, så väljer jag frågor som passar dig.",
+ sv:{help:"🤔 Jag förstår inte",helpEasy:"enklare förklaring",helpMore:"Visa mer →",helpAgain:"Vi tittar en gång till, lugnt och steg för steg.",trTitle:"Översättning: ingen, engelska eller arabiska",backToLesson:"Tillbaka till lektionen →",prev:"← Förra",keyNext:"eller tryck på piltangenten →",keyPrev:"eller tryck på piltangenten ←",course:"Matematik för årskurs 4",courseY:y=>`Matematik för årskurs ${y}`,courseS:(n,y)=>`${n} för årskurs ${y}`,subSoon:(n,y)=>`${n} för årskurs ${y} kommer snart. Du kan öva tidigare årskurser här under.`,courseDone:(a,b)=>`${a} av ${b} lektioner klara`,courseNote:"Gör lektionerna i ordning. Varje lektion slutar med egna övningar.",hello:"Hej! Jag är Olle.",intro:"Här läser vi inte bara. Vi ser saker röra sig, rör vid dem och testar själva. Berätta lite om dig, så väljer jag frågor som passar dig.",
   name:"Ditt namn",ph:"till exempel Sara",grade:"Vilken årskurs går du i?",start:"Nu kör vi!",needName:"Skriv ditt namn först ✏️",pickGrade:"Välj din årskurs först",
   greet:n=>n?`Hej ${n}! Välj en lektion`:"Hej! Välj en lektion",soon:"snart",scenes:n=>`${n} interaktiva scener`,forGrades:g=>`Åk ${g}`,gradeChip:g=>`Åk ${g}`,
   back:"← Lektioner",next:"Nästa →",replay:"↻ Igen",toChallenge:"Till utmaningen →",toPractice:"Öva själv →",yourTurnPick:"Välj rätt svar under tavlan.",yourTurn:"Skriv svaret under tavlan och tryck på Kolla.",check:"Kolla",needAnswer:"Skriv ett svar först",nextProblem:"Nästa uppgift →",finish:"Klar →",showSol:"Visa lösningen",wrongSol:a=>`Inte riktigt. Svaret är ${a}. Titta hur vi löser det på tavlan!`,practiceMore:"Öva mer",teacher:"Olle",voice:"Uppläsning",sound:"Skrivljud på/av",profile:"Byt namn eller årskurs",great:"Bra jobbat!",
@@ -44,7 +44,12 @@ const UI={
 };
 let lang="sv";
 const T=k=>UI[lang][k];
+/* Everything is in Swedish (David, 2026-10-09): lang stays "sv". The SV / EN / عربي switch now picks a
+   translation (S.tr "en" or "ar", "" for none), shown under Olle's words and on word cards. */
 const L=o=>o&&typeof o==="object"&&!Array.isArray(o)?(o[lang]??o.en):o;
+const trOn=()=>typeof S!=="undefined"&&S&&(S.tr==="en"||S.tr==="ar")?S.tr:"";
+const LT=o=>{const t=trOn();return{s:L(o),t:t&&o&&typeof o==="object"?o[t]||"":""}};
+const trSpan=t=>t?`<span class="trl" dir="auto">${esc(t)}</span>`:"";
 const FONT=(w,s)=>`${w} ${s}px Figtree, "IBM Plex Sans Arabic", sans-serif`;
 
 
@@ -61,12 +66,12 @@ try{const p=JSON.parse(localStorage.getItem(PKEY)||"null");if(p&&p.kids){PROF.cu
 try{const r=JSON.parse(localStorage.getItem(KEY)||"null");if(r&&r.lessons&&(r.name||r.grade)&&!PROF.kids.k0&&!PROF.gone.k0){PROF.kids.k0=Object.assign(clean(r),{id:"k0"});if(!PROF.cur)PROF.cur="k0"}localStorage.removeItem(KEY)}catch(e){}
 const kidList=()=>Object.values(PROF.kids).filter(k=>k.name&&k.grade).sort((a,b)=>a.name.localeCompare(b.name));
 let S=PROF.kids[PROF.cur]||Object.assign(fresh(),{id:newId()});
-lang=S.lang||(kidList()[0]||{}).lang||"sv";
+lang="sv";
 /* saveLocal keeps this browser's copy; save also marks a real change and sends it to the account copy when signed in */
 const saveLocal=()=>{if(S.name&&S.grade){PROF.kids[S.id]=S;PROF.cur=S.id}try{localStorage.setItem(PKEY,JSON.stringify(PROF))}catch(e){}};
 function save(){S.upd=Date.now();saveLocal();pushCloud();if(typeof accPush==="function")accPush()}
 function useKid(id){leave();S=PROF.kids[id]||Object.assign(fresh(),{id:newId(),lang});PROF.cur=PROF.kids[id]?id:PROF.cur;saveLocal();viewYear=null;tabNow="math";
-  lang=S.lang||lang;S.lang=lang;$("#wrap").dir=lang==="ar"?"rtl":"ltr";document.documentElement.lang=lang;document.querySelectorAll("#langs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===lang));hud()}
+  markTr();hud()}
 function dropKid(id){if(S.id===id)S=Object.assign(fresh(),{id:newId(),lang});delete PROF.kids[id];PROF.gone[id]=Date.now();if(PROF.cur===id)PROF.cur=null;saveLocal();goneCloud(id)}
 function hud(){SFX.on=S.sound!==false;
   $("#hud").innerHTML=(CLOUD.on?`<span class="chip" title="${T("cloud")}">☁️</span>`:"")+`<button class="chip" id="snd" aria-pressed="${SFX.on}" title="${T("sound")}">${SFX.on?"🔊":"🔇"}</button>`+(S.grade?`<span class="chip">★ ${S.xp}</span><button class="chip" id="who" title="${T("whoSwitch")}">👤 ${esc(S.name)}</button><button class="chip" id="prof" title="${T("profile")}">${T("gradeChip")(S.grade)} ✎</button>`:"");
@@ -2772,7 +2777,7 @@ function showWords(keys){const el=$("#words");if(!el)return;keys=(keys||[]).filt
   el.querySelectorAll(".wchip").forEach(b=>b.onclick=()=>wordCard([b.dataset.w]))}
 function wordCard(keys,title){const p=$("#wpop");
   p.innerHTML=`<div class="wcard" role="dialog" aria-modal="true">${title?`<h3>${esc(title)}</h3>`:""}${keys.map(k=>{const w=TERMS[k];return`<div class="wrow">
-    <b class="wsv">${esc(w.sv)}</b><span class="wtr">${w.tr?["en","ar"].filter(x=>w.tr[x]).map(x=>`<span dir="auto">${x.toUpperCase()}: ${esc(w.tr[x])}</span>`).join(""):""}</span>
+    <b class="wsv">${esc(w.sv)}</b><span class="wtr">${w.tr?[trOn()].filter(x=>x&&w.tr[x]).map(x=>`<span dir="auto">${x.toUpperCase()}: ${esc(w.tr[x])}</span>`).join(""):""}</span>
     <p>${esc(L(w.d))}</p>${w.ex?`<p class="wex" dir="ltr">${esc(w.ex)}</p>`:""}</div>`}).join("")}<button class="btn" id="wok">${T("wordsOk")}</button></div>`;
   p.hidden=false;const close=()=>{p.hidden=true;p.innerHTML=""};$("#wok").onclick=close;p.onclick=e=>{if(e.target===p)close()};$("#wok").focus()}
 /* a quick "what does this word mean?" question, so the words come back like everything else */
@@ -2796,7 +2801,8 @@ const COURSES={4:["pv4","round","placevalue","sub","mul","div","fractions","dec"
  8:["pow8","root8","sci8","speed8","pct8","interest8","paren8","eq8","pyth8","vol8","sim8","poly8","lin8","seq8","spread8","tree8"],
  9:["quad9","qeq9","formula9","sys9","line9","nonlin9","exp9","pct9","cone9","surf9","scale9","pythapp9","comb9","prob9","crit9","prog9"]};
 const ORD4=COURSES[4];
-LESSONS.forEach(l=>{for(const y in COURSES){const k=COURSES[y].indexOf(l.id);if(k>=0){l.ord=k+1;l.year=+y}}});
+/* year and order come from COURSES; run from start(), after every lesson file has added its lessons */
+function courseMeta(){LESSONS.forEach(l=>{for(const y in COURSES){const k=COURSES[y].indexOf(l.id);if(k>=0){l.ord=k+1;l.year=+y}}})}
 
 /* =====================================================================
    "I don't get it" help. HELP: a shorter, more concrete explanation of the
@@ -2900,8 +2906,9 @@ const HINTS={
   {say:t3("Räkna baklänges med det motsatta räknesättet. Gånger blir delat med.","Work backwards with the opposite operation. Times becomes divided by.","احسب بالعكس بالعملية المعاكسة: الضرب يصبح قسمة."),cut:g=>g.sol.slice(0,3)}]
 };
 Object.assign(HELP,HELPX);Object.assign(HINTS,HINTSX);
-LESSONS.forEach(l=>{if(HELP[l.id])l.help=HELP[l.id];const H=HINTS[l.id];if(!H||!l.gen)return;const g0=l.gen;
- l.gen=lv=>{const g=g0(lv),h=H[Math.min(lv,H.length-1)];let d=[];try{d=h.cut?h.cut(g):[]}catch(e){}g.hint={say:h.say,draw:d};return g}});
+/* help scenes and practice hints (HELPX/HINTSX are filled by the lesson files too), applied once from start() */
+function helpMeta(){Object.assign(HELP,HELPX);Object.assign(HINTS,HINTSX);LESSONS.forEach(l=>{if(l.metaDone)return;l.metaDone=true;if(HELP[l.id])l.help=HELP[l.id];const H=HINTS[l.id];if(!H||!l.gen)return;const g0=l.gen;
+ l.gen=lv=>{const g=g0(lv),h=H[Math.min(lv,H.length-1)];let d=[];try{d=h.cut?h.cut(g):[]}catch(e){}g.hint={say:h.say,draw:d};return g}})}
 
 /* =================== v8: placement test, mistake notebook, daily review, parents page, badges, cloud sync =================== */
 Object.assign(UI.sv,{placeTitle:"Nivåtest",placeHero:"Ett kort test först?",placeText:"Några snabba frågor, cirka 5 minuter, så vet jag vilken lektion du ska börja med. Det gör inget om du inte kan svaret.",
@@ -3016,7 +3023,7 @@ function showBadge(){const el=$("#bpop");if(!el||!el.hidden||!bq.length)return;c
 
 /* ---- active time: counted only while a lesson or review is open, the tab is visible and the student did something in the last 2 minutes ---- */
 let lastAct=Date.now();["pointerdown","keydown"].forEach(ev=>document.addEventListener(ev,()=>{lastAct=Date.now()},{capture:true}));
-setInterval(()=>{if(!active||!S.grade||document.visibilityState!=="visible"||Date.now()-lastAct>120000)return;dayRec().sec+=15;saveLocal()},15000);
+setInterval(()=>{if((!active&&!(S.grade===1&&screen===map))||!S.grade||document.visibilityState!=="visible"||Date.now()-lastAct>120000)return;dayRec().sec+=15;saveLocal()},15000);
 
 /* ---- cloud sync: one private document per child ("kid-<id>") in the signed-in viewer's own folder, merged with this browser's copy ---- */
 const CLOUD={on:false,col:null,t:0,busy:false,again:false,dirty:new Set()};
@@ -3071,7 +3078,7 @@ function takeKid(id,d){if(!d)return false;
 /* ---- one problem on the board, shared by practice, placement and the reviews ----
    o: head (text before "type the answer"), hint, sol (draw the solution when wrong), skip ("I don't know"), next() label, onNext */
 function hintNow(ctx){const c=ctx.cur;if(!c||!c.g.hint||c.hinted||c.judged)return;c.hinted=true;ctx.helpBtn.disabled=true;S.tot.hints++;saveLocal();
-  if(c.g.hint.draw.length)ctx.wb.run(c.g.hint.draw);ctx.talk(L(c.g.hint.say))}
+  if(c.g.hint.draw.length)ctx.wb.run(c.g.hint.draw);ctx.talk(LT(c.g.hint.say))}
 function poseProblem(ctx,g,o,done){
   const {wb,talk,helpBtn,av}=ctx,ctrl=$("#ctrl"),quiz=$("#quiz");ctx.cur={g,hinted:false,judged:false};
   wb.run(g.q);helpBtn.hidden=!(o.hint&&g.hint);helpBtn.disabled=false;
@@ -3114,10 +3121,10 @@ function poseProblem(ctx,g,o,done){
 }
 
 /* ---- the owl's speech for screens outside a lesson ---- */
-function makeTalk(av,say){let typeT,full="",typed=true,cb=null;
-  const finish=()=>{clearInterval(typeT);say.innerHTML=esc(full).replace(/(\d[\d  ,.:\/·×÷+−=≈<>□²-]*\d|\d)/g,'<b class="n">$1</b>');typed=true;av.classList.remove("talking");const c=cb;cb=null;c&&c()};
+function makeTalk(av,say){let typeT,full="",typed=true,cb=null,tr="";
+  const finish=()=>{clearInterval(typeT);say.innerHTML=esc(full).replace(/(\d[\d  ,.:\/·×÷+−=≈<>□²-]*\d|\d)/g,'<b class="n">$1</b>')+trSpan(tr);typed=true;av.classList.remove("talking");const c=cb;cb=null;c&&c()};
   say.onclick=()=>{if(!typed)finish()};
-  return{finish,typed:()=>typed,talk(text,done){full=text;cb=done||null;clearInterval(typeT);say.textContent="";typed=false;av.classList.remove("happy");av.classList.add("talking");
+  return{finish,typed:()=>typed,talk(text,done){tr="";if(text&&typeof text==="object"){tr=text.t;text=text.s}full=text;cb=done||null;clearInterval(typeT);say.textContent="";typed=false;av.classList.remove("happy");av.classList.add("talking");
     if(REDUCED){finish();return}let n=0;typeT=setInterval(()=>{n+=2;say.textContent=text.slice(0,n);if(n>=text.length)finish()},30)}}}
 
 /* the course as a row of numbered circles: green = already known, orange = where to start */
@@ -3146,10 +3153,10 @@ function drill(mode){
   const title={place:T("placeTitle"),daily:T("dailyT"),notes:T("notesT")}[mode];
   app.innerHTML=`<div class="lesson">
    <div class="lhead"><button class="btn ghost" id="back" style="padding:5px 16px">${T("back")}</button><h2>${title}</h2><div class="progress" id="prog"></div></div>
-   <div class="lmain"><div class="lboard"><div class="stage" id="stage"></div><div class="ctrl" id="ctrl"></div></div>
+   <div class="lcard"><div class="lmain"><div class="lboard"><div class="stage" id="stage"></div><div class="ctrl" id="ctrl"></div></div>
    <div class="teacher"><div id="av">${OWL}</div>
      <div class="bubble"><span class="who">${T("teacher")}</span><p id="say" title="${T("tapToSkip")}"></p><div class="wchips" id="words" hidden></div><div id="quiz"></div><div id="aibox"></div>
-      <div class="row"><div class="row"><button class="btn helpb" id="help" hidden>${T("help")}</button>${mode!=="place"?`<button class="btn aib" id="ai" hidden>${T("aiBtn")}</button>`:""}</div></div></div></div></div>
+      <div class="row"><div class="row"><button class="btn helpb" id="help" hidden>${T("help")}</button>${mode!=="place"?`<button class="btn aib" id="ai" hidden>${T("aiBtn")}</button>`:""}</div></div></div></div></div></div>
   </div>`;
   fitOn();
   window.scrollTo(0,0);
@@ -3345,8 +3352,9 @@ function setViewYear(v){viewYear=v}
 function setTab(t){tabNow=t}
 function backToCur(){if(!PROF.kids[S.id])S=PROF.kids[PROF.cur]||S}
 document.addEventListener("keydown",e=>{if(KEYS)KEYS(e)});
-function setLang(l){lang=l;if(S.lang!==l){S.lang=l;save()}$("#wrap").dir=l==="ar"?"rtl":"ltr";document.documentElement.lang=l;
-  document.querySelectorAll("#langs button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===l));hud();screen()}
+function setLang(l){const t=l==="en"||l==="ar"?l:"";if((S.tr||"")!==t){S.tr=t;save()}markTr();hud();screen()}
+function markTr(){lang="sv";$("#wrap").dir="ltr";document.documentElement.lang="sv";
+  document.querySelectorAll("#langs button").forEach(b=>{b.setAttribute("aria-pressed",b.dataset.l===(trOn()||"sv"));b.title=T("trTitle")})}
 document.querySelectorAll("#langs button").forEach(b=>b.onclick=()=>setLang(b.dataset.l));
 
 /* the name and grade screen, and "who are you?", are React (app/src/ui/Profiles.tsx) */
@@ -3370,22 +3378,22 @@ function lesson(id){
   screen=()=>lesson(id);leave();
   const Ls=LESSONS.find(l=>l.id===id);wordsSvOnly=!!Ls&&Ls.subject==="swedish";if(!(S.lessons[id]||{}).seen){S.lessons[id]=Object.assign({stars:0},S.lessons[id],{seen:true});saveLocal()}
   app.innerHTML=`<div class="lesson">
-   <div class="lhead"><button class="btn ghost" id="back" style="padding:5px 16px">${T("back")}</button><h2>${L(Ls.title)}</h2><div class="progress" id="prog"></div></div>
-   <div class="lmain"><div class="lboard"><div class="stage" id="stage"></div><div class="ctrl" id="ctrl"></div></div>
+   <div class="lhead"><button class="btn ghost" id="back" style="padding:5px 16px">${T("back")}</button><h2>${L(Ls.title)}</h2></div>
+   <div class="lcard"><div class="lmain"><div class="lboard"><div class="stage" id="stage"></div><div class="ctrl" id="ctrl"></div></div>
    <div class="teacher"><div id="av">${OWL}</div>
      <div class="bubble"><span class="who">${T("teacher")}</span><p id="say" title="${T("tapToSkip")}"></p><div class="wchips" id="words" hidden></div>
       <div id="quiz"></div><div id="aibox"></div>
-      <div class="row"><div class="row"><button class="btn helpb" id="help">${T("help")}</button>${lessonWords(Ls).length?`<button class="btn ghost" id="wlist" style="padding:5px 12px">📖 ${T("wordsBtn")}</button>`:""}<button class="btn aib" id="ai" hidden>${T("aiBtn")}</button><span class="task" id="task" hidden></span></div>
-       <div class="row"><button class="btn ghost" id="prev" style="padding:5px 14px" title="${T("keyPrev")}">${T("prev")}</button><button class="btn ghost" id="again" style="padding:5px 14px">${T("replay")}</button><button class="btn" id="next" title="${T("keyNext")}">${T("next")}</button></div></div>
+      <div class="row"><div class="row"><button class="btn helpb" id="help">${T("help")}</button>${lessonWords(Ls).length?`<button class="btn ghost" id="wlist" style="padding:5px 12px">📖 ${T("wordsBtn")}</button>`:""}<button class="btn aib" id="ai" hidden>${T("aiBtn")}</button><span class="task" id="task" hidden></span></div></div>
      </div></div></div>
+   <div class="lfoot"><div class="row"><button class="btn ghost" id="prev" title="${T("keyPrev")}">${T("prev")}</button><button class="btn ghost" id="again">${T("replay")}</button></div><div class="progress" id="prog"></div><button class="btn" id="next" title="${T("keyNext")}">${T("next")}</button></div></div>
   </div>`;
   fitOn();
   window.scrollTo(0,0);
   const av=$("#av .avatar"),say=$("#say"),next=$("#next"),again=$("#again"),prev=$("#prev"),taskEl=$("#task"),helpBtn=$("#help"),who=$(".bubble .who");
   let helpOn=false;helpBtn.hidden=!(Ls.help||Ls.gen);
   let i=0,typed=false,taskDone=true,busy=false,typeT,full="",finish=()=>{};
-  function talk(text,cb){full=text;clearInterval(typeT);say.textContent="";typed=false;av.classList.remove("happy");av.classList.add("talking");
-    finish=()=>{clearInterval(typeT);say.innerHTML=esc(full).replace(/(\d[\d\u00a0 ,.:\/·×÷+−=≈<>□²-]*\d|\d)/g,'<b class="n">$1</b>');typed=true;av.classList.remove("talking");const c=cb;cb=null;c&&c()};
+  function talk(text,cb){let tr="";if(text&&typeof text==="object"){tr=text.t;text=text.s}full=text;clearInterval(typeT);say.textContent="";typed=false;av.classList.remove("happy");av.classList.add("talking");
+    finish=()=>{clearInterval(typeT);say.innerHTML=esc(full).replace(/(\d[\d\u00a0 ,.:\/·×÷+−=≈<>□²-]*\d|\d)/g,'<b class="n">$1</b>')+trSpan(tr);typed=true;av.classList.remove("talking");const c=cb;cb=null;c&&c()};
     if(REDUCED){finish();return}let n=0;typeT=setInterval(()=>{n+=2;say.textContent=text.slice(0,n);if(n>=text.length)finish()},30)}
   say.onclick=()=>{if(!typed)finish()};
   function prog(){$("#prog").innerHTML=Ls.steps.map((_,k)=>`<i class="${k<i?"done":k===i?"now":""}"></i>`).join("")+`<i class="${i>=Ls.steps.length?"now":""}"></i>`}
@@ -3404,7 +3412,7 @@ function lesson(id){
     $("#quiz").innerHTML="";next.disabled=true;const r=active.step(k);
     if(r&&r.then){busy=true;r.then(()=>{if(i===k){busy=false;lockNext()}})}else busy=false;
     showWords([...new Set([...termsIn([s.say&&s.say.sv],true),...(lang!=="sv"?termsIn([L(s.say)]):[])])].slice(0,4));
-    prev.disabled=k===0;prog();next.textContent=k===Ls.steps.length-1?T(Ls.gen?"toPractice":"toChallenge"):T("next");talk(L(s.say),lockNext)}
+    prev.disabled=k===0;prog();next.textContent=k===Ls.steps.length-1?T(Ls.gen?"toPractice":"toChallenge"):T("next");talk(LT(s.say),lockNext)}
   const wl=$("#wlist");if(wl)wl.onclick=()=>wordCard(lessonWords(Ls),T("wordsT"));
   next.onclick=()=>{if(i<Ls.steps.length-1)go(i+1);else if(Ls.gen)practice();else challenge()};
   again.onclick=()=>go(i);prev.onclick=()=>{if(i>0&&i<Ls.steps.length)go(i-1)};
@@ -3419,7 +3427,7 @@ function lesson(id){
     helpOn=true;let h=0;
     next.hidden=prev.hidden=again.hidden=helpBtn.hidden=true;taskEl.hidden=true;who.textContent=T("teacher")+" · "+T("helpEasy");
     const close=()=>{helpOn=false;$("#quiz").innerHTML="";next.hidden=prev.hidden=again.hidden=helpBtn.hidden=false;who.textContent=T("teacher");go(i)};
-    const show=()=>{const H=Ls.help[h];if(active.wb&&H.draw)active.wb.run([A.wipe(),...H.draw()]);talk(L(H.say));
+    const show=()=>{const H=Ls.help[h];if(active.wb&&H.draw)active.wb.run([A.wipe(),...H.draw()]);talk(LT(H.say));
       $("#quiz").innerHTML=`<div class="row" style="justify-content:flex-end">${h<Ls.help.length-1?`<button class="btn ghost" id="hmore">${T("helpMore")}</button>`:""}<button class="btn" id="hback">${T("backToLesson")}</button></div>`;
       const hm=$("#hmore");if(hm)hm.onclick=()=>{h++;show()};$("#hback").onclick=close};
     show()};
@@ -3602,10 +3610,10 @@ function accStart(){
 
 
 /* runs once every lesson module has registered itself in LESSONS */
-export function start(){
-  setLang(lang);
+export function start(){courseMeta();helpMeta();
+  setLang(S.tr||"sv");
   if(!accStart())route();
   setTimeout(checkBadges,700);
 }
 
-export {$,app,rnd,pick,esc,shuffle,mod,REDUCED,toastT,toast,UI,lang,T,L,FONT,KEY,PKEY,fresh,clean,newId,PROF,kidList,S,saveLocal,save,useKid,dropKid,hud,addXP,OWL,makeCanvas,svgPoint,GRID,LESSONS,NS,MK,jit,f1,R,A,rod,ones,pieLines,fontsReady,SFX,WB,wbMount,rint,vAdd,WT,PV,WF,PIE,FR,fracAddBoard,fracEqBoard,t3,MUL,DIVS,fmt,dfmt,pad,qt,dots,dotGrid,plines,polyPts,REST,eqLines,PVH,PVX,PVC,pvHead,pvDigits,cmpBoard,PV4,nline,roundBoard,RND,vSub,WS,crossOnes,SUB,apple,arrayBoard,mulBoard,MULT,groupsBoard,DIVL,part10,bar10,SEP,decCol,DEC,ruler,UNITS,LEN,clockFace,clock,minLabels,timeline,TIME,gridRect,CM2,CM,rectQ,AREA,ANG,angleAt,SHP,FRUIT,SPORT,BX,BY,BCOL,chart,tally,STAT,scale,ALG,HELPX,HINTSX,TERMS,WORDS,TERM,lessonWords,trRe,termsIn,wordsSvOnly,showWords,wordCard,wordQ,COURSES,ORD4,coinsPath,bagPath,HELP,before,HINTS,dkey,today,daysAgo,dayRec,streakNow,courseOf,years,viewYear,yearNow,course4,allCourse,placeOf,isDone,nextLesson,answerText,track,GAPS,dayDiff,inDays,revStart,revFill,revAnswer,revDue,memState,revLv,mixPick,remind,addRemind,BADGES,bq,checkBadges,showBadge,lastAct,CLOUD,flushCloud,pushCloud,goneCloud,mergeState,adopt,takeKid,hintNow,poseProblem,makeTalk,placeBoard,PROBES,planDrill,drill,yearSeg,wireYears,badges,parents,AI_MAX,SAMPLE,aiOn,aiShow,boardTexts,sceneInfo,probInfo,aiPrompt,clampN,cutS,okC,AIH,aiItem,aiSteps,aiHelp,aiButtons,aiClose,probBoard,SUBJECTS,fitStage,fitRO,fitOn,active,screen,KEYS,leaveHooks,leave,setScreen,testHook,setPicked,setViewYear,setTab,backToCur,setLang,welcome,picked,who,route,tabNow,map,lesson,SB,AKEY,ACC,AUI,AT,sb,rpc,aget,aset,parKeep,parTok,kidState,accPush,accUse,accKidOut,accParOut,hudBase,kidMenu,startScreen,kidLogin,parLogin,parentHome,accStart};
+export {$,app,rnd,pick,esc,shuffle,mod,REDUCED,toastT,toast,UI,lang,T,L,trOn,LT,trSpan,FONT,KEY,PKEY,fresh,clean,newId,PROF,kidList,S,saveLocal,save,useKid,dropKid,hud,addXP,OWL,makeCanvas,svgPoint,GRID,LESSONS,NS,MK,jit,f1,R,A,rod,ones,pieLines,fontsReady,SFX,WB,wbMount,rint,vAdd,WT,PV,WF,PIE,FR,fracAddBoard,fracEqBoard,t3,MUL,DIVS,fmt,dfmt,pad,qt,dots,dotGrid,plines,polyPts,REST,eqLines,PVH,PVX,PVC,pvHead,pvDigits,cmpBoard,PV4,nline,roundBoard,RND,vSub,WS,crossOnes,SUB,apple,arrayBoard,mulBoard,MULT,groupsBoard,DIVL,part10,bar10,SEP,decCol,DEC,ruler,UNITS,LEN,clockFace,clock,minLabels,timeline,TIME,gridRect,CM2,CM,rectQ,AREA,ANG,angleAt,SHP,FRUIT,SPORT,BX,BY,BCOL,chart,tally,STAT,scale,ALG,HELPX,HINTSX,TERMS,WORDS,TERM,lessonWords,trRe,termsIn,wordsSvOnly,showWords,wordCard,wordQ,COURSES,ORD4,courseMeta,coinsPath,bagPath,HELP,before,HINTS,helpMeta,dkey,today,daysAgo,dayRec,streakNow,courseOf,years,viewYear,yearNow,course4,allCourse,placeOf,isDone,nextLesson,answerText,track,GAPS,dayDiff,inDays,revStart,revFill,revAnswer,revDue,memState,revLv,mixPick,remind,addRemind,BADGES,bq,checkBadges,showBadge,lastAct,CLOUD,flushCloud,pushCloud,goneCloud,mergeState,adopt,takeKid,hintNow,poseProblem,makeTalk,placeBoard,PROBES,planDrill,drill,yearSeg,wireYears,badges,parents,AI_MAX,SAMPLE,aiOn,aiShow,boardTexts,sceneInfo,probInfo,aiPrompt,clampN,cutS,okC,AIH,aiItem,aiSteps,aiHelp,aiButtons,aiClose,probBoard,SUBJECTS,fitStage,fitRO,fitOn,active,screen,KEYS,leaveHooks,leave,setScreen,testHook,setPicked,setViewYear,setTab,backToCur,setLang,markTr,welcome,picked,who,route,tabNow,map,lesson,SB,AKEY,ACC,AUI,AT,sb,rpc,aget,aset,parKeep,parTok,kidState,accPush,accUse,accKidOut,accParOut,hudBase,kidMenu,startScreen,kidLogin,parLogin,parentHome,accStart};

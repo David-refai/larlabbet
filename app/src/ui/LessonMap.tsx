@@ -7,7 +7,7 @@ import {YearSeg} from "./YearSeg";
 import {
   T, L, S, LESSONS, SUBJECTS, BADGES, tabNow, setTab, save, toast,
   yearNow, courseOf, course4, allCourse, nextLesson, isDone, placeOf, revDue, today, streakNow, memState,
-  lesson, drill, badges, parents, map,
+  lesson, drill, badges, parents, map, ACC,
 } from "../legacy/core.js";
 
 type Lesson = {id: string; ord?: number; year?: number; subject?: string; title: unknown; icon: string; grades: string; steps: unknown[]; gen?: unknown};
@@ -88,7 +88,7 @@ function LessonMap() {
       : <div className="empty">{T("empty")}</div>}
 
     {math && <div className="row" style={{justifyContent: "center"}}>
-      <button className="btn ghost" id="tpar" onClick={parents}>👪 {T("parentsT")}</button>
+      {!ACC.kid && <button className="btn ghost" id="tpar" onClick={parents}>👪 {T("parentsT")}</button>}
       {(placeOf(Y) || anyDone) && <button className="btn ghost" id="tplace" onClick={() => drill("place")}>🧭 {T("placeRedo")}</button>}
     </div>}
   </div>;

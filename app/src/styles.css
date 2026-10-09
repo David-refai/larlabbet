@@ -87,6 +87,27 @@ body.inles .wrap{max-width:1500px;padding-block:8px}body.inles .top{padding-bloc
   .lesson .bubble .btn{padding:4px 11px!important;font-size:.92rem}.lesson .bubble .row{gap:6px}.lesson .teacher .avatar{width:52px;height:52px}
   .lesson .bubble{padding:10px 14px;gap:8px}.lesson .bubble p{font-size:1.06rem;line-height:1.45}
   .lesson .lhead .btn{padding:4px 12px!important}.lesson .progress i{width:14px}}
+/* one lesson card: the board and Olle side by side (or stacked), split by a thin line, with Back / Again / Next and the step dots in one bar underneath */
+.lcard{flex:1;min-height:0;display:flex;flex-direction:column;gap:10px;background:var(--surface);border-radius:22px;padding:10px;box-shadow:var(--shadow)}
+.lcard .lmain{flex:1}
+.lesson:has(.lcard){height:calc(100vh - var(--toph,64px) - 34px);height:calc(100dvh - var(--toph,64px) - 34px)}
+.lcard .teacher>#av{align-self:start}
+.lcard .stage{box-shadow:none;border:1px solid var(--line)}
+.lcard .teacher{align-content:start;padding-top:2px}
+.lcard .bubble{background:none;box-shadow:none;border:0;border-radius:0;padding:4px 6px 4px 0}
+.lcard .bubble .who{font-size:1rem}
+.lfoot{flex:none;display:flex;align-items:center;justify-content:space-between;gap:10px;border-top:1px solid var(--line);padding:8px 4px 0}
+.lfoot .row{gap:8px;flex-wrap:nowrap}.lfoot .btn.ghost{padding:5px 14px}.lfoot #next{min-width:120px}
+.lfoot .progress{flex:1;justify-content:center;flex-wrap:wrap;min-width:0}
+@media (min-width:900px) and (min-aspect-ratio:5/4){
+  .lcard .lmain{grid-template-columns:minmax(0,1fr) clamp(320px,31vw,440px);gap:0}
+  .lcard .lboard{padding-inline-end:12px}
+  .lcard .teacher{border-inline-start:1px solid var(--line);padding-inline-start:14px;grid-template-columns:56px 1fr;grid-template-rows:minmax(0,1fr);gap:10px}
+  .lcard .teacher .avatar{width:56px;height:56px}}
+@media (max-width:899px),(max-aspect-ratio:5/4){
+  .lcard{padding:8px;gap:8px;border-radius:18px}
+  .lcard .lmain{gap:8px}.lcard .teacher{border-top:1px solid var(--line);padding-top:8px}
+  .lfoot .btn{padding:4px 11px!important;font-size:.92rem}.lfoot #next{min-width:96px}.lfoot .progress i{width:10px}}
 .progress{display:flex;gap:5px}
 .progress i{width:24px;height:6px;border-radius:999px;background:var(--line)}
 .progress i.done{background:var(--teal)} .progress i.now{background:var(--accent)}
@@ -304,3 +325,7 @@ body.inles .wrap{max-width:1500px;padding-block:8px}body.inles .top{padding-bloc
 .lwcard{touch-action:none;user-select:none;cursor:grab;background:#fde68a;border-radius:16px;padding:12px 20px;font:800 1.6rem var(--display);color:#1f2937;box-shadow:0 5px 0 #f59e0b;z-index:60}
 .lwcard.on{box-shadow:0 0 0 4px #6366f1,0 5px 0 #f59e0b}.lwcard.drag{cursor:grabbing;transform:scale(1.1)}
 .lv1 .ldot{stroke:#94a3b8}.lv1 .ldot:not(.now){stroke:#e2e8f0}
+.trl{display:block;margin-top:6px;font-size:.88em;color:var(--muted,#64748b);font-style:italic}
+.p1grid{display:flex;flex-wrap:wrap;gap:6px}
+.p1c{position:relative;display:grid;place-items:center;width:42px;height:42px;border-radius:10px;background:var(--line);color:var(--muted,#64748b);font:700 1.25rem var(--display)}
+.p1c.ok{background:#dcfce7;color:#166534}.p1c small{position:absolute;top:1px;inset-inline-end:4px;font-size:.62rem;font-weight:800}

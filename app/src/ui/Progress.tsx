@@ -1,6 +1,7 @@
 /* Badges, and the page for parents and teachers (time, accuracy, what needs practice). */
 import {showReact} from "./mount";
 import {YearSeg} from "./YearSeg";
+import {SETS} from "../little/glyphs";
 import {
   T, L, S, LESSONS, BADGES, CLOUD, lang, setPicked, map, parents, useKid, kidList,
   course4, isDone, daysAgo, revDue, memState, yearNow, streakNow,
@@ -39,6 +40,34 @@ function Chart({mins, recs, days}: {mins: number[]; recs: {q: number}[]; days: s
     })}</svg>;
 }
 
+/* Year 1 (Lilla labbet): what the child has traced and played, and the time spent */
+const LT1 = {stars: "Stjärnor", big: "Bokstäver", nums: "Siffror", games: "Spel", words: "Ordspelet", pop: "Ballonger", count: "Räkna djur",
+  times: "gånger", next: "Nästa att öva", allDone: "Alla är spårade. Bra jobbat!", tapHint: "Grön = spårad. Siffran visar hur många gånger."};
+function LittleReport({mins, recs, days}: {mins: number[]; recs: {q: number}[]; days: string[]}) {
+  const t: Record<string, number> = (S.little && S.little.t) || {};
+  const sets = [["ABC", LT1.big], ["123", LT1.nums]] as const;
+  /* a letter counts whether it was traced in the letter lesson (capital key) or as a small letter */
+  const n = (k: string) => (t[k] || 0) + (k.startsWith("ABC") ? t["abc" + k.slice(3).toLowerCase()] || 0 : 0), sum = (pre: string) => Object.keys(t).filter(k => k.startsWith(pre)).reduce((a, k) => a + t[k], 0);
+  const left = sets.flatMap(([id]) => SETS[id].chars.filter(ch => !n(id + ch)));
+  return <>
+    <div className="tiles">
+      <div className="tile"><span className="label">{LT1.stars}</span><b>⭐ {(S.little && S.little.stars) || 0}</b></div>
+      {sets.map(([id, name]) => <div className="tile" key={id}><span className="label">{name}</span><b>{SETS[id].chars.filter(ch => n(id + ch)).length} / {SETS[id].chars.length}</b></div>)}
+      <div className="tile"><span className="label">{T("pTime")}</span><b>{mins.reduce((a, b) => a + b, 0)} {T("min")}</b></div>
+    </div>
+    <section className="panel stack" style={{gap: 8}}><h3>{T("pChart")}</h3><Chart mins={mins} recs={recs} days={days} /></section>
+    {sets.map(([id, name]) => <section className="panel stack" style={{gap: 8}} key={id}><h3>{name}</h3>
+      <div className="p1grid">{SETS[id].chars.map(ch => <span key={ch} className={"p1c" + (n(id + ch) ? " ok" : "")}>{ch}{n(id + ch) > 0 && <small>{n(id + ch)}</small>}</span>)}</div></section>)}
+    <p className="muted" style={{fontSize: ".9rem"}}>{LT1.tapHint}</p>
+    <section className="panel stack" style={{gap: 8}}><h3>{LT1.next}</h3>
+      <p style={{fontSize: "1.3rem", letterSpacing: 4}}>{left.length ? left.slice(0, 8).join(" ") : LT1.allDone}</p></section>
+    <section className="panel stack" style={{gap: 8}}><h3>{LT1.games}</h3><ul className="plist">
+      <li><b>{LT1.words}</b> <span className="muted">· {n("words")} {LT1.times}</span></li>
+      <li><b>{LT1.pop}</b> <span className="muted">· {sum("pop")} {LT1.times}</span></li>
+      <li><b>{LT1.count}</b> <span className="muted">· {n("count")} {LT1.times}</span></li></ul></section>
+  </>;
+}
+
 function Parents() {
   const c: Lesson[] = course4(), done = c.filter(l => isDone(l.id)).length;
   const days: string[] = [...Array(7)].map((_, j) => daysAgo(6 - j));
@@ -56,8 +85,9 @@ function Parents() {
     <Back title={T("parentsT")} />
     {kids.length > 1 && <div className="seg yseg" id="pkids" role="group">{kids.map((k: {id: string; name: string}) =>
       <button key={k.id} data-k={k.id} aria-pressed={k.id === S.id} onClick={() => { setPicked(true); useKid(k.id); parents(); }}>👤 {k.name}</button>)}</div>}
-    <div className="course"><div><h2>{S.name || "…"}</h2><p className="muted">{T("gradeChip")(S.grade)} · {T("courseY")(yearNow())}</p><YearSeg again={parents} /></div>
+    <div className="course"><div><h2>{S.name || "…"}</h2><p className="muted">{T("gradeChip")(S.grade)}{S.grade !== 1 && <> · {T("courseY")(yearNow())}</>}</p>{S.grade !== 1 && <YearSeg again={parents} />}</div>
       <p className="muted" style={{maxWidth: 360, fontSize: ".9rem"}}>{CLOUD.on ? "☁️ " + T("savedCloud") : T("savedLocal")}</p></div>
+    {S.grade === 1 ? <LittleReport mins={mins} recs={recs} days={days} /> : <>
     <div className="tiles">
       <div className="tile"><span className="label">{T("pDone")}</span><b>{done} / {c.length}</b><span className="muted">🧠 {c.filter(l => (S.lessons[l.id] || {}).mastered).length} {T("pSits")}</span></div>
       <div className="tile"><span className="label">{T("pTime")}</span><b>{mins.reduce((a, b) => a + b, 0)} {T("min")}</b></div>
@@ -79,6 +109,7 @@ function Parents() {
     <section className="panel stack" style={{gap: 8}}><h3>{T("badgesT")} · {T("badgesS")(Object.keys(S.badges).length, BADGES.length)}</h3>
       <p style={{fontSize: "1.8rem", letterSpacing: 6}}>{BADGES.some((b: Badge) => S.badges[b.id])
         ? BADGES.filter((b: Badge) => S.badges[b.id]).map((b: Badge) => <span key={b.id} title={L(b.name)}>{b.icon}</span>) : "–"}</p></section>
+    </>}
   </div>;
 }
 
