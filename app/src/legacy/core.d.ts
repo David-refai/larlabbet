@@ -190,6 +190,8 @@ export declare const placeBoard: any;
 export declare const PROBES: any;
 export declare const planDrill: any;
 export declare const drill: any;
+export declare const examItems: any;
+export declare const exam: any;
 export declare const yearSeg: any;
 export declare const wireYears: any;
 export declare const badges: any;

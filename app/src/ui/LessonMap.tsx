@@ -10,7 +10,7 @@ import {
   lesson, drill, badges, parents, map, ACC,
 } from "../legacy/core.js";
 
-type Lesson = {id: string; ord?: number; year?: number; subject?: string; title: unknown; icon: string; grades: string; steps: unknown[]; gen?: unknown};
+type Lesson = {id: string; ord?: number; year?: number; subject?: string; title: unknown; icon: string; grades: string; steps: unknown[]; gen?: unknown; exam?: {n: number; ids: string[]}};
 
 function Card({l, here}: {l: Lesson; here: boolean}) {
   const p = S.lessons[l.id] || {}, st: number = p.stars || 0, kn = !st && p.known, mem = memState(l.id);
@@ -22,7 +22,8 @@ function Card({l, here}: {l: Lesson; here: boolean}) {
     </div>
     <div className="meta">
       <h3>{L(l.title)}</h3>
-      <span className="muted" style={{fontSize: ".88rem"}}>{T("forGrades")(l.grades)} · {T("scenes")(l.steps.length)}</span>
+      <span className="muted" style={{fontSize: ".88rem"}}>{T("forGrades")(l.grades)} · {l.exam ? "📝 " + T("examQs")(l.exam.n) : T("scenes")(l.steps.length)}</span>
+      {l.exam && S.exams && S.exams[l.id] && <span className="muted" style={{fontSize: ".88rem"}}>{T("examBest")(S.exams[l.id].best, S.exams[l.id].tries)}</span>}
       {kn ? <span className="kntag">✓ {T("known")}</span>
         : <span className="stars">{[0, 1, 2].map(i => <span key={i} className={i < st ? "" : "off"}>★</span>)}</span>}
       {mem && <span className={"mem " + mem}>{T("mem")[mem]}</span>}

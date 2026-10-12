@@ -55,7 +55,7 @@ const FONT=(w,s)=>`${w} ${s}px Figtree, "IBM Plex Sans Arabic", sans-serif`;
 
 /* ---------- state: one profile per child, kept in this browser (and in the account when signed in) ---------- */
 const KEY="larlabbet-v3",PKEY="larlabbet-kids";
-const fresh=()=>({places:{},name:"",grade:null,xp:0,lang:"sv",lessons:{},mist:{},days:{},tot:{q:0,ok:0,okNoHint:0,hints:0},badges:{},daily:{last:"",streak:0,n:0},fixed:0,place:null,upd:0,rev:{}});
+const fresh=()=>({places:{},name:"",grade:null,xp:0,lang:"sv",lessons:{},mist:{},days:{},tot:{q:0,ok:0,okNoHint:0,hints:0},badges:{},daily:{last:"",streak:0,n:0},fixed:0,place:null,upd:0,rev:{},exams:{}});
 const clean=r=>{const s=Object.assign(fresh(),r);s.tot=Object.assign(fresh().tot,r.tot);s.daily=Object.assign(fresh().daily,r.daily);return s};
 const newId=()=>"k"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 /* PROF.kids holds every child's state; S is the active child's (the same object as PROF.kids[S.id] once saved).
@@ -119,7 +119,7 @@ const LESSONS=[];
    path: stroke drawn along its length · text: handwriting revealed left→right (right→left for Arabic)
    hatch: marker shading swept across a shape · hl: highlighter swipe · band: faint column tint · wipe: erase board */
 const NS="http://www.w3.org/2000/svg";
-const MK={k:"#1d2433",b:"#2257c9",r:"#d63b2f",g:"#1e9e5a",o:"#e07b00"};
+const MK={k:"#1d2433",b:"#2257c9",r:"#d63b2f",g:"#1e9e5a",o:"#e07b00",v:"#7c3aed",p:"#c2417a"};
 function jit(a,b){const s=Math.sin(a*12.9898+b*78.233)*43758.5453;return s-Math.floor(s)-.5}
 const f1=v=>v.toFixed(1);
 const R={
@@ -1044,7 +1044,7 @@ LESSONS.push({id:"triangle",subject:"math",grades:"4–7",
 });
 
 /* ---------- 2. States of matter (science) ---------- */
-LESSONS.push({id:"matter",subject:"science",grades:"4–7",
+LESSONS.push({id:"matter",subject:"science",year:4,grades:"4–7",
  title:{sv:"Varför smälter isen?",en:"Why does ice melt?",ar:"لماذا يذوب الثلج؟"},
  icon:`<svg viewBox="0 0 320 180"><rect width="320" height="180" fill="#f7f9fd"/><path d="M110 30v110q0 14 14 14h72q14 0 14-14V30" fill="#dcebff" fill-opacity=".5" stroke="#9fb3d1" stroke-width="4"/>${[0,1,2].map(r=>[0,1,2].map(c=>{const x=130+c*20+(r%2)*10,y=134-r*22;return`<circle cx="${x-6}" cy="${y-6}" r="3.6" fill="#fff" stroke="#aab6cb"/><circle cx="${x+6}" cy="${y-6}" r="3.6" fill="#fff" stroke="#aab6cb"/><circle cx="${x}" cy="${y}" r="6.5" fill="#e8505b"/>`}).join("")).join("")}</svg>`,
  steps:[
@@ -1137,7 +1137,7 @@ LESSONS.push({id:"matter",subject:"science",grades:"4–7",
 });
 
 /* ---------- 3. Friction (science) ---------- */
-LESSONS.push({id:"friction",subject:"science",grades:"4–7",
+LESSONS.push({id:"friction",subject:"science",year:4,grades:"4–7",
  title:{sv:"Vem stoppade bilen?",en:"Who stopped the car?",ar:"من أوقف السيارة؟"},
  icon:`<svg viewBox="0 0 320 180"><defs><linearGradient id="isk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dff1ff"/><stop offset="1" stop-color="#f7fbff"/></linearGradient></defs><rect width="320" height="180" fill="url(#isk)"/><path d="M0 125Q80 70 160 125T320 120V180H0z" fill="#cfe8d5"/><rect y="128" width="320" height="22" fill="#cfd5df"/><rect y="150" width="320" height="30" fill="#e8ecf3"/><rect x="0" y="158" width="320" height="12" fill="#ffd23f"/><ellipse cx="148" cy="130" rx="44" ry="4" fill="#13213f" opacity=".15"/><path d="M106 118V104q2-6 10-6l14-1q8-15 22-15h10q12 2 17 15 8 2 8 10v11z" fill="#ff7a45"/><path d="M134 98q7-11 17-11h7q10 2 14 11z" fill="#cfe6ff"/><circle cx="124" cy="120" r="11" fill="#1e2433"/><circle cx="124" cy="120" r="6" fill="#c9d1de"/><circle cx="172" cy="120" r="11" fill="#1e2433"/><circle cx="172" cy="120" r="6" fill="#c9d1de"/><path d="M148 136H112" stroke="#e5484d" stroke-width="4"/><path d="M104 136l9-6v12z" fill="#e5484d"/></svg>`,
  steps:[
@@ -1228,7 +1228,7 @@ LESSONS.push({id:"friction",subject:"science",grades:"4–7",
 });
 
 /* ---------- 4. Day and night (science) — a real globe drawn with d3-geo ---------- */
-LESSONS.push({id:"daynight",subject:"science",grades:"4–6",
+LESSONS.push({id:"daynight",subject:"science",year:4,grades:"4–6",
  title:{sv:"Var kommer natten ifrån?",en:"Where does night come from?",ar:"من أين يأتي الليل؟"},
  icon:`<svg viewBox="0 0 320 180"><defs><radialGradient id="isp"><stop offset="0" stop-color="#16244a"/><stop offset="1" stop-color="#070b1c"/></radialGradient><radialGradient id="ioc" cx="35%" cy="35%"><stop offset="0" stop-color="#5aa5ff"/><stop offset="1" stop-color="#1b3f99"/></radialGradient></defs><rect width="320" height="180" fill="url(#isp)"/><circle cx="56" cy="90" r="40" fill="#ffc93c" opacity=".25"/><circle cx="56" cy="90" r="26" fill="#ffc93c"/><circle cx="210" cy="90" r="62" fill="url(#ioc)"/><path d="M180 50q20-10 36 2t10 30q-10 10-26 4t-20-36zM214 112q14-4 22 8t-4 22q-14-2-18-30z" fill="#5cc27a"/><path d="M222 29a62 62 0 0 1 0 122a80 80 0 0 0 0-122z" fill="#04081e" opacity=".6"/><circle cx="198" cy="58" r="5" fill="#ffc93c" stroke="#fff" stroke-width="2"/></svg>`,
  steps:[
@@ -2918,7 +2918,9 @@ Object.assign(UI.sv,{placeTitle:"Nivåtest",placeHero:"Ett kort test först?",pl
   dailyT:"Dagens 5 minuter",dailyS:"5 blandade frågor från det du har gjort",dailyDone:"Klar för idag ✓",dailyNeed:"Gör en lektion först",dailyIntro:"Fem snabba frågor från det du redan kan.",
   streakN:n=>`🔥 ${n} ${n===1?"dag":"dagar"} i rad`,notesT:"Mina misstag",notesS:n=>n?`${n} ${n===1?"uppgift":"uppgifter"} att öva igen`:"Inga misstag just nu 🎉",notesIntro:"De här var svåra förra gången. Nu med nya siffror!",
   fixed:"Fixat! Den försvinner ur misstagsboken.",badgesT:"Märken",badgesS:(k,n)=>`${k} av ${n}`,newBadge:"Nytt märke!",locked:"Inte ännu",
-  drillEnd:(r,n)=>`Du fick ${r} av ${n} rätt.`,parentsT:"För föräldrar och lärare",wordsBtn:"Ord",wordsT:"Ord att kunna",wordsOk:"Jag förstår",wordQH:"Ordkoll! ",whoT:"Vem är du?",whoS:"Tryck på ditt namn.",newKid:"Nytt barn",whoSwitch:"Byt barn",delKid:"Ta bort profilen",delSure:"Tryck igen för att ta bort allt för",parentsS:"Se hur det går",
+  drillEnd:(r,n)=>`Du fick ${r} av ${n} rätt.`,parentsT:"För föräldrar och lärare",examIntro:n=>`Provet har ${n} frågor. Du får ingen hjälp, och du ser svaren först när du är klar. Lycka till!`,examSaved:"Svaret är sparat.",examDone:"Se resultatet",
+  examVerdict:p=>p>=90?"Mycket bra! Du kan det här kapitlet.":p>=70?"Bra jobbat! Läs igenom det du missade.":p>=50?"Godkänt. Öva lite till på det du missade.":"Inte riktigt än. Gå igenom lektionerna och försök igen.",
+  examBest:(b,t)=>`Bästa resultat: ${b} %. Antal försök: ${t}.`,examAgain:"Gör provet igen",examReview:"Alla frågor och rätt svar",examYours:"Ditt svar",examRight:"Rätt svar",examRead:"Läs igen",examQs:n=>`${n} frågor`,examT:"Prov",wordsBtn:"Ord",wordsT:"Ord att kunna",wordsOk:"Jag förstår",wordQH:"Ordkoll! ",whoT:"Vem är du?",whoS:"Tryck på ditt namn.",newKid:"Nytt barn",whoSwitch:"Byt barn",delKid:"Ta bort profilen",delSure:"Tryck igen för att ta bort allt för",parentsS:"Se hur det går",
   pDone:"Lektioner klara",pTime:"Tid senaste 7 dagarna",pRight:"Rätt svar senaste 7 dagarna",pStreak:"Dagar i rad",pChart:"Minuter per dag",pNeeds:"Behöver öva",pNeedsNone:"Inget just nu. Bra jobbat!",
   pAll:"Alla lektioner",pStatus:{done:"Klar",known:"Kunde redan",started:"Påbörjad",none:"Inte påbörjad"},pLevel:["Lätt","Mellan","Svår"],pLvl:"Nivå",pStars:"Stjärnor",pHints:"Ledtrådar använda",pQs:"frågor",
   pMistakes:"i misstagsboken",fromBefore:t=>`🔁 Från en tidigare lektion: ${t}. `,remindBtn:"🔁 Påminn mig",tryLike:"Prova en liknande →",tryLikeH:"En liknande uppgift. ",sits:t=>`🧠 ”${t}” sitter nu!`,mem:{sits:"🧠 Sitter",due:"🔁 Dags att repetera",fading:"🔁 Börjar glömmas"},dueN:n=>n===1?"1 lektion att repetera i dag":`${n} lektioner att repetera i dag`,pSits:"sitter i minnet",pReview:"behöver repeteras",pFading:"börjar glömmas",pLow:"bara 1 stjärna",min:"min",savedCloud:"Framstegen sparas i ditt konto och syns på alla enheter där du är inloggad.",savedLocal:"Framstegen sparas bara i den här webbläsaren.",cloud:"Sparas i ditt konto"});
@@ -2968,7 +2970,7 @@ function track(id,lv,ok,hinted,mode){
   const d=dayRec();d.q++;if(ok)d.ok++;S.tot.q++;if(ok){S.tot.ok++;if(!hinted)S.tot.okNoHint++}
   if(mode!=="place"){
     if(!ok)S.mist[id]={lv:Math.min(lv,S.mist[id]?S.mist[id].lv:9),at:Date.now()};
-    else if(S.mist[id]&&mode!=="practice"){delete S.mist[id];S.fixed++;toast(T("fixed"))}}
+    else if(S.mist[id]&&mode!=="practice"&&mode!=="exam"){delete S.mist[id];S.fixed++;toast(T("fixed"))}}
   save();checkBadges()}
 
 /* ---- memory: spaced review. A finished lesson comes back after 1, 3, 7, 21 and 60 days. A right answer moves it to the
@@ -3044,6 +3046,7 @@ function mergeState(a,b){
   r.tot={};["q","ok","okNoHint","hints"].forEach(k=>r.tot[k]=Math.max((a.tot||{})[k]||0,(b.tot||{})[k]||0));
   r.xp=Math.max(a.xp||0,b.xp||0);r.fixed=Math.max(a.fixed||0,b.fixed||0);r.badges=Object.assign({},o.badges,n.badges);r.mist=Object.assign({},n.mist);r.places=Object.assign({},o.places,n.places);r.rev=Object.assign({},o.rev,n.rev);
   r.daily=((a.daily||{}).last||"")>=((b.daily||{}).last||"")?Object.assign({},b.daily,a.daily):Object.assign({},a.daily,b.daily);
+  r.exams={};keys(a.exams,b.exams).forEach(k=>{const x=(a.exams||{})[k]||{},y=(b.exams||{})[k]||{},m=(x.at||"")>=(y.at||"")?x:y;r.exams[k]=Object.assign({},m,{best:Math.max(x.best||0,y.best||0),tries:Math.max(x.tries||0,y.tries||0)})});
   r.upd=Math.max(a.upd||0,b.upd||0);return r}
 /* the active child's copy changed elsewhere: merge it in and redraw the screen unless a lesson is running */
 function adopt(R){const before=JSON.stringify(S);S=mergeState(S,R);if(JSON.stringify(S)===before)return;saveLocal();
@@ -3082,7 +3085,7 @@ function hintNow(ctx){const c=ctx.cur;if(!c||!c.g.hint||c.hinted||c.judged)retur
 function poseProblem(ctx,g,o,done){
   const {wb,talk,helpBtn,av}=ctx,ctrl=$("#ctrl"),quiz=$("#quiz");ctx.cur={g,hinted:false,judged:false};
   wb.run(g.q);helpBtn.hidden=!(o.hint&&g.hint);helpBtn.disabled=false;
-  if(!g.wordQ)showWords(termsIn([...g.q.filter(c=>c&&c.t==="text").map(c=>c.s),...(g.kind==="choice"?g.opts.map(x=>L(x)):[])]));else showWords([]);
+  if(o.exam)showWords([]);else if(!g.wordQ)showWords(termsIn([...g.q.filter(c=>c&&c.t==="text").map(c=>c.s),...(g.kind==="choice"?g.opts.map(x=>L(x)):[])]));else showWords([]);
   talk(o.head+T(g.kind==="choice"?"yourTurnPick":"yourTurn"));
   const numIn=t=>{t=String(t).replace(/[\s ]/g,"").replace(/[−–]/g,"-");t=lang==="en"?t.replace(/,(?=\d{3}(\D|$))/g,""):t;t=t.replace(",",".");return t===""||!/^-?\d*\.?\d+$/.test(t)?NaN:+t};
   const inp=(id,lab)=>`<input id="${id}" type="text" inputmode="${g.kind==="text"?"text":g.dec?"decimal":"numeric"}"${g.kind==="text"?` class="txtin" autocapitalize="off" spellcheck="false"`:""} autocomplete="off" aria-label="${esc(lab||"answer")}">`;
@@ -3098,7 +3101,8 @@ function poseProblem(ctx,g,o,done){
     ctrl.innerHTML=`<span class="big">${ok?"✓":"✗"} ${esc(shown)}</span>`;ctx.cur.shown=shown;ctx.cur.ok=ok;
     done(ok,ctx.cur.hinted);
     const nextBtn=`<button class="btn" id="nx" title="${T("keyNext")}">${o.next()}</button>`;
-    if(ok){av.classList.add("happy");talk(pick(T("right")));quiz.innerHTML=`<div class="row">${o.sol!==false?`<button class="btn ghost" id="sol">${T("showSol")}</button>`:""}${nextBtn}</div>`;
+    if(o.exam){ctrl.innerHTML=`<span class="big">✎ ${esc(shown)}</span>`;talk(T("examSaved"));quiz.innerHTML=`<div class="row">${nextBtn}</div>`}
+    else if(ok){av.classList.add("happy");talk(pick(T("right")));quiz.innerHTML=`<div class="row">${o.sol!==false?`<button class="btn ghost" id="sol">${T("showSol")}</button>`:""}${nextBtn}</div>`;
       const sb=$("#sol");if(sb)sb.onclick=()=>{sb.remove();wb.run(g.sol)}}
     else if(o.sol===false){talk(T("placeNo"));quiz.innerHTML=`<div class="row">${nextBtn}</div>`}
     else{talk(T("wrongSol")(answerText(g)));quiz.innerHTML=`<div class="row">${nextBtn}</div>`;wb.run(g.sol)}
@@ -3111,7 +3115,7 @@ function poseProblem(ctx,g,o,done){
     /* a written word or sentence (Svenska): case, spaces and end punctuation don't count; one letter off counts as right with a spelling note */
     if(g.kind==="text"){const nz=t=>String(t).toLowerCase().replace(/[.!?,;:”"'’]/g,"").replace(/\s+/g," ").trim(),v=nz(an.value);if(!v){toast(T("needAnswer"));return}
       const acc=[].concat(g.ans).map(nz),near=(a,b)=>{if(Math.abs(a.length-b.length)>1)return false;let i=0,j=0,e=0;while(i<a.length&&j<b.length){if(a[i]===b[j]){i++;j++;continue}if(++e>1)return false;if(a.length>b.length)i++;else if(b.length>a.length)j++;else{i++;j++}}return e+(a.length-i)+(b.length-j)<=1};
-      const ok=acc.includes(v),almost=!ok&&v.length>4&&acc.some(a=>near(a,v));if(almost)toast("✏️ "+[].concat(g.ans)[0]);judge(ok||almost,an.value.trim());return}
+      const ok=acc.includes(v),almost=!ok&&v.length>4&&acc.some(a=>near(a,v));if(almost&&!o.exam)toast("✏️ "+[].concat(g.ans)[0]);judge(ok||almost,an.value.trim());return}
     const v=numIn(an.value),d=g.kind==="num"?0:numIn($("#ad").value);
     if(isNaN(v)||(g.kind!=="num"&&isNaN(d))||(g.kind==="frac"&&!d)){toast(T("needAnswer"));return}
     const gcd=(x,y)=>y?gcd(y,x%y):Math.abs(x);
@@ -3198,6 +3202,56 @@ function drill(mode){
       $("#quiz").innerHTML=`<div class="row"><span class="stars" style="font-size:1.6rem">${res.map(r=>`<span class="${r.ok?"":"off"}">★</span>`).join("")}</span><button class="btn" id="mapb">${T("toLessons")}</button></div>`}
     $("#mapb").onclick=map}
   function talk2(s){tk.talk(s)}
+  ask();
+}
+
+/* a chapter test (prov): questions from the chapter's lessons, no hints and no answers until the end,
+   then the score, a verdict and every question with the right answer. Best and last result kept in S.exams. */
+function examItems(X){const per=Math.ceil(X.exam.n/X.exam.ids.length),out=[],seen=new Set();
+  X.exam.ids.forEach((id,j)=>{const Ls=LESSONS.find(l=>l.id===id);if(!Ls||!Ls.gen)return;
+    for(let i=0,tries=0;i<per&&tries<40;tries++){const lv=1+(i+j)%2,g=Ls.gen(lv,{exam:true}),key=g.qs||JSON.stringify(g.q.filter(c=>c&&c.t==="text").map(c=>c.s));
+      if(seen.has(key))continue;seen.add(key);out.push({id,lv,g});i++}});
+  return shuffle(out).slice(0,X.exam.n)}
+function exam(id){
+  if(!S.name||!S.grade){welcome();return}
+  const X=LESSONS.find(l=>l.id===id),items=examItems(X);if(!items.length){map();return}
+  screen=()=>exam(id);leave();wordsSvOnly=false;
+  app.innerHTML=`<div class="lesson">
+   <div class="lhead"><button class="btn ghost" id="back" style="padding:5px 16px">${T("back")}</button><h2>📝 ${esc(L(X.title))}</h2><div class="progress" id="prog"></div></div>
+   <div class="lcard"><div class="lmain"><div class="lboard"><div class="stage" id="stage"></div><div class="ctrl" id="ctrl"></div></div>
+   <div class="teacher"><div id="av">${OWL}</div>
+     <div class="bubble"><span class="who">${T("teacher")}</span><p id="say" title="${T("tapToSkip")}"></p><div class="wchips" id="words" hidden></div><div id="quiz"></div><div id="aibox"></div>
+      <div class="row"><div class="row"><button class="btn helpb" id="help" hidden>${T("help")}</button></div></div></div></div></div></div>
+  </div>`;
+  fitOn();window.scrollTo(0,0);
+  const wb=new WB($("#stage"));active={wb,stop(){wb.cancel()}};
+  const av=$("#av .avatar"),helpBtn=$("#help"),tk=makeTalk(av,$("#say")),ctx={wb,talk:tk.talk,helpBtn,av,cur:null};
+  $("#back").onclick=map;
+  KEYS=e=>{if(e.altKey||e.ctrlKey||e.metaKey)return;const tg=e.target;if(tg&&(tg.tagName==="INPUT"||tg.tagName==="TEXTAREA"))return;
+    if(e.key==="ArrowRight"||e.key==="PageDown"){e.preventDefault();if(!tk.typed())tk.finish();const nx=$("#nx");if(nx)nx.click()}};
+  let k=0;const res=[];
+  const prog=()=>{$("#prog").innerHTML=items.map((_,j)=>`<i class="${j<k?"done":j===k?"now":""}"></i>`).join("")};
+  function ask(){prog();const it=items[k];
+    poseProblem(ctx,it.g,{exam:true,head:(k===0?T("examIntro")(items.length)+" ":"")+T("qOf")(k+1,items.length),hint:false,sol:false,skip:true,
+      next:()=>k>=items.length?T("examDone"):T("nextProblem"),onNext:()=>k>=items.length?end():ask()},
+     (ok,h,)=>{res.push({it,ok,given:ctx.cur.shown});k++;track(it.id,it.lv,ok,false,"exam")});
+    ctx.cur.item=it}
+  function end(){
+    const right=res.filter(r=>r.ok).length,n=res.length,pct=Math.round(100*right/n),stars=pct>=90?3:pct>=70?2:pct>=50?1:0;
+    S.exams=S.exams||{};const old=S.exams[id]||{};S.exams[id]={best:Math.max(old.best||0,pct),last:pct,at:today(),tries:(old.tries||0)+1,right,n};
+    const p=Object.assign({stars:0},S.lessons[id],{seen:true});p.stars=Math.max(p.stars||0,stars);S.lessons[id]=p;addXP(right*5);save();checkBadges();leave();
+    const v=T("examVerdict")(pct);
+    app.innerHTML=`<div class="stack exres">
+      <div class="lhead"><button class="btn ghost" id="back" style="padding:5px 16px">${T("back")}</button><h2>📝 ${esc(L(X.title))}</h2></div>
+      <section class="panel exsum"><div class="exring" style="--p:${pct}"><b>${pct} %</b><span>${right} / ${n}</span></div>
+        <div class="stack" style="gap:6px"><h2>${esc(v)}</h2><p class="muted">${esc(T("examBest")(S.exams[id].best,S.exams[id].tries))}</p>
+        <span class="stars" style="font-size:1.8rem">${[0,1,2].map(j=>`<span class="${j<stars?"":"off"}">★</span>`).join("")}</span>
+        <div class="row"><button class="btn" id="exagain">↻ ${T("examAgain")}</button><button class="btn ghost" id="mapb">${T("toLessons")}</button></div></div></section>
+      <section class="panel stack" style="gap:8px"><h3>${T("examReview")}</h3><ol class="exlist">${res.map(r=>{const Ls=LESSONS.find(l=>l.id===r.it.id);
+        return`<li class="${r.ok?"ok":"no"}"><span class="exmark">${r.ok?"✓":"✗"}</span><div><b>${esc(r.it.g.qs||"")}</b>
+        ${r.ok?`<span class="muted">${esc(answerText(r.it.g))}</span>`:`<span class="exgiven">${T("examYours")}: ${esc(r.given||"–")}</span><span class="exright">${T("examRight")}: ${esc(answerText(r.it.g))}</span>`}
+        ${!r.ok&&Ls?`<span class="muted exles">${T("examRead")}: ${esc(L(Ls.title))}</span>`:""}</div></li>`}).join("")}</ol></section></div>`;
+    window.scrollTo(0,0);$("#back").onclick=map;$("#mapb").onclick=map;$("#exagain").onclick=()=>exam(id)}
   ask();
 }
 
@@ -3375,6 +3429,7 @@ function map(){
 
 function lesson(id){
   if(!S.name||!S.grade){welcome();return}
+  {const X=LESSONS.find(l=>l.id===id);if(X&&X.exam){exam(id);return}}
   screen=()=>lesson(id);leave();
   const Ls=LESSONS.find(l=>l.id===id);wordsSvOnly=!!Ls&&Ls.subject==="swedish";if(!(S.lessons[id]||{}).seen){S.lessons[id]=Object.assign({stars:0},S.lessons[id],{seen:true});saveLocal()}
   app.innerHTML=`<div class="lesson">
@@ -3616,4 +3671,4 @@ export function start(){courseMeta();helpMeta();
   setTimeout(checkBadges,700);
 }
 
-export {$,app,rnd,pick,esc,shuffle,mod,REDUCED,toastT,toast,UI,lang,T,L,trOn,LT,trSpan,FONT,KEY,PKEY,fresh,clean,newId,PROF,kidList,S,saveLocal,save,useKid,dropKid,hud,addXP,OWL,makeCanvas,svgPoint,GRID,LESSONS,NS,MK,jit,f1,R,A,rod,ones,pieLines,fontsReady,SFX,WB,wbMount,rint,vAdd,WT,PV,WF,PIE,FR,fracAddBoard,fracEqBoard,t3,MUL,DIVS,fmt,dfmt,pad,qt,dots,dotGrid,plines,polyPts,REST,eqLines,PVH,PVX,PVC,pvHead,pvDigits,cmpBoard,PV4,nline,roundBoard,RND,vSub,WS,crossOnes,SUB,apple,arrayBoard,mulBoard,MULT,groupsBoard,DIVL,part10,bar10,SEP,decCol,DEC,ruler,UNITS,LEN,clockFace,clock,minLabels,timeline,TIME,gridRect,CM2,CM,rectQ,AREA,ANG,angleAt,SHP,FRUIT,SPORT,BX,BY,BCOL,chart,tally,STAT,scale,ALG,HELPX,HINTSX,TERMS,WORDS,TERM,lessonWords,trRe,termsIn,wordsSvOnly,showWords,wordCard,wordQ,COURSES,ORD4,courseMeta,coinsPath,bagPath,HELP,before,HINTS,helpMeta,dkey,today,daysAgo,dayRec,streakNow,courseOf,years,viewYear,yearNow,course4,allCourse,placeOf,isDone,nextLesson,answerText,track,GAPS,dayDiff,inDays,revStart,revFill,revAnswer,revDue,memState,revLv,mixPick,remind,addRemind,BADGES,bq,checkBadges,showBadge,lastAct,CLOUD,flushCloud,pushCloud,goneCloud,mergeState,adopt,takeKid,hintNow,poseProblem,makeTalk,placeBoard,PROBES,planDrill,drill,yearSeg,wireYears,badges,parents,AI_MAX,SAMPLE,aiOn,aiShow,boardTexts,sceneInfo,probInfo,aiPrompt,clampN,cutS,okC,AIH,aiItem,aiSteps,aiHelp,aiButtons,aiClose,probBoard,SUBJECTS,fitStage,fitRO,fitOn,active,screen,KEYS,leaveHooks,leave,setScreen,testHook,setPicked,setViewYear,setTab,backToCur,setLang,markTr,welcome,picked,who,route,tabNow,map,lesson,SB,AKEY,ACC,AUI,AT,sb,rpc,aget,aset,parKeep,parTok,kidState,accPush,accUse,accKidOut,accParOut,hudBase,kidMenu,startScreen,kidLogin,parLogin,parentHome,accStart};
+export {$,app,rnd,pick,esc,shuffle,mod,REDUCED,toastT,toast,UI,lang,T,L,trOn,LT,trSpan,FONT,KEY,PKEY,fresh,clean,newId,PROF,kidList,S,saveLocal,save,useKid,dropKid,hud,addXP,OWL,makeCanvas,svgPoint,GRID,LESSONS,NS,MK,jit,f1,R,A,rod,ones,pieLines,fontsReady,SFX,WB,wbMount,rint,vAdd,WT,PV,WF,PIE,FR,fracAddBoard,fracEqBoard,t3,MUL,DIVS,fmt,dfmt,pad,qt,dots,dotGrid,plines,polyPts,REST,eqLines,PVH,PVX,PVC,pvHead,pvDigits,cmpBoard,PV4,nline,roundBoard,RND,vSub,WS,crossOnes,SUB,apple,arrayBoard,mulBoard,MULT,groupsBoard,DIVL,part10,bar10,SEP,decCol,DEC,ruler,UNITS,LEN,clockFace,clock,minLabels,timeline,TIME,gridRect,CM2,CM,rectQ,AREA,ANG,angleAt,SHP,FRUIT,SPORT,BX,BY,BCOL,chart,tally,STAT,scale,ALG,HELPX,HINTSX,TERMS,WORDS,TERM,lessonWords,trRe,termsIn,wordsSvOnly,showWords,wordCard,wordQ,COURSES,ORD4,courseMeta,coinsPath,bagPath,HELP,before,HINTS,helpMeta,dkey,today,daysAgo,dayRec,streakNow,courseOf,years,viewYear,yearNow,course4,allCourse,placeOf,isDone,nextLesson,answerText,track,GAPS,dayDiff,inDays,revStart,revFill,revAnswer,revDue,memState,revLv,mixPick,remind,addRemind,BADGES,bq,checkBadges,showBadge,lastAct,CLOUD,flushCloud,pushCloud,goneCloud,mergeState,adopt,takeKid,hintNow,poseProblem,makeTalk,placeBoard,PROBES,planDrill,drill,examItems,exam,yearSeg,wireYears,badges,parents,AI_MAX,SAMPLE,aiOn,aiShow,boardTexts,sceneInfo,probInfo,aiPrompt,clampN,cutS,okC,AIH,aiItem,aiSteps,aiHelp,aiButtons,aiClose,probBoard,SUBJECTS,fitStage,fitRO,fitOn,active,screen,KEYS,leaveHooks,leave,setScreen,testHook,setPicked,setViewYear,setTab,backToCur,setLang,markTr,welcome,picked,who,route,tabNow,map,lesson,SB,AKEY,ACC,AUI,AT,sb,rpc,aget,aset,parKeep,parTok,kidState,accPush,accUse,accKidOut,accParOut,hudBase,kidMenu,startScreen,kidLogin,parLogin,parentHome,accStart};

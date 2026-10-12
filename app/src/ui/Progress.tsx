@@ -95,6 +95,9 @@ function Parents() {
       <div className="tile"><span className="label">{T("pStreak")}</span><b>🔥 {streakNow()}</b><span className="muted">{T("pHints")}: {S.tot.hints}</span></div>
     </div>
     <section className="panel stack" style={{gap: 8}}><h3>{T("pChart")}</h3><Chart mins={mins} recs={recs} days={days} /></section>
+    {Object.keys(S.exams || {}).length > 0 && <section className="panel stack" id="pexams" style={{gap: 8}}><h3>📝 {T("examT")}</h3><ul className="plist">
+      {Object.entries(S.exams as Record<string, {best: number; last: number; at: string; tries: number}>).map(([id, e]) => { const l: Lesson | undefined = LESSONS.find((x: Lesson) => x.id === id);
+        return <li key={id}><b>{l ? L(l.title) : id}</b> <span className="muted">· {e.last} % ({e.at}) · {T("examBest")(e.best, e.tries)}</span></li>; })}</ul></section>}
     <section className="panel stack" style={{gap: 8}}><h3>{T("pNeeds")}</h3>
       {needs.length ? <ul className="plist">{needs.map((n, i) => { const l: Lesson | undefined = LESSONS.find((x: Lesson) => x.id === n.id);
         return l ? <li key={i}><b>{l.ord || ""}. {L(l.title)}</b> <span className="muted">· {n.why}</span></li> : null; })}</ul>

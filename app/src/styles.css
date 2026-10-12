@@ -329,3 +329,11 @@ body.inles .wrap{max-width:1500px;padding-block:8px}body.inles .top{padding-bloc
 .p1grid{display:flex;flex-wrap:wrap;gap:6px}
 .p1c{position:relative;display:grid;place-items:center;width:42px;height:42px;border-radius:10px;background:var(--line);color:var(--muted,#64748b);font:700 1.25rem var(--display)}
 .p1c.ok{background:#dcfce7;color:#166534}.p1c small{position:absolute;top:1px;inset-inline-end:4px;font-size:.62rem;font-weight:800}
+/* chapter test results */
+.exsum{display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.exring{--p:0;width:150px;height:150px;border-radius:50%;display:grid;place-content:center;text-align:center;background:radial-gradient(closest-side,var(--surface) 78%,transparent 79%),conic-gradient(var(--teal) calc(var(--p)*1%),var(--line) 0)}
+.exring b{font:800 2.1rem var(--display);color:var(--ink)}.exring span{color:var(--muted,#64748b);font-weight:700}
+.exlist{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.exlist li{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--line) 40%,transparent)}
+.exlist li>div{display:flex;flex-direction:column;gap:2px}.exmark{font:800 1.3rem var(--display);width:1.4em;text-align:center}
+.exlist li.ok .exmark{color:#16a34a}.exlist li.no .exmark{color:#dc2626}.exgiven{color:#dc2626}.exright{color:#16a34a;font-weight:700}.exles{font-size:.88rem}

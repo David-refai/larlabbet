@@ -2,9 +2,9 @@
 // and core.js / sv-0engine.js export every top-level name. Run by build.sh; safe to run any time.
 // usage: node tools/fix-imports.mjs
 import {Linter} from "eslint";import fs from "fs";import path from "path";
-const ENGINES=["app/src/legacy/core.js","app/src/lessons/sv-0engine.js"];
+const ENGINES=["app/src/legacy/core.js","app/src/lessons/sv-0engine.js","app/src/lessons/no-0body.js"];
 const files=["app/src/legacy/core.js",...fs.readdirSync("app/src/lessons").filter(f=>f.endsWith(".js")).sort().map(f=>"app/src/lessons/"+f)];
-const GEN=/^import \{[^}]*\} from "\.{1,2}\/[^"]*(core|sv-0engine)\.js";\n/mg,EXP=/\nexport \{[^}]*\};\n*$/;
+const GEN=/^import \{[^}]*\} from "\.{1,2}\/[^"]*(core|sv-0engine|no-0body)\.js";\n/mg,EXP=/\nexport \{[^}]*\};\n*$/;
 const body=f=>fs.readFileSync(f,"utf8").replace(GEN,"").replace(EXP,"\n");
 function scan(src){const res={defs:[],uses:new Set()};const l=new Linter({configType:"flat"});
   const m=l.verify(src,[{languageOptions:{ecmaVersion:"latest",sourceType:"module"},plugins:{x:{rules:{r:{create(ctx){return{"Program:exit"(){const ms=ctx.sourceCode.scopeManager.globalScope.childScopes[0];
