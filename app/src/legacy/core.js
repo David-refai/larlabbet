@@ -149,6 +149,10 @@ const A={
     and a beat that makes the last n drawn things swell and shrink (a heart, lungs) */
  flow:(d,c="r",n=6,dur=4,r=6)=>({t:"flow",d,c,n,dur,r}),
  beat:(n,cx,cy,k=1.07,dur=.9)=>({t:"beat",n,cx,cy,k,dur}),
+ /* a finished 2.5D picture (SVG markup around 0,0) placed at x,y and scale s; it fades in, or grows out of a point when grow is set */
+ art:(svg,x=0,y=0,s=1,grow=false)=>({t:"art",svg,x,y,s,grow}),
+ /* the camera moves in to show the part of the board around (x,y), w wide; the next wipe moves it back */
+ zoom:(x,y,w,dur=1.5)=>({t:"zoom",x,y,w,dur}),
 };
 const rod=(x,y,h=120,c="b")=>{let d=R.rect(x,y,20,h);for(let i=1;i<10;i++)d+=R.line(x,y+i*h/10,x+20,y+i*h/10,.3);return A.p(d,c,3)};
 const ones=(x,y,n,c="r",per=5)=>{let d="";for(let i=0;i<n;i++)d+=R.rect(x+(i%per)*24,y+Math.floor(i/per)*24,18,18,.5);return A.p(d,c,3)};
@@ -190,7 +194,7 @@ class WB{
  penOff(){this.pen.style.display="none";this.px=null;SFX.level(0)}
  async travel(x,y,tok){if(this.fast||REDUCED)return;const sx=this.px??820,sy=this.py??540,d=Math.hypot(x-sx,y-sy);if(d<4)return;
   await this.anim(Math.min(520,160+d*.9),tok,q=>{const e=q<.5?2*q*q:1-(-2*q+2)**2/2;this.penAt(sx+(x-sx)*e,sy+(y-sy)*e-Math.sin(Math.PI*q)*Math.min(26,d*.12),this.penC||MK.k,false)})}
- clear(){this.ink.innerHTML=""}
+ clear(){this.ink.innerHTML="";this.svg.setAttribute("viewBox","0 0 800 500")}
  cancel(){this.tok++;this.penOff()}
  anim(dur,tok,f){return new Promise(res=>{if(this.fast||REDUCED){f(1);return res()}const t0=performance.now();
    const tick=t=>{if(tok!==this.tok)return res();if(this.fast){f(1);return res()}const p=Math.min(1,(t-t0)/dur);f(p);p<1?requestAnimationFrame(tick):res()};requestAnimationFrame(tick)})}
@@ -216,6 +220,12 @@ class WB{
       if(REDUCED){const pt=p.getPointAtLength(L*(i+.5)/a.n);ci.setAttribute("cx",f1(pt.x));ci.setAttribute("cy",f1(pt.y))}
       else{const m=sv("animateMotion",{dur:a.dur+"s",repeatCount:"indefinite",begin:f1(-a.dur*i/a.n)+"s"},ci);sv("mpath",{href:"#"+id},m)}}
     if(!this.fast&&!REDUCED){g.style.opacity="0";g.style.transition="opacity .5s";requestAnimationFrame(()=>{g.style.opacity="1"});await this.anim(300,tok,()=>{})}return}
+  if(a.t==="art"){const o=this.el("g",{transform:`translate(${a.x},${a.y}) scale(${a.s})`}),g=document.createElementNS(NS,"g");o.appendChild(g);g.innerHTML=a.svg;
+    if(this.fast||REDUCED)return;g.style.opacity="0";
+    await this.anim(a.grow?700:450,tok,q=>{const e=1-(1-q)**3;g.style.opacity=String(Math.min(1,q*1.6));if(a.grow)g.setAttribute("transform",`scale(${f1(.3+.7*e)})`);if(q>=1)g.removeAttribute("transform")});return}
+  if(a.t==="zoom"){const h=a.w*500/800,to=[a.x-a.w/2,a.y-h/2,a.w,h],from=this.svg.getAttribute("viewBox").split(/[ ,]+/).map(Number),set=v=>this.svg.setAttribute("viewBox",v.map(f1).join(" "));
+    if(this.fast||REDUCED){set(to);return}
+    await this.anim(a.dur*1000,tok,q=>{const e=q<.5?4*q*q*q:1-(-2*q+2)**3/2;set(from.map((f,i)=>f+(to[i]-f)*e))});return}
   if(a.t==="beat"){const kids=[...this.ink.children].slice(-a.n);if(!kids.length||REDUCED)return;
     const o=document.createElementNS(NS,"g"),m=document.createElementNS(NS,"g"),i=document.createElementNS(NS,"g");
     o.setAttribute("transform",`translate(${a.cx},${a.cy})`);i.setAttribute("transform",`translate(${-a.cx},${-a.cy})`);

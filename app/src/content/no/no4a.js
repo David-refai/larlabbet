@@ -1,3 +1,4 @@
+import {CELL3D,CELLPATCH,FEMUR3D,FEMURUP,KID} from "./no-0art.js";
 import {OUT,at,bankGen,blist,body,bp,bx,by,cell,heartBig,joints,label,note,organ,pointAt,skeleton,ttl} from "./no-0body.js";
 import {A,LESSONS,R,TERM,WORDS,f1,t3,wbMount} from "../../legacy/core.js";
 /* ===== no4a.js: NO, Year 4, the human body 1 and 2 =====
@@ -29,12 +30,13 @@ const BODY1={steps:[
  {say:t3("Din kropp är som en stor fabrik där alla delar jobbar tillsammans. I det här kapitlet ska vi titta in i kroppen och se hur den fungerar.",
    "Your body is like a big factory where all the parts work together. In this chapter we look inside the body and see how it works.",
    "جسمك مثل مصنع كبير تعمل كل أجزائه معًا. في هذا الفصل سننظر داخل الجسم ونرى كيف يعمل."),
-  draw:()=>{at(400,40,.98);return[A.wipe(),...body(),A.tx("Människokroppen",640,110,40,"b"),A.tx("Hur fungerar",640,190,30),A.tx("du inuti?",640,230,30)]}},
+  draw:()=>[A.wipe(),A.art(KID,250,58,1.05),A.tx("Människokroppen",590,110,40,"b"),A.tx("Hur fungerar",590,190,30),A.tx("du inuti?",590,230,30)]},
  {say:t3("Hela kroppen är byggd av små byggstenar som heter celler. En cell är så liten att den bara syns i mikroskop. Du har miljarder celler, och varje cell har en cellkärna som styr den.",
    "The whole body is built of tiny building blocks called cells. A cell is so small you can only see it in a microscope. You have billions of cells, and each one has a nucleus that controls it.",
    "الجسم كله مبني من وحدات صغيرة اسمها الخلايا. الخلية صغيرة جدًا فلا تُرى إلا بالمجهر. لديك مليارات الخلايا، ولكل خلية نواة تتحكّم بها."),
-  draw:()=>[A.wipe(),ttl("Celler"),...cell(250,270,110),A.p(R.line(270,270,470,200,.3),"v",2.5),A.tx("cellkärna",480,206,32,"v","start"),A.p(R.line(330,350,470,380,.3),"g",2.5),A.tx("cell",480,390,32,"g","start"),
-   ...cell(620,300,26),...cell(680,330,22),...cell(640,360,20),A.tx("miljarder!",660,440,30,"o")]},
+  draw:()=>[A.wipe(),A.art(KID,250,58,1.05),A.zoom(151,356,110),A.art(CELLPATCH,151,356,.075),A.zoom(151,356,34,1.2),A.wipe(),A.art(CELL3D,270,284,.95,true),ttl("Celler"),
+   A.p(R.line(300,272,470,206,.3),"v",2.5),A.tx("cellkärna",480,214,32,"v","start"),A.p(R.line(420,330,470,380,.3),"r",2.5),A.tx("cellmembran",480,392,30,"r","start"),
+   A.art(CELL3D,640,290,.13),A.art(CELL3D,688,318,.11),A.art(CELL3D,650,338,.1),A.tx("miljarder!",660,440,30,"o")]},
  {say:t3("Många likadana celler som gör samma jobb bildar en vävnad. Olika vävnader bildar ett organ. Ett organ är en del av kroppen som har en viss uppgift, till exempel hjärtat som pumpar blod.",
    "Many cells of the same kind doing the same job form a tissue. Different tissues form an organ. An organ is a part of the body with a special job, like the heart that pumps blood.",
    "خلايا كثيرة متشابهة تقوم بالعمل نفسه تكوّن نسيجًا. والأنسجة المختلفة تكوّن عضوًا. العضو جزء من الجسم له مهمة معيّنة، مثل القلب الذي يضخّ الدم."),
@@ -110,6 +112,12 @@ const BODY2={steps:[
    "Inside the body is the skeleton. It is all the bones of the body together. An adult has about 206 bones! The skeleton holds the body up, just like the frame of a house.",
    "داخل الجسم يوجد الهيكل العظمي، وهو كل عظام الجسم معًا. لدى الإنسان البالغ نحو 206 عظمة! الهيكل يحمل الجسم مثل هيكل البيت."),
   draw:()=>[A.wipe(),...SKEL(),A.tx("Skelettet",650,110,44,"b"),A.tx("ca 206 ben",650,170,34,"o"),A.tx("bär upp kroppen",650,230,30)]},
+ {say:t3("Nu zoomar vi in i lårbenet. Ett ben är levande! Ytterst finns ett hårt skal. I ändarna är benet som en svamp, lätt men starkt. Inuti finns benmärg, där nya blodkroppar tillverkas.",
+   "Now we zoom into the thigh bone. A bone is alive! On the outside is a hard shell. At the ends the bone is like a sponge, light but strong. Inside is bone marrow, where new blood cells are made.",
+   "الآن نقترب داخل عظمة الفخذ. العظمة حيّة! في الخارج قشرة صلبة، وفي الطرفين يشبه العظم الإسفنج، خفيف لكنه قوي. وفي الداخل نخاع العظم، حيث تُصنع خلايا دم جديدة."),
+  draw:()=>[A.wipe(),A.art(KID,400,52,1.05),A.zoom(364,386,120),A.art(FEMURUP,364,392,.13),A.zoom(364,392,60,1.1),A.wipe(),A.art(FEMUR3D,400,262,1,true),ttl("Inuti ett ben"),
+   A.p(R.line(470,150,470,214,.2),"k",2.5),A.tx("hårt skal",470,140,30,"k"),A.p(R.line(150,380,140,300,.2),"o",2.5),A.tx("svampigt ben",150,410,30,"o"),
+   A.p(R.line(560,370,520,272,.2),"r",2.5),A.tx("benmärg:",600,400,30,"r"),A.tx("gör blodkroppar",600,436,28,"r")]},
  {say:t3("Skelettet skyddar också organen. Skallen är en hård hjälm runt hjärnan. Revbenen bildar en bur runt hjärtat och lungorna. Ryggraden skyddar ryggmärgen, nervsträngen inuti ryggen.",
    "The skeleton also protects the organs. The skull is a hard helmet around the brain. The ribs form a cage around the heart and lungs. The backbone protects the spinal cord, the bundle of nerves inside the back.",
    "الهيكل العظمي يحمي الأعضاء أيضًا. الجمجمة خوذة صلبة حول الدماغ، والأضلاع قفص حول القلب والرئتين، والعمود الفقري يحمي النخاع الشوكي داخل الظهر."),
@@ -158,6 +166,8 @@ const BANK2=[
  {lv:0,q:"Vad skyddar skallen?",a:"hjärnan",w:["hjärtat","magsäcken","lungorna"]},
  {lv:0,q:"Vad gör att du kan röra dig?",a:"musklerna",w:["levern","hjärnan bara","huden"]},
  {lv:1,q:"Vad skyddar revbenen?",a:"hjärtat och lungorna",w:["hjärnan","tarmarna","njurarna"]},
+ {lv:1,q:"Var tillverkas nya blodkroppar?",a:"i benmärgen",w:["i huden","i magsäcken","i senorna"]},
+ {lv:2,q:"Hur ser benet ut inuti i ändarna?",a:"som en svamp",w:["helt ihåligt","som vatten","som en sten utan hål"]},
  {lv:1,q:"Vad heter de små benen som ryggraden är byggd av?",a:"kotor",w:["revben","senor","leder"]},
  {lv:1,q:"Vad kallas platsen där två ben möts?",a:"en led",w:["en sena","en kota","en muskel"]},
  {lv:1,q:"Vad fäster en muskel vid ett ben?",a:"en sena",w:["en led","en kota","en nerv"]},
