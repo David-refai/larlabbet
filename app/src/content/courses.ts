@@ -42,8 +42,7 @@ const CHAPTERS: Chapter[] = [
   ch("swedish", 4, "sv4-sma", "Små ord, tid och oregelbundna verb", ["sv4i", "sv4j", "sv4k", "sv4l"]),
 
   ch("bio", 4, "bio4-kropp", "Människokroppen", ["no4a", "no4b", "no4c", "no4d", "no4e", "no4f", "no4g"], {exam: "prov4kropp"}),
-  ch("bio", 4, "bio4-natur", "Djur, växter och ekosystem", [],
-    {about: "Näringskedjor, fotosyntes, artkunskap och hur allt i naturen hänger ihop."}),
+  ch("bio", 4, "bio4-natur", "Djur, växter och ekosystem", ["bio4h", "bio4i", "bio4j", "bio4k", "bio4l", "bio4m"]),
 
   ch("fys", 4, "fys4-kraft", "Krafter och rörelse", ["friction"],
     {about: "Tyngdkraft, friktion, magneter och hur saker sätts i rörelse."}),

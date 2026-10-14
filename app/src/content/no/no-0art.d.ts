@@ -5,3 +5,6 @@ export declare const CELL3D: any;
 export declare const FEMUR3D: any;
 export declare const CELLPATCH: any;
 export declare const FEMURUP: any;
+export declare const TREE3D: any;
+export declare const LEAFPATCH: any;
+export declare const PCELL3D: any;

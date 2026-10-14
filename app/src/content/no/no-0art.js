@@ -82,4 +82,46 @@ const CELLPATCH=(()=>{let o=`<defs><radialGradient id="a-pc" cx=".4" cy=".35" r=
 /* the bone standing up, for showing it through the leg */
 const FEMURUP=`<g transform="rotate(90)" opacity=".9">${FEMUR3D}</g>`;
 
-export {ART_LINE,KID,CELL3D,FEMUR3D,CELLPATCH,FEMURUP};
+
+/* a 2.5D birch-like tree, about 400 tall, trunk foot at y≈390, centred on x=0. A leaf to zoom into sits at (70,120). */
+const TREE3D=(()=>{let o=`<defs>
+ <linearGradient id="a-trunk" x1="0" x2="1"><stop offset="0" stop-color="#a9744a"/><stop offset=".45" stop-color="#d9a679"/><stop offset="1" stop-color="#7a4e2c"/></linearGradient>
+ <radialGradient id="a-crown" cx=".38" cy=".3" r=".85"><stop offset="0" stop-color="#9fe08a"/><stop offset=".6" stop-color="#4fae4a"/><stop offset="1" stop-color="#2b7a34"/></radialGradient>
+ <linearGradient id="a-tleaf" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b8f0a0"/><stop offset="1" stop-color="#3f9a3c"/></linearGradient>
+</defs>
+<ellipse cx="0" cy="394" rx="120" ry="13" fill="${ART_LINE}" opacity=".13"/>
+<path d="M-22 392 Q-14 300 -16 220 L16 220 Q14 300 24 392Z" fill="url(#a-trunk)"/>
+<path d="M-6 250 Q-50 210 -80 190M6 240 Q50 205 78 180" stroke="#8a5a34" stroke-width="10" fill="none" stroke-linecap="round"/>`;
+ for(const [x,y,r] of [[-90,150,80],[80,140,84],[0,90,100],[-40,190,70],[50,200,70],[0,170,80]])o+=`<circle cx="${x}" cy="${y}" r="${r}" fill="url(#a-crown)"/>`;
+ for(let k=0;k<46;k++){const a=k*2.399,r=22+((k*37)%120),x=Math.round(Math.cos(a)*r*1.15),y=Math.round(140+Math.sin(a)*r*.8);
+  if(Math.abs(x-90)<34&&Math.abs(y-112)<24)continue;
+  o+=`<path d="M${x} ${y} q9 -11 21 -8 q-3 13 -21 8z" fill="#3d9a3e" opacity=".55" transform="rotate(${(k*53)%360} ${x} ${y})"/>`}
+ o+=`<path d="M70 120 q22 -26 50 -20 q-6 30 -50 20z" fill="#e4f7a0" stroke="#2b7a34" stroke-width="3"/><path d="M70 120 l40 -16" stroke="#2b7a34" stroke-width="1.8"/>`;
+ return o})();
+
+/* the surface of a leaf seen very close: box-shaped plant cells with green dots, radius 200 */
+const LEAFPATCH=(()=>{let o=`<defs><radialGradient id="a-lp" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#e9fbe0"/><stop offset="1" stop-color="#a9de95"/></radialGradient></defs><circle r="200" fill="#5aa94f"/>`;
+ for(let r=-5;r<=5;r++)for(let c=-4;c<=4;c++){const x=c*50+(r%2?25:0),y=r*36;if(x*x+y*y>180*180)continue;
+  o+=`<rect x="${x-23}" y="${y-16}" width="46" height="32" rx="5" fill="url(#a-lp)" stroke="#2f7a2e" stroke-width="3"/>`;
+  for(const [dx,dy] of [[-12,-6],[2,7],[13,-4],[-4,-8]])o+=`<ellipse cx="${x+dx}" cy="${y+dy}" rx="5" ry="3.4" fill="#2f9e3c"/>`}
+ return o+`<circle r="200" fill="none" stroke="#2f7a2e" stroke-width="6"/>`})();
+
+/* a plant cell, about 380 wide and 260 tall, centred on (0,0).
+   Useful points: cell wall top (0,-130), nucleus (-110,-40), chloroplast (90,70), vacuole (40,-10). */
+const PCELL3D=(()=>{let o=`<defs>
+ <linearGradient id="a-wall" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9ad67f"/><stop offset="1" stop-color="#3f8f3a"/></linearGradient>
+ <radialGradient id="a-cyto" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#f6fff0"/><stop offset="1" stop-color="#d4efc4"/></radialGradient>
+ <radialGradient id="a-vac" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#eaf7ff"/><stop offset="1" stop-color="#a9d6f2"/></radialGradient>
+ <radialGradient id="a-nuc" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#c7b3ff"/><stop offset="1" stop-color="#6a49c9"/></radialGradient>
+ <linearGradient id="a-chl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7fd96a"/><stop offset="1" stop-color="#1f7a2c"/></linearGradient>
+</defs>
+<ellipse cx="0" cy="150" rx="190" ry="14" fill="${ART_LINE}" opacity=".12"/>
+<rect x="-195" y="-135" width="390" height="270" rx="34" fill="url(#a-wall)"/>
+<rect x="-180" y="-120" width="360" height="240" rx="26" fill="url(#a-cyto)" stroke="#5fae4c" stroke-width="3"/>
+<path d="M-40 -90 Q60 -110 120 -60 Q150 10 100 70 Q20 100 -40 60 Q-70 0 -40 -90Z" fill="url(#a-vac)" stroke="#6aaed6" stroke-width="3"/>
+<circle cx="-110" cy="-40" r="38" fill="url(#a-nuc)"/><circle cx="-118" cy="-48" r="12" fill="#4a2fa0" opacity=".7"/>`;
+ for(const [x,y,a] of [[90,70,10],[-120,60,-20],[-60,90,15],[140,-90,30],[-150,-95,-30],[150,20,80],[30,-100,0],[-20,100,-5]])
+  o+=`<g transform="translate(${x} ${y}) rotate(${a})"><ellipse rx="24" ry="13" fill="url(#a-chl)"/><path d="M-14 -3h28M-14 4h28" stroke="#c9f3b4" stroke-width="2" opacity=".8"/></g>`;
+ return o+`<path d="M-170 -110 Q-60 -128 60 -118" stroke="#fff" stroke-width="6" opacity=".5" fill="none" stroke-linecap="round"/>`})();
+
+export {ART_LINE,KID,CELL3D,FEMUR3D,CELLPATCH,FEMURUP,TREE3D,LEAFPATCH,PCELL3D};
