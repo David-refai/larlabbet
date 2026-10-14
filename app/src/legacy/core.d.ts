@@ -196,6 +196,7 @@ export declare const yearSeg: any;
 export declare const wireYears: any;
 export declare const badges: any;
 export declare const parents: any;
+export declare const explorer: any;
 export declare const AI_MAX: any;
 export declare const SAMPLE: any;
 export declare const aiOn: any;

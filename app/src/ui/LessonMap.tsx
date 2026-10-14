@@ -9,7 +9,7 @@ import type {Chapter, Exam} from "../content/courses";
 import {
   T, L, S, BADGES, tabNow, setTab, save, toast,
   years, yearNow, course4, allCourse, nextLesson, isDone, placeOf, revDue, today, streakNow, memState,
-  lesson, drill, badges, parents, map, ACC,
+  lesson, drill, badges, parents, map, explorer, ACC,
 } from "../legacy/core.js";
 
 type Lesson = {id: string; ord?: number; year?: number; subject?: string; title: unknown; icon: string; grades: string; steps: unknown[]; gen?: unknown; exam?: {n: number; ids: string[]}};
@@ -39,6 +39,7 @@ const LM = {lessons: "Lektioner", prov: "Prov", chapter: (k: number) => `Kapitel
   kinds: {chapter: "Kapitelprov", subject: "Ämnesprov", own: "Eget prov"} as Record<string, string>, qs: (n: number) => `${n} frågor`,
   left: (n: number) => n === 1 ? "1 lektion kvar" : `${n} lektioner kvar`, ready: "Redo att göras", best: (b: number, t: number) => `Bäst ${b} % · ${t} ${t === 1 ? "gång" : "gånger"}`,
   locked: "Gör klart lektionerna i kapitlet först. En förälder kan låsa upp provet på föräldrasidan.", ownBy: "Ett prov som en förälder har satt ihop",
+  explore: "Utforska kroppen", exploreS: "Titta inuti kroppen: muskler, skelett, organ, blodkärl och nerver. Öppna hjärtat, lungorna och hjärnan.",
   noProv: "Inga prov för den här årskursen ännu.", noYear: (s: string) => `${s} finns inte för din årskurs ännu.`};
 
 /* lessons or tests; kept while the app is open */
@@ -118,6 +119,10 @@ function LessonMap() {
         <span className="ti">🏅</span><span><b>{T("badgesT")}</b><span className="muted">{T("badgesS")(nB, BADGES.length)}</span>
           <span className="bmini">{BADGES.filter((b: {id: string}) => S.badges[b.id]).map((b: {icon: string}) => b.icon).join("")}</span></span></button>
     </div>}
+
+    {tabNow === "bio" && <div className="tools3 xtools">
+      <button className="tool xtool" id="texplore" onClick={() => explorer()}>
+        <span className="ti" aria-hidden="true">🔬</span><span><b>{LM.explore}</b><span className="muted">{LM.exploreS}</span></span></button></div>}
 
     {!math && S.grade && Y !== S.grade && <div className="empty" id="subsoon">🚧 {sub.soon || !Y ? LM.noYear(sub.name) : T("subSoon")(sub.name, S.grade)}</div>}
 

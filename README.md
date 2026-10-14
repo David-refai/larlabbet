@@ -28,6 +28,7 @@ Each lesson is a whiteboard animation. A hand draws every step in marker, and Ol
 | `app/src/main.tsx` | Entry: loads the engine, then every lesson module, then starts the app. |
 | `app/src/legacy/core.js` | The original app as one ES module: whiteboard engine, Years 4–5 lessons, screens, progress, cloud sync and accounts. The lesson player, practice and reviews still render here; the other screens are in `app/src/ui/`. |
 | `app/src/ui/` | Screens in React: profiles and name/grade (`Profiles.tsx`), the lesson map (`LessonMap.tsx`), badges and the parents page (`Progress.tsx`), and accounts (`Account.tsx`). `mount.tsx` shows a React screen in `#app`; navigation (`screen`, `leave()`) stays in core. |
+| `app/src/explorer/` | "Utforska kroppen", the body explorer on the Biologi tab: `bodyData.ts` (organs, layers, detail parts, sv/en/ar texts), `renderer.ts` (the renderer interface, so a 3D renderer can replace the SVG one), `svgRenderer.ts`, `bodyArt.ts` and `detailArt.ts` (the 2.5D SVG pictures). The screen is `app/src/ui/BodyExplorer.tsx`. |
 | `app/src/styles.css` | All styles. |
 | `app/src/content/` | Lesson files by subject: `matte/` (years 6–9 and the words files `terms-*.js`), `svenska/` (`sv-0engine.js` and the units), `no/` (`no-0body.js` and the NO lessons). Each file imports the engine names it uses. |
 | `app/src/content/courses.ts` | The course registry: subjects (Matte, Svenska, Biologi, Fysik, Kemi, Engelska), each year's chapters in order, and the tests (prov) made from them: per chapter, per subject and year, and one a parent puts together. A year without chapters listed gets one chapter with its lessons. |
@@ -57,6 +58,7 @@ node tests/t20.js                      # Svenska units (SV_IDS=sv7c,sv7d to test
 node tests/t21.js                      # Year 1 page: tracing, balloons, counting, drawing
 node tests/t22.js                      # Year 1 voice recordings
 node tests/t23.js                      # Year 1 letter and number lessons, words game
+node tests/t27.js                      # "Utforska kroppen": layers, organs, isolate, heart/lungs/brain details
 node tests/t13.js                      # Year 5 flow
 node tests/t10.js                      # placement, notebook, daily, badges, parents page
 node tests/t11.js                      # sync between two devices (mock db)
