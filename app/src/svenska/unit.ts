@@ -3,7 +3,7 @@
    Stories, words and reading questions are plain data; grammar scenes and the grammar
    exercise generator stay small functions. defineUnit() checks the data and registers the unit. */
 import * as core from "../legacy/core.js";
-import * as sv from "../lessons/sv-0engine.js";
+import * as sv from "../content/svenska/sv-0engine.js";
 
 export type T3 = {sv: string; en: string; ar: string};
 /** one drawing command on the whiteboard (A.tx, A.p, A.arrow, A.hl …) */

@@ -55,7 +55,7 @@ const FONT=(w,s)=>`${w} ${s}px Figtree, "IBM Plex Sans Arabic", sans-serif`;
 
 /* ---------- state: one profile per child, kept in this browser (and in the account when signed in) ---------- */
 const KEY="larlabbet-v3",PKEY="larlabbet-kids";
-const fresh=()=>({places:{},name:"",grade:null,xp:0,lang:"sv",lessons:{},mist:{},days:{},tot:{q:0,ok:0,okNoHint:0,hints:0},badges:{},daily:{last:"",streak:0,n:0},fixed:0,place:null,upd:0,rev:{},exams:{}});
+const fresh=()=>({places:{},name:"",grade:null,xp:0,lang:"sv",lessons:{},mist:{},days:{},tot:{q:0,ok:0,okNoHint:0,hints:0},badges:{},daily:{last:"",streak:0,n:0},fixed:0,place:null,upd:0,rev:{},exams:{},unlock:{}});
 const clean=r=>{const s=Object.assign(fresh(),r);s.tot=Object.assign(fresh().tot,r.tot);s.daily=Object.assign(fresh().daily,r.daily);return s};
 const newId=()=>"k"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 /* PROF.kids holds every child's state; S is the active child's (the same object as PROF.kids[S.id] once saved).
@@ -145,6 +145,10 @@ const A={
  hl:(x,y,w,h)=>({t:"hl",x,y,w,h}),
  band:(x,y,w,h,c)=>({t:"band",x,y,w,h,c}),
  wipe:()=>({t:"wipe"}),
+ /* moving pictures that keep going while the scene is on screen: dots that flow along a path (blood, air, water),
+    and a beat that makes the last n drawn things swell and shrink (a heart, lungs) */
+ flow:(d,c="r",n=6,dur=4,r=6)=>({t:"flow",d,c,n,dur,r}),
+ beat:(n,cx,cy,k=1.07,dur=.9)=>({t:"beat",n,cx,cy,k,dur}),
 };
 const rod=(x,y,h=120,c="b")=>{let d=R.rect(x,y,20,h);for(let i=1;i<10;i++)d+=R.line(x,y+i*h/10,x+20,y+i*h/10,.3);return A.p(d,c,3)};
 const ones=(x,y,n,c="r",per=5)=>{let d="";for(let i=0;i<n;i++)d+=R.rect(x+(i%per)*24,y+Math.floor(i/per)*24,18,18,.5);return A.p(d,c,3)};
@@ -206,6 +210,18 @@ class WB{
  }
  async do(a,tok){
   const c=MK[a.c]||a.c||MK.k;
+  if(a.t==="flow"){const id="fl"+(++this.uid),g=this.el("g",{}),sv=(tag,at,par)=>{const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);par.appendChild(e);return e};
+    const p=sv("path",{id,d:a.d,fill:"none",stroke:"none"},g),L=p.getTotalLength();
+    for(let i=0;i<a.n;i++){const ci=sv("circle",{r:a.r,fill:c,stroke:"#fff","stroke-width":1.5},g);
+      if(REDUCED){const pt=p.getPointAtLength(L*(i+.5)/a.n);ci.setAttribute("cx",f1(pt.x));ci.setAttribute("cy",f1(pt.y))}
+      else{const m=sv("animateMotion",{dur:a.dur+"s",repeatCount:"indefinite",begin:f1(-a.dur*i/a.n)+"s"},ci);sv("mpath",{href:"#"+id},m)}}
+    if(!this.fast&&!REDUCED){g.style.opacity="0";g.style.transition="opacity .5s";requestAnimationFrame(()=>{g.style.opacity="1"});await this.anim(300,tok,()=>{})}return}
+  if(a.t==="beat"){const kids=[...this.ink.children].slice(-a.n);if(!kids.length||REDUCED)return;
+    const o=document.createElementNS(NS,"g"),m=document.createElementNS(NS,"g"),i=document.createElementNS(NS,"g");
+    o.setAttribute("transform",`translate(${a.cx},${a.cy})`);i.setAttribute("transform",`translate(${-a.cx},${-a.cy})`);
+    this.ink.insertBefore(o,kids[0]);o.appendChild(m);m.appendChild(i);kids.forEach(k=>i.appendChild(k));
+    const t=document.createElementNS(NS,"animateTransform");[["attributeName","transform"],["type","scale"],["values",`1;${a.k};1;1`],["keyTimes","0;.25;.55;1"],["dur",a.dur+"s"],["repeatCount","indefinite"]].forEach(([k,v])=>t.setAttribute(k,v));
+    m.appendChild(t);return}
   if(a.t==="wipe"){const kids=[...this.ink.children];if(!this.fast&&!REDUCED&&kids.length){kids.forEach(k=>{k.style.transition="opacity .35s";k.style.opacity="0"});await this.anim(380,tok,()=>{})}if(tok===this.tok)this.clear();return}
   if(a.t==="band"){this.el("rect",{x:a.x,y:a.y,width:a.w,height:a.h,rx:12,fill:c,"fill-opacity":.07});return}
   if(a.t==="path"){const p=this.el("path",{d:a.d,fill:"none",stroke:c,"stroke-width":a.w||4.5,"stroke-linecap":"round","stroke-linejoin":"round"});
@@ -3387,11 +3403,13 @@ const SUBJECTS=[{id:"math"},{id:"science"},{id:"english",soon:true},{id:"swedish
 function fitStage(){const st=$("#stage"),ls=$(".lesson");if(!st||!ls||!document.body.classList.contains("inles"))return;
   document.documentElement.style.setProperty("--toph",$(".top").offsetHeight+"px");
   const bd=st.parentNode,ct=$("#ctrl"),side=getComputedStyle($(".lmain")).gridTemplateColumns.split(" ").length>1,W=bd.clientWidth,
-    ch=ct&&ct.offsetHeight?ct.offsetHeight+8:0,H=side?bd.clientHeight-ch:Math.max(140,ls.clientHeight*(ls.clientHeight<600?.42:.5)-ch);
+    ch=ct&&ct.offsetHeight?ct.offsetHeight+8:0,lm=$(".lcard .lmain"),tc=lm&&$(".lcard .teacher"),
+    /* one lesson card: the board gets all the height the explanation strip under it leaves */
+    H=side?bd.clientHeight-ch:lm&&tc?Math.max(140,lm.clientHeight-tc.offsetHeight-8-ch):Math.max(140,ls.clientHeight*(ls.clientHeight<600?.42:.5)-ch);
   st.style.width=Math.floor(Math.min(W,H*1.6))+"px"}
 const fitRO=window.ResizeObserver?new ResizeObserver(()=>fitStage()):null;
 function fitOn(){document.body.classList.add("inles");fitStage();requestAnimationFrame(fitStage);
-  if(fitRO){fitRO.disconnect();[$(".lesson"),$("#ctrl")].forEach(e=>e&&fitRO.observe(e))}}
+  if(fitRO){fitRO.disconnect();[$(".lesson"),$("#ctrl"),$(".lcard .teacher")].forEach(e=>e&&fitRO.observe(e))}}
 window.addEventListener("resize",fitStage);
 let active=null,screen=()=>welcome(),KEYS=null;
 /* React screens (app/src/ui) register here to unmount when any screen takes #app over */

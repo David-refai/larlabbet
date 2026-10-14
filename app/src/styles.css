@@ -337,3 +337,24 @@ body.inles .wrap{max-width:1500px;padding-block:8px}body.inles .top{padding-bloc
 .exlist li{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--line) 40%,transparent)}
 .exlist li>div{display:flex;flex-direction:column;gap:2px}.exmark{font:800 1.3rem var(--display);width:1.4em;text-align:center}
 .exlist li.ok .exmark{color:#16a34a}.exlist li.no .exmark{color:#dc2626}.exgiven{color:#dc2626}.exright{color:#16a34a;font-weight:700}.exles{font-size:.88rem}
+/* lesson map: lessons or tests, chapters (v30) */
+.modeseg{align-self:flex-start}.modeseg button{padding:6px 20px;font-size:1rem}
+.chap{gap:12px}.chead{display:flex;align-items:baseline;gap:4px 14px;flex-wrap:wrap}.chead h2{margin:0;font-size:1.3rem}
+.csoon{display:flex;flex-direction:column;gap:4px;padding:18px;text-align:start}
+.excard .exart{aspect-ratio:16/5;display:grid;place-items:center;font-size:3rem;background:#eef3ff;border-bottom:1px solid var(--line)}
+.excard.locked .exart{background:#f1f1f4;filter:grayscale(1)}.excard.locked h3{color:var(--muted)}
+.exbest{font-weight:800;color:var(--teal);font-size:.9rem}
+.padmin li{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.ownpick{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:6px 14px}.ownpick label{display:flex;gap:8px;align-items:center}
+/* v30: the board on top at full width, the explanation in a strip under it, at every screen size */
+.lcard .lmain{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr) auto!important;gap:8px}
+.lcard .lboard{padding-inline-end:0!important;justify-content:center}
+.lcard .teacher{border-inline-start:0!important;padding-inline-start:0!important;border-top:1px solid var(--line);padding-top:8px;grid-template-columns:56px 1fr!important;grid-template-rows:auto!important;gap:10px;max-height:40vh;max-width:1100px;width:100%;justify-self:center}
+.lcard .teacher>#av{align-self:start;justify-self:center}.lcard .teacher .avatar{width:56px;height:56px}
+.lcard .bubble{gap:8px}.lcard .bubble p{font-size:1.18rem;min-height:2.2em}
+@media (max-width:640px){.lcard .teacher{grid-template-columns:44px 1fr!important}.lcard .teacher .avatar{width:44px;height:44px}.lcard .bubble p{font-size:1.04rem}}
+.lcard .lmain{grid-template-rows:auto auto!important;align-content:center}
+.lcard .bubble{flex-direction:row;flex-wrap:wrap;align-items:center;column-gap:10px;row-gap:6px}
+.lcard .bubble>.who{display:none}.lcard .bubble>p,.lcard .bubble>#quiz,.lcard .bubble>#aibox{flex:1 1 100%}
+.lcard .bubble>#quiz:empty,.lcard .bubble>#aibox:empty{display:none}
+.lcard .bubble>.wchips{flex:1 1 auto;min-width:0}.lcard .bubble>.row{flex:none;margin-inline-start:auto}

@@ -29,7 +29,8 @@ Each lesson is a whiteboard animation. A hand draws every step in marker, and Ol
 | `app/src/legacy/core.js` | The original app as one ES module: whiteboard engine, Years 4–5 lessons, screens, progress, cloud sync and accounts. The lesson player, practice and reviews still render here; the other screens are in `app/src/ui/`. |
 | `app/src/ui/` | Screens in React: profiles and name/grade (`Profiles.tsx`), the lesson map (`LessonMap.tsx`), badges and the parents page (`Progress.tsx`), and accounts (`Account.tsx`). `mount.tsx` shows a React screen in `#app`; navigation (`screen`, `leave()`) stays in core. |
 | `app/src/styles.css` | All styles. |
-| `app/src/lessons/` | Years 6–9 maths, the words files (`terms-*.js`), and Svenska (`sv-0engine.js` plus the unit files `sv7*.js`). Each file imports the engine names it uses. |
+| `app/src/content/` | Lesson files by subject: `matte/` (years 6–9 and the words files `terms-*.js`), `svenska/` (`sv-0engine.js` and the units), `no/` (`no-0body.js` and the NO lessons). Each file imports the engine names it uses. |
+| `app/src/content/courses.ts` | The course registry: subjects (Matte, Svenska, Biologi, Fysik, Kemi, Engelska), each year's chapters in order, and the tests (prov) made from them: per chapter, per subject and year, and one a parent puts together. A year without chapters listed gets one chapter with its lessons. |
 | `app/src/legacy/land.json` | World map outline used by one lesson. |
 | `tools/fix-imports.mjs` | Writes each lesson file's `import` line and the engines' `export` lists. `build.sh` runs it. |
 | `supabase/schema.sql` | The database: tables, access rules and the child login functions. |
@@ -67,7 +68,7 @@ The tests serve fonts and d3 from `tests/fonts` and `tests/vendor`, so they run 
 
 ## Adding lessons
 
-Write the lessons in a new file in `app/src/lessons/`, following `docs/lesson-brief.md`. Files load in name order after the engine, and `build.sh` adds the `import` line for the engine names the file uses. Then check it:
+Write the lessons in a new file in `app/src/content/<subject>/`, add its lesson ids to a chapter in `app/src/content/courses.ts`, following `docs/lesson-brief.md`. Files load in name order after the engine, and `build.sh` adds the `import` line for the engine names the file uses. Then check it:
 
 ```bash
 bash build.sh

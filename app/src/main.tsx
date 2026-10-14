@@ -2,9 +2,9 @@
    module registers itself in LESSONS (file order matters: engines before units), then the app starts. */
 import "./styles.css";
 import * as core from "./legacy/core.js";
-import * as sv from "./lessons/sv-0engine.js";
+import * as sv from "./content/svenska/sv-0engine.js";
 
-import.meta.glob("./lessons/*.{js,ts}", {eager: true});
+import.meta.glob("./content/**/*.{js,ts}", {eager: true});
 
 /* the browser tests and the console read the engine's names as globals, live
    (this also shadows window.screen with the app's own "screen") */

@@ -19,9 +19,8 @@ for(const [w,h,tag] of [[1280,720,'laptop'],[390,844,'phone']]){
  ok(!bad.length,tag+' question banks sane '+bad.join(' | '));
  const words=await p.evaluate(ids=>ids.map(id=>[id,lessonWords(LESSONS.find(l=>l.id===id)).length]),IDS);
  words.forEach(([id,n])=>ok(n>=5,`${tag} ${id} has ${n} words to know`));
- await p.click('.tab[data-t="science"]');await p.waitForTimeout(300);
- const cards=await p.$$eval('.card',e=>e.map(x=>x.dataset.l));ok(IDS.every(id=>cards.includes(id))&&cards.includes('prov4kropp'),tag+' NO map shows the 7 lessons and the test: '+cards.join(','));
- ok(cards.indexOf('prov4kropp')===7,tag+' the test comes after the lessons');
+ await p.click('.tab[data-t="bio"]');await p.waitForTimeout(300);
+ const cards=await p.$$eval('.chap[data-c="bio4-kropp"] .card',e=>e.map(x=>x.dataset.l));ok(IDS.every((id,k)=>cards[k]===id),tag+' Biologi: the body chapter holds the 7 lessons in order: '+cards.join(','));
  await p.screenshot({path:`${D}/${tag}-map.png`});
  /* one lesson to the end: every scene, then practice */
  await p.click('.card[data-l="no4c"]');await p.waitForTimeout(400);
@@ -32,8 +31,9 @@ for(const [w,h,tag] of [[1280,720,'laptop'],[390,844,'phone']]){
  ok(q>=3,`${tag} no4c practice asked ${q} questions`);
  await p.evaluate(()=>map());await p.waitForTimeout(200);
  /* the test: no hints, no right/wrong while answering, then the results page */
- await p.click('.tab[data-t="science"]');await p.waitForTimeout(200);
- await p.click('.card[data-l="prov4kropp"]');await p.waitForTimeout(400);
+ await p.click('#mode button[data-m="prov"]');await p.waitForTimeout(200);
+ await p.evaluate(()=>{S.unlock={prov4kropp:1};map()});await p.waitForTimeout(200);
+ await p.click('.excard[data-e="prov4kropp"]');await p.waitForTimeout(400);
  const n=await p.$$eval('#prog i',e=>e.length);ok(n===21,tag+' the test has '+n+' questions');
  ok(await p.$eval('#help',e=>e.hidden),tag+' no help button in the test');
  await p.screenshot({path:`${D}/${tag}-exam-q1.png`});

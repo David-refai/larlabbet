@@ -2,9 +2,11 @@
 import {showReact} from "./mount";
 import {YearSeg} from "./YearSeg";
 import {SETS} from "../little/glyphs";
+import {useState} from "react";
+import {SUBJ, chapters, examsOf, examOpen, examLeft, setUnlock, register, ownExam} from "../content/courses";
 import {
   T, L, S, LESSONS, BADGES, CLOUD, lang, setPicked, map, parents, useKid, kidList,
-  course4, isDone, daysAgo, revDue, memState, yearNow, streakNow,
+  course4, isDone, daysAgo, save, toast, revDue, memState, yearNow, streakNow,
 } from "../legacy/core.js";
 
 type Badge = {id: string; icon: string; name: unknown; how: unknown};
@@ -68,7 +70,35 @@ function LittleReport({mins, recs, days}: {mins: number[]; recs: {q: number}[]; 
   </>;
 }
 
+/* tests for the child's year: open a locked one early, or put together an own test from chosen chapters */
+const PA = {t: "Prov", note: "Ett kapitelprov öppnas när lektionerna i kapitlet är klara. Här kan du öppna det tidigare.",
+  open: "Öppet", openNow: "Lås upp", lockAgain: "Lås igen", left: (n: number) => `🔒 ${n} lektioner kvar`,
+  own: "Eget prov", ownNote: "Välj kapitel. Provet blandar frågor från dem och syns under Prov.", n: "Antal frågor", save: "Spara provet", del: "Ta bort", saved: "Provet är sparat"};
+function ProvAdmin() {
+  const Y: number = S.grade, ex = SUBJ.flatMap(s => examsOf(s.id, Y));
+  const chs = SUBJ.flatMap(s => chapters(s.id, Y).map(c => ({c, s}))).filter(x => x.c.lessons.some(id => { const l = LESSONS.find((q: {id: string}) => q.id === id); return l && l.gen; }));
+  const cur = (S.ownExam || {ids: [], n: 10}) as {ids: string[]; n: number};
+  const [pick, setPick] = useState<string[]>(chs.filter(x => x.c.lessons.every(id => cur.ids.includes(id)) && cur.ids.length).map(x => x.c.id));
+  const [n, setN] = useState<number>(cur.n || 10), [, redraw] = useState(0);
+  if (!ex.length && !chs.length) return null;
+  return <section className="panel stack" id="padmin" style={{gap: 10}}><h3>📝 {PA.t}</h3><p className="muted">{PA.note}</p>
+    <ul className="plist padmin">{ex.map(e => { const own = examLeft(e) === 0;
+      return <li key={e.id}><span><b>{e.title}</b>{!own && <span className="muted"> · {PA.left(examLeft(e))}</span>}</span>
+        {own ? <span className="muted">{PA.open}</span> : <button className="btn ghost" data-u={e.id} style={{padding: "3px 12px"}}
+          onClick={() => { setUnlock(e.id, !examOpen(e)); redraw(x => x + 1); }}>{examOpen(e) ? PA.lockAgain : PA.openNow}</button>}</li>; })}</ul>
+    {chs.length > 0 && <div className="stack" style={{gap: 8}}><h3>{PA.own}</h3><p className="muted">{PA.ownNote}</p>
+      <div className="ownpick">{chs.map(({c, s}) => <label key={c.id}><input type="checkbox" data-c={c.id} checked={pick.includes(c.id)}
+        onChange={e => setPick(p => e.target.checked ? [...p, c.id] : p.filter(x => x !== c.id))} />{s.name}: {c.title}</label>)}</div>
+      <div className="row"><label>{PA.n} <select id="ownn" value={n} onChange={e => setN(+e.target.value)}>{[10, 15, 20].map(v => <option key={v}>{v}</option>)}</select></label>
+        <button className="btn" id="ownsave" disabled={!pick.length} onClick={() => {
+          S.ownExam = {ids: chs.filter(x => pick.includes(x.c.id)).flatMap(x => x.c.lessons), n, at: new Date().toISOString().slice(0, 10)}; save(); toast(PA.saved); redraw(x => x + 1); }}>{PA.save}</button>
+        {S.ownExam && <button className="btn ghost" id="owndel" onClick={() => { delete S.ownExam; save(); setPick([]); redraw(x => x + 1); }}>{PA.del}</button>}</div></div>}
+  </section>;
+}
+
 function Parents() {
+  /* made tests get their names from the registry */
+  if (S.grade > 1) { SUBJ.forEach(s => examsOf(s.id, S.grade).forEach(register)); const o = ownExam(); if (o) register(o); }
   const c: Lesson[] = course4(), done = c.filter(l => isDone(l.id)).length;
   const days: string[] = [...Array(7)].map((_, j) => daysAgo(6 - j));
   const recs = days.map(k => S.days[k] || {sec: 0, q: 0, ok: 0});
@@ -98,6 +128,7 @@ function Parents() {
     {Object.keys(S.exams || {}).length > 0 && <section className="panel stack" id="pexams" style={{gap: 8}}><h3>📝 {T("examT")}</h3><ul className="plist">
       {Object.entries(S.exams as Record<string, {best: number; last: number; at: string; tries: number}>).map(([id, e]) => { const l: Lesson | undefined = LESSONS.find((x: Lesson) => x.id === id);
         return <li key={id}><b>{l ? L(l.title) : id}</b> <span className="muted">· {e.last} % ({e.at}) · {T("examBest")(e.best, e.tries)}</span></li>; })}</ul></section>}
+    <ProvAdmin />
     <section className="panel stack" style={{gap: 8}}><h3>{T("pNeeds")}</h3>
       {needs.length ? <ul className="plist">{needs.map((n, i) => { const l: Lesson | undefined = LESSONS.find((x: Lesson) => x.id === n.id);
         return l ? <li key={i}><b>{l.ord || ""}. {L(l.title)}</b> <span className="muted">· {n.why}</span></li> : null; })}</ul>
