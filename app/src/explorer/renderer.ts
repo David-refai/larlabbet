@@ -1,6 +1,8 @@
-/* The renderer interface of "Utforska kroppen". The screen (ui/BodyExplorer.tsx) only talks to a
-   renderer through this, so the 2.5D SVG one (svgRenderer.ts) can later be swapped for a 3D one
-   (Three.js) that maps the same ids from bodyData.ts to meshes. */
+/* The renderer interface of the 2.5D SVG explorer of "Utforska kroppen" (svgRenderer.ts): the screen
+   (ui/BodyExplorer.tsx) drives it through these calls. The 3D explorer (explorer/3d/Explorer3D.tsx)
+   does not implement this interface: it is a React component that gets the same state as props
+   (layers, selection, isolation, detail, tab, part, flow) and reports taps through the same Pick.
+   Both use the ids of bodyData.ts. */
 import type {LayerId, OrganId, DetailId} from "./bodyData";
 
 export type Pick = {kind: "organ"; id: OrganId} | {kind: "part"; id: string};

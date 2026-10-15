@@ -28,7 +28,8 @@ Each lesson is a whiteboard animation. A hand draws every step in marker, and Ol
 | `app/src/main.tsx` | Entry: loads the engine, then every lesson module, then starts the app. |
 | `app/src/legacy/core.js` | The original app as one ES module: whiteboard engine, Years 4–5 lessons, screens, progress, cloud sync and accounts. The lesson player, practice and reviews still render here; the other screens are in `app/src/ui/`. |
 | `app/src/ui/` | Screens in React: profiles and name/grade (`Profiles.tsx`), the lesson map (`LessonMap.tsx`), badges and the parents page (`Progress.tsx`), and accounts (`Account.tsx`). `mount.tsx` shows a React screen in `#app`; navigation (`screen`, `leave()`) stays in core. |
-| `app/src/explorer/` | "Utforska kroppen", the body explorer on the Biologi tab: `bodyData.ts` (organs, layers, detail parts, sv/en/ar texts), `renderer.ts` (the renderer interface, so a 3D renderer can replace the SVG one), `svgRenderer.ts`, `bodyArt.ts` and `detailArt.ts` (the 2.5D SVG pictures). The screen is `app/src/ui/BodyExplorer.tsx`. |
+| `app/src/explorer/` | "Utforska kroppen", the body explorer on the Biologi tab: `bodyData.ts` (organs, layers, detail parts, sv/en/ar texts), `renderer.ts` (the interface the screen drives the SVG renderer through; the 3D explorer gets the same state as React props), `svgRenderer.ts`, `bodyArt.ts` and `detailArt.ts` (the 2.5D SVG pictures). The screen is `app/src/ui/BodyExplorer.tsx`. |
+| `app/src/explorer/3d/` | The 3D body explorer (three.js with @react-three/fiber and drei), loaded with `React.lazy` when the explorer opens. `registry.ts` is the parts registry (one entry per part: layer, anchor box in body space, optional GLB). `model/` builds every part in code: `body.ts` (the child), `skeleton.ts`, `muscles.ts`, `vessels.ts` (vessels and nerves), `organs.ts`, and the detail models `heartDetail.ts`, `lungsDetail.ts`, `brainDetail.ts`. `geo/` holds the signed-distance modelling and mesher, `scene/` the camera, the GLB slots and the detail stage. Without WebGL, or with `?no3d` in the address or `window.NO3D = true`, the SVG explorer is shown instead. |
 | `app/src/styles.css` | All styles. |
 | `app/src/content/` | Lesson files by subject: `matte/` (years 6–9 and the words files `terms-*.js`), `svenska/` (`sv-0engine.js` and the units), `no/` (`no-0body.js` and the NO lessons). Each file imports the engine names it uses. |
 | `app/src/content/courses.ts` | The course registry: subjects (Matte, Svenska, Biologi, Fysik, Kemi, Engelska), each year's chapters in order, and the tests (prov) made from them: per chapter, per subject and year, and one a parent puts together. A year without chapters listed gets one chapter with its lessons. |
@@ -58,7 +59,9 @@ node tests/t20.js                      # Svenska units (SV_IDS=sv7c,sv7d to test
 node tests/t21.js                      # Year 1 page: tracing, balloons, counting, drawing
 node tests/t22.js                      # Year 1 voice recordings
 node tests/t23.js                      # Year 1 letter and number lessons, words game
-node tests/t27.js                      # "Utforska kroppen": layers, organs, isolate, heart/lungs/brain details
+node tests/t27.js                      # "Utforska kroppen" (the SVG version): layers, organs, isolate, details
+node tests/t28.js                      # the 3D explorer: turning, layers, organs, isolate, details, en/ar, GLB fallback, no-WebGL fallback
+node tests/heart-check.js              # the 3D heart's walls: no hole between the right and left heart (t28 runs it too)
 node tests/t13.js                      # Year 5 flow
 node tests/t10.js                      # placement, notebook, daily, badges, parents page
 node tests/t11.js                      # sync between two devices (mock db)
@@ -67,6 +70,16 @@ node tests/t8.js; node tests/t9.js sv  # Year 4 lessons and help screens
 ```
 
 The tests serve fonts and d3 from `tests/fonts` and `tests/vendor`, so they run offline. Each test prints `errors []` when the page has no errors. Screenshots go to `build/`.
+
+## 3D models (GLB)
+
+Every part of the 3D explorer is built in code, so the app works as one file with no downloads. A part can be replaced by a real model:
+
+1. Export the model as `.glb` (without Draco or meshopt compression, which the app does not include).
+2. Put it next to `index.html`, for example `models/heart.glb`.
+3. Set `glb: "models/heart.glb"` on that part in `app/src/explorer/3d/registry.ts` and rebuild. To try it without rebuilding, set `window.EX3D_GLB = {heart: "models/heart.glb"}` before the explorer opens.
+
+The model is scaled to fit the part's anchor box and centred on it; its own materials are kept. If the file is missing or does not load, the code-built model is used and nothing is shown to the pupil. In a detail model (`heart-cutaway`, `lungs-detail`, `brain-detail`), name the nodes after the part ids in `bodyData.ts` (`hf`, `vk`, `aorta`, `luftstrupe` ...) to get their labels. A single-file artifact cannot load files next to it, so there the GLB has to be served from elsewhere or left out.
 
 ## Adding lessons
 

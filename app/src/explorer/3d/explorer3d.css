@@ -1,0 +1,75 @@
+/* "Utforska kroppen" in 3D (explorer/3d/Explorer3D.tsx): the stage, its two backgrounds (light for the
+   body, dark navy inside), the labels with leader lines, the organ name tag, the reset button. */
+.xstage.x3d{background:#0b1730;touch-action:none}
+.xstage.x3d::after{display:none}
+.x3{position:absolute;inset:0;overflow:hidden;outline:none}
+/* keyboard focus on the stage (arrows turn, + and - zoom) */
+.x3:focus-visible{box-shadow:0 0 0 3px #ffcf4a inset}
+.x3bg{position:absolute;inset:0;transition:opacity .9s ease;pointer-events:none}
+.x3bg.light{background:radial-gradient(ellipse at 50% 34%,#ffffff 0%,#eef4fc 52%,#d9e5f4 100%)}
+.x3bg.darkbg{opacity:0;background:radial-gradient(ellipse at 50% 38%,#1d3561 0%,#11234a 46%,#081430 100%)}
+.x3.dark .x3bg.darkbg{opacity:1}
+.x3.dark .x3bg.light{opacity:0}
+.x3canvas{position:absolute!important;inset:0}
+.x3canvas canvas{display:block;outline:none}
+
+.x3reset{position:absolute;right:10px;bottom:10px;z-index:5;display:flex;align-items:center;gap:6px;border:0;border-radius:999px;padding:7px 14px 7px 11px;
+  font:700 .95rem var(--display,inherit);color:#13213f;background:rgba(255,255,255,.92);box-shadow:0 2px 10px rgba(10,20,50,.18),0 0 0 1.5px rgba(19,33,63,.12) inset;cursor:pointer}
+.x3reset span{font-size:1.15rem;line-height:1}
+.x3reset .x3rt{font-size:inherit}
+/* on a small stage: a round button with just the icon (its name stays for screen readers) */
+.x3reset.icon{width:40px;height:40px;padding:0;justify-content:center;right:8px;bottom:8px}
+.x3reset.icon .x3rt{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.x3reset.icon span{font-size:1.3rem}
+.x3reset:hover,.x3reset:focus-visible{background:#fff3c4}
+.x3.dark .x3reset{background:rgba(20,40,80,.82);color:#e6f6ff;box-shadow:0 2px 12px rgba(0,0,0,.35),0 0 0 1.5px rgba(150,230,240,.35) inset}
+.x3.dark .x3reset:hover,.x3.dark .x3reset:focus-visible{background:rgba(40,80,130,.95)}
+.x3hint{position:absolute;left:50%;top:12px;transform:translateX(-50%);z-index:4;padding:5px 12px;border-radius:999px;background:rgba(19,33,63,.72);color:#fff;
+  font-size:.86rem;white-space:nowrap;pointer-events:none;animation:x3hint 6s ease forwards}
+.x3hint b{color:#ffd45a;margin-inline-end:4px}
+.x3phase{position:absolute;left:14px;top:12px;z-index:4;padding:6px 14px;border-radius:999px;background:rgba(92,198,232,.22);border:1px solid rgba(127,216,242,.6);
+  color:#dff6ff;font-weight:800;font-size:.95rem;pointer-events:none}
+.x3phase[hidden]{display:none}
+@keyframes x3hint{0%,80%{opacity:1}100%{opacity:0}}
+
+.x3load{position:absolute;inset:0;z-index:6;display:grid;place-content:center;justify-items:center;gap:10px;color:#cfe7ff;font-weight:700;
+  background:radial-gradient(ellipse at 50% 38%,#1d3561 0%,#0b1730 100%)}
+.x3spin{width:34px;height:34px;border-radius:50%;border:4px solid rgba(160,230,240,.25);border-top-color:#7fe3dc;animation:x3spin 1s linear infinite}
+@keyframes x3spin{to{transform:rotate(1turn)}}
+
+/* the organ's name tag: placed by the frame loop on top of the organ, with a leader line */
+.x3tag{position:absolute;left:0;top:0;z-index:4;pointer-events:none;padding:5px 12px;border-radius:999px;background:#fff7d6;color:#13213f;
+  font:800 1rem var(--display,inherit);white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,.28),0 0 0 2px #ffcf4a;visibility:hidden;text-align:center}
+.x3tag[hidden]{display:none}
+.x3tag .trl{display:block;font:600 .78rem Figtree,sans-serif;color:#4b5876}
+.x3tagline{position:absolute;inset:0;width:100%;height:100%;z-index:4;pointer-events:none;overflow:visible;visibility:hidden}
+.x3tagline path{fill:none;stroke:#ffcf4a;stroke-width:2.2}
+.x3tagline circle{fill:#ffcf4a;stroke:#13213f;stroke-width:1.5}
+
+/* detail labels: buttons on top, tied to the model with leader lines */
+.x3labels{position:absolute;inset:0;pointer-events:none;z-index:3}
+.x3lines{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.x3lines path{fill:none;stroke:rgba(230,245,255,.75);stroke-width:1.6}
+.x3lines circle{fill:#fff;stroke:#13213f;stroke-width:2}
+.x3lines circle.on{fill:#ffcf4a}
+.x3labels .xlab{position:absolute;left:0;top:0;pointer-events:auto;border:0;border-radius:12px;padding:5px 11px;max-width:170px;text-align:start;
+  font:700 .92rem/1.2 var(--display,inherit);color:#13213f;background:rgba(255,255,255,.95);box-shadow:0 3px 10px rgba(0,0,0,.25);cursor:pointer;white-space:normal}
+.x3labels .xlab:hover,.x3labels .xlab:focus-visible,.x3labels .xlab.on{background:#fff3c4;box-shadow:0 3px 12px rgba(0,0,0,.3),0 0 0 2px #ffcf4a}
+.x3labels .xlab.xnum{width:30px;height:30px;padding:0;border-radius:50%;display:grid;place-items:center;font-size:.9rem;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.35),0 0 0 2px #13213f}
+.x3labels .xlab.xnum.on{background:#ffcf4a}
+
+/* the honest note in the info card */
+.x3note{font-size:.82rem;line-height:1.35;color:var(--muted,#64748b);background:var(--bg);border-radius:10px;padding:6px 10px;margin:0}
+.x3note::before{content:"ⓘ ";font-weight:700}
+#xwhole{white-space:nowrap}
+@media (max-width:899px),(max-aspect-ratio:5/4){
+  .x3reset:not(.icon){right:8px;bottom:8px;padding:5px 11px 5px 9px;font-size:.85rem}
+  /* the stage gets the room: the info card scrolls inside itself, its buttons share one row */
+  .xstage.x3d~.xinfo{max-height:36vh}
+  .xstage.x3d.indetail~.xinfo{max-height:30vh}
+  .xstage.x3d~.xinfo .xbtns{flex-wrap:wrap;gap:6px}
+  .xstage.x3d~.xinfo .xbtns .btn{padding:3px 10px;font-size:.88rem}
+  .x3hint{font-size:.78rem;top:8px}
+  .x3tag{font-size:.9rem;padding:4px 10px}
+  .x3note{font-size:.78rem;padding:4px 8px}
+}

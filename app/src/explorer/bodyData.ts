@@ -71,8 +71,10 @@ export interface Part {
   id: string;
   name: T3;
   info: T3;
-  /* the tabs that show this label */
+  /* the tabs that show this label (in the SVG pictures) */
   tabs: string[];
+  /* the tabs that show it in the 3D models, when they differ: a 3D label only names what the model shows */
+  tabs3d?: string[];
   /* the point on the drawing and where its label sits (detail picture units) */
   anchor: Pt;
   label: Pt;
@@ -84,6 +86,8 @@ export interface Detail {
   view: Box;
   compact: Box;
   tabs: Tab[];
+  /* the tabs of the 3D view, when they differ (ids from tabs) */
+  tabs3d?: string[];
   /* the tab that runs the flow animation */
   flowTab: string;
   flowName: T3;
@@ -95,6 +99,7 @@ export interface Detail {
 const OV = "oversikt";
 export const DETAILS: Record<DetailId, Detail> = {
   heart: {id: "heart", title: t3("Hjärtat inuti", "Inside the heart", "داخل القلب"), view: [-40, 0, 720, 570], compact: [130, 4, 430, 560], flowTab: "flode",
+    tabs3d: [OV, "kammare", "klaffar", "flode"],
     flowName: t3("Blodflöde", "Blood flow", "جريان الدم"),
     legend: [{color: "#d21f36", name: t3("Syrerikt blod: från lungorna ut i kroppen", "Blood rich in oxygen: from the lungs to the body", "دم غني بالأكسجين: من الرئتين إلى الجسم")},
       {color: "#2a55c8", name: t3("Syrefattigt blod: från kroppen till lungorna", "Blood low in oxygen: from the body to the lungs", "دم قليل الأكسجين: من الجسم إلى الرئتين")}],
@@ -115,7 +120,11 @@ export const DETAILS: Record<DetailId, Detail> = {
         info: t3("För blodet från hjärtat till lungorna.", "Carries blood from the heart to the lungs.", "ينقل الدم من القلب إلى الرئتين.")},
       {id: "halvener", name: t3("Hålvener", "Venae cavae", "الوريدان الأجوفان"), tabs: [OV], anchor: [232, 110], label: [70, 110],
         info: t3("Två stora vener som för tillbaka blodet från kroppen till hjärtat.", "Two big veins that bring blood from the body back to the heart.", "وريدان كبيران يعيدان الدم من الجسم إلى القلب.")},
-      {id: "klaffar", name: t3("Klaffar", "Valves", "الصمامات"), tabs: [OV], anchor: [262, 318], label: [70, 340],
+      {id: "lungvener", name: t3("Lungvener", "Pulmonary veins", "الأوردة الرئوية"), tabs: [], tabs3d: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("Fyra vener som för syrerikt blod från lungorna till vänster förmak.", "Four veins that bring blood full of oxygen from the lungs to the left atrium.", "أربعة أوردة تنقل الدم الغني بالأكسجين من الرئتين إلى الأذين الأيسر.")},
+      {id: "skiljevagg", name: t3("Skiljevägg", "Septum", "الحاجز"), tabs: [], tabs3d: ["kammare"], anchor: [0, 0], label: [0, 0],
+        info: t3("En tjock vägg mitt i hjärtat. Den håller isär det blå och det röda blodet.", "A thick wall in the middle of the heart. It keeps the blue and the red blood apart.", "جدار سميك في وسط القلب يفصل بين الدم الأزرق والدم الأحمر.")},
+      {id: "klaffar", name: t3("Klaffar", "Valves", "الصمامات"), tabs: [OV], tabs3d: [], anchor: [262, 318], label: [70, 340],
         info: t3("Små dörrar som bara öppnas åt ett håll, så att blodet inte rinner bakåt.", "Small doors that open only one way, so the blood cannot flow backwards.", "أبواب صغيرة تُفتح في اتجاه واحد، فلا يرجع الدم إلى الخلف.")},
       {id: "k-tri", name: t3("Trikuspidalklaff", "Tricuspid valve", "الصمام ثلاثي الشرفات"), tabs: ["klaffar"], anchor: [262, 318], label: [70, 340],
         info: t3("Dörren mellan höger förmak och höger kammare.", "The door between the right atrium and the right ventricle.", "الباب بين الأذين الأيمن والبطين الأيمن.")},
@@ -131,6 +140,7 @@ export const DETAILS: Record<DetailId, Detail> = {
         info: t3("Det röda blodet kommer från lungorna och pumpas ut i kroppen.", "The red blood comes from the lungs and is pumped out to the body.", "الدم الأحمر يأتي من الرئتين ويُضَخّ إلى الجسم.")},
     ]},
   lungs: {id: "lungs", title: t3("Lungorna inuti", "Inside the lungs", "داخل الرئتين"), view: [-40, 0, 720, 570], compact: [128, 0, 516, 560], flowTab: "luft",
+    tabs3d: ["vagar", "blasor", "luft"],
     flowName: t3("Luftflöde", "Air flow", "جريان الهواء"),
     legend: [{color: "#5cc6e8", name: t3("Luft: in när du andas in, ut när du andas ut", "Air: in when you breathe in, out when you breathe out", "الهواء: يدخل عند الشهيق ويخرج عند الزفير")}],
     tabs: [{id: OV, name: t3("Översikt", "Overview", "نظرة عامة")}, {id: "vagar", name: t3("Luftvägar", "Airways", "المجاري التنفسية")},
@@ -138,24 +148,27 @@ export const DETAILS: Record<DetailId, Detail> = {
     parts: [
       {id: "luftstrupe", name: t3("Luftstrupe", "Windpipe", "القصبة الهوائية"), tabs: [OV, "vagar", "luft"], anchor: [320, 96], label: [440, 60],
         info: t3("Ett rör med ringar av brosk. Luften går här ner till lungorna.", "A tube with rings of cartilage. Air goes down here to the lungs.", "أنبوب فيه حلقات غضروفية، ينزل منه الهواء إلى الرئتين.")},
-      {id: "luftror", name: t3("Luftrör", "Bronchi", "الشُّعَب الهوائية"), tabs: [OV, "vagar"], anchor: [262, 214], label: [70, 150],
+      {id: "luftror", name: t3("Luftrör", "Bronchi", "الشُّعَب الهوائية"), tabs: [OV, "vagar"], tabs3d: ["vagar", "luft"], anchor: [262, 214], label: [70, 150],
         info: t3("Luftstrupen delar sig i två luftrör, ett till varje lunga.", "The windpipe splits into two bronchi, one to each lung.", "تتفرّع القصبة الهوائية إلى شعبتين، واحدة لكل رئة.")},
       {id: "smaror", name: t3("Små luftrör", "Small airways", "الشُّعَيبات"), tabs: ["vagar"], anchor: [196, 330], label: [70, 400],
         info: t3("Luftrören grenar sig som ett träd i allt mindre rör.", "The bronchi branch like a tree into smaller and smaller tubes.", "تتفرّع الشعب مثل الشجرة إلى أنابيب أصغر فأصغر.")},
       {id: "lungblasor", name: t3("Lungblåsor", "Air sacs (alveoli)", "الحويصلات الهوائية"), tabs: [OV, "blasor"], anchor: [556, 432], label: [592, 320],
         info: t3("Små blåsor längst ut. Där går syret över till blodet.", "Tiny sacs at the very end. There the oxygen passes into the blood.", "أكياس صغيرة في النهاية، ومنها ينتقل الأكسجين إلى الدم.")},
-      {id: "hlunga", name: t3("Höger lunga", "Right lung", "الرئة اليمنى"), tabs: [OV], anchor: [170, 300], label: [70, 300],
+      {id: "hlunga", name: t3("Höger lunga", "Right lung", "الرئة اليمنى"), tabs: [OV], tabs3d: ["vagar"], anchor: [170, 300], label: [70, 300],
         info: t3("Den högra lungan har tre delar, lober.", "The right lung has three parts, called lobes.", "الرئة اليمنى لها ثلاثة أجزاء تسمّى فصوصًا.")},
-      {id: "vlunga", name: t3("Vänster lunga", "Left lung", "الرئة اليسرى"), tabs: [OV], anchor: [454, 280], label: [576, 250],
+      {id: "vlunga", name: t3("Vänster lunga", "Left lung", "الرئة اليسرى"), tabs: [OV], tabs3d: ["vagar"], anchor: [454, 280], label: [576, 250],
         info: t3("Den vänstra lungan är lite mindre. Den ger plats åt hjärtat.", "The left lung is a little smaller. It leaves room for the heart.", "الرئة اليسرى أصغر قليلًا لتترك مكانًا للقلب.")},
-      {id: "syre", name: t3("Syre in", "Oxygen in", "الأكسجين يدخل"), tabs: ["luft", "blasor"], anchor: [492, 412], label: [440, 548],
+      {id: "syre", name: t3("Syre in", "Oxygen in", "الأكسجين يدخل"), tabs: ["luft", "blasor"], tabs3d: ["blasor"], anchor: [492, 412], label: [440, 548],
         info: t3("Syret går från lungblåsorna in i blodet.", "Oxygen goes from the air sacs into the blood.", "ينتقل الأكسجين من الحويصلات إلى الدم.")},
-      {id: "koldioxid", name: t3("Koldioxid ut", "Carbon dioxide out", "ثاني أكسيد الكربون يخرج"), tabs: ["luft", "blasor"], anchor: [620, 432], label: [604, 548],
+      {id: "koldioxid", name: t3("Koldioxid ut", "Carbon dioxide out", "ثاني أكسيد الكربون يخرج"), tabs: ["luft", "blasor"], tabs3d: ["blasor"], anchor: [620, 432], label: [604, 548],
         info: t3("Koldioxid går från blodet ut i luften som du andas ut.", "Carbon dioxide goes from the blood into the air you breathe out.", "ينتقل ثاني أكسيد الكربون من الدم إلى الهواء الذي تُخرجه.")},
+      {id: "kapillarer", name: t3("Små blodkärl", "Tiny blood vessels", "أوعية دموية دقيقة"), tabs: [], tabs3d: ["blasor"], anchor: [0, 0], label: [0, 0],
+        info: t3("Runt lungblåsorna går små blodkärl. Där hämtar blodet syre och lämnar koldioxid.", "Tiny blood vessels wrap around the air sacs. There the blood picks up oxygen and leaves carbon dioxide.", "تلتفّ أوعية دموية دقيقة حول الحويصلات، وفيها يأخذ الدم الأكسجين ويترك ثاني أكسيد الكربون.")},
     ]},
   brain: {id: "brain", title: t3("Hjärnan inuti", "Inside the brain", "داخل الدماغ"), view: [-40, 0, 720, 570], compact: [136, 70, 400, 500], flowTab: "signal",
+    tabs3d: ["delar", "signal"],
     flowName: t3("Signaler", "Signals", "الإشارات"),
-    legend: [{color: "#f2b705", name: t3("Nervsignaler: från hjärnan ut i kroppen", "Nerve signals: from the brain out to the body", "إشارات عصبية: من الدماغ إلى الجسم")}],
+    legend: [{color: "#f2b705", name: t3("Nervsignaler mellan hjärnan och kroppen", "Nerve signals between the brain and the body", "إشارات عصبية بين الدماغ والجسم")}],
     tabs: [{id: OV, name: t3("Översikt", "Overview", "نظرة عامة")}, {id: "delar", name: t3("Delar", "Parts", "الأجزاء")},
       {id: "signal", name: t3("Signaler", "Signals", "الإشارات")}],
     parts: [
@@ -172,8 +185,25 @@ export const DETAILS: Record<DetailId, Detail> = {
       {id: "syncentrum", name: t3("Syn", "Sight", "البصر"), tabs: ["delar"], anchor: [470, 250], label: [570, 200],
         info: t3("Längst bak i storhjärnan förstår du det som ögonen ser.", "At the back of the cerebrum you understand what your eyes see.", "في مؤخّرة المخ تفهم ما تراه العينان.")},
       {id: "signaler", name: t3("Nervsignaler", "Nerve signals", "الإشارات العصبية"), tabs: ["signal"], anchor: [300, 150], label: [90, 70],
-        info: t3("Hjärnan skickar signaler genom ryggmärgen ut till musklerna.", "The brain sends signals through the spinal cord out to the muscles.", "يرسل الدماغ إشارات عبر الحبل الشوكي إلى العضلات.")},
+        info: t3("Hjärnan skickar signaler genom ryggmärgen ut till musklerna. Kroppen skickar också signaler tillbaka till hjärnan, till exempel när du känner något.", "The brain sends signals through the spinal cord out to the muscles. The body also sends signals back to the brain, for example when you feel something.", "يرسل الدماغ إشارات عبر الحبل الشوكي إلى العضلات. ويرسل الجسم أيضًا إشارات إلى الدماغ، مثلًا عندما تشعر بشيء.")},
     ]},
+};
+
+/* the tabs and the labelled parts of a detail view, in 2D (SVG) or in 3D */
+export const tabsOf = (d: Detail, in3d: boolean) => in3d && d.tabs3d ? d.tabs.filter(t => d.tabs3d!.includes(t.id)) : d.tabs;
+export const partsOn = (d: Detail, tab: string, in3d: boolean) => d.parts.filter(p => (in3d && p.tabs3d ? p.tabs3d : p.tabs).includes(tab));
+
+/* the 3D explorer's own texts */
+export const EX3D = {
+  canvas: t3("En kropp i 3D. Dra för att snurra den, nyp eller scrolla för att zooma.", "A body in 3D. Drag to turn it, pinch or scroll to zoom.", "جسم ثلاثي الأبعاد. اسحب لتدويره، وقرّب بإصبعين أو بعجلة الفأرة."),
+  keys: t3("Piltangenterna snurrar och lutar, plus och minus zoomar.", "The arrow keys turn and tilt, plus and minus zoom.", "مفاتيح الأسهم تدير وتميل، والزائد والناقص للتكبير والتصغير."),
+  reset: t3("Återställ kameran", "Reset the camera", "إعادة ضبط الكاميرا"),
+  hint: t3("Dra för att snurra · nyp för att zooma", "Drag to turn · pinch to zoom", "اسحب للتدوير · قرّب بإصبعين"),
+  back: t3("Tillbaka till hela kroppen", "Back to the whole body", "العودة إلى الجسم كله"),
+  simplified: t3("Förenklad modell – formen är förenklad för att visa hur det fungerar", "Simplified model – the shape is simplified to show how it works", "نموذج مبسّط – الشكل مبسّط ليوضّح كيف يعمل"),
+  loading: t3("Bygger kroppen i 3D …", "Building the body in 3D …", "جارٍ بناء الجسم ثلاثي الأبعاد …"),
+  breatheIn: t3("Andas in", "Breathe in", "شهيق"),
+  breatheOut: t3("Andas ut", "Breathe out", "زفير"),
 };
 
 /* the four stages of the mockup */
