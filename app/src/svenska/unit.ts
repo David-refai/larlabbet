@@ -4,6 +4,7 @@
    exercise generator stay small functions. defineUnit() checks the data and registers the unit. */
 import * as core from "../legacy/core.js";
 import * as sv from "../content/svenska/sv-0engine.js";
+import {STORY_PICS} from "./story-pics";
 
 export type T3 = {sv: string; en: string; ar: string};
 /** one drawing command on the whiteboard (A.tx, A.p, A.arrow, A.hl …) */
@@ -97,5 +98,8 @@ function check(u: Unit) {
 
 export function defineUnit(u: Unit) {
   check(u);
-  E.LESSONS.push(V.svUnit({...u, pic: H.pic("")}));
+  /* a story page with a painted picture shows it instead of the drawn SVG */
+  const story = u.story.map((p, i) => STORY_PICS.has(`${u.id}-${i + 1}`)
+    ? {...p, pic: `<img class="svphoto" src="story/${u.id}-${i + 1}.webp" alt="" decoding="async">`} : p);
+  E.LESSONS.push(V.svUnit({...u, story, pic: H.pic("")}));
 }

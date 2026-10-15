@@ -11,7 +11,9 @@ node tools/fix-imports.mjs
 npx vite build --logLevel warn
 mkdir -p dist build
 cp dist/app/index.html index.html
-cp dist/app/index.html build/test.html
+# painted story pictures sit next to the page (GitHub Pages and the artifact's files)
+rm -rf story && cp -r dist/app/story story
+cp dist/app/index.html build/test.html && rm -rf build/story && cp -r dist/app/story build/story
 # the claude.ai artifact build leaves the 3D explorer out: the artifact check rejects pages with it
 VITE_WITH3D=0 npx vite build --logLevel warn
 cp dist/app/index.html dist/larlabbet.html
