@@ -20,10 +20,12 @@ const SVU={};   /* unit id -> definition, for the practice generators */
 function svMount(U){return function(stage,ctrl){
   stage.classList.add("svstage");stage.innerHTML='<div class="svwb"></div><div class="svstory" hidden></div>';
   const wb=new WB(stage.querySelector(".svwb")),story=stage.querySelector(".svstory"),run0=wb.run.bind(wb);
-  wb.run=(c,f)=>{story.hidden=true;return run0(c,f)};ctrl.innerHTML="";
+  /* a story page may use the whole height on a phone; the whiteboard keeps its shape */
+  const show=on=>{story.hidden=!on;if(stage.classList.contains("svtall")!==on){stage.classList.toggle("svtall",on);window.dispatchEvent(new Event("resize"))}};
+  wb.run=(c,f)=>{show(false);return run0(c,f)};ctrl.innerHTML="";
   return{wb,step(k){wb.cancel();const s=U.steps[k];
-    if(s.html){wb.clear();story.hidden=false;story.innerHTML=s.html();svWire(story);return null}
-    story.hidden=true;return(async()=>{wb.clear();let j=k;while(j>0&&!U.steps[j-1].html)j--;for(;j<k;j++)if(!(await run0(U.steps[j].draw(),true)))return false;return run0(s.draw())})()},
+    if(s.html){wb.clear();show(true);story.innerHTML=s.html();svWire(story);return null}
+    show(false);return(async()=>{wb.clear();let j=k;while(j>0&&!U.steps[j-1].html)j--;for(;j<k;j++)if(!(await run0(U.steps[j].draw(),true)))return false;return run0(s.draw())})()},
    stop(){wb.cancel()}}}}
 function svWire(el){el.querySelectorAll("[data-w]").forEach(b=>b.onclick=()=>wordCard([b.dataset.w]))}
 /* story text with the unit's words (and earlier units' words) made tappable */
@@ -84,6 +86,6 @@ const SVK={
 .svcard{font:inherit;border:0;border-radius:.6em;background:#fff;box-shadow:0 2px 8px rgba(19,33,63,.12);padding:.8em .4em;display:flex;flex-direction:column;gap:.3em;cursor:pointer;color:#1d2433}
 .svcard b{font-family:Caveat,cursive;font-size:1.6em;color:#1f4fb0}.svcard span{font-size:.7em;color:#5b6884}
 .answer input.txtin{width:min(26em,72vw);text-align:start;font-size:1.15rem}
-@media (max-width:620px){.svpage{grid-template-columns:1fr}.svpic{display:none}.svstory{font-size:4.4cqw}.svwords{grid-template-columns:repeat(2,1fr);gap:2%}}`;document.head.appendChild(st)})();
+@media (max-width:620px){.svpage{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto}.svpic{min-height:0;padding:2%}.svpic svg{height:100%}.svstage:not(.svtall) .svpic{display:none}.svstory{font-size:4.4cqw}.svwords{grid-template-columns:repeat(2,1fr);gap:2%}}`;document.head.appendChild(st)})();
 
 export {SVH,SVU,svMount,svWire,svMark,svPage,svWordsPage,svUnit,svQ,svLines,svGen,SVK};

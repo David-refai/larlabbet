@@ -107,7 +107,10 @@ body.inles .wrap{max-width:1500px;padding-block:8px}body.inles .top{padding-bloc
 @media (max-width:899px),(max-aspect-ratio:5/4){
   .lcard{padding:8px;gap:8px;border-radius:18px}
   .lcard .lmain{gap:8px}.lcard .teacher{border-top:1px solid var(--line);padding-top:8px}
-  .lfoot .btn{padding:4px 11px!important;font-size:.92rem}.lfoot #next{min-width:96px}.lfoot .progress i{width:10px}}
+  .lfoot .btn{padding:4px 11px!important;font-size:.92rem}.lfoot #next{min-width:96px}.lfoot .progress i{width:10px}
+  /* many steps: thinner dots on one line; Olle's buttons wrap instead of running off the card */
+  .lfoot .progress{flex-wrap:nowrap;gap:3px}.lfoot .progress i{width:auto;flex:1 1 0;max-width:10px;min-width:4px}
+  .lesson .bubble .row{flex-wrap:wrap}}
 .progress{display:flex;gap:5px}
 .progress i{width:24px;height:6px;border-radius:999px;background:var(--line)}
 .progress i.done{background:var(--teal)} .progress i.now{background:var(--accent)}
