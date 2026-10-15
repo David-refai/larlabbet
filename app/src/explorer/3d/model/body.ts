@@ -33,18 +33,33 @@ function legParts(s: number): P[] {
     [intersect(union([ellipsoid([s * .54, .22, .16], [.23, .21, .5]), [sphere([s * .47, .14, .58], .11), .08]]), half([0, -1, 0], 0), .05), .12],
   ];
 }
-function armParts(s: number): P[] {
-  const fingers: P[] = [0, 1, 2, 3].map(f => {
-    const z = .27 - f * .118, L = [.34, .37, .35, .28][f], x0 = s * 1.725, y0 = 4.12;
-    return [union([cone([x0, y0, z], [x0 + s * .025, y0 - L * .55, z + .015], .07, .062), [cone([x0 + s * .025, y0 - L * .55, z + .015], [x0 - s * .01, y0 - L, z + .035], .062, .056), .02]]), .035] as P;
-  });
-  return [
+function armParts(s: number, withHand = true): P[] {
+  const arm: P[] = [
     [cone([s * 1.1, 7.02, -.05], [s * 1.4, 5.8, -.03], .33, .26), .18],
-    [cone([s * 1.4, 5.8, -.03], [s * 1.62, 4.62, .08], .25, .185), .08],
-    [ellipsoid([s * 1.68, 4.31, .11], [.12, .27, .225], [0, 0, s * .17]), .08],
-    ...fingers,
-    [union([cone([s * 1.63, 4.42, .22], [s * 1.6, 4.25, .37], .084, .072), [cone([s * 1.6, 4.25, .37], [s * 1.59, 4.1, .42], .072, .062), .02]]), .04],
+    [cone([s * 1.4, 5.8, -.03], [s * 1.62, 4.62, .08], .25, .16), .08],
   ];
+  return withHand ? [...arm, [handShape(s), .08]] : arm;
+}
+
+/* a relaxed hand, palm towards the thigh: a soft palm, four slightly curled fingers that fan a
+   little, and the thumb in front */
+export function handShape(s: number): Prim {
+  return once("sdf:hand" + s, () => {
+    const fingers: P[] = [0, 1, 2, 3].map(i => {
+      const z = .235 - i * .098, L = [.29, .32, .3, .24][i], dz = [.03, .008, -.012, -.035][i];
+      const b: V3 = [s * 1.715, 4.13 + [.012, 0, .006, .03][i], z];
+      const m: V3 = [b[0] + s * .004, b[1] - L * .52, z + dz * .5];
+      const t: V3 = [m[0] - s * .045, m[1] - L * .46, z + dz];
+      return [union([cone(b, m, .05, .045), [cone(m, t, .045, .04), .02]]), .035] as P;
+    });
+    return union([
+      cone([s * 1.6, 4.8, .072], [s * 1.685, 4.42, .1], .135, .122),
+      [ellipsoid([s * 1.705, 4.28, .11], [.092, .2, .175], [0, 0, s * .1]), .08],
+      [ellipsoid([s * 1.66, 4.3, .2], [.07, .12, .075]), .06],
+      ...fingers,
+      [union([cone([s * 1.655, 4.35, .22], [s * 1.625, 4.21, .33], .062, .052), [cone([s * 1.625, 4.21, .33], [s * 1.6, 4.1, .36], .052, .044), .02]]), .045],
+    ]);
+  });
 }
 function headParts(): P[] {
   return [
@@ -54,6 +69,22 @@ function headParts(): P[] {
     [ellipsoid([0, 8.55, 1.0], [.13, .12, .11]), .08],
     ...S.map(s => [ellipsoid([s * 1.08, 8.72, -.1], [.12, .27, .19], [0, s * -.3, 0]), .07] as P),
   ];
+}
+
+/* The body is meshed in two pieces from the same shape: the hands (below the wrist) on a fine grid,
+   because the fingers are too thin for the body's grid, and the rest on the normal grid. The two
+   pieces overlap by a thin band at the wrist so no crack shows. */
+const WRIST_Y = 4.55;
+function bodyNoHands(): Prim {
+  /* near the cut the coarse piece shrinks a little, so its ragged edge hides under the fine hand */
+  const tucked = offset(bodyShape(), (x, y) => Math.abs(x) > 1.4 ? -.03 * Math.max(0, Math.min(1, (WRIST_Y - y) / .025)) : 0);
+  return once("sdf:body-nohands", () => intersect(tucked,
+    union([half([0, -1, 0], -(WRIST_Y - .025)), intersect(half([1, 0, 0], 1.4), half([-1, 0, 0], 1.4))])));
+}
+function handPiece(s: number): Prim {
+  /* its top edge shrinks a little so that it tucks under the body piece */
+  const tucked = offset(bodyShape(), (_x, y) => -.03 * Math.max(0, Math.min(1, (y - WRIST_Y - .05) / .03)));
+  return intersect(tucked, intersect(half([0, 1, 0], WRIST_Y + .08), half([-s, 0, 0], -1.4)));
 }
 
 export function bodyShape(): Prim {
@@ -88,12 +119,27 @@ export function bodyGeometry() {
   return once("geo:body", () => {
     const base = new THREE.Color(COLORS.skin), rosy = new THREE.Color("#ea8f76");
     const near = (x: number, y: number, z: number, c: V3, r: number) => Math.max(0, 1 - Math.hypot(x - c[0], y - c[1], z - c[2]) / r);
-    return mesh(bodyShape(), {h: .045, lo: [-2.05, -.06, -1.25], hi: [2.05, 10.3, 1.35], color: (x, y, z) => {
+    return mesh(bodyNoHands(), {h: .045, lo: [-2.05, -.06, -1.25], hi: [2.05, 10.3, 1.35], color: (x, y, z) => {
       const w = Math.max(near(Math.abs(x), y, z, [.62, 8.38, .72], .32) * .55, near(Math.abs(x), y, z, [.5, 2.6, .3], .3) * .25,
         near(Math.abs(x), y, z, [1.42, 5.8, -.2], .25) * .2, near(x, y, z, [0, 8.55, 1.08], .15) * .35);
       const c = lerp3(base, rosy, w);
       return [c.r, c.g, c.b];
     }});
+  });
+}
+
+/* each hand on a fine grid (see bodyNoHands) */
+export function handGeometry(s: number) {
+  return once("geo:hand" + s, () => mesh(handPiece(s), {h: .014,
+    lo: [s > 0 ? 1.38 : -2.05, 3.6, -.3], hi: [s > 0 ? 2.05 : -1.38, WRIST_Y + .11, .6]}));
+}
+
+function bandGeometry(s: number) {
+  return once("geo:band" + s, () => {
+    const slab = intersect(half([0, 1, 0], WRIST_Y + .09), half([0, -1, 0], -(WRIST_Y - .04)));
+    const arm = intersect(bodyShape(), half([-s, 0, 0], -1.4));
+    return mesh(intersect(offset(arm, .02), slab, .025), {h: .012,
+      lo: [s > 0 ? 1.38 : -2.05, WRIST_Y - .1, -.3], hi: [s > 0 ? 2.05 : -1.38, WRIST_Y + .14, .5]});
   });
 }
 
@@ -126,6 +172,11 @@ export function buildBody(): BodyParts {
   const skinM = skinMat(); skinM.color.set("#ffffff"); skinM.vertexColors = true;
   const skinG = new THREE.Group(); skinG.name = "skin";
   const body = new THREE.Mesh(geo, skinM); body.name = "body"; skinG.add(body);
+  const handM = skinMat();
+  for (const s of S) { const h = new THREE.Mesh(handGeometry(s), handM); h.name = "hand"; skinG.add(h); }
+  /* a soft wristband on each wrist: it covers the join between the hand and the arm */
+  const bandM = organ(COLORS.shortsBand, {roughness: .75, clearcoat: .05, sheen: .8, sheenColor: new THREE.Color("#a9c2ff")});
+  for (const s of S) { const b = new THREE.Mesh(bandGeometry(s), bandM); b.name = "wristband"; skinG.add(b); }
 
   const hair = new THREE.Mesh(once("geo:hair", () => mesh(hairShape(), {h: .04})),
     organ(COLORS.hair, {roughness: .5, clearcoat: .25, clearcoatRoughness: .5, sheen: .9, sheenColor: new THREE.Color("#a3714d"), sheenRoughness: .35}));
@@ -137,6 +188,7 @@ export function buildBody(): BodyParts {
 
   const shell = new THREE.Group(); shell.name = "shell";
   const sm = new THREE.Mesh(geo, xray()); sm.renderOrder = 10; shell.add(sm);
+  for (const s of S) { const h = new THREE.Mesh(handGeometry(s), sm.material); h.renderOrder = 10; shell.add(h); }
   return {skin: skinG, shell};
 }
 

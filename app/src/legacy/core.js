@@ -173,18 +173,27 @@ class WB{
   const pats=Object.entries(MK).map(([k,c])=>`<pattern id="h${k}" width="10" height="10" patternUnits="userSpaceOnUse" patternTransform="rotate(40)"><rect width="10" height="10" fill="${c}" fill-opacity=".07"/><line x1="2" y1="0" x2="2" y2="10" stroke="${c}" stroke-width="3.4" stroke-opacity=".55" stroke-linecap="round"/></pattern>`).join("");
   stage.innerHTML=`<svg class="wb" viewBox="0 0 800 500" role="img"><defs>${pats}
    <linearGradient id="wbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#eef2f7"/></linearGradient>
+   <radialGradient id="pskin" cx=".38" cy=".3" r=".85"><stop offset="0" stop-color="#ffe3cf"/><stop offset=".55" stop-color="#f6c19e"/><stop offset="1" stop-color="#e29d78"/></radialGradient>
+   <linearGradient id="pfing" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd9c0"/><stop offset="1" stop-color="#f0b48d"/></linearGradient>
+   <linearGradient id="psleeve" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6aa6f5"/><stop offset=".6" stop-color="#3f7fdc"/><stop offset="1" stop-color="#2d63bd"/></linearGradient>
+   <linearGradient id="pbody" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#f1f4f8"/><stop offset="1" stop-color="#c9d1dd"/></linearGradient>
    <filter id="pensh" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="3" dy="5" stdDeviation="3" flood-color="#1d2433" flood-opacity=".25"/></filter></defs>
-   <rect width="800" height="500" fill="url(#wbg)"/><path d="M40 40Q400 10 760 60" stroke="#ffffff" stroke-width="40" opacity=".5" fill="none"/>
+   <rect x="-1600" y="-1000" width="4000" height="2500" fill="url(#wbg)"/><path d="M40 40Q400 10 760 60" stroke="#ffffff" stroke-width="40" opacity=".5" fill="none"/>
    <g id="ink"></g>
-   <g id="pen" style="display:none" filter="url(#pensh)"><g transform="rotate(32) scale(.78)"><path d="M98,-92 C150,-100 200,-104 240,-104 L240,26 C200,24 150,20 98,12 Z" fill="#2a7d9c" opacity=".93"/><path d="M98,-96 L118,-98 L118,16 L98,14 Z" fill="#1d5f7a"/>
-    <path d="M104,-78 C74,-86 44,-84 26,-70 C10,-58 8,-40 16,-28 C28,-10 62,-4 104,-6 Z" fill="#f3c6a5" stroke="#d49b78" stroke-width="2"/>
-    <path d="M60,-58 q6,-4 12,0 M58,-40 q6,-4 12,0" fill="none" stroke="#d49b78" stroke-width="2" stroke-linecap="round"/>
-    <path d="M52,-52 Q28,-46 13,-31" fill="none" stroke="#d49b78" stroke-width="17" stroke-linecap="round"/><path d="M52,-52 Q28,-46 13,-31" fill="none" stroke="#f3c6a5" stroke-width="14" stroke-linecap="round"/>
-    <path id="pentip" d="M0 0L5.5 -13H-5.5Z" fill="#1d2433"/><rect x="-7.5" y="-25" width="15" height="13" rx="2" fill="#5b6475"/>
-    <rect x="-11" y="-122" width="22" height="99" rx="8" fill="#fbfcfd" stroke="#c9d0db" stroke-width="1.5"/>
-    <rect id="penband" x="-11" y="-80" width="22" height="18" fill="#1d2433"/><rect x="-7" y="-116" width="4" height="70" rx="2" fill="#fff" opacity=".8"/>
-    <rect id="pencap" x="-12" y="-131" width="24" height="15" rx="6" fill="#1d2433"/><path d="M58,-76 Q26,-78 9,-48" fill="none" stroke="#d49b78" stroke-width="18" stroke-linecap="round"/><path d="M58,-76 Q26,-78 9,-48" fill="none" stroke="#f3c6a5" stroke-width="15" stroke-linecap="round"/><ellipse cx="11" cy="-50" rx="4.5" ry="6" transform="rotate(30 11 -50)" fill="#f8dccb"/>
-    <path d="M46,-22 Q16,-16 -6,-35" fill="none" stroke="#d49b78" stroke-width="17" stroke-linecap="round"/><path d="M46,-22 Q16,-16 -6,-35" fill="none" stroke="#f3c6a5" stroke-width="14" stroke-linecap="round"/><ellipse cx="-4" cy="-34" rx="4" ry="5.5" transform="rotate(-50 -4 -34)" fill="#f8dccb"/></g></g></svg>`;
+   <g id="pen" style="display:none" filter="url(#pensh)"><g transform="rotate(32) scale(.78)">
+    <path d="M100,-90 C155,-97 212,-100 266,-98 L266,26 C212,24 155,20 100,10 Q88,-40 100,-90Z" fill="url(#psleeve)"/>
+    <path d="M160,-92 Q172,-40 162,18" fill="none" stroke="#244f9e" stroke-opacity=".3" stroke-width="5" stroke-linecap="round"/><path d="M120,-86 C170,-92 220,-94 262,-92" fill="none" stroke="#fff" stroke-opacity=".3" stroke-width="7" stroke-linecap="round"/>
+    <path d="M60,-50 Q32,-46 15,-33" fill="none" stroke="#c98a66" stroke-width="19" stroke-linecap="round"/><path d="M60,-50 Q32,-46 15,-33" fill="none" stroke="#f2b993" stroke-width="15" stroke-linecap="round"/>
+    <path d="M100,-82 C80,-92 46,-90 28,-74 C12,-60 10,-38 20,-24 C34,-6 66,-2 100,-8 Z" fill="url(#pskin)" stroke="#c98a66" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M86,-94 C98,-98 112,-99 122,-97 Q134,-42 122,14 C110,15 98,12 86,9 Q74,-42 86,-94Z" fill="#2a5aa8"/><path d="M92,-90 Q82,-42 92,4" fill="none" stroke="#fff" stroke-opacity=".28" stroke-width="4" stroke-linecap="round"/>
+    <path d="M66,-60 q7,-5 14,0 M64,-38 q7,-5 14,0" fill="none" stroke="#d99a76" stroke-width="2.2" stroke-linecap="round" opacity=".8"/>
+    <path id="pentip" d="M0 0L5.5 -13H-5.5Z" fill="#1d2433"/><rect x="-7.5" y="-25" width="15" height="13" rx="2.5" fill="#6b7486"/>
+    <rect x="-11" y="-122" width="22" height="99" rx="9" fill="url(#pbody)" stroke="#b7c0ce" stroke-width="1.5"/>
+    <rect id="penband" x="-11" y="-80" width="22" height="18" fill="#1d2433"/><rect x="-6.5" y="-116" width="4" height="88" rx="2" fill="#fff" opacity=".9"/>
+    <rect id="pencap" x="-12.5" y="-133" width="25" height="17" rx="7" fill="#1d2433"/><rect x="-8" y="-130" width="4" height="10" rx="2" fill="#fff" opacity=".35"/>
+    <path d="M62,-76 Q30,-82 11,-52" fill="none" stroke="#c98a66" stroke-width="20" stroke-linecap="round"/><path d="M62,-76 Q30,-82 11,-52" fill="none" stroke="url(#pfing)" stroke-width="16" stroke-linecap="round"/><ellipse cx="12" cy="-53" rx="4.8" ry="6.4" transform="rotate(32 12 -53)" fill="#fde7da" stroke="#e2b096" stroke-width="1"/>
+    <path d="M50,-20 Q18,-12 -5,-34" fill="none" stroke="#c98a66" stroke-width="20" stroke-linecap="round"/><path d="M50,-20 Q18,-12 -5,-34" fill="none" stroke="url(#pfing)" stroke-width="16" stroke-linecap="round"/><ellipse cx="-3" cy="-33" rx="4.4" ry="6" transform="rotate(-48 -3 -33)" fill="#fde7da" stroke="#e2b096" stroke-width="1"/>
+    <path d="M40,-84 Q26,-80 18,-70" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="4" stroke-linecap="round"/></g></g></svg>`;
   this.svg=stage.querySelector("svg");this.ink=this.svg.querySelector("#ink");this.pen=this.svg.querySelector("#pen");this.tok=0;this.fast=false;this.uid=0;
   this.svg.addEventListener("pointerdown",()=>{this.fast=true});
  }
@@ -3417,7 +3426,9 @@ function fitStage(){const st=$("#stage"),ls=$(".lesson");if(!st||!ls||!document.
     ch=ct&&ct.offsetHeight?ct.offsetHeight+8:0,lm=$(".lcard .lmain"),tc=lm&&$(".lcard .teacher"),
     /* one lesson card: the board gets all the height the explanation strip under it leaves */
     H=side?bd.clientHeight-ch:lm&&tc?Math.max(140,lm.clientHeight-tc.offsetHeight-8-ch):Math.max(140,ls.clientHeight*(ls.clientHeight<600?.42:.5)-ch);
-  st.style.width=Math.floor(Math.min(W,H*1.6))+"px"}
+  /* the whiteboard fills the whole width; its drawing keeps its shape and sits in the middle */
+  if(st.classList.contains("wbframe")){st.style.width=W+"px";st.style.height=Math.floor(Math.min(H,W/1.6))+"px"}
+  else{st.style.height="";st.style.width=Math.floor(Math.min(W,H*1.6))+"px"}}
 const fitRO=window.ResizeObserver?new ResizeObserver(()=>fitStage()):null;
 function fitOn(){document.body.classList.add("inles");fitStage();requestAnimationFrame(fitStage);
   if(fitRO){fitRO.disconnect();[$(".lesson"),$("#ctrl"),$(".lcard .teacher")].forEach(e=>e&&fitRO.observe(e))}}
