@@ -13,7 +13,9 @@ import {reducedMotion, type BodyRenderer} from "../explorer/renderer";
 import {want3D, no3D} from "../explorer/webgl";
 
 /* the 3D explorer is its own lazily loaded module: nothing of it runs before this screen opens */
-const Explorer3D = lazy(() => import("../explorer/3d/Explorer3D"));
+/* the claude.ai artifact build leaves the 3D explorer out (VITE_WITH3D=0, see build.sh) */
+const WITH3D = import.meta.env.VITE_WITH3D !== "0";
+const Explorer3D = WITH3D ? lazy(() => import("../explorer/3d/Explorer3D")) : null;
 
 /* if the 3D stage fails (no WebGL context, a crash), the SVG one takes over */
 class Fallback extends Component<{onFail: () => void; children: ReactNode}, {failed: boolean}> {
@@ -60,7 +62,7 @@ function Explorer({keep}: {keep: boolean}) {
   const [more, setMore] = useState(v0.more);
   memo = {layers, sel, iso, hidden, det, tab, part, flow, more};
   const still = reducedMotion();
-  const [use3d, setUse3d] = useState(want3D);
+  const [use3d, setUse3d] = useState(() => WITH3D && want3D());
   const [compact, setCompact] = useState(false);
 
   /* one screen, no page scroll: the explorer takes the height left under the header */
@@ -157,7 +159,7 @@ function Explorer({keep}: {keep: boolean}) {
           <span className="xi" aria-hidden="true">{l.icon}</span>{l.name.sv}</button>)}</div>}
 
     <div className={"xstage" + (use3d ? " x3d" : "") + (use3d && D ? " indetail" : "") + (use3d && compact ? " compact" : "")} ref={host}>
-      {use3d && <Fallback onFail={() => { no3D(); setUse3d(false); }}>
+      {use3d && Explorer3D && <Fallback onFail={() => { no3D(); setUse3d(false); }}>
         <Suspense fallback={<div className="x3load"><span className="x3spin" aria-hidden="true" />{EX3D.loading.sv}</div>}>
           <Explorer3D layers={layers} sel={sel} iso={iso} hidden={hidden} det={det} tab={tab} part={part} flow={flow} still={still}
             labels={shown.map(p => ({id: p.id, name: p.name.sv}))} compact={compact} tr={trOn() as "" | "en" | "ar"} onPick={onPick} />
