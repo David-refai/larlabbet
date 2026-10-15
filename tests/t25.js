@@ -50,12 +50,12 @@ for(const [w,h,tag,rm] of [[1366,768,'laptop','no-preference'],[390,844,'phone',
  await p.evaluate(()=>map());await p.waitForTimeout(200);await p.screenshot({path:`${D}/${tag}-prov.png`,fullPage:true});
  await p.click('#mode button[data-m="les"]');await p.waitForTimeout(150);
 
- /* the wide lesson card: board above the explanation, one screen, no scrolling */
+ /* the lesson card: on a laptop Olle sits right of the board, on a phone under it; one screen, no scrolling */
  await p.click('.tab[data-t="bio"]');await p.waitForTimeout(150);
  await p.click('.card[data-l="no4c"]');await p.waitForTimeout(400);
  const L=await p.evaluate(()=>{const st=document.querySelector('#stage').getBoundingClientRect(),tc=document.querySelector('.lcard .teacher').getBoundingClientRect();
-   return{below:tc.top>=st.bottom-1,sw:Math.round(st.width),scroll:document.documentElement.scrollHeight>innerHeight+1}});
- ok(L.below&&!L.scroll,tag+' explanation under the board, no scrolling '+JSON.stringify(L));
+   return{below:tc.top>=st.bottom-1,beside:tc.left>=st.right-1,sw:Math.round(st.width),scroll:document.documentElement.scrollHeight>innerHeight+1}});
+ ok((tag==='laptop'?L.beside:L.below)&&!L.scroll,tag+(tag==='laptop'?' explanation beside':' explanation under')+' the board, no scrolling '+JSON.stringify(L));
  if(tag==='laptop')ok(L.sw>=700,tag+' board is wide: '+L.sw+'px');
  /* the circulation scene keeps moving */
  await p.evaluate(()=>{active.wb.fast=true;return active.step(3)});await p.waitForTimeout(400);

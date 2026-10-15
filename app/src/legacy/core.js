@@ -3405,12 +3405,13 @@ const SUBJECTS=[{id:"math"},{id:"science"},{id:"english",soon:true},{id:"swedish
 /* lessons fill exactly one screen: the board takes the room the explanation leaves, keeping its 16:10 shape */
 function fitStage(){const st=$("#stage"),ls=$(".lesson");if(!st||!ls||!document.body.classList.contains("inles"))return;
   document.documentElement.style.setProperty("--toph",$(".top").offsetHeight+"px");
-  const bd=st.parentNode,ct=$("#ctrl"),side=getComputedStyle($(".lmain")).gridTemplateColumns.split(" ").length>1,W=bd.clientWidth,
+  const lc=$(".lcard"),wide=!!lc&&getComputedStyle(lc).display==="grid",
+    bd=st.parentNode,ct=$("#ctrl"),side=wide||getComputedStyle($(".lmain")).gridTemplateColumns.split(" ").length>1,W=bd.clientWidth,
     ch=ct&&ct.offsetHeight?ct.offsetHeight+8:0,lm=$(".lcard .lmain"),tc=lm&&$(".lcard .teacher"),
     /* one lesson card: the board gets all the height the explanation strip under it leaves */
     H=side?bd.clientHeight-ch:lm&&tc?Math.max(140,lm.clientHeight-tc.offsetHeight-8-ch):Math.max(140,ls.clientHeight*(ls.clientHeight<600?.42:.5)-ch);
   /* the whiteboard fills the whole width; its drawing keeps its shape and sits in the middle */
-  if(!side&&st.classList.contains("svtall")){st.style.width=W+"px";st.style.height=Math.floor(H)+"px"}
+  if((wide||!side)&&st.classList.contains("svtall")){st.style.width=W+"px";st.style.height=Math.floor(H)+"px"}
   else if(st.classList.contains("wbframe")){st.style.width=W+"px";st.style.height=Math.floor(Math.min(H,W/1.6))+"px"}
   else{st.style.height="";st.style.width=Math.floor(Math.min(W,H*1.6))+"px"}}
 const fitRO=window.ResizeObserver?new ResizeObserver(()=>fitStage()):null;

@@ -435,3 +435,14 @@ body.inles .wrap{max-width:1500px;padding-block:8px}body.inles .top{padding-bloc
 /* painted story pictures fill the picture column (phones keep the text only, as before) */
 .svpic:has(.svphoto){padding:0;overflow:hidden}
 .svphoto{width:100%;height:100%;object-fit:cover;display:block}
+/* laptops (wide and short): Olle and the step buttons sit in a column to the right, the board gets the full height */
+@media (min-width:900px) and (min-aspect-ratio:3/2){
+  .lcard{display:grid!important;grid-template-columns:minmax(0,1fr) clamp(300px,26vw,400px);grid-template-rows:minmax(0,1fr) auto;column-gap:14px;row-gap:10px}
+  .lcard .lmain{display:contents!important}
+  .lcard .lboard{grid-column:1;grid-row:1/3;min-height:0;display:flex;flex-direction:column;justify-content:center;align-items:center}
+  .lcard .teacher{grid-column:2;grid-row:1;align-self:stretch;border-top:0!important;padding-top:6px!important;border-inline-start:1px solid var(--line)!important;padding-inline-start:14px!important;max-height:none!important;overflow-y:auto;grid-template-columns:56px 1fr!important;align-content:start}
+  .lcard .bubble p{font-size:1.24rem;line-height:1.45}
+  .lcard .bubble>.row{margin-inline-start:0}
+  .lfoot{grid-column:2;grid-row:2;flex-wrap:wrap;border-top:1px solid var(--line);padding:10px 0 0 14px;border-inline-start:1px solid var(--line);row-gap:10px}
+  .lfoot .progress{order:-1;flex:1 1 100%}
+  .lfoot #next{flex:1;min-width:0}}
