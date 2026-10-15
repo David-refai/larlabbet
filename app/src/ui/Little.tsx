@@ -5,6 +5,7 @@ import {showReact} from "./mount";
 import {S, save, lang, REDUCED, welcome, ACC, T, parents} from "../legacy/core.js";
 import {SETS, type SetId} from "../little/glyphs";
 import {say, sayNum, sayText, LETTER_WORD, NUM_WORD, ALL_KEYS, keyOf, putClip, dropClip, clipKeys, hasVoice} from "../little/voice";
+import {picOf} from "../little/pics";
 
 const TX: Record<string, Record<string, string>> = {
   sv: {title: "Lilla labbet", hi: "Hej", trace: "Spåra", letters: "Bokstäver", numbers: "Siffror", words: "Ord", draw: "Rita", balloons: "Ballonger", count: "Räkna djur", find: "Hitta", clear: "Sudda", again: "Igen", next: "Nästa", stars: "stjärnor", howMany: "Hur många?", rec: "Spela in rösten", recHelp: "Tryck på 🎙, säg ljudet tydligt och tryck igen. Barnet hör sedan din röst.", say: "Säg", voice: "Röst", vAuto: "Inspelad eller enhetens röst", vRec: "Bara inspelad", vOff: "Av", noMic: "Mikrofonen gick inte att öppna. Välj en ljudfil i stället.", noVoice: "Den här enheten har ingen svensk röst. Spela in din egen."},
@@ -36,6 +37,8 @@ function tone(notes: number[], len = 0.12) {
 const ding = () => tone([660, 880]), yay = () => tone([523, 659, 784, 1047], 0.13), pop = () => tone([900, 500], 0.06), oops = () => tone([300, 240], 0.1);
 
 const ANIMALS = ["🐶", "🐱", "🐰", "🐸", "🐥", "🐢", "🦊", "🐼", "🐷", "🐮", "🐵", "🦁", "🐨", "🐙", "🦋", "🐞"];
+/* an AI picture where one exists, else the emoji */
+const Pic = ({a}: {a: string}) => { const u = picOf(a); return u ? <img className="lpic" src={u} alt="" draggable={false} /> : <>{a}</>; };
 const COLORS = ["#ef4444", "#f97316", "#facc15", "#22c55e", "#06b6d4", "#3b82f6", "#a855f7", "#ec4899"];
 const rnd = (n: number) => Math.floor(Math.random() * n);
 const pickOne = <X,>(a: readonly X[]) => a[rnd(a.length)];
@@ -46,7 +49,7 @@ function Party({animal, word, onNext, onAgain}: {animal: string; word?: string; 
   const balls = useMemo(() => Array.from({length: 14}, (_, i) => ({i, x: rnd(92), d: 2.2 + Math.random() * 2, c: pickOne(COLORS), w: Math.random() * .8})), []);
   return <div className="lparty" role="status">
     {balls.map(b => <span key={b.i} className="lball" style={{left: b.x + "%", background: b.c, animationDuration: b.d + "s", animationDelay: b.w + "s"}} />)}
-    <div className="lwin"><span className="lstar">⭐</span><span className="ljump">{animal}</span>{word && <b className="lword">{word}</b>}
+    <div className="lwin"><span className="lstar">⭐</span><span className="ljump"><Pic a={animal} /></span>{word && <b className="lword">{word}</b>}
       <div className="row" style={{justifyContent: "center"}}>
         {onAgain && <button className="lbtn ghost" onClick={onAgain} aria-label={tx("again")}>↻</button>}
         {onNext && <button className="lbtn" id="lnext" onClick={onNext} aria-label={tx("next")}>➜</button>}
@@ -186,14 +189,14 @@ function Lesson({set, home}: {set: "ABC" | "123"; home: () => void}) {
     <div className="lsteps" id="lsteps">{Array.from({length: last + 1}, (_, i) => <i key={i} className={i < step ? "on" : i === step ? "now" : ""} />)}</div>
     {step === 0 && <div className="lintro" id="lintro">
       <div className="lpair"><span>{ch}</span>{!num && <span>{ch.toLowerCase()}</span>}</div>
-      {num ? <div className="lcountrow">{Array.from({length: +ch}, (_, i) => <span key={i}>{animal}</span>)}{ch === "0" && <span className="muted">∅</span>}</div>
-        : <button className="lanimalbig" onClick={() => talk(ch, true)}>{animal}<Word w={lw[0]} ch={ch} /></button>}
+      {num ? <div className="lcountrow">{Array.from({length: +ch}, (_, i) => <span key={i}><Pic a={animal} /></span>)}{ch === "0" && <span className="muted">∅</span>}</div>
+        : <button className="lanimalbig" onClick={() => talk(ch, true)}><Pic a={animal} /><Word w={lw[0]} ch={ch} /></button>}
       <button className="lbtn" id="lstart" onClick={() => setStep(1)}>✏️ ➜</button>
     </div>}
     {sheet && <TracePad key={step} strokes={sheet.strokes} level={sheet.level} onDone={() => setStep(s => s + 1)} />}
     {step === last && (num
       ? <div className="lintro"><div className="lcountrow big">{Array.from({length: +ch}, (_, i) =>
-          <span key={i} className={i < shown ? "in" : "out"}>{animal}{i < shown && <b className="lmark">{i + 1}</b>}</span>)}</div>
+          <span key={i} className={i < shown ? "in" : "out"}><Pic a={animal} />{i < shown && <b className="lmark">{i + 1}</b>}</span>)}</div>
           <div className="lpair"><span>{ch}</span></div>
           <div className="row" style={{justifyContent: "center"}}><button className="lbtn ghost" onClick={() => setStep(0)}>↻</button><button className="lbtn" id="lnext" onClick={() => go(1)}>➜</button></div></div>
       : <Party animal={animal} word={lw ? ch + " som " + lw[0] : ""} onAgain={() => setStep(0)} onNext={() => go(1)} />)}
@@ -256,7 +259,7 @@ function Words({home}: {home: () => void}) {
     <div className="lzoo" id="lzoo">{items.animals.map(k =>
       <button key={k} className={"lzooa" + (placed.includes(k) ? " ok" : "")} data-animal={k}
         onClick={() => pick ? drop(pick, k) : sayText("W:" + LETTER_WORD[k][0], LETTER_WORD[k][0], vo())}>
-        <span className="lzooe" data-animal={k}>{LETTER_WORD[k][1]}</span>
+        <span className="lzooe" data-animal={k}><Pic a={LETTER_WORD[k][1]} /></span>
         <span className="lslot" data-animal={k}>{placed.includes(k) ? LETTER_WORD[k][0] : ""}</span></button>)}</div>
     <div className="lwords" id="lwords">{items.words.filter(k => !placed.includes(k)).map(k =>
       <span key={k} className={"lwcard" + (pick === k ? " on" : "") + (bad === k ? " shake" : "") + (drag?.k === k ? " drag" : "")} data-w={k}
@@ -367,7 +370,7 @@ function Count({home}: {home: () => void}) {
     <div className="ltop"><button className="lbtn ghost" onClick={home} aria-label="home">🏠</button><span className="ltarget">{tx("howMany")}</span></div>
     <div className={"lfarm" + (won ? " dance" : "")} id="lfarm">{Array.from({length: q.n}, (_, i) =>
       <button key={i} className="lanimal" style={{animationDelay: i * 0.12 + "s"}} onClick={() => mark(i)}>
-        {q.a}{marks.includes(i) && <b className="lmark">{marks.indexOf(i) + 1}</b>}</button>)}</div>
+        <Pic a={q.a} />{marks.includes(i) && <b className="lmark">{marks.indexOf(i) + 1}</b>}</button>)}</div>
     <div className="lopts">{q.opts.map(o =>
       <button key={o} className={"lnumbtn" + (bad === o ? " shake" : "")} data-n={o} onClick={() => !won && answer(o)}>{o}</button>)}</div>
     {won && <Party animal={q.a} onNext={next} />}

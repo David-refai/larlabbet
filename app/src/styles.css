@@ -428,3 +428,4 @@ body.inles .wrap{max-width:1500px;padding-block:8px}body.inles .top{padding-bloc
 .xno{display:inline-grid;place-items:center;min-width:1.45em;height:1.45em;border-radius:50%;background:var(--ink);color:var(--bg);font-size:.78rem;margin-inline-end:2px}
 .xdet .xnum.on circle,.xdet .xnum:hover circle{fill:#ffcf3a}
 .xstage:not(.compact)~.xinfo .xno{display:none}
+.lpic{width:1.2em;height:1.2em;object-fit:contain;vertical-align:middle;pointer-events:none;user-select:none;-webkit-user-drag:none}
