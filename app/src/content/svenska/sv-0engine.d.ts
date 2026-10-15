@@ -2,6 +2,8 @@
 export declare const SVH: any;
 export declare const SVU: any;
 export declare const svMount: any;
+export declare const svLeaf: any;
+export declare const svFlip: any;
 export declare const svWire: any;
 export declare const svMark: any;
 export declare const svPage: any;

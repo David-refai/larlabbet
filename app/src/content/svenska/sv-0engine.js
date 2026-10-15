@@ -23,10 +23,59 @@ function svMount(U){return function(stage,ctrl){
   /* a story page may use the whole height on a phone; the whiteboard keeps its shape */
   const show=on=>{story.hidden=!on;if(stage.classList.contains("svtall")!==on){stage.classList.toggle("svtall",on);window.dispatchEvent(new Event("resize"))}};
   wb.run=(c,f)=>{show(false);return run0(c,f)};ctrl.innerHTML="";
+  /* the story reads like a book: it opens from a cover and the pages turn (svFlip); a swipe turns a page too */
+  story.classList.add("svbook");let at=-1,sx=null;
+  story.addEventListener("touchstart",e=>{sx=e.touches.length===1?[e.touches[0].clientX,e.touches[0].clientY]:null},{passive:true});
+  story.addEventListener("touchend",e=>{if(!sx)return;const t=e.changedTouches[0],dx=t.clientX-sx[0],dy=t.clientY-sx[1];sx=null;
+    if(Math.abs(dx)>60&&Math.abs(dx)>2*Math.abs(dy)){const b=document.getElementById(dx<0?"next":"prev");if(b&&!b.disabled)b.click()}});
   return{wb,step(k){wb.cancel();const s=U.steps[k];
-    if(s.html){wb.clear();show(true);story.innerHTML=s.html();svWire(story);return null}
+    if(s.html){wb.clear();const was=story.hidden?-1:at;show(true);svFlip(story,U,was,k,()=>s.html());at=k;svWire(story);return null}
+    at=-1;
     show(false);return(async()=>{wb.clear();let j=k;while(j>0&&!U.steps[j-1].html)j--;for(;j<k;j++)if(!(await run0(U.steps[j].draw(),true)))return false;return run0(s.draw())})()},
    stop(){wb.cancel()}}}}
+/* a page turn. A story page is a spread: picture on the left page, text on the right one.
+   Forward, the right page lifts at the spine and turns over to the left, its back is the next picture;
+   backward, the left page turns back to the right. The first page opens from a cover.
+   On a phone (one page) or to or from the word page the whole page turns. */
+let svLeaf=null;
+function svFlip(story,U,from,to,html){
+  if(svLeaf){svLeaf.getAnimations().forEach(a=>a.finish());svLeaf.remove();svLeaf=null}
+  const n=U.story.length,old=story.querySelector(".svpage,.svwords"),oldPic=old&&old.querySelector(".svpic"),oldTxt=old&&old.querySelector(".svtext");
+  story.innerHTML=html();story.scrollTop=0;
+  const still=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(still||from===to||(from<0&&to!==0))return;
+  const pg=story.querySelector(".svpage,.svwords"),pic=pg.querySelector(".svpic"),txt=pg.querySelector(".svtext"),
+    spread=pic&&getComputedStyle(pg).gridTemplateColumns.split(" ").length>1,fwd=to>from;
+  const cover=from<0?`<div class="svcover"><div class="svcpic">${U.story[0].pic||U.pic}</div><b>${esc(U.storyTitle)}</b></div>`:null;
+  const face=(h,cls)=>`<div class="svface ${cls}">${h}<i class="svshade"></i></div>`;
+  const leaf=document.createElement("div");leaf.className="svleaf";leaf.setAttribute("aria-hidden","true");let rot;
+  if(spread&&(cover||(oldPic&&oldTxt))){
+    const half=fwd?"right":"left";leaf.classList.add(half);
+    /* front: what the turning page showed; back: what it shows when it lands on the other side */
+    const front=cover||(fwd?oldTxt.outerHTML:oldPic.outerHTML),back=fwd?pic.outerHTML:txt.outerHTML;
+    leaf.innerHTML=face(front,"front"+(cover?" iscover":""))+face(back,"back");
+    /* until the page has turned, the half it lands on still shows the old page */
+    const under=fwd?pic:txt,keep=fwd?(cover?null:oldPic):oldTxt;
+    if(keep){const c=keep.cloneNode(true);c.classList.add("svkeep");under.appendChild(c)}
+    else if(cover)under.classList.add("svblank");
+    rot=fwd?[0,-180]:[0,180];
+    story.appendChild(leaf);
+    const a=leaf.animate([{transform:`rotateY(${rot[0]}deg)`},{transform:`rotateY(${rot[1]}deg)`}],{duration:cover?1100:850,easing:"cubic-bezier(.45,.05,.25,1)"});
+    leaf.querySelectorAll(".svshade").forEach((sh,i)=>sh.animate([{opacity:0},{opacity:.55,offset:.5},{opacity:i?0:.55}],{duration:a.effect.getTiming().duration}));
+    /* the old picture/text under the landing half goes when the page passes the spine */
+    setTimeout(()=>{under.querySelectorAll(".svkeep").forEach(e=>e.remove());under.classList.remove("svblank")},a.effect.getTiming().duration/2);
+    svLeaf=leaf;a.onfinish=()=>{under.querySelectorAll(".svkeep").forEach(e=>e.remove());under.classList.remove("svblank");leaf.remove();if(svLeaf===leaf)svLeaf=null};
+  }else{
+    /* one page: the old page turns away to the left (forward) or the new one turns in from the left (back) */
+    leaf.classList.add("full");
+    const front=cover||(old?old.outerHTML:"");if(!front)return;
+    if(fwd){leaf.innerHTML=face(front,"front"+(cover?" iscover":""));rot=[0,-110]}
+    else{leaf.innerHTML=face(pg.outerHTML,"front");rot=[-110,0]}
+    story.appendChild(leaf);
+    const a=leaf.animate([{transform:`rotateY(${rot[0]}deg)`,opacity:fwd?1:.6},{transform:`rotateY(${rot[1]}deg)`,opacity:fwd?.6:1}],{duration:cover?1000:700,easing:"cubic-bezier(.45,.05,.25,1)"});
+    svLeaf=leaf;a.onfinish=()=>{leaf.remove();if(svLeaf===leaf)svLeaf=null};
+  }
+}
 function svWire(el){el.querySelectorAll("[data-w]").forEach(b=>b.onclick=()=>wordCard([b.dataset.w]))}
 /* story text with the unit's words (and earlier units' words) made tappable */
 function svMark(text,newKeys){const hits=[];
@@ -82,10 +131,30 @@ const SVK={
 .svnum{position:absolute;bottom:3%;inset-inline-end:4%;font-size:.75em;color:#7d8aa5}
 .svw{font:inherit;color:inherit;background:none;border:0;padding:0 .08em;cursor:pointer;border-bottom:2px dotted #9aa8c4}
 .svw.new{color:#1f4fb0;font-weight:700;background:#e7f0ff;border-radius:.25em;border-bottom:0}
+.svbook{perspective:2400px;overflow-x:hidden}
+.svbook .svpage{grid-template-columns:1fr 1fr;position:relative;background:#fffaf0}
+.svbook .svpage::after{content:"";position:absolute;inset:0 auto 0 calc(50% - 22px);width:44px;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(60,40,10,.16) 45%,rgba(60,40,10,.22) 50%,rgba(60,40,10,.10) 55%,transparent)}
+.svbook .svtext{background:#fffaf0;font-family:Georgia,"Times New Roman",serif;overflow:auto}
+.svbook .svpic,.svbook .svtext{position:relative}
+.svkeep{position:absolute!important;inset:0;margin:0}
+.svblank>*{visibility:hidden}.svblank{background:#fffaf0!important}
+.svleaf{position:absolute;top:0;bottom:0;transform-style:preserve-3d;pointer-events:none;z-index:3}
+.svleaf.right{left:50%;right:0;transform-origin:0 50%}.svleaf.left{left:0;right:50%;transform-origin:100% 50%}
+.svleaf.full{inset:0;transform-origin:0 50%}
+.svface{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;overflow:hidden;background:#fffaf0;box-shadow:0 0 18px rgba(30,20,0,.18)}
+.svface>.svpic,.svface>.svtext,.svface>.svpage,.svface>.svwords{position:absolute;inset:0;height:100%}
+.svface.back{transform:rotateY(180deg)}
+.svshade{position:absolute;inset:0;opacity:0;pointer-events:none;background:linear-gradient(90deg,rgba(0,0,0,.35),rgba(0,0,0,0) 60%)}
+.svleaf.left .svface.front .svshade{background:linear-gradient(270deg,rgba(0,0,0,.35),rgba(0,0,0,0) 60%)}
+.svface.iscover{background:linear-gradient(135deg,#1f4fb0,#16367a);border-radius:0 .5em .5em 0}
+.svcover{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5%;padding:8%;color:#fff;text-align:center}
+.svcover .svcpic{width:78%;aspect-ratio:1;border-radius:.4em;overflow:hidden;border:4px solid #f3d27a;box-shadow:0 6px 20px rgba(0,0,0,.35);display:grid;place-items:center;background:#eef4fb}
+.svcover .svcpic>*{width:100%;height:100%;object-fit:cover}
+.svcover b{font-family:Georgia,serif;font-size:1.5em;line-height:1.2;color:#f9e7b0;text-shadow:0 2px 6px rgba(0,0,0,.35)}
 .svwords{display:grid;grid-template-columns:repeat(4,1fr);gap:3%;padding:5%;height:100%;align-content:center}
 .svcard{font:inherit;border:0;border-radius:.6em;background:#fff;box-shadow:0 2px 8px rgba(19,33,63,.12);padding:.8em .4em;display:flex;flex-direction:column;gap:.3em;cursor:pointer;color:#1d2433}
 .svcard b{font-family:Caveat,cursive;font-size:1.6em;color:#1f4fb0}.svcard span{font-size:.7em;color:#5b6884}
 .answer input.txtin{width:min(26em,72vw);text-align:start;font-size:1.15rem}
-@media (max-width:620px){.svpage{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto}.svpic{min-height:0;padding:2%}.svpic svg{height:100%}.svstage:not(.svtall) .svpic{display:none}.svstory{font-size:4.4cqw}.svwords{grid-template-columns:repeat(2,1fr);gap:2%}}`;document.head.appendChild(st)})();
+@media (max-width:620px){.svpage{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto}.svpic{min-height:0;padding:2%}.svpic svg{height:100%}.svstage:not(.svtall) .svpic{display:none}.svstory{font-size:4.4cqw}.svwords{grid-template-columns:repeat(2,1fr);gap:2%}.svbook .svpage{grid-template-columns:1fr}.svbook .svpage::after{display:none}}`;document.head.appendChild(st)})();
 
-export {SVH,SVU,svMount,svWire,svMark,svPage,svWordsPage,svUnit,svQ,svLines,svGen,SVK};
+export {SVH,SVU,svMount,svLeaf,svFlip,svWire,svMark,svPage,svWordsPage,svUnit,svQ,svLines,svGen,SVK};
