@@ -1,4 +1,4 @@
-import {BRN,art,bankGen,blist,dotsP,note,soil,tfx,ttl} from "./no-0body.js";
+import {BRN,art,bankGen,blist,dotsP,note,soil,ttl} from "./no-0body.js";
 import {A,LESSONS,R,TERM,WORDS,shuffle,t3,wbMount} from "../../legacy/core.js";
 /* ===== no4j.js: Biologi, Year 4, Djur, växter och ekosystem 3 and 4 =====
    3. bio4j: food chains and food webs - producers, consumers, predators and prey
@@ -62,7 +62,7 @@ const NAT3={steps:[
    "An animal that hunts and eats other animals is called a predator. The animal being hunted is called prey. The fox has sharp teeth and a good sense of smell. The hare has big ears to hear danger and long legs to run fast.",
    "الحيوان الذي يصطاد حيوانات أخرى ويأكلها يسمّى مفترسًا، والحيوان المطارَد يسمّى فريسة. للثعلب أسنان حادّة وحاسّة شمّ قوية، وللأرنب البري أذنان كبيرتان تسمعان الخطر وساقان طويلتان تجريان بسرعة."),
   draw:()=>[A.wipe(),ttl("Rovdjur och byte"),...soil(40,760,350),...art("fox",270,350,1.15),A.p("M60 300 L120 300 M50 320 L110 320 M70 280 L120 280","#9aa3b2",3),...art("hare",610,350,1.15),A.p("M690 250 L740 250 M700 270 L750 270","#9aa3b2",3),
-   A.tx("rovdjur",270,200,40,"r"),A.tx("byte",610,180,40,"b"),A.tx("vassa tänder, bra näsa",270,410,26,"r"),A.tx("stora öron, snabba ben",610,410,26,"b")]},
+   A.tx("rovdjur",270,170,40,"r"),A.tx("byte",610,150,40,"b"),A.tx("vassa tänder, bra näsa",270,410,26,"r"),A.tx("stora öron, snabba ben",610,410,26,"b")]},
  {say:t3("I sjön finns också näringskedjor. Små alger är producenter, för de gör sin egen näring med solljus. Abborren äter smådjur som lever av alger, och gäddan är ett rovdjur som äter abborren.",
    "Lakes have food chains too. Tiny algae are producers because they make their own food with sunlight. The perch eats small animals that live on algae, and the pike is a predator that eats the perch.",
    "في البحيرة أيضًا سلاسل غذائية. الطحالب الصغيرة منتِجات لأنها تصنع غذاءها بضوء الشمس، والفرخ يأكل حيوانات صغيرة تعيش على الطحالب، والكراكي مفترس يأكل الفرخ."),
@@ -117,7 +117,7 @@ const trunk=(x,y1,y2)=>[A.p(`M${x-20} ${y1} L${x-22} ${y2} M${x+20} ${y1} L${x+2
 /* a picture of one species for "what is this?" questions */
 const SP={
  moose:()=>[...soil(40,370,360),...art("moose",170,360,1.15)],fox:()=>[...soil(40,370,330),...art("fox",200,330,1.3)],squirrel:()=>[...soil(80,330,350),...art("squirrel",200,350,1.9)],
- woodpecker:()=>[...trunk(262,110,400),...art("woodpecker",190,300,2)],perch:()=>[...lake(30,140,350,240),...art("perch",200,270,1.35)],pike:()=>[...lake(30,140,350,240),...art("pike",200,270,1.1)],
+ woodpecker:()=>[...art("woodpecker",200,280,2.2)],perch:()=>[...lake(30,140,350,240),...art("perch",200,270,1.35)],pike:()=>[...lake(30,140,350,240),...art("pike",200,270,1.1)],
  gran:()=>[...soil(80,330,400),...art("gran",200,400,1.6)],tall:()=>[...soil(80,330,400),...art("tall",200,400,1.5)],bjork:()=>[...soil(80,330,400),...art("bjork",200,400,1.5)],
  lily:()=>[...lake(30,190,350,260),...art("lily",210,206,2)],blabar:()=>[...soil(80,330,360),...art("blabar",200,360,2.6)],svamp:()=>[...soil(80,330,360),...art("svamp",200,360,2.2)],
 };
@@ -139,28 +139,28 @@ const NAT4={steps:[
    "On the forest floor grow blueberry bushes and moss, and in autumn mushrooms come up. Blueberries are food for many animals and birds. Fungi help break down old leaves and needles.",
    "على أرض الغابة ينمو شجيرات التوت البري والطحالب، وفي الخريف يظهر الفطر. التوت البري غذاء لكثير من الحيوانات والطيور، والفطريات تساعد على تحليل الأوراق والإبر القديمة."),
   draw:()=>[A.wipe(),ttl("Skogens botten"),...soil(40,760,370),...art("blabar",150,370,2.2),...art("svamp",400,370,1.7),...art("svamp",470,370,.9),
-   A.hatch(tfx(MOSS,650,370,1.6),"g"),A.p(tfx(MOSS,650,370,1.6),"g",4),A.p(tfx("M-40 -6 L-44 -16 M-14 -10 L-12 -24 M14 -8 L18 -22 M38 -6 L40 -16",650,370,1.6),"g",3),
+   ...art("moss",650,370,1.2),
    A.tx("blåbärsris",150,425,34,"b"),A.tx("svamp",430,425,34,"o"),A.tx("mossa",650,425,34,"g")]},
  {say:t3("I skogen lever många djur. Älgen är Sveriges största landdjur och äter blad, kvistar och ris. Räven jagar möss och harar. Ekorren äter kottar och nötter, och hackspetten hackar i träden för att hitta insekter.",
    "Many animals live in the forest. The moose is Sweden's largest land animal and eats leaves, twigs and shrubs. The fox hunts mice and hares. The squirrel eats cones and nuts, and the woodpecker pecks at trees to find insects.",
    "تعيش في الغابة حيوانات كثيرة. الموظ أكبر حيوان برّي في السويد ويأكل الأوراق والأغصان والشجيرات. الثعلب يصطاد الفئران والأرانب، والسنجاب يأكل المخاريط والجوز، ونقّار الخشب ينقر الأشجار ليجد الحشرات."),
-  draw:()=>[A.wipe(),ttl("Skogens djur"),...soil(40,760,400),...art("moose",140,400,.85),...art("fox",390,400,.82),...art("squirrel",570,400,1.1),...trunk(722,120,400),...art("woodpecker",676,320,1),
+  draw:()=>[A.wipe(),ttl("Skogens djur"),...soil(40,760,400),...art("moose",140,400,.85),...art("fox",390,400,.82),...art("squirrel",570,400,1.1),...art("woodpecker",700,346,1.25),
    A.tx("älg",150,445,34,"#5a3d22"),A.tx("räv",390,445,34,"o"),A.tx("ekorre",570,445,34,"#b5541c"),A.tx("hackspett",700,445,32,"k")]},
  {say:t3("Arter har anpassningar, alltså kroppsdelar och beteenden som hjälper dem att överleva. Ekorren har vassa klor för att klättra och en yvig svans för balansen. Hackspetten har en stark näbb och en styv stjärt som stöd mot trädet.",
    "Species have adaptations: body parts and behaviours that help them survive. The squirrel has sharp claws for climbing and a bushy tail for balance. The woodpecker has a strong beak and a stiff tail that props it against the tree.",
    "للأنواع تكيّفات، أي أعضاء وسلوكيات تساعدها على البقاء. للسنجاب مخالب حادّة للتسلّق وذيل كثيف للتوازن، ولنقّار الخشب منقار قوي وذيل صلب يستند به إلى الشجرة."),
-  draw:()=>[A.wipe(),ttl("Anpassningar"),...soil(60,340,330),...art("squirrel",200,330,1.8),...trunk(626,100,340),...art("woodpecker",560,300,1.8),
+  draw:()=>[A.wipe(),ttl("Anpassningar"),...soil(60,340,330),...art("squirrel",200,330,1.8),...art("woodpecker",590,260,2),
    A.tx("yvig svans: balans",200,385,28,"#b5541c"),A.tx("vassa klor: klättrar",200,425,28,"#b5541c"),A.tx("stark näbb: hackar",590,385,28,"k"),A.tx("styv stjärt: stöd",590,425,28,"k")]},
  {say:t3("Sjön är ett annat ekosystem. Vid stranden växer vass. Näckrosen har stora blad som flyter på ytan och en lång stjälk ner till botten. I vattnet simmar abborrar och gäddor, och längst ner växer alger.",
    "The lake is another ecosystem. Reeds grow along the shore. The water lily has big leaves that float on the surface and a long stem down to the bottom. Perch and pike swim in the water, and algae grow at the bottom.",
    "البحيرة نظام بيئي آخر. على الشاطئ ينمو القصب، وزنبق الماء له أوراق كبيرة تطفو على السطح وساق طويلة حتى القاع. في الماء يسبح الفرخ والكراكي، وفي القاع تنمو الطحالب."),
   draw:()=>[A.wipe(),ttl("Sjön"),A.p("M40 180 Q220 168 400 180 Q580 192 760 180 M40 180 Q60 460 400 460 Q740 460 760 180","b",3.5),A.p("M180 260 q15 -8 30 0 q15 8 30 0 M600 250 q15 -8 30 0 q15 8 30 0 M420 420 q15 -8 30 0 q15 8 30 0 M640 300 q15 -8 30 0","b",2.5),
-   ...REEDS(70,250,5,170),...art("lily",300,182,.9),...art("perch",460,300,.62),...art("perch",540,340,.45),...art("pike",610,400,.55),A.p("M300 452 Q290 420 306 390 M326 452 Q338 424 322 400 M350 452 Q344 430 356 410","g",4),
-   A.tx("vass",160,120,30,"g"),A.tx("näckros",320,130,30,"p"),A.tx("abborrar",470,240,28,"g"),A.tx("gädda",700,350,28,"#2f6b45"),A.tx("alger",240,410,28,"g")]},
+   ...art("reeds",110,250,1.15),...art("lily",300,182,.9),...art("perch",460,300,.62),...art("perch",540,340,.45),...art("pike",610,400,.55),A.p("M300 452 Q290 420 306 390 M326 452 Q338 424 322 400 M350 452 Q344 430 356 410","g",4),
+   A.tx("vass",160,120,30,"g"),A.tx("näckros",320,130,30,"p"),A.tx("abborrar",470,240,28,"g"),A.tx("gädda",718,372,28,"#2f6b45"),A.tx("alger",240,410,28,"g")]},
  {say:t3("Även i sjön finns anpassningar. Gäddan är grön och randig som vassen, så bytet ser den inte. Den står stilla och gör sedan ett blixtsnabbt anfall. Abborren har taggar på ryggfenan som skydd, och simmar ofta i stim.",
    "There are adaptations in the lake too. The pike is green and striped like the reeds, so its prey does not see it. It stays still and then makes a lightning-fast attack. The perch has spikes on its back fin for protection and often swims in shoals.",
    "في البحيرة أيضًا تكيّفات. الكراكي أخضر مخطّط مثل القصب فلا تراه الفريسة، يقف ساكنًا ثم ينقضّ بسرعة البرق. وللفرخ أشواك على زعنفة ظهره تحميه، وغالبًا ما يسبح في أسراب."),
-  draw:()=>[A.wipe(),ttl("Anpassningar i sjön"),...lake(30,110,740,280),...REEDS(150,380,12,240,"#9ccfa9"),...art("pike",330,270,1.35),...art("perch",640,250,.95),A.p(R.line(612,190,590,160,.3),"g",2.5),
+  draw:()=>[A.wipe(),ttl("Anpassningar i sjön"),...lake(30,110,740,280),...REEDS(150,380,12,240,"#9ccfa9"),...art("pike",320,270,.95),...art("perch",640,250,.95),A.p(R.line(612,190,590,160,.3),"g",2.5),
    A.tx("taggig ryggfena",590,150,28,"g"),...art("perch",590,350,.3),...art("perch",660,365,.3),...art("perch",720,340,.3),
    A.tx("grön och randig: syns inte",330,430,28,"#2f6b45"),A.tx("simmar i stim",650,430,28,"g")]},
  {say:t3("Kom ihåg: i ett ekosystem hänger allt ihop. Om en art försvinner påverkas de andra. Försvinner alla harar får räven mindre mat. Varje art har anpassningar som hjälper den att leva i sin livsmiljö.",

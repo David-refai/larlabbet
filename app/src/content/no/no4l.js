@@ -1,4 +1,4 @@
-import {BRN,art,bankGen,blist,dotsP,note,plant,ringArrows,ringFlow,ringPts,soil,tfx,ttl} from "./no-0body.js";
+import {BRN,art,bankGen,blist,note,plant,ringArrows,ringFlow,ringPts,soil,ttl} from "./no-0body.js";
 import {A,LESSONS,R,TERM,WORDS,t3,wbMount} from "../../legacy/core.js";
 /* ===== no4l.js: Biologi, Year 4, Djur, växter och ekosystem 5 and 6 =====
    5. bio4l: life cycles - the frog, the butterfly and the seed
@@ -25,9 +25,9 @@ TERM("no_atervinning",{sv:"återvinning",m:W("återvinn(ing|ingen|a|s)"),d:t3("N
 /* four pictures round a ring with arrows; the dots go round on a smaller ring inside */
 const cycle4=(cx,cy,rx,ry,pics,c="k",fc="o")=>[...pics.flatMap((f,i)=>{const [x,y]=ringPts(cx,cy,rx,ry,4)[i];return f(x,y)}),...ringArrows(cx,cy,rx,ry,4,c,30),ringFlow(cx,cy,rx*.42,ry*.42,fc,8,7)];
 const water=(x,y,w,h)=>[A.band(x,y,w,h,"b"),A.p(`M${x} ${y+14} Q${x+w*.25} ${y+2} ${x+w*.5} ${y+14} Q${x+w*.75} ${y+26} ${x+w} ${y+14}`,"b",3)];
-const NETTLE=(x,y,s)=>[...art("leaf",x,y,s)];
+const NETTLE=(x,y,s)=>[...art("nettle",x,y,s)];
 const STAGE={rom:()=>[...water(40,140,330,260),...art("spawn",200,270,2.4)],grodyngel:()=>[...water(40,140,330,260),...art("tadpole",210,270,2.6)],
- larv:()=>[...art("leaf",200,300,2.4),...art("larva",200,284,1.8)],puppa:()=>art("pupa",210,250,2.2),
+ larv:()=>[...art("nettle",200,280,2.2),...art("larva",200,270,1.6)],puppa:()=>art("pupa",210,250,3),
  fjaril:()=>art("butterfly",200,270,2.3),groda:()=>[...soil(60,340,340),...art("frog",200,340,1.9)]};
 const NAT5={steps:[
  {say:t3("Alla djur och växter har en livscykel. De föds, växer upp, förökar sig och dör till slut. Men innan de dör har de fått ungar eller frön, så livet fortsätter runt, runt som i en ring.",
@@ -54,12 +54,12 @@ const NAT5={steps:[
  {say:t3("Fjärilen har också en förvandling. Nässelfjärilen lägger sina ägg på en brännässla. Ur äggen kryper små larver. Larven äter och äter, och den växer så mycket att den byter skinn flera gånger.",
    "The butterfly also goes through metamorphosis. The small tortoiseshell lays its eggs on a stinging nettle. Small caterpillars crawl out of the eggs. The caterpillar eats and eats, and grows so much that it sheds its skin several times.",
    "الفراشة أيضًا تمرّ بتحوّل. تضع فراشة القرّاص بيضها على نبتة القرّاص، فتخرج منه يرقات صغيرة. اليرقة تأكل وتأكل، وتكبر كثيرًا حتى تغيّر جلدها عدة مرات."),
-  draw:()=>[A.wipe(),ttl("Fjärilen: ägg och larv"),...NETTLE(220,280,2.4),...art("eggs",220,270,2),A.arrow(370,270,440,270,"k",-14),...NETTLE(600,290,2.6),...art("larva",600,276,1.9),
+  draw:()=>[A.wipe(),ttl("Fjärilen: ägg och larv"),...art("eggs",220,270,2.4),A.arrow(370,270,440,270,"k",-14),...NETTLE(600,262,2.3),...art("larva",600,252,1.7),
    A.p("M700 250 q8 6 0 12 q8 6 0 12","g",3),A.tx("ägg",220,400,34,"b"),A.tx("larv",600,400,34,"g"),A.tx("äter och växer",600,440,28,"g")]},
  {say:t3("När larven är stor blir den en puppa. Inuti puppan byggs hela kroppen om. Efter några veckor kryper en fjäril ut. Fjärilen lägger nya ägg, och cykeln börjar om: ägg, larv, puppa, fjäril.",
    "When the caterpillar is big it becomes a pupa. Inside the pupa the whole body is rebuilt. After a few weeks a butterfly crawls out. The butterfly lays new eggs, and the cycle starts again: egg, caterpillar, pupa, butterfly.",
    "عندما تكبر اليرقة تصبح عذراء، وداخل العذراء يُعاد بناء الجسم كله. بعد بضعة أسابيع تخرج فراشة، فتضع بيضًا جديدًا وتبدأ الدورة من جديد: بيضة، يرقة، عذراء، فراشة."),
-  draw:()=>[A.wipe(),ttl("Fjärilens livscykel"),...cycle4(400,285,230,155,[(x,y)=>[...art("eggs",x,y+10,1.6),A.tx("ägg",x+50,y+10,30,"b","start")],(x,y)=>[...art("larva",x,y+6,1.15),A.tx("larv",x,y+46,30,"g")],
+  draw:()=>[A.wipe(),ttl("Fjärilens livscykel"),...cycle4(400,285,230,155,[(x,y)=>[...art("eggs",x,y+28,.95),A.tx("ägg",x+50,y+10,30,"b","start")],(x,y)=>[...art("larva",x,y+6,1.15),A.tx("larv",x,y+46,30,"g")],
    (x,y)=>[...art("pupa",x,y+10,1),A.tx("puppa",x+46,y+10,30,BRN,"start")],(x,y)=>[...art("butterfly",x,y-8,1),A.tx("fjäril",x,y+72,30,"o")]],"k","o")]},
  {say:t3("Växter har också en livscykel. Fröet gror och blir en liten grodd. Grodden växer till en planta, och plantan får blommor. I blomman bildas nya frön, och så börjar det om.",
    "Plants have a life cycle too. The seed sprouts and becomes a small seedling. The seedling grows into a plant, and the plant gets flowers. New seeds form in the flower, and it starts again.",
@@ -104,13 +104,12 @@ WORDS.bio4l=["no_livscykel","no_rom","no_grodyngel","no_larv","no_puppa","no_for
 const CHECK=(x,y,c="g")=>A.p(`M${x-10} ${y-8} L${x-2} ${y+2} L${x+12} ${y-18}`,c,5);
 const CROSS=(x,y,c="r")=>A.p(`M${x-10} ${y-18} L${x+10} ${y+2} M${x+10} ${y-18} L${x-10} ${y+2}`,c,5);
 const LEAFS=[[460,412,.35],[500,416,.3],[540,410,.38],[585,414,.3],[620,412,.34]];
-const MOUND="M-80 0 Q-40 -50 0 -52 Q40 -50 80 0 Z";
 const NAT6={steps:[
  {say:t3("Varje höst faller miljarder löv till marken, och växter och djur dör hela tiden. Ändå blir skogen inte full av gamla löv. Vart tar allt vägen? Det ska vi ta reda på nu.",
    "Every autumn billions of leaves fall to the ground, and plants and animals die all the time. Yet the forest does not fill up with old leaves. Where does it all go? Let's find out.",
    "في كل خريف تسقط مليارات الأوراق على الأرض، وتموت النباتات والحيوانات طوال الوقت، ومع ذلك لا تمتلئ الغابة بالأوراق القديمة. أين يذهب كل ذلك؟ لنكتشف الآن."),
   draw:()=>[A.wipe(),ttl("Vart tar alla löv vägen?"),...soil(40,760,420),...art("bjork",230,420,1.45),A.flow("M190 240 Q140 330 180 410","o",5,3.6,6),A.flow("M280 230 Q340 320 300 410","o",5,4,6),
-   ...LEAFS.flatMap(([x,y,s])=>art("leaf",x,y,s)),A.tx("?",640,280,120,"r"),A.tx("löv faller",540,370,30,"o")]},
+   ...LEAFS.flatMap(([x,y,s])=>art("autumn",x,y-12*s,s)),A.tx("?",640,280,120,"r"),A.tx("löv faller",540,370,30,"o")]},
  {say:t3("Nedbrytare är organismer som äter döda växter och djur. Daggmaskar drar ner löv i jorden och äter dem. Svampar och bakterier bryter ner resten. Bakterierna är så små att de bara syns i mikroskop.",
    "Decomposers are living things that eat dead plants and animals. Earthworms pull leaves into the soil and eat them. Fungi and bacteria break down the rest. Bacteria are so small you can only see them in a microscope.",
    "المحلِّلات كائنات تأكل النباتات والحيوانات الميتة. ديدان الأرض تسحب الأوراق إلى التربة وتأكلها، والفطريات والبكتيريا تحلّل الباقي. البكتيريا صغيرة جدًا فلا تُرى إلا بالمجهر."),
@@ -119,15 +118,14 @@ const NAT6={steps:[
  {say:t3("Nedbrytarna gör om det döda till näring i jorden. Den näringen tar nya växter upp med sina rötter. Växterna blir mat åt djuren, och när de dör börjar allt om. Det är naturens kretslopp: inget går förlorat!",
    "Decomposers turn dead things into nutrients in the soil. New plants take up those nutrients with their roots. The plants become food for animals, and when they die it all starts again. That is nature's cycle: nothing is lost!",
    "المحلِّلات تحوّل الكائنات الميتة إلى غذاء في التربة، فتمتصّه النباتات الجديدة بجذورها. وتصبح النباتات غذاءً للحيوانات، وعندما تموت يبدأ كل شيء من جديد. هذه دورة الطبيعة: لا شيء يضيع!"),
-  draw:()=>[A.wipe(),ttl("Naturens kretslopp"),...cycle4(400,285,235,150,[(x,y)=>[...art("sprout",x,y+18,1.4),A.tx("ny växt",x+44,y+6,30,"g","start")],(x,y)=>[...art("leaf",x,y,.85),A.tx("döda löv",x,y+44,30,"o")],
+  draw:()=>[A.wipe(),ttl("Naturens kretslopp"),...cycle4(400,285,235,150,[(x,y)=>[...art("sprout",x,y+18,1.4),A.tx("ny växt",x+44,y+6,30,"g","start")],(x,y)=>[...art("autumn",x,y-6,.6),A.tx("döda löv",x,y+48,30,"o")],
    (x,y)=>[...art("worm",x,y-10,1.1),A.tx("nedbrytare",x+70,y-4,30,"p","start")],(x,y)=>[A.tx("näring",x-10,y-4,32,BRN),A.tx("i jorden",x-10,y+30,32,BRN)]],"k","g")]},
  {say:t3("Du kan hjälpa kretsloppet med en kompost. Där lägger man matrester, skal och löv. Maskar, svampar och bakterier gör om det till ny näringsrik jord som man kan odla i.",
    "You can help the cycle with a compost. You put food scraps, peel and leaves in it. Worms, fungi and bacteria turn it into new, rich soil that you can grow things in.",
    "يمكنك أن تساعد دورة الطبيعة بالسماد العضوي. نضع فيه بقايا الطعام والقشور والأوراق، فتحوّلها الديدان والفطريات والبكتيريا إلى تربة جديدة غنية نزرع فيها."),
-  draw:()=>[A.wipe(),ttl("Kompost"),A.p(R.rect(110,180,240,230,.5),BRN,4.5),A.p("M110 260 Q170 250 230 262 Q290 272 350 260 M110 330 Q170 320 230 332 Q290 342 350 330",BRN,2.5),
-   ...art("leaf",170,232,.4),A.p(tfx("M-10 -20 Q-2 -12 -8 0 Q-2 12 -10 20 L10 20 Q2 12 8 0 Q2 -12 10 -20 Z",290,232,1.1),"r",3.5),A.p(tfx("M0 -20 L2 -30",290,232,1.1),BRN,3.5),...art("worm",220,372,.8),A.p(dotsP([[160,300],[250,296],[300,304]]),"v",6),
+  draw:()=>[A.wipe(),ttl("Kompost"),...art("compost",230,410,1.25),...art("worm",300,392,.6),
    A.tx("matrester, skal, löv",230,160,28,"k"),A.p(R.arrow(370,300,460,320,-16),"k",4),A.flow("M370 300 Q420 296 460 320","o",4,2,6),
-   A.hatch(tfx(MOUND,560,410,1.3),"o"),A.p(tfx(MOUND,560,410,1.3),BRN,4),...art("sprout",560,346,1.6),A.tx("ny jord",560,455,32,BRN)]},
+   ...art("mound",570,420,1.25),...art("sprout",570,362,.9),A.tx("ny jord",560,455,32,BRN)]},
  {say:t3("Människan påverkar naturen. Skräp i naturen kan skada djur. Plast bryts inte ner av nedbrytarna. Den blir bara mindre bitar, mikroplast, som hamnar i havet och i fiskarnas magar. En plastflaska kan finnas kvar i hundratals år.",
    "People affect nature. Litter in nature can hurt animals. Plastic is not broken down by decomposers. It just becomes smaller pieces, microplastics, that end up in the sea and in fish stomachs. A plastic bottle can last for hundreds of years.",
    "الإنسان يؤثّر في الطبيعة. النفايات في الطبيعة قد تؤذي الحيوانات، والبلاستيك لا تحلّله المحلِّلات، بل يتفتّت إلى قطع أصغر هي الجسيمات البلاستيكية الدقيقة التي تصل إلى البحر وبطون الأسماك. قد تبقى زجاجة بلاستيكية مئات السنين."),

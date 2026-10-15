@@ -1,0 +1,40 @@
+/* "Utforska kroppen" with David's painted pictures (imageRenderer.ts). The stage is white like the
+   pictures; the layers are stacked and blended with "darken", so their white backgrounds vanish and
+   the parts that are the same in two pictures (the face, the glass body) do not get darker. */
+.xstage.ximg{background:#fff;container-type:size}
+.xstage.ximg::after{display:none}
+.ximg .xvig{position:absolute;inset:0;pointer-events:none;z-index:3;border-radius:inherit;
+  background:radial-gradient(ellipse 75% 70% at 50% 46%,rgba(255,255,255,0) 60%,rgba(140,168,212,.16) 100%)}
+.ximg .xbody .xl{mix-blend-mode:darken}
+.ximg .xbody .xl[data-layer=skin]{mix-blend-mode:normal}
+.ximg .xbody .xorg .xkey{opacity:0;transition:opacity .25s}
+.ximg .xbody .xorg.sel .xkey,.ximg .xbody .xorg:hover .xkey,.ximg .xbody .xorg:focus-visible .xkey{opacity:1}
+.ximg .xbody .xorg .xhit{fill:#fff;fill-opacity:0}
+.ximg .xbody .xlabel text,.ximg .xdet text{font-family:Caveat,"Segoe Print","Comic Sans MS",cursive;font-weight:700}
+.ximg .xbody .xlabel{animation:ximgin .35s ease-out}
+@keyframes ximgin{from{opacity:0}to{opacity:1}}
+
+/* an isolated organ: its own picture, large, on a soft background */
+.ximg .xiso{position:absolute;inset:0;z-index:2;display:grid;grid-template-rows:minmax(0,1fr) auto;justify-items:center;gap:6px;
+  padding:5% 7% 4%;background:radial-gradient(circle at 50% 40%,#ffffff 0%,#f4f8fe 52%,#e2ecf8 100%);
+  opacity:0;transform:scale(.9);pointer-events:none;transition:opacity .45s ease,transform .55s cubic-bezier(.2,.8,.3,1.1)}
+.ximg.isocard .xiso{opacity:1;transform:none;pointer-events:auto}
+.ximg.indetail .xiso{opacity:0;pointer-events:none}
+.ximg .xiso img{width:100%;height:100%;min-height:0;object-fit:contain;filter:drop-shadow(0 16px 18px rgba(30,52,96,.22));user-select:none;-webkit-user-drag:none}
+.ximg .xiso .xcap{text-align:center;color:#13213f;max-width:30em;display:flex;flex-direction:column;gap:2px}
+.ximg .xiso .xcap b{font-family:Caveat,"Segoe Print","Comic Sans MS",cursive;font-size:clamp(1.7rem,7cqh,2.7rem);line-height:1}
+.ximg .xiso .xcap span{font-size:1rem;line-height:1.4;color:#34415e}
+@container (max-height:430px){.ximg .xiso .xcap span{display:none}.ximg .xiso{padding:4% 6% 3%}}
+
+/* the detail pictures: tap areas, labels, flows */
+.ximg .xdet .xhit{fill:#ffcf3a;fill-opacity:0;cursor:pointer;transition:fill-opacity .2s}
+.ximg .xdet .xhit:hover{fill-opacity:.14}
+.ximg .xdet .xhit.on{fill-opacity:.26;stroke:#f5b800;stroke-width:4}
+.ximg .xdet .xlab.on circle.xa{fill:#ff8a3a}
+.ximg .xdet .xflowpath{fill:none;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1 14;opacity:.75}
+.ximg .xdet .xbreathe{transform-box:fill-box;transform-origin:50% 30%;animation:ximgbreathe 5s ease-in-out infinite}
+@keyframes ximgbreathe{0%,100%{transform:none}50%{transform:scale(1.035)}}
+.ximg .xdet.paused .xbreathe{animation-play-state:paused}
+@media (prefers-reduced-motion:reduce){
+  .ximg .xbody .xl,.ximg .xbody .xorg .xkey,.ximg .xiso,.ximg .xdet .xhit{transition:none}
+  .ximg .xdet .xbreathe,.ximg .xbody .xlabel{animation:none}}

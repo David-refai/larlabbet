@@ -1,5 +1,5 @@
-import {LEAFPATCH,PCELL3D,TREE3D} from "./no-0art.js";
-import {BRN,art,bankGen,blist,dotsP,note,ntag,plant,soil,tfx,ttl} from "./no-0body.js";
+import {IMG,place} from "./no-0art.js";
+import {BRN,art,bankGen,blist,callout,dotsP,note,ntag,plant,soil,tfx,ttl} from "./no-0body.js";
 import {A,LESSONS,R,TERM,WORDS,t3,wbMount} from "../../legacy/core.js";
 /* ===== no4h.js: Biologi, Year 4, Djur, växter och ekosystem 1 and 2 =====
    1. bio4h: what is alive - the signs of life and what all life needs
@@ -25,7 +25,7 @@ TERM("no_pollen",{sv:"pollen",m:W("pollen(et)?"),d:t3("Ett fint gult pulver i bl
 /* wind lines for "luft" and a simple apple for "näring" */
 const AIR="M-44 -16 Q0 -34 26 -16 Q40 -6 28 4 Q18 8 14 0 M-50 6 Q-4 -6 36 10 Q50 18 40 28 Q30 32 26 24 M-36 26 Q-10 20 6 28";
 const APPLE="M0 -40 Q-30 -60 -48 -30 Q-60 10 -30 40 Q-14 50 0 40 Q14 50 30 40 Q60 10 48 -30 Q30 -60 0 -40 Z";
-const apple=(x,y,s=1)=>[A.hatch(tfx(APPLE,x,y,s),"r"),A.p(tfx(APPLE,x,y,s),"r",3.5),A.p(tfx("M0 -40 Q2 -54 8 -62",x,y,s),BRN,3.5),A.p(tfx("M4 -50 Q20 -66 30 -54 Q16 -46 4 -50 Z",x,y,s),"g",3)];
+const apple=(x,y,s=1)=>[IMG("apple",x,y-6*s,0,{h:112*s})];
 const NAT1={steps:[
  {say:t3("Titta ut i naturen: träd, blommor, djur, stenar och moln. En del av det lever och annat lever inte. I det här kapitlet lär vi oss hur djur och växter lever och hur allt i naturen hänger ihop.",
    "Look out at nature: trees, flowers, animals, stones and clouds. Some of it is alive and some is not. In this chapter we learn how animals and plants live and how everything in nature fits together.",
@@ -43,13 +43,13 @@ const NAT1={steps:[
    "العلامة الأولى: كل كائن حيّ ينمو ويتطوّر. بذرة صغيرة قد تصبح شجرة بتولا كبيرة، وصغير الثعلب يكبر ليصبح ثعلبًا بالغًا. أما الحجر فلا ينمو أبدًا."),
   draw:()=>[A.wipe(),ttl("1. Växer och utvecklas"),...soil(40,760,240),...art("seed",100,234,1.3),A.arrow(140,215,195,215,"k"),...art("sprout",250,240,1.3),A.arrow(300,215,375,215,"k"),
    ...art("bjork",440,240,.5),A.arrow(510,215,575,215,"k"),...art("bjork",650,240,.82),ntag("frö",100,280),ntag("grodd",250,280),ntag("ung björk",440,280),ntag("stor björk",650,280),
-   ...soil(120,680,420),...art("fox",230,420,.45),A.arrow(300,395,370,395,"k"),...art("fox",500,420,.9),ntag("rävunge",230,458),ntag("vuxen räv",500,458)]},
+   ...soil(120,680,420),...art("cub",230,420,.7),A.arrow(300,395,370,395,"k"),...art("fox",500,420,.9),ntag("rävunge",230,458),ntag("vuxen räv",500,458)]},
  {say:t3("Allt levande behöver näring för att få energi. Växter gör sin egen näring med hjälp av solljuset. Djur måste äta, till exempel äter haren gräs. Utan energi kan ingen organism leva.",
    "Everything living needs food to get energy. Plants make their own food with the help of sunlight. Animals must eat, for example the hare eats grass. Without energy no organism can live.",
    "كل كائن حيّ يحتاج إلى الغذاء ليحصل على الطاقة. النباتات تصنع غذاءها بمساعدة ضوء الشمس، والحيوانات يجب أن تأكل، فالأرنب البري مثلًا يأكل العشب. بلا طاقة لا يعيش أي كائن."),
   draw:()=>[A.wipe(),ttl("2. Behöver näring"),...art("sun",100,170,.7),...soil(40,370,400),...plant(250,400,.8),A.flow("M140 200 Q170 290 200 355","o",6,2.6,6),
    A.p(R.line(400,110,400,440,.3),"#c7cfdc",2),...soil(430,760,400),...art("grass",520,400,1.2),...art("hare",650,400,1.1,-1),A.flow("M560 360 Q585 330 605 345","g",3,1.6,5),
-   ntag("växten gör egen näring",200,470,"g"),ntag("haren äter gräs",600,470,"o")]},
+   ntag("växten gör egen näring",200,480,"g"),ntag("haren äter gräs",600,470,"o")]},
  {say:t3("Allt levande andas. Djur och människor andas in syre. Fisken tar syret ur vattnet med sina gälar. Även växter andas, genom små hål på bladens undersida.",
    "Everything living breathes. Animals and people breathe in oxygen. A fish takes oxygen from the water with its gills. Plants breathe too, through tiny holes under their leaves.",
    "كل كائن حيّ يتنفّس. الحيوانات والناس يستنشقون الأكسجين، والسمكة تأخذ الأكسجين من الماء بخياشيمها، وحتى النباتات تتنفّس عبر ثقوب صغيرة تحت أوراقها."),
@@ -60,9 +60,9 @@ const NAT1={steps:[
  {say:t3("Allt levande förökar sig, alltså gör nya individer av samma slag. Djur får ungar eller lägger ägg. Växter sprider frön som kan bli nya växter. Utan förökning skulle arten dö ut.",
    "Everything living reproduces, that is, makes new individuals of the same kind. Animals have young or lay eggs. Plants spread seeds that can become new plants. Without reproducing, the species would die out.",
    "كل كائن حيّ يتكاثر، أي ينتج أفرادًا جددًا من النوع نفسه. الحيوانات تلد صغارًا أو تضع بيضًا، والنباتات تنشر بذورًا تصبح نباتات جديدة. ولولا التكاثر لانقرض النوع."),
-  draw:()=>[A.wipe(),ttl("4. Förökar sig"),...soil(40,380,400),...art("fox",210,320,.85),...art("fox",120,400,.42,-1),...art("fox",300,400,.42),
+  draw:()=>[A.wipe(),ttl("4. Förökar sig"),...soil(40,380,400),...art("fox",210,320,.85),...art("cub",120,400,.7,-1),...art("cub",300,400,.7),
    A.p(R.line(400,110,400,440,.3),"#c7cfdc",2),...soil(430,760,400),...plant(560,400,.85),A.flow("M580 260 Q660 280 700 395","o",5,3.4,5),...art("seed",700,398,.7),...art("sprout",740,400,.7),
-   ntag("räven får ungar",210,460,"o"),ntag("växten sprider frön",600,460,"g")]},
+   ntag("räven får ungar",210,478,"o"),ntag("växten sprider frön",600,478,"g")]},
  {say:t3("Vad behöver allt liv? Ljus från solen, vatten, luft med syre, näring och en plats att leva på. Om något av detta saknas kan djur och växter inte överleva.",
    "What does all life need? Light from the sun, water, air with oxygen, food, and a place to live. If any of these is missing, animals and plants cannot survive.",
    "ماذا تحتاج كل الحياة؟ ضوء الشمس والماء والهواء بما فيه من أكسجين والغذاء ومكانًا تعيش فيه. إذا غاب شيء من هذا لا تستطيع الحيوانات والنباتات البقاء."),
@@ -80,7 +80,7 @@ const SIGN={
  grow:()=>[...soil(30,380,330),...art("seed",70,325,1),A.arrow(95,310,140,310,"k"),...art("sprout",175,330,1),A.arrow(205,310,250,310,"k"),...art("bjork",315,330,.6)],
  food:()=>[...soil(40,370,330),...art("grass",140,330,1.3),...art("hare",270,330,1.15,-1)],
  breathe:()=>[A.band(30,120,350,260,"b"),...art("perch",190,260,.95),A.flow("M275 250 Q295 200 282 140","#3fa7c9",5,3,6)],
- young:()=>[...soil(40,370,340),...art("fox",200,280,.8),...art("fox",110,340,.4,-1),...art("fox",290,340,.4)],
+ young:()=>[...soil(40,370,340),...art("fox",200,280,.8),...art("cub",110,340,.7,-1),...art("cub",290,340,.7)],
 };
 /* is it living? a picture on the left */
 const PIC={hare:()=>[...soil(60,340,330),...art("hare",200,330,1.5)],stone:()=>[...soil(60,340,330),...art("stone",200,330,1.6)],svamp:()=>[...soil(60,340,340),...art("svamp",200,340,1.6)],
@@ -116,7 +116,7 @@ WORDS.bio4h=["no_levande","no_icke_levande","no_organism","no_forokning","no_ene
    2. bio4i: plants and photosynthesis
    --------------------------------------------------------------- */
 /* where each part of the plant is in its own box, for pointers */
-const PART={blomma:[0,-150],blad:[36,-86],stjalk:[3,-24],rot:[0,30]};
+const PART={blomma:[0,-150],blad:[40,-66],stjalk:[2,-26],rot:[0,34]};
 const partLabel=(x0,y0,s,k,text,ty,tx,c)=>{const [px,py]=PART[k],X=x0+px*s,Y=y0+py*s;
   return[A.p(R.line(X+(k==="blomma"?40*s:6),Y,tx-10,ty-9,.3),c,2.5),A.p(R.circ(X+(k==="blomma"?40*s:6),Y,4),c,3),A.tx(text,tx,ty,34,c,"start")]};
 /* a plant with an arrow at one part: "what is this part called?" */
@@ -146,15 +146,15 @@ const NAT2={steps:[
  {say:t3("Bladen är växtens matfabrik. De är gröna av ett ämne som heter klorofyll, och klorofyllet fångar solljuset. Bladen är platta och breda för att fånga så mycket ljus som möjligt.",
    "The leaves are the plant's food factory. They are green because of a substance called chlorophyll, which catches the sunlight. Leaves are flat and wide to catch as much light as possible.",
    "الأوراق هي مصنع غذاء النبات. لونها أخضر بسبب مادة اسمها اليخضور، وهي تلتقط ضوء الشمس. والأوراق مسطّحة وعريضة لتلتقط أكبر قدر من الضوء."),
-  draw:()=>[A.wipe(),ttl("Bladen"),...art("sun",100,180,.8),...art("leaf",480,290,3),A.flow("M150 200 Q300 200 420 260","o",6,2.4,6),A.flow("M140 240 Q260 300 380 300","o",6,2.8,6),
+  draw:()=>[A.wipe(),ttl("Bladen"),...art("sun",100,180,.8),...art("leaf",480,256,2.5),A.flow("M150 200 Q300 200 420 260","o",6,2.4,6),A.flow("M140 240 Q260 300 380 300","o",6,2.8,6),
    A.tx("matfabrik",480,400,40,"g"),A.tx("klorofyll gör bladet grönt",480,450,30,"g")]},
  {say:t3("Nu zoomar vi in i ett blad! Bladet är byggt av små celler, precis som du. Men växtceller har en hård cellvägg och massor av gröna korn som heter kloroplaster. Där sker fotosyntesen.",
   "Let's zoom into a leaf! The leaf is built of tiny cells, just like you. But plant cells have a hard cell wall and lots of green grains called chloroplasts. That is where photosynthesis happens.",
   "لندخل إلى ورقة! الورقة مبنية من خلايا صغيرة مثلك تمامًا. لكن للخلايا النباتية جدار خلوي صلب وحبيبات خضراء كثيرة اسمها البلاستيدات الخضراء، وفيها يحدث البناء الضوئي."),
-  draw:()=>[A.wipe(),A.art(TREE3D,400,52,1.05),A.zoom(500,168,120),A.art(LEAFPATCH,500,168,.07),A.zoom(500,168,40,1.2),A.wipe(),A.art(PCELL3D,330,280,1,true),ttl("Inuti ett blad"),
-   A.p(R.line(588,170,470,224,.3),"g",2.5),A.tx("kloroplaster",640,160,30,"g"),A.tx("gör socker",640,196,24,"g"),
-   A.p(R.line(588,322,500,300,.3),"k",2.5),A.tx("cellvägg",650,330,30,"k"),
-   A.p(R.line(150,430,220,240,.3),"v",2.5),A.tx("cellkärna",140,462,26,"v")]},
+  draw:()=>{const T=place("tree-birch",400,262,0,{h:440}),[lx,ly]=T.at(244,92),C=place("cell-plant",300,276,0,{h:360,grow:true});
+   return[A.wipe(),T.art,A.zoom(lx,ly,120),IMG("nat-leaf",lx,ly,0,{h:40}),A.zoom(lx,ly,60,1),IMG("leaf-cells-patch",lx,ly,20),A.zoom(lx,ly,26,1.2),A.wipe(),C.art,ttl("Inuti ett blad"),
+   ...callout(C.at(330,128),480,160,"kloroplaster","g"),A.tx("gör socker",488,194,24,"g","start"),
+   ...callout(C.at(368,300),480,330,"cellvägg","k"),...callout(C.at(250,150),140,240,"cellkärna","v",28)]}},
 {say:t3("I bladen sker fotosyntesen. Växten tar solljus, vatten från roten och koldioxid från luften. Av det gör den socker, som är växtens näring, och syre, som släpps ut i luften.",
    "Photosynthesis happens in the leaves. The plant takes sunlight, water from the root and carbon dioxide from the air. From them it makes sugar, which is the plant's food, and oxygen, which goes out into the air.",
    "يحدث البناء الضوئي في الأوراق. يأخذ النبات ضوء الشمس والماء من الجذر وثاني أكسيد الكربون من الهواء، ويصنع منها السكر، وهو غذاء النبات، والأكسجين الذي يخرج إلى الهواء."),
@@ -172,7 +172,7 @@ const NAT2={steps:[
    "The flower helps the plant reproduce. Bees and bumblebees fly between the flowers and carry pollen from flower to flower. Then seeds can form, which spread and become new plants.",
    "الزهرة تساعد النبات على التكاثر. يطير النحل والطنّان بين الأزهار وينقل حبوب اللقاح من زهرة إلى أخرى، فتتكوّن البذور التي تنتشر وتصبح نباتات جديدة."),
   draw:()=>[A.wipe(),ttl("Blomman och fröet"),...soil(40,760,410),...plant(160,410,.95,"p"),...plant(600,410,.95,"v"),A.flow("M195 255 Q380 110 565 255","o",8,3.4,5),
-   ...art("bee",380,180,1.4),A.tx("pollen",380,300,32,"o"),...art("seed",710,404,.7),...art("seed",745,406,.6),...art("sprout",300,410,.9),A.tx("frö → ny växt",300,470,28,"g")]},
+   ...art("bee",380,180,1.4),A.tx("pollen",380,300,32,"o"),...art("seed",710,404,.7),...art("seed",745,406,.6),...art("sprout",300,410,.9),A.tx("frö → ny växt",300,482,28,"g")]},
  {say:t3("Utan växter skulle vi inte kunna leva. Växterna ger oss syret vi andas. Alla näringskedjor börjar med växter, så de ger mat åt djur och människor. De ger också djuren hem, och oss virke och papper.",
    "Without plants we could not live. Plants give us the oxygen we breathe. All food chains start with plants, so they give food to animals and people. They also give animals a home, and give us wood and paper.",
    "بدون النباتات لا نستطيع أن نعيش. النباتات تعطينا الأكسجين الذي نتنفّسه، وكل السلاسل الغذائية تبدأ بالنباتات فهي تطعم الحيوانات والناس، وتعطي الحيوانات مأوى وتعطينا الخشب والورق."),

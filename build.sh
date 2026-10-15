@@ -13,7 +13,8 @@ mkdir -p dist build
 cp dist/app/index.html index.html
 # painted story pictures sit next to the page (GitHub Pages and the artifact's files)
 rm -rf story && cp -r dist/app/story story
-cp dist/app/index.html build/test.html && rm -rf build/story && cp -r dist/app/story build/story
+rm -rf body && cp -r dist/app/body body
+cp dist/app/index.html build/test.html && rm -rf build/story && cp -r dist/app/story build/story && rm -rf build/body && cp -r dist/app/body build/body
 # the claude.ai artifact build leaves the 3D explorer out: the artifact check rejects pages with it
 VITE_WITH3D=0 npx vite build --logLevel warn
 cp dist/app/index.html dist/larlabbet.html

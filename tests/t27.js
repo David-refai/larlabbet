@@ -1,6 +1,8 @@
-// "Utforska kroppen": the body explorer on the Biologi tab. Layers, tapping an organ, isolating it
-// (the viewBox zooms), the heart, lungs and brain detail views with labels and flows (still under
+// "Utforska kroppen": the body explorer on the Biologi tab, 2D stage (the painted pictures of
+// explorer/imageRenderer.ts). Layers, tapping an organ, isolating it (the viewBox zooms, then the
+// organ's own picture), the heart, lungs and brain detail pictures with labels and flows (still under
 // reduced motion), the other organs' info cards, one screen without scrolling, and no page errors.
+// Last: when a picture does not load, the drawn SVG body (svgRenderer.ts) takes over.
 const {chromium}=require(process.env.PW);const fs=require('fs');
 const fmap=Object.fromEntries(fs.readFileSync('tests/fonts/fontmap.txt','utf8').trim().split('\n').map(l=>l.split(' ')));
 const D='build/explorer';fs.mkdirSync(D,{recursive:true});
@@ -29,6 +31,10 @@ for(const [w,h,tag,rm] of [[1366,768,'laptop','no-preference'],[390,844,'phone',
  await p.evaluate(()=>{S.grade=4;map()});await p.waitForTimeout(150);
  await p.click('#texplore');await p.waitForTimeout(400);
  ok(!!(await p.$('.xpl .xstage svg.xbody')),tag+' the explorer screen opens with the body');
+ ok(!!(await p.$('.xstage.ximg')),tag+' the painted pictures are used');
+ const pics=await p.evaluate(()=>Promise.all([...new Set([...document.querySelectorAll('.xbody image')].map(i=>i.getAttribute('href')).filter(h=>/^body\//.test(h)))]
+  .map(h=>new Promise(r=>{const i=new Image();i.onload=()=>r(h+':'+i.naturalWidth);i.onerror=()=>r(h+':ERR');i.src=h}))));
+ ok(pics.length===7&&pics.every(x=>x.endsWith(':900')),tag+' the 7 body pictures load (900 px) '+pics.join(' '));
  await noScroll('stage 1 Kroppen');
  const layerOn=async l=>p.evaluate(l=>[...document.querySelectorAll(`.xbody .xl[data-layer="${l}"]`)].map(g=>g.dataset.on+':'+getComputedStyle(g).opacity).join(','),l);
  ok((await layerOn('skin')).startsWith('1:1'),tag+' stage 1: the skin shows '+await layerOn('skin'));
@@ -54,8 +60,9 @@ for(const [w,h,tag,rm] of [[1366,768,'laptop','no-preference'],[390,844,'phone',
  ok((await layerOn('nerves')).startsWith('0:0')&&(await layerOn('muscles')).startsWith('0:0'),tag+' layers hide again');
 
  /* anatomy: heart and stomach on the viewer's right, liver on the viewer's left */
- const cx=await p.evaluate(()=>Object.fromEntries([...document.querySelectorAll('.xbody .xorg')].map(g=>{const b=g.getBBox();return[g.dataset.id,Math.round(b.x+b.width/2)]})));
- ok(cx.heart>200&&cx.stomach>200&&cx.liver<200,tag+' heart and stomach on the viewer\'s right, liver on the left '+JSON.stringify(cx));
+ const cx=await p.evaluate(()=>Object.fromEntries([...document.querySelectorAll('.xbody .xorg .xhit')].map(g=>{const b=g.getBBox();return[g.parentNode.dataset.id,Math.round(b.x+b.width/2)]})));
+ /* the middle of the 900 px pictures */
+ ok(cx.heart>452&&cx.stomach>452&&cx.liver<452,tag+' heart and stomach on the viewer\'s right, liver on the left '+JSON.stringify(cx));
  ok(Object.keys(cx).length===8,tag+' 8 organs drawn');
 
  /* stage 3: tap the heart */
@@ -71,11 +78,16 @@ for(const [w,h,tag,rm] of [[1366,768,'laptop','no-preference'],[390,844,'phone',
  const vb1=await p.getAttribute('.xbody','viewBox');
  ok(vb0!==vb1&&+vb1.split(' ')[2]<+vb0.split(' ')[2],tag+` Isolera zooms the viewBox ${vb0} → ${vb1}`);
  ok(await p.$eval('.xbody .xorg[data-id="liver"]',e=>+getComputedStyle(e).opacity<.3),tag+' the rest of the body fades back');
+ await p.waitForFunction(()=>+getComputedStyle(document.querySelector('.xiso')).opacity>.9,null,{timeout:4000}).catch(()=>{});
+ const card=await p.evaluate(()=>{const i=document.querySelector('.xiso img');return{on:document.querySelector('.xstage').classList.contains('isocard'),src:i.getAttribute('src'),w:i.naturalWidth,
+  name:document.querySelector('.xisoname').textContent,op:getComputedStyle(document.querySelector('.xiso')).opacity}});
+ ok(card.on&&card.src==='body/organ-heart.webp'&&card.w>0&&card.name==='Hjärtat'&&+card.op>.9,tag+' then the heart\'s own picture shows large '+JSON.stringify(card));
  await p.screenshot({path:`${D}/t27-${tag}-3-heart-iso.png`});await noScroll('isolated heart');
 
  /* stage 4: the heart opened up */
  await p.click('#xmorebtn');await p.waitForTimeout(still?150:900);
  ok(await p.$eval('.xstage',e=>e.classList.contains('indetail')),tag+' "Mer" opens the heart detail');
+ ok(await p.$eval('.xdet image.xdpic',e=>e.getAttribute('href'))==='body/heart-inside.webp',tag+' the heart detail is the painted cutaway');
  const tabs=await p.$$eval('.xside [role=tab]',e=>e.map(x=>x.textContent));ok(tabs.join()==='Översikt,Kammare,Klaffar,Blodflöde',tag+' heart tabs '+tabs);
  const labs=await p.$$eval('.xdet .xlab',e=>e.map(x=>x.getAttribute('aria-label')));
  for(const n of ['Höger förmak','Vänster förmak','Höger kammare','Vänster kammare','Aorta','Lungartär','Hålvener','Klaffar'])ok(labs.includes(n),tag+' heart label '+n);
@@ -110,6 +122,8 @@ for(const [w,h,tag,rm] of [[1366,768,'laptop','no-preference'],[390,844,'phone',
  await p.click('.xchip[data-tab="luft"]');await p.waitForTimeout(300);
  const air=await p.evaluate(()=>({m:document.querySelectorAll('.xdet animateMotion').length,d:document.querySelectorAll('.xdet .xdot').length}));
  ok(still?air.m===0&&air.d>0:air.m>0,tag+' air flows in the airways '+JSON.stringify(air));
+ await p.click('.xchip[data-tab="blasor"]');await p.waitForTimeout(200);
+ ok(await p.$eval('.xdet image.xdpic',e=>e.getAttribute('href'))==='body/alveoli.webp'&&(await p.$$eval('.xdet .xlab',e=>e.length))===3,tag+' the air sacs tab shows the alveoli picture with 3 labels');
  await p.screenshot({path:`${D}/t27-${tag}-4-lungs.png`});
  await openDetail('brain');
  L=await p.$$eval('.xdet .xlab',e=>e.map(x=>x.getAttribute('aria-label')));
@@ -139,4 +153,19 @@ for(const [w,h,tag,rm] of [[1366,768,'laptop','no-preference'],[390,844,'phone',
  await p.click('#back');await p.waitForTimeout(300);
  ok(!!(await p.$('.tabs'))&&!(await p.$('.xpl')),tag+' back to the lesson map');
  ok(!p.errs.length,tag+' no page errors '+p.errs.join(' | '));await p.close()}
+
+/* a picture that does not load: the drawn SVG body takes over */
+{const p=await b.newPage({viewport:{width:1280,height:800}});p.errs=[];p.on('pageerror',e=>p.errs.push(e.message));
+ await p.addInitScript(()=>{window.NO3D=true});
+ await p.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());await p.route(/jsdelivr/,r=>r.abort());
+ await p.route(/body\/organs-front\.webp/,r=>r.abort());
+ await p.goto('file://'+process.cwd()+'/build/test.html');await p.waitForTimeout(500);
+ await p.fill('#nm','Test');await p.click('#gr button[data-g="4"]');await p.click('#go');await p.waitForTimeout(300);
+ await p.click('.tab[data-t="bio"]');await p.waitForTimeout(200);await p.click('#texplore');await p.waitForTimeout(300);
+ await p.click('#xlook');await p.waitForTimeout(800);
+ const fb=await p.evaluate(()=>({img:!!document.querySelector('.xstage.ximg'),art:document.querySelectorAll('.xbody .xorg').length,pics:document.querySelectorAll('.xbody image').length}));
+ ok(!fb.img&&fb.art===8&&fb.pics===0,'fallback: without organs-front.webp the drawn body shows '+JSON.stringify(fb));
+ await p.click('.xchip[data-organ="heart"]');await p.click('#xmorebtn');await p.waitForTimeout(800);
+ ok(!!(await p.$('.xdet path[data-part="vk"]'))&&!(await p.$('.xdet image')),'fallback: the drawn heart detail');
+ ok(!p.errs.length,'fallback: no page errors '+p.errs.join(' | '));await p.close()}
 await b.close()})();

@@ -1,14 +1,15 @@
 /* "Utforska kroppen": a full screen where the pupil looks inside a body, layer by layer,
    taps an organ, isolates it and opens the heart, lungs or brain into their parts.
    The screen keeps the state and the side panels. The stage is the real 3D explorer
-   (explorer/3d/Explorer3D.tsx, React Three Fiber, loaded only when this screen opens), or the
-   2.5D SVG renderer (explorer/svgRenderer.ts) when WebGL is missing or switched off
-   (window.NO3D = true or ?no3d). The texts and organs come from explorer/bodyData.ts. */
+   (explorer/3d/Explorer3D.tsx, React Three Fiber, loaded only when this screen opens), or, when
+   WebGL is missing or switched off (window.NO3D = true or ?no3d) or the build has no 3D (the
+   artifact), the painted pictures (explorer/imageRenderer.ts), with the drawn 2.5D SVG body
+   (explorer/svgRenderer.ts) as the fallback when a picture does not load. The texts and organs come from explorer/bodyData.ts. */
 import {Component, Suspense, lazy, useEffect, useLayoutEffect, useRef, useState, type ReactNode} from "react";
 import {showReact} from "./mount";
 import {T, map, trOn} from "../legacy/core.js";
 import {LAYERS, ORGANS, DETAILS, STAGES, EX3D, organById, tabsOf, partsOn, type LayerId, type OrganId, type DetailId, type T3, type StageId} from "../explorer/bodyData";
-import {createSvgRenderer} from "../explorer/svgRenderer";
+import {createBodyRenderer2D} from "../explorer/imageRenderer";
 import {reducedMotion, type BodyRenderer} from "../explorer/renderer";
 import {want3D, no3D} from "../explorer/webgl";
 
@@ -17,7 +18,7 @@ import {want3D, no3D} from "../explorer/webgl";
 const WITH3D = import.meta.env.VITE_WITH3D !== "0";
 const Explorer3D = WITH3D ? lazy(() => import("../explorer/3d/Explorer3D")) : null;
 
-/* if the 3D stage fails (no WebGL context, a crash), the SVG one takes over */
+/* if the 3D stage fails (no WebGL context, a crash), the 2D one takes over */
 class Fallback extends Component<{onFail: () => void; children: ReactNode}, {failed: boolean}> {
   state = {failed: false};
   static getDerivedStateFromError() { return {failed: true}; }
@@ -85,7 +86,7 @@ function Explorer({keep}: {keep: boolean}) {
   };
   useEffect(() => {
     if (use3d) return;
-    const r = createSvgRenderer(); R.current = r; r.mount(host.current!);
+    const r = createBodyRenderer2D(); R.current = r; r.mount(host.current!);
     r.onPick(onPick);
     /* the renderer gets the current view (it may take over from a failed 3D stage) */
     r.setLayers(layers); r.select(sel); r.hide(hidden); r.isolate(iso && sel ? sel : null); r.detail(det, tab); r.setFlow(flow);

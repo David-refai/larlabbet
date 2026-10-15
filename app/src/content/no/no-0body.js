@@ -1,3 +1,4 @@
+import {IMG,PICS,place} from "./no-0art.js";
 import {A,R,f1,pick,shuffle} from "../../legacy/core.js";
 /* ======================================================================
    NO (science), Year 4: the human body. Shared drawings for the body lessons,
@@ -80,9 +81,17 @@ const mcq=(e,ex)=>{const opts=shuffle([e.a,...e.w.slice(0,3)]);const qs=e.q;
   return{kind:"choice",opts,ans:opts.indexOf(e.a),show:e.a,qs,q:qBoard(e.lines||[qs],e.pic&&e.pic()),sol:e.sol?e.sol():solNote(e.a,!!e.pic),nt:e.nt}};
 /* a write-the-word question (Swedish spelling, one letter off is accepted by the checker) */
 const wq=(e)=>({kind:"text",ans:e.a,show:[].concat(e.a)[0],qs:e.q,q:qBoard(e.lines||[e.q],e.pic&&e.pic()),sol:e.sol?e.sol():solNote([].concat(e.a)[0],!!e.pic),nt:e.nt});
-/* an arrow pointing at one organ on the body: "What is this organ called?" */
-const pointAt=(k)=>{const o=ORG[k];at(230,40,.95);const x0=bx(o.lab[0]),y0=by(o.lab[1]),tx=bx(150);
-  return[...body(),...Object.keys(ORG).filter(n=>n!=="spine"&&n!=="kidneys").flatMap(n=>[bp(ORG[n].d,n===k?ORG[n].c:"#b8c2d4",n===k?3.5:2.2)]),A.p(R.arrow(tx,y0-50,x0+8,y0-2,-20),"r",4.5),A.tx("?",tx+12,y0-58,52,"r")]};
+/* the painted body with its organs (organs-front.webp), cropped to head and body.
+   ORGP = where each organ sits in the picture, in picture pixels. bodyPic(x, top, h) places it (x = centre, h = height on the board). */
+const ORGP={brain:[450,135],lungR:[394,440],lungL:[514,452],heart:[458,425],windpipe:[450,338],liver:[410,478],stomach:[460,515],kidneys:[396,498],small:[448,594],large:[396,592],bladder:[450,648],gullet:[452,300]};
+const BODYCROP=[230,40,440,660];
+const bodyPic=(x,top,h,crop=BODYCROP)=>place("organs-front",x,top+h/2,0,{h,crop});
+/* a label for a point on a picture: a dot, a thin line and the text at (tx, ty) (ty = baseline) */
+const callout=([x,y],tx,ty,s,c="k",z=30,an)=>{const right=an?an==="start":tx>=x,ex=right?tx-8:tx+8;
+  return[A.p(R.circ(x,y,4),c,3),A.p(R.line(x,y,ex,ty-9,.3),c,2.5),A.tx(s,tx,ty,z,c,right?"start":"end")]};
+/* an arrow pointing at one organ on the painted body: "What is this organ called?" */
+const pointAt=(k)=>{const P=bodyPic(230,40,420),[x0,y0]=P.at(...ORGP[k]),side=["lungR","liver","kidneys","large"].includes(k)?-1:1,tx=x0+side*120;
+  return[P.art,A.p(R.arrow(tx,y0-50,x0+side*8,y0-2,side*-20),"r",4.5),A.tx("?",tx+side*12,y0-58,52,"r")]};
 
 /* practice and test questions from a bank: {lv, q, a, w?: wrong options (makes it multiple choice), lines?, pic?, sol?}.
    A level gets mostly its own questions and sometimes easier ones. */
@@ -157,14 +166,34 @@ const NAT={
   ["M50 -78 Q60 -98 82 -94 Q96 -90 98 -78 L112 -72 Q114 -62 102 -62 Q90 -60 76 -62 Q60 -62 52 -70",BRN,3.5,"o"],[ellP(66,-94,7,7),BRN,3.5],
   ["M-58 -26 L-60 0 L-46 0 L-42 -26 M-30 -24 L-30 0 L-16 0 L-14 -24 M24 -26 L22 0 L36 0 L38 -26 M46 -30 L50 0 L62 0 L58 -36",BRN,4],[dotsP([[86,-82],[112,-70]]),"k",6]],
 };
-/* draw a picture from NAT: hatches first, then the lines on top */
-const art=(k,x,y,s=1,fl=1)=>{const P=NAT[k],w=Math.max(.7,Math.min(1.25,s));
+/* draw a picture from NAT as marker lines: hatches first, then the lines on top */
+const artLines=(k,x,y,s=1,fl=1)=>{const P=NAT[k],w=Math.max(.7,Math.min(1.25,s));
   return[...P.filter(q=>q[3]).map(q=>A.hatch(tfx(q[0],x,y,s,fl),q[3])),...P.map(q=>A.p(tfx(q[0],x,y,s,fl),q[1],q[2]*w))]};
+/* the painted picture for each NAT name: [picture, size factor, shift down (in box units)].
+   The picture fills the box of the old line drawing, so (x, y, s) mean the same: things on the ground stand on y, fish and insects are centred.
+   Names that are not in NAT bring their own box [x0, y0, x1, y1]. */
+const NATPIC={sun:["nat-sun",1.05],cloud:["nat-cloud",1.15],gran:["nat-spruce",1.1],tall:["nat-pine",1.1],bjork:["nat-birch-small",1.15],blabar:["nat-blueberry",1.1],svamp:["nat-mushroom",1.1],
+ grass:["nat-grass",1.5],stone:["nat-stone",1.1],drop:["nat-drop",1],fox:["nat-fox",1.7],hare:["nat-hare",1.05],moose:["nat-moose",1.3],squirrel:["nat-squirrel",1.2],woodpecker:["nat-woodpecker",1.2],
+ perch:["nat-perch",1.3],pike:["nat-pike",1.9],lily:["nat-water-lily",1.25,0,[-70,-40,62,16]],frog:["nat-frog",1.3],spawn:["nat-frog-spawn",1.1],tadpole:["nat-tadpole",1.1],tadlegs:["nat-tadpole-legs",1.15],
+ butterfly:["nat-butterfly",1.1],larva:["nat-caterpillar",1.1],pupa:["nat-pupa",1.1],eggs:["nat-butterfly-eggs",2,0,[-20,-28,20,8]],leaf:["nat-leaf",1],worm:["nat-earthworm",1.7],seed:["nat-seed",1.1],sprout:["nat-sprout",1.1,0,[-34,-56,34,0]],
+ bacteria:["nat-bacteria",1.3],bottle:["nat-bottle",2.2],bag:["nat-plastic-bag",1.1],stump:["nat-tree-stump",1.3],bee:["nat-bee",1.3],bear:["nat-bear",1.5],
+ nettle:["nat-nettle-leaf",1,0,[-60,-46,60,34]],autumn:["nat-leaf-autumn",1,0,[-60,-40,60,40]],cub:["nat-fox-cub",1,0,[-50,-90,50,0]],reeds:["nat-reeds",1,0,[-60,-150,60,0]],
+ moss:["nat-moss",1,0,[-60,-80,60,0]],compost:["nat-compost",1.6,0,[-100,-90,100,0]],mound:["nat-soil-mound",1,0,[-80,-52,80,0]],trunk:["nat-tree-trunk",1,0,[-100,-50,100,0]],microscope:["nat-microscope",1,0,[-40,-120,40,0]]};
+const NATBOX={};
+const natBox=k=>{if(NATBOX[k])return NATBOX[k];const e=NATPIC[k];if(e&&e[3])return NATBOX[k]=e[3];
+  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;NAT[k].forEach(q=>{const n=q[0].match(/-?\d+(\.\d+)?/g).map(Number);for(let i=0;i+1<n.length;i+=2){x0=Math.min(x0,n[i]);x1=Math.max(x1,n[i]);y0=Math.min(y0,n[i+1]);y1=Math.max(y1,n[i+1])}});
+  return NATBOX[k]=[x0,y0,x1,y1]};
+/* draw a nature picture: the painted one when there is one, otherwise the marker lines */
+const art=(k,x,y,s=1,fl=1)=>{const e=NATPIC[k];if(!e)return artLines(k,x,y,s,fl);
+  const [name,kf=1,dy=0]=e,[x0,y0,x1,y1]=natBox(k),[pw,ph]=PICS[name],bw=(x1-x0)*s*kf,bh=(y1-y0)*s*kf,f=Math.min(bw/pw,bh/ph),w=pw*f,h=ph*f,cx=x+fl*(x0+x1)/2*s,ground=y1<=2;
+  return[IMG(name,cx,ground?y+(y1+dy)*s-h/2+0:y+((y0+y1)/2+dy)*s,w,{flip:fl<0})]};
 /* a plant with root, stem, two leaves and a flower; (x, y) = where the stem meets the ground */
 const PLANT={root:"M0 0 L0 34 M0 10 L-24 34 M0 16 L22 40 M0 26 L-10 50 M-14 24 L-28 26 M12 30 L26 30",stem:"M0 0 Q6 -60 0 -126",
   leafL:"M2 -46 Q-36 -74 -66 -50 Q-34 -26 2 -46 Z",leafR:"M3 -82 Q42 -108 70 -86 Q40 -62 3 -82 Z",
   flower:[0,1,2,3,4,5].map(i=>{const a=i*Math.PI/3;return ellP(Math.cos(a)*26,-150+Math.sin(a)*26,15,15)}).join(""),mid:ellP(0,-150,13,13)};
 const plant=(x,y,s=1,fc="p",parts="root stem leaves flower")=>{const T=d=>tfx(d,x,y,s),w=Math.max(.7,Math.min(1.25,s)),o=[];
+  /* the whole plant is the painted one (plant-flower.webp, cut off a bit below the soil): flower centre at (205,103), stem meets the soil at (200,375) in the picture */
+  if(parts==="root stem leaves flower"){const f=150*s/272;return[IMG("plant-flower",x+(171-200)*f,y+(230-375)*f,342*f,{crop:[0,0,342,460]})]}
   if(parts.includes("root"))o.push(A.p(T(PLANT.root),BRN,3.5*w));
   if(parts.includes("stem"))o.push(A.p(T(PLANT.stem),"g",4.5*w));
   if(parts.includes("leaves"))o.push(A.hatch(T(PLANT.leafL+PLANT.leafR),"g"),A.p(T(PLANT.leafL+PLANT.leafR),"g",3.5*w));
@@ -180,4 +209,4 @@ const ringArrows=(cx,cy,rx,ry,n,c="k",gap=26,a0=-90)=>[...Array(n)].map((_,i)=>{
   const p=t=>[cx+Math.cos(t)*rx,cy+Math.sin(t)*ry],[x1,y1]=p(a-da),[x2,y2]=p(a+da);return A.arrow(x1,y1,x2,y2,c,-gap*.18)});
 const ringFlow=(cx,cy,rx,ry,c="o",n=10,dur=8)=>A.flow(`M${cx} ${cy-ry} Q${cx+rx*1.33} ${cy-ry} ${cx+rx} ${cy} Q${cx+rx} ${cy+ry*1.33} ${cx} ${cy+ry} Q${cx-rx*1.33} ${cy+ry} ${cx-rx} ${cy} Q${cx-rx} ${cy-ry*1.33} ${cx} ${cy-ry}`,c,n,dur,5);
 
-export {tf,NOB,bp,bh,bx,by,at,ellP,OUT,HEAD,body,ORG,organ,label,BONE,JOINT,skeleton,joints,heartBig,SENSE,ttl,note,blist,qBoard,solNote,mcq,wq,pointAt,bankGen,cell,tfx,BRN,dotsP,NAT,art,PLANT,plant,soil,ntag,ringPts,ringArrows,ringFlow};
+export {tf,NOB,bp,bh,bx,by,at,ellP,OUT,HEAD,body,ORG,organ,label,BONE,JOINT,skeleton,joints,heartBig,SENSE,ttl,note,blist,qBoard,solNote,mcq,wq,ORGP,BODYCROP,bodyPic,callout,pointAt,bankGen,cell,tfx,BRN,dotsP,NAT,artLines,NATPIC,NATBOX,natBox,art,PLANT,plant,soil,ntag,ringPts,ringArrows,ringFlow};

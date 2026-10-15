@@ -1,3 +1,4 @@
+import {A} from "../../legacy/core.js";
 /* ===== no-0art.js: 2.5D cartoon pictures for NO lessons (soft gradients, light, shadow) =====
    Each picture is SVG markup drawn around (0,0); place it with A.art(svg,x,y,scale).
    Gradient ids start with "a-" and are defined inside each picture, so a picture works on its own.
@@ -124,4 +125,24 @@ const PCELL3D=(()=>{let o=`<defs>
   o+=`<g transform="translate(${x} ${y}) rotate(${a})"><ellipse rx="24" ry="13" fill="url(#a-chl)"/><path d="M-14 -3h28M-14 4h28" stroke="#c9f3b4" stroke-width="2" opacity=".8"/></g>`;
  return o+`<path d="M-170 -110 Q-60 -128 60 -118" stroke="#fff" stroke-width="6" opacity=".5" fill="none" stroke-linecap="round"/>`})();
 
-export {ART_LINE,KID,CELL3D,FEMUR3D,CELLPATCH,FEMURUP,TREE3D,LEAFPATCH,PCELL3D};
+/* ===== painted pictures: David's images, served as files in body/ next to the page =====
+   PICS holds each picture's size in pixels, so a picture can be placed by its width alone.
+   Pictures on a white background (the full-body ones) get a filter that makes the white see-through. */
+const PICS={"alveoli":[494,460],"alveoli-2":[158,604],"apple":[382,428],"apple-bitten":[373,425],"blood-cells":[447,403],"body-glass":[900,900],"brain-parts":[559,510],"cell-animal":[487,493],"cell-plant":[376,482],"cigarette":[301,576],"ear":[308,421],"eye":[396,452],"femur":[149,603],"femur-cut":[587,197],"fist":[446,549],"glass-water":[376,551],"hand-open":[455,537],"heart-inside":[406,570],"helmet":[580,469],"hot-plate":[559,545],"leaf-cells-patch":[596,596],"lungs-tree":[586,589],"moon-night":[482,492],"muscles-front":[900,900],"nat-bacteria":[432,456],"nat-bear":[475,533],"nat-bee":[475,398],"nat-birch-small":[395,580],"nat-blueberry":[346,546],"nat-bottle":[530,523],"nat-butterfly":[613,416],"nat-butterfly-eggs":[362,557],"nat-caterpillar":[585,303],"nat-cloud":[572,381],"nat-compost":[468,376],"nat-drop":[410,568],"nat-earthworm":[605,381],"nat-fox":[489,548],"nat-fox-cub":[398,534],"nat-frog":[493,499],"nat-frog-spawn":[462,457],"nat-grass":[457,347],"nat-hare":[340,594],"nat-leaf":[452,581],"nat-leaf-autumn":[527,508],"nat-microscope":[343,604],"nat-moose":[559,596],"nat-moss":[515,505],"nat-mushroom":[412,517],"nat-nettle-leaf":[520,579],"nat-perch":[543,479],"nat-pike":[608,226],"nat-pine":[455,617],"nat-plastic-bag":[439,548],"nat-pupa":[231,523],"nat-reeds":[544,549],"nat-seed":[317,524],"nat-soil-mound":[618,376],"nat-sprout":[484,459],"nat-spruce":[443,585],"nat-squirrel":[495,549],"nat-stone":[532,427],"nat-sun":[539,536],"nat-tadpole":[533,259],"nat-tadpole-legs":[609,288],"nat-tree-stump":[506,485],"nat-tree-trunk":[539,288],"nat-water-lily":[567,450],"nat-woodpecker":[306,538],"nerve-cell":[583,563],"nerves-front":[900,900],"nose":[420,310],"organ-bladder":[610,606],"organ-brain":[571,497],"organ-heart":[405,570],"organ-intestines":[531,618],"organ-kidneys":[560,502],"organ-liver":[512,369],"organ-lungs":[564,568],"organ-stomach":[540,580],"organs-front":[900,900],"plant-flower":[342,581],"plate-food":[507,506],"skeleton-front":[900,900],"skin-cells-patch":[533,534],"skin-section":[449,546],"smiley":[464,467],"spine-vertebrae":[378,616],"tongue":[472,373],"tooth":[404,479],"tree-birch":[354,588],"vessels-front":[900,900]};
+/* the child in body-glass.webp without the white around it */
+const KIDCROP=[213,59,474,794];
+const WHITEBG=["body-glass","muscles-front","nerves-front","organs-front","skeleton-front","vessels-front"];
+/* place a picture: (x, y) = its centre (or the middle of its bottom edge with o.bottom), w = width on the board.
+   o.h: fit this height instead; o.crop=[x,y,w,h] in picture pixels shows only that part; o.flip mirrors it; o.op = opacity; o.grow grows it out of its centre.
+   Returns {art, at, w, h, left, top}: art is the board action, at(px,py) turns a point in picture pixels into board coordinates for labels and arrows. */
+let PICN=0;
+const place=(name,x,y,w,o={})=>{const [pw,ph]=PICS[name]||[500,500],c=o.crop||[0,0,pw,ph];if(o.h)w=o.h*c[2]/c[3];
+  const s=w/c[2],h=c[3]*s,top=o.bottom?y-h:y-h/2,cy=top+h/2,fl=o.flip?-1:1,r=v=>Math.round(v*10)/10;
+  const key=WHITEBG.includes(name)?`<defs><filter id="a-wkey" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 -6 -6 -6 17.7 0"/></filter></defs>`:"";
+  const cp=o.crop?"a-cp"+(++PICN):"",X=-w/2-c[0]*s,Y=-h/2-c[1]*s;
+  const svg=`${key}${cp?`<clipPath id="${cp}"><rect x="${r(-w/2)}" y="${r(-h/2)}" width="${r(w)}" height="${r(h)}"/></clipPath>`:""}<g${o.flip?' transform="scale(-1,1)"':""}${o.op!=null?` opacity="${o.op}"`:""}${cp?` clip-path="url(#${cp})"`:""}><image href="body/${name}.webp" x="${r(X)}" y="${r(Y)}" width="${r(pw*s)}" height="${r(ph*s)}"${key?' filter="url(#a-wkey)"':""}/></g>`;
+  return{art:A.art(svg,r(x),r(cy),1,!!o.grow),at:(px,py)=>[r(x+fl*((px-c[0])*s-w/2)),r(top+(py-c[1])*s)],w,h,left:x-w/2,top}};
+/* the same, when only the board action is needed */
+const IMG=(name,x,y,w,o)=>place(name,x,y,w,o).art;
+
+export {ART_LINE,KID,CELL3D,FEMUR3D,CELLPATCH,FEMURUP,TREE3D,LEAFPATCH,PCELL3D,PICS,KIDCROP,WHITEBG,PICN,place,IMG};
