@@ -9,7 +9,9 @@ export type Lesson = {id: string; subject?: string; year?: number; ord?: number;
   steps: unknown[]; gen?: unknown; exam?: {ids: string[]; n: number}; kind?: string};
 export type Chapter = {id: string; subject: string; year: number; title: string; lessons: string[]; exam?: string;
   /* what the chapter covers, shown while it has no lessons yet */
-  about?: string};
+  about?: string;
+  /* "Lär mer": harder lessons after the base ones; not needed to open the chapter test */
+  more?: string[]};
 export type Exam = {id: string; kind: "chapter" | "subject" | "own"; subject: string; year: number; title: string; ids: string[]; n: number;
   /* the lessons that must be done first */
   needs: string[]};
@@ -53,6 +55,16 @@ const CHAPTERS: Chapter[] = [
 
   ch("kemi", 4, "kemi4-amnen", "Ämnen, vatten och luft", ["matter"],
     {about: "Fast, flytande och gas, vattnets kretslopp, luft och blandningar."}),
+
+  /* ---------- Årskurs 7: Fysik, in the order of the school book (Titano Fysik, åk 7-9: first four chapters) ---------- */
+  ch("fys", 7, "fys7-materia", "Materia", ["f7m1", "f7m2", "f7m3", "f7m4", "f7m5"],
+    {more: ["f7m6", "f7m7", "f7m8"], about: "Naturvetenskapligt arbetssätt, atomer och molekyler, densitet, elektrisk laddning och att ingenting försvinner."}),
+  ch("fys", 7, "fys7-varme", "Värme och klimat", ["f7v1", "f7v2", "f7v3", "f7v4", "f7v5"],
+    {more: ["f7v6", "f7v7", "f7v8"], about: "Temperatur och värme, vattnets egenskaper, hur värme sprids, klimat och växthuseffekten."}),
+  ch("fys", 7, "fys7-kraft", "Kraft och rörelse", ["f7k1", "f7k2", "f7k3", "f7k4", "f7k5", "f7k6", "f7k7", "f7k8"],
+    {more: ["f7k9", "f7k10", "f7k11", "f7k12"], about: "Tyngdkraft, fart, pendeln, krafter, friktion, tyngdpunkt och enkla maskiner."}),
+  ch("fys", 7, "fys7-tryck", "Tryck", ["f7t1", "f7t2", "f7t3", "f7t4", "f7t5", "f7t6"],
+    {more: ["f7t7", "f7t8"], about: "Tryck mot en yta, lufttryck, vattentryck, lyftkraft och Arkimedes princip."}),
 ];
 
 const byId = (id: string): Lesson | undefined => LESSONS.find((l: Lesson) => l.id === id);
@@ -74,7 +86,8 @@ export function yearsOf(subject: string): number[] {
   return [...ys].sort((a, b) => a - b);
 }
 export const lessonsOf = (c: Chapter): Lesson[] => c.lessons.map(byId).filter(Boolean) as Lesson[];
-export const chapterOf = (lessonId: string) => CHAPTERS.find(c => c.lessons.includes(lessonId));
+export const moreOf = (c: Chapter): Lesson[] => (c.more || []).map(byId).filter(Boolean) as Lesson[];
+export const chapterOf = (lessonId: string) => CHAPTERS.find(c => c.lessons.includes(lessonId) || (c.more || []).includes(lessonId));
 
 /* the year shown for a subject: the one picked, else the child's own, else the nearest below it, else the first */
 const picked: Record<string, number> = {};
@@ -92,11 +105,11 @@ const nFor = (k: number) => Math.max(8, Math.min(20, 4 * k));
 export function examsOf(subject: string, year: number): Exam[] {
   const cs = chapters(subject, year), out: Exam[] = [];
   for (const c of cs) {
-    const ids = practisable(c.lessons);
+    const ids = practisable([...c.lessons, ...(c.more || [])]);
     if (c.exam) { const X = byId(c.exam); if (X && X.exam) out.push({id: c.exam, kind: "chapter", subject, year, title: c.title, ids: X.exam.ids, n: X.exam.n, needs: c.lessons}); }
     else if (ids.length >= 2) out.push({id: "prov-" + c.id, kind: "chapter", subject, year, title: c.title, ids, n: nFor(ids.length), needs: c.lessons});
   }
-  const all = practisable(cs.flatMap(c => c.lessons));
+  const all = practisable(cs.flatMap(c => [...c.lessons, ...(c.more || [])]));
   if (out.length >= 2) out.push({id: `prov-${subject}${year}`, kind: "subject", subject, year, title: `${subj(subject).name}, hela årskurs ${year}`,
     ids: all, n: 20, needs: cs.flatMap(c => c.lessons)});
   return out;

@@ -4,7 +4,7 @@ import {Owl} from "./Owl";
 import {Html} from "./Html";
 import {showReact} from "./mount";
 import {YearSeg} from "./YearSeg";
-import {SUBJ, subj, chapters, lessonsOf, yearsOf, yearFor, pickYear, examsOf, ownExam, examOpen, examLeft, register} from "../content/courses";
+import {SUBJ, subj, chapters, lessonsOf, moreOf, yearsOf, yearFor, pickYear, examsOf, ownExam, examOpen, examLeft, register} from "../content/courses";
 import type {Chapter, Exam} from "../content/courses";
 import {
   T, L, S, BADGES, tabNow, setTab, save, toast,
@@ -35,7 +35,7 @@ function Card({l, n, here}: {l: Lesson; n: number; here: boolean}) {
 
 /* Swedish only on screen (the translation setting does not reach these short labels) */
 const LM = {lessons: "Lektioner", prov: "Prov", chapter: (k: number) => `Kapitel ${k}`, of: (a: number, b: number) => `${a} av ${b} klara`,
-  soon: "Kommer snart", provNote: "Proven ger inga ledtrådar. Du ser svaren när provet är klart.",
+  soon: "Kommer snart", more: "Lär mer", moreS: "Svårare lektioner för dig som vill gå djupare.", provNote: "Proven ger inga ledtrådar. Du ser svaren när provet är klart.",
   kinds: {chapter: "Kapitelprov", subject: "Ämnesprov", own: "Eget prov"} as Record<string, string>, qs: (n: number) => `${n} frågor`,
   left: (n: number) => n === 1 ? "1 lektion kvar" : `${n} lektioner kvar`, ready: "Redo att göras", best: (b: number, t: number) => `Bäst ${b} % · ${t} ${t === 1 ? "gång" : "gånger"}`,
   locked: "Gör klart lektionerna i kapitlet först. En förälder kan låsa upp provet på föräldrasidan.", ownBy: "Ett prov som en förälder har satt ihop",
@@ -134,12 +134,15 @@ function LessonMap() {
       {all.length > 0 && <div className="cprog"><span>{T("courseDone")(done, all.length)}</span><i><b style={{width: pct + "%"}} /></i></div>}
     </div>}
 
-    {chs.map((c, k) => { const ls = lessonsOf(c), cd = ls.filter(l => isDone(l.id)).length;
+    {chs.map((c, k) => { const ls = lessonsOf(c), mo = moreOf(c), cd = ls.filter(l => isDone(l.id)).length;
       return <section key={c.id} className="chap stack" data-c={c.id}>
         <div className="chead"><span className="label">{LM.chapter(k + 1)}</span><h2>{c.title}</h2>
           {ls.length > 0 && <span className="muted">{LM.of(cd, ls.length)}</span>}</div>
         {ls.length ? <div className="cards">{ls.map(l => <Card key={l.id} l={l} n={++num} here={!!nx && nx.id === l.id} />)}</div>
           : <div className="empty csoon">🚧 <b>{LM.soon}</b>{c.about && <span>{c.about}</span>}</div>}
+        {mo.length > 0 && <div className="cmore stack"><div className="chead"><span className="label">{LM.more}</span>
+          <span className="muted">{LM.moreS}</span></div>
+          <div className="cards">{mo.map(l => <Card key={l.id} l={l} n={++num} here={!!nx && nx.id === l.id} />)}</div></div>}
       </section>; })}
     {Y && !chs.length && <div className="empty">{T("empty")}</div>}
 
