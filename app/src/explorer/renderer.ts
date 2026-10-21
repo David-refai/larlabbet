@@ -5,7 +5,7 @@
    Both use the ids of bodyData.ts. */
 import type {LayerId, OrganId, DetailId} from "./bodyData";
 
-export type Pick = {kind: "organ"; id: OrganId} | {kind: "part"; id: string};
+export type Pick = {kind: "organ"; id: OrganId} | {kind: "part"; id: string} | {kind: "bit"; id: string};
 
 export interface BodyRenderer {
   /* draw into el (the renderer owns everything inside it) */
@@ -24,7 +24,9 @@ export interface BodyRenderer {
   selectPart(id: string | null): void;
   /* run or pause the flow animation (blood, air, signals) */
   setFlow(play: boolean): void;
-  /* the pupil tapped an organ or a part */
+  /* zoom to a tapped bone or muscle on the skeleton or muscle picture (null: the whole body); painted pictures only */
+  focusBit?(id: string | null): void;
+  /* the pupil tapped an organ, a part, or a bone or muscle */
   onPick(cb: (p: Pick) => void): void;
   destroy(): void;
 }

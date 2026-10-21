@@ -79,22 +79,13 @@ function hud(){SFX.on=S.sound!==false;
 function addXP(n){S.xp+=n;save();hud()}
 
 /* ---------- owl teacher ---------- */
+/* Olle the owl: David's painted owl (body/owl-olle*.webp), blinking now and then and pointing while he talks */
 const OWL=`<svg class="avatar" viewBox="0 0 120 120" aria-hidden="true">
- <ellipse cx="60" cy="114" rx="30" ry="4" fill="#13213f" opacity=".12"/>
+ <ellipse cx="60" cy="116" rx="34" ry="4" fill="#13213f" opacity=".12"/>
  <g class="bob">
-  <path class="wl" d="M30 62c-12 8-14 26-4 38 6-10 8-24 4-38z" fill="#1d5f7a"/>
-  <path class="wr" d="M90 62c12 8 14 26 4 38-6-10-8-24-4-38z" fill="#1d5f7a"/>
-  <path d="M60 20c-25 0-36 19-36 44 0 27 15 45 36 45s36-18 36-45c0-25-11-44-36-44z" fill="#2a7d9c"/>
-  <path d="M28 34l-5-18 18 11zM92 34l5-18-18 11z" fill="#1d5f7a"/>
-  <ellipse cx="60" cy="84" rx="22" ry="22" fill="#f6e7c8"/>
-  <path d="M50 78q4 4 8 0M62 78q4 4 8 0M44 88q4 4 8 0M56 88q4 4 8 0M68 88q4 4 8 0M50 98q4 4 8 0M62 98q4 4 8 0" fill="none" stroke="#e2c99a" stroke-width="2" stroke-linecap="round"/>
-  <circle cx="44" cy="54" r="15" fill="#fff"/><circle cx="76" cy="54" r="15" fill="#fff"/>
-  <circle cx="44" cy="54" r="15" fill="none" stroke="#ffc93c" stroke-width="3"/><circle cx="76" cy="54" r="15" fill="none" stroke="#ffc93c" stroke-width="3"/>
-  <circle cx="46" cy="55" r="7" fill="#13213f"/><circle cx="74" cy="55" r="7" fill="#13213f"/>
-  <circle cx="48.5" cy="52" r="2.2" fill="#fff"/><circle cx="76.5" cy="52" r="2.2" fill="#fff"/>
-  <g class="lids"><circle cx="44" cy="54" r="13.5" fill="#2a7d9c"/><circle cx="76" cy="54" r="13.5" fill="#2a7d9c"/></g>
-  <path d="M53 64h14l-7 7z" fill="#ff9f1c"/><path class="jaw" d="M55 70h10l-5 5z" fill="#e8840f"/>
-  <path d="M50 109l-4 5M54 109v6M58 109l3 5M62 109l-3 5M66 109v6M70 109l4 5" stroke="#ff9f1c" stroke-width="3" stroke-linecap="round"/>
+  <image class="o-base" href="body/owl-olle.webp" x="0" y="8" width="120" height="108"/>
+  <image class="o-blink" href="body/owl-olle-blink.webp" x="0" y="8" width="120" height="108"/>
+  <image class="o-point" href="body/owl-olle-point.webp" x="0" y="8" width="120.8" height="108"/>
  </g></svg>`;
 
 function makeCanvas(stage){

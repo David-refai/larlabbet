@@ -19,7 +19,7 @@ export function DetailStage({id, model, tab, part, flow, still, labels, compact,
   labels: {id: string; name: string}[]; compact: boolean;
   onPick: (id: string) => void; onSource: (id: PartId, s: Source) => void;
 }) {
-  const pid = DETAIL_PART[id], anchor = partById(pid).anchor, want = glbFor(pid), g = useGlb(want);
+  const pid = DETAIL_PART[id as keyof typeof DETAIL_PART], anchor = partById(pid).anchor, want = glbFor(pid), g = useGlb(want);
   const {invalidate, camera, gl} = useThree();
   const grp = useRef<THREE.Group>(null);
   const pop = useRef(still ? 1 : 0);

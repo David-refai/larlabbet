@@ -119,12 +119,69 @@ const BRAIN: DetailPic = {
     {d: "M346 508L304 420L300 330C320 250 380 180 440 150", color: "signal", dots: 5, dur: 3},
   ],
 };
+
+/* the other organs: their own pictures (organ-*.webp) with the parts marked */
+const LIVER: DetailPic = {
+  pic: "organ-liver", size: [512, 369],
+  parts: {hlob: {at: [120, 150], r: 70}, vlob: {at: [410, 130], r: 55}, gallblasa: {at: [178, 315], r: 34}, rensar: {at: [250, 230], r: 40, side: "r"}},
+};
+const STOMACH: DetailPic = {
+  pic: "organ-stomach", size: [540, 580],
+  parts: {
+    matstrupe: {at: [265, 60], r: 32}, ovremagmun: {at: [300, 170], r: 28, side: "r"}, magvagg: {at: [480, 300], r: 40},
+    magsaft: {at: [330, 400], r: 50, side: "r"}, nedremagmun: {at: [118, 440], r: 30}, tolvfinger: {at: [30, 450], r: 24},
+  },
+};
+const INTESTINES: DetailPic = {
+  pic: "organ-intestines", size: [531, 618],
+  parts: {
+    tunntarm: {at: [270, 260], r: 70, side: "r"}, tarmludd: {at: [380, 320], r: 34}, tjocktarm: {at: [250, 95], r: 50, side: "l"},
+    blindtarm: {at: [112, 470], r: 26}, andtarm: {at: [262, 560], r: 40},
+  },
+};
+const KIDNEYS: DetailPic = {
+  pic: "organ-kidneys", size: [560, 502],
+  parts: {
+    hnjure: {at: [90, 190], r: 70}, vnjure: {at: [470, 200], r: 70}, njurartar: {at: [345, 165], r: 22, side: "r"},
+    njurven: {at: [345, 205], r: 22, side: "r"}, urinledare: {at: [225, 400], r: 24},
+  },
+};
+const BLADDER: DetailPic = {
+  pic: "organ-bladder", size: [610, 606],
+  parts: {"b-urinledare": {at: [80, 110], r: 30}, blasvagg: {at: [440, 340], r: 70}, slutmuskel: {at: [320, 512], r: 26, side: "l"}, urinror: {at: [322, 575], r: 24, side: "r"}},
+};
 export const DETAIL_PICS: Record<DetailId, DetailPics> = {
   heart: {main: HEART},
   lungs: {main: LUNGS, tabs: {blasor: ALVEOLI}},
   brain: {main: BRAIN},
+  liver: {main: LIVER}, stomach: {main: STOMACH}, intestines: {main: INTESTINES}, kidneys: {main: KIDNEYS}, bladder: {main: BLADDER},
 };
 export const detailPic = (id: DetailId, tab: string): DetailPic => DETAIL_PICS[id].tabs?.[tab] || DETAIL_PICS[id].main;
 
 /* the colours of the flow dots */
 export const FLOW_GRAD: Record<string, string> = {red: "x-dred", blue: "x-dblue", air: "x-dair", signal: "x-dsig"};
+
+/* ---- the bones and muscles on the skeleton and muscle pictures (bodyData.ts BITS) ----
+   tap areas in body picture units, both sides of the body where there are two */
+export const BIT_SPOTS: Record<string, OrganSpot> = {
+  skalle: {ell: [[450, 190, 112, 110]], at: [450, 150]},
+  ryggrad: {ell: [[450, 470, 14, 70], [450, 322, 14, 22]], at: [450, 470]},
+  revben: {ell: [[392, 425, 46, 58], [508, 425, 46, 58]], at: [380, 420]},
+  brostben: {ell: [[450, 405, 13, 46]], at: [450, 395]},
+  overarm: {ell: [[338, 405, 24, 50], [562, 405, 24, 50]], at: [338, 400]},
+  underarm: {ell: [[282, 478, 22, 38], [618, 478, 22, 38]], at: [282, 478]},
+  hand: {ell: [[225, 548, 34, 36], [675, 548, 34, 36]], at: [228, 548]},
+  backen: {ell: [[450, 560, 78, 42]], at: [450, 560]},
+  larben: {ell: [[393, 630, 22, 48], [507, 630, 22, 48]], at: [393, 630]},
+  knaskal: {ell: [[392, 690, 18, 15], [508, 690, 18, 15]], at: [392, 690]},
+  underben: {ell: [[393, 750, 18, 42], [507, 750, 18, 42]], at: [393, 755]},
+  fot: {ell: [[385, 822, 40, 22], [515, 822, 40, 22]], at: [385, 822]},
+  halsmuskel: {ell: [[450, 305, 34, 18]], at: [450, 305]},
+  axelmuskel: {ell: [[343, 350, 28, 30], [557, 350, 28, 30]], at: [343, 350]},
+  brostmuskel: {ell: [[400, 365, 42, 30], [500, 365, 42, 30]], at: [400, 365]},
+  biceps: {ell: [[318, 405, 20, 34], [582, 405, 20, 34]], at: [318, 405]},
+  underarmsmuskel: {ell: [[262, 480, 26, 40], [638, 480, 26, 40]], at: [262, 480]},
+  magmuskler: {ell: [[450, 455, 48, 62]], at: [450, 455]},
+  larmuskel: {ell: [[388, 610, 36, 62], [512, 610, 36, 62]], at: [388, 610]},
+  vadmuskel: {ell: [[385, 745, 30, 48], [515, 745, 30, 48]], at: [385, 745]},
+};

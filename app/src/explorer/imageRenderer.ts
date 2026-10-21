@@ -9,11 +9,11 @@
      a flow of dots (blood, air, signals) that stands still under prefers-reduced-motion
    If a picture does not load, createBodyRenderer2D() hands over to the drawn SVG renderer. */
 import "./imageRenderer.css";
-import {DETAILS, organById, type Box, type LayerId, type OrganId, type DetailId} from "./bodyData";
+import {DETAILS, BITS, organById, bitById, type Box, type LayerId, type OrganId, type DetailId} from "./bodyData";
 import {reducedMotion, type BodyRenderer, type Pick} from "./renderer";
 import {createSvgRenderer} from "./svgRenderer";
 import {SKIN_MASK} from "./skinMask";
-import {PIC, BODY_SIZE, BODY_HOME, BODY_MID, LAYER_PIC, GLASS_PIC, ORGAN_SPOTS, SPOT_ORDER, spotPath, spotBox, detailPic, FLOW_GRAD, type DetailPic} from "./imageMap";
+import {PIC, BODY_SIZE, BODY_HOME, BODY_MID, LAYER_PIC, GLASS_PIC, ORGAN_SPOTS, SPOT_ORDER, spotPath, spotBox, detailPic, FLOW_GRAD, BIT_SPOTS, type DetailPic} from "./imageMap";
 
 const NS = "http://www.w3.org/2000/svg";
 const INK = "#13213f";
@@ -55,7 +55,9 @@ export function createImageRenderer(onFail: () => void = () => {}): BodyRenderer
   let card: HTMLDivElement, cardImg: HTMLImageElement, cardName: HTMLElement, cardText: HTMLElement, vig: HTMLDivElement;
   let pick: (p: Pick) => void = () => {};
   let layers = new Set<LayerId>(["skin"]), sel: OrganId | null = null, iso: OrganId | null = null, hidden = new Set<OrganId>();
-  let cur: DetailId | null = null, tab = "", part: string | null = null, flowOn = true;
+  let cur: DetailId | null = null, tab = "", part: string | null = null, flowOn = true, bit: string | null = null;
+  /* a detail view asked for while the body is still zooming in opens when the zoom ends */
+  let zooming = false, pending: (() => void) | null = null;
   let vb: Box = [...BODY_HOME] as Box, raf = 0, ro: ResizeObserver | null = null, alive = false;
 
   const fail = () => { if (alive) { alive = false; onFail(); } };
@@ -78,6 +80,13 @@ export function createImageRenderer(onFail: () => void = () => {}): BodyRenderer
       if (k < 1) raf = requestAnimationFrame(step); else done?.();
     };
     raf = requestAnimationFrame(step);
+  }
+
+  /* the view around a bone or muscle: all its tap areas with room for the label */
+  function vbFor(id: string): Box {
+    /* the first area is the side the label points at; a pair is zoomed to that one */
+    const s = BIT_SPOTS[id], [x, y, w, h] = spotBox(s.ell ? {ell: [s.ell[0]], at: s.at} : s), side = Math.max(w, h, 70) * 2.2;
+    return [x + w / 2 - side / 2, y + h / 2 - side / 2, side, side];
   }
 
   /* the opacity of every layer and organ from the current state */
@@ -113,6 +122,12 @@ export function createImageRenderer(onFail: () => void = () => {}): BodyRenderer
       g.setAttribute("tabindex", tappable && !gone && !iso ? "0" : "-1");
       g.setAttribute("aria-pressed", String(id === sel));
     });
+    body.querySelectorAll<SVGGElement>(".xbit").forEach(g => {
+      const on = layers.size === 1 && layers.has(g.dataset.layer as LayerId) && !iso;
+      g.style.display = on ? "" : "none";
+      g.classList.toggle("sel", g.dataset.id === bit);
+      g.setAttribute("tabindex", on ? "0" : "-1");
+    });
     body.classList.toggle("iso", !!iso);
     drawLabel();
   }
@@ -120,6 +135,21 @@ export function createImageRenderer(onFail: () => void = () => {}): BodyRenderer
   /* the selected organ's name beside it, with a pointer line (not while zoomed in) */
   function drawLabel() {
     labels.innerHTML = "";
+    const b = bit ? bitById(bit) : null;
+    if (b) {
+      /* zoomed in on a bone or muscle: a smaller label in the zoomed view */
+      const [ax, ay] = BIT_SPOTS[b.id].at, [vx, , w, h] = vbFor(b.id), fs = Math.min(Math.max(w, h) / 16, w * .36 / (b.name.sv.length * .46 + .9)), tw = textW(b.name.sv, fs);
+      /* the label goes to the outer side, unless it would leave the view */
+      let left = ax < BODY_MID;
+      if (left && ax - fs * 2.2 - tw < vx + fs * .3) left = false;
+      else if (!left && ax + fs * 2.2 + tw > vx + w - fs * .3) left = true;
+      const th = fs * 1.35, ex = left ? ax - fs * 2.2 : ax + fs * 2.2, x = left ? ex - tw : ex, y = ay - fs * 2.2;
+      labels.innerHTML = `<path d="M${ax} ${ay}L${ex} ${y}" stroke="${INK}" stroke-width="${fs / 12}" stroke-linecap="round"/>
+        <circle cx="${ax}" cy="${ay}" r="${fs / 5}" fill="#ffcf3a" stroke="${INK}" stroke-width="${fs / 12}"/>
+        <rect x="${x}" y="${y - th / 2}" width="${tw}" height="${th}" rx="${th / 2}" fill="#fff" stroke="${INK}" stroke-width="${fs / 12}"/>
+        <text x="${x + tw / 2}" y="${y + fs * .33}" font-size="${fs}" fill="${INK}" text-anchor="middle">${esc(b.name.sv)}</text>`;
+      return;
+    }
     if (!sel || iso || layers.has("skin")) return;
     const o = organById(sel)!, [ax, ay] = ORGAN_SPOTS[sel].at, left = ax < BODY_MID, fs = 34;
     const w = textW(o.name.sv, fs), h = fs * 1.35, edge = left ? 356 : 548, x = left ? edge - w : edge;
@@ -247,6 +277,8 @@ export function createImageRenderer(onFail: () => void = () => {}): BodyRenderer
         spots += `<g class="xorg" data-id="${id}" role="button" aria-label="${esc(o.name.sv)}" tabindex="-1">
           ${img(LAYER_PIC.organs, `class="xkey" clip-path="url(#xc-${id})"`)}<path class="xhit" d="${spotPath(ORGAN_SPOTS[id])}"/></g>`;
       }
+      let bits = "";
+      for (const b of BITS) bits += `<g class="xbit" data-id="${b.id}" data-layer="${b.layer}" role="button" aria-label="${esc(b.name.sv)}" tabindex="-1" style="display:none"><path class="xhit" d="${spotPath(BIT_SPOTS[b.id])}"/></g>`;
       body.innerHTML = `<defs>${DEFS}${organs}
         <mask id="x-hide" maskUnits="userSpaceOnUse" x="0" y="0" width="${BODY_SIZE}" height="${BODY_SIZE}"><rect width="${BODY_SIZE}" height="${BODY_SIZE}" fill="#fff"/><g class="xmh" fill="#000" filter="url(#x-soft)"></g></mask>
         <mask id="x-show" maskUnits="userSpaceOnUse" x="0" y="0" width="${BODY_SIZE}" height="${BODY_SIZE}"><rect width="${BODY_SIZE}" height="${BODY_SIZE}" fill="#000"/><g class="xms" fill="#fff" filter="url(#x-soft)"></g></mask></defs>
@@ -254,7 +286,7 @@ export function createImageRenderer(onFail: () => void = () => {}): BodyRenderer
         ${layer("ghost", img(GLASS_PIC))}
         ${INNER.map(l => layer(l, l === "organs" ? img(LAYER_PIC.organs, `mask="url(#x-hide)"`) + img(GLASS_PIC, `mask="url(#x-show)"`) : img(LAYER_PIC[l]))).join("")}
         ${layer("skin", img(LAYER_PIC.skin, `mask="url(#x-skinmask)"`))}
-        <g class="xorgs">${spots}</g><g class="xlabel" pointer-events="none"></g>`;
+        <g class="xorgs">${spots}</g><g class="xbits">${bits}</g><g class="xlabel" pointer-events="none"></g>`;
       labels = body.querySelector(".xlabel")!; skull = body.querySelector(".xl[data-layer=skeleton] image")!; hideMask = body.querySelector(".xmh")!; showMask = body.querySelector(".xms")!;
       det = svg("xsvg xdet", {role: "group", preserveAspectRatio: "xMidYMid meet"});
       card = document.createElement("div"); card.className = "xiso";
@@ -269,8 +301,9 @@ export function createImageRenderer(onFail: () => void = () => {}): BodyRenderer
       }
       if (window.ResizeObserver) { ro = new ResizeObserver(() => { if (cur && isCompact() !== compact) drawDetail(); }); ro.observe(h); }
       const hit = (e: Event) => {
-        const t = e.target as Element, o = t.closest<SVGGElement>(".xorg"), p = t.closest<SVGElement>("[data-part]");
-        if (o && body.contains(o)) pick({kind: "organ", id: o.dataset.id as OrganId});
+        const t = e.target as Element, o = t.closest<SVGGElement>(".xorg"), p = t.closest<SVGElement>("[data-part]"), b = t.closest<SVGGElement>(".xbit");
+        if (b && body.contains(b)) pick({kind: "bit", id: b.dataset.id!});
+        else if (o && body.contains(o)) pick({kind: "organ", id: o.dataset.id as OrganId});
         else if (p && det.contains(p) && p.dataset.part && !p.closest(".xflow")) pick({kind: "part", id: p.dataset.part});
       };
       h.addEventListener("click", hit);
@@ -282,6 +315,7 @@ export function createImageRenderer(onFail: () => void = () => {}): BodyRenderer
     hide(ids) { hidden = new Set(ids); apply(); },
     isolate(id) {
       const was = iso;
+      zooming = false; pending = null;
       iso = id; apply();
       if (!id) { showCard(false); animateVB(BODY_HOME); return; }
       fillCard(id);
@@ -289,10 +323,20 @@ export function createImageRenderer(onFail: () => void = () => {}): BodyRenderer
       const [x, y, w, h] = spotBox(ORGAN_SPOTS[id]), pad = Math.max(w, h) * .7;
       if (was && host?.classList.contains("isocard")) { setVB([x - pad, y - pad, w + 2 * pad, h + 2 * pad]); return; }
       showCard(false);
-      animateVB([x - pad, y - pad, w + 2 * pad, h + 2 * pad], () => { if (iso === id) showCard(true); });
+      zooming = true;
+      animateVB([x - pad, y - pad, w + 2 * pad, h + 2 * pad], () => {
+        zooming = false;
+        if (iso !== id) return;
+        if (pending) { const go = pending; pending = null; go(); } else showCard(true);
+      });
     },
     detail(id, t) {
+      /* tapped in the body: the zoom runs first, then the parts open */
+      if (id && zooming) { pending = () => R.detail(id, t); return; }
+      pending = null;
       const was = cur;
+      /* closing the parts of an organ that is still zoomed in: its own picture shows */
+      if (!id && was && iso) showCard(true);
       cur = id; tab = t || (id ? DETAILS[id].tabs[0].id : ""); part = null;
       host?.classList.toggle("indetail", !!id);
       if (id && was !== id && !reducedMotion()) { det.classList.remove("pop"); void det.getBoundingClientRect(); det.classList.add("pop"); }
@@ -300,6 +344,10 @@ export function createImageRenderer(onFail: () => void = () => {}): BodyRenderer
     },
     selectPart(id) { part = id; markPart(); },
     setFlow(play) { flowOn = play; setFlowState(); },
+    focusBit(id) {
+      bit = id; apply();
+      animateVB(id ? vbFor(id) : BODY_HOME);
+    },
     onPick(cb) { pick = cb; },
     destroy() {
       alive = false; cancelAnimationFrame(raf); ro?.disconnect();
@@ -315,7 +363,7 @@ export function createImageRenderer(onFail: () => void = () => {}): BodyRenderer
 export function createBodyRenderer2D(): BodyRenderer {
   let host: HTMLElement | null = null, pick: (p: Pick) => void = () => {};
   const st = {layers: new Set<LayerId>(["skin"]), sel: null as OrganId | null, hidden: new Set<OrganId>(), iso: null as OrganId | null,
-    det: null as DetailId | null, tab: "", part: null as string | null, flow: true};
+    det: null as DetailId | null, tab: "", part: null as string | null, flow: true, bit: null as string | null};
   let fellBack = false;
   const failover = () => {
     if (fellBack || !host) return;
@@ -336,6 +384,7 @@ export function createBodyRenderer2D(): BodyRenderer {
     detail(id, t) { st.det = id; st.tab = t || ""; st.part = null; r.detail(id, t); },
     selectPart(id) { st.part = id; r.selectPart(id); },
     setFlow(play) { st.flow = play; r.setFlow(play); },
+    focusBit(id) { st.bit = id; r.focusBit?.(id); },
     onPick(cb) { pick = cb; },
     destroy() { r.destroy(); host = null; },
   };

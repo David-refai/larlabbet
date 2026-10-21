@@ -1,3 +1,4 @@
+import {IMG} from "./no-0art.js";
 import {BRN,art,bankGen,blist,note,plant,ringArrows,ringFlow,ringPts,soil,ttl} from "./no-0body.js";
 import {A,LESSONS,R,TERM,WORDS,t3,wbMount} from "../../legacy/core.js";
 /* ===== no4l.js: Biologi, Year 4, Djur, växter och ekosystem 5 and 6 =====
@@ -113,7 +114,7 @@ const NAT6={steps:[
  {say:t3("Nedbrytare är organismer som äter döda växter och djur. Daggmaskar drar ner löv i jorden och äter dem. Svampar och bakterier bryter ner resten. Bakterierna är så små att de bara syns i mikroskop.",
    "Decomposers are living things that eat dead plants and animals. Earthworms pull leaves into the soil and eat them. Fungi and bacteria break down the rest. Bacteria are so small you can only see them in a microscope.",
    "المحلِّلات كائنات تأكل النباتات والحيوانات الميتة. ديدان الأرض تسحب الأوراق إلى التربة وتأكلها، والفطريات والبكتيريا تحلّل الباقي. البكتيريا صغيرة جدًا فلا تُرى إلا بالمجهر."),
-  draw:()=>[A.wipe(),ttl("Nedbrytarna"),A.band(50,262,210,96,"o"),...soil(50,260,262),...art("worm",155,316,1.75),...soil(300,500,330),...art("svamp",400,330,1.6),A.p(R.circ(650,290,70),"v",3.5),...art("bacteria",650,290,2.2),
+  draw:()=>[A.wipe(),ttl("Nedbrytarna"),A.band(50,262,210,96,"o"),...soil(50,260,262),...art("worm",155,316,1.75),...art("trunk",400,344,.62),...art("svamp",400,318,1.3),A.p(R.circ(640,290,66),"v",3.5),...art("bacteria",640,290,2.1),IMG("nat-microscope",752,300,0,{h:124}),
    A.tx("daggmaskar",150,400,32,"p"),A.tx("svampar",400,400,32,"o"),A.tx("bakterier",650,400,32,"v"),A.tx("äter döda löv",150,440,26),A.tx("bryter ner döda saker",400,440,26),A.tx("syns i mikroskop",650,440,26)]},
  {say:t3("Nedbrytarna gör om det döda till näring i jorden. Den näringen tar nya växter upp med sina rötter. Växterna blir mat åt djuren, och när de dör börjar allt om. Det är naturens kretslopp: inget går förlorat!",
    "Decomposers turn dead things into nutrients in the soil. New plants take up those nutrients with their roots. The plants become food for animals, and when they die it all starts again. That is nature's cycle: nothing is lost!",

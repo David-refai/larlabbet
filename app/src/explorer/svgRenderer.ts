@@ -101,7 +101,7 @@ export function createSvgRenderer(): BodyRenderer {
     det.setAttribute("aria-label", D.title.sv);
     det.classList.toggle("compact", compact); host?.classList.toggle("compact", compact);
     let lab = "";
-    D.parts.filter(p => p.tabs.includes(tab)).forEach((p, i) => {
+    D.parts.filter(p => p.tabs.includes(tab) && (p.anchor[0] || p.anchor[1])).forEach((p, i) => {
       const [ax, ay] = p.anchor;
       if (compact) {
         lab += `<g class="xlab xnum" data-part="${p.id}" role="button" tabindex="0" aria-label="${esc(p.name.sv)}">

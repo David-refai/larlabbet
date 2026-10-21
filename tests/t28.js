@@ -93,10 +93,10 @@ for(const [w,h,tag,rm] of [[1366,768,'laptop','no-preference'],[390,844,'phone',
  ok(await p.$eval('.xchip[data-layer="skeleton"]',e=>e.getAttribute('aria-pressed'))==='true',tag+' skeleton button aria-pressed=true');
  ok(await fadeTo(p,'skeleton',1),tag+' the skeleton fades in');
  ok(await p.evaluate(()=>{let n=0;window.__ex3dThree.scene.getObjectByName('slot:skeleton').traverse(o=>{if(o.isMesh)n++});return n>5}),tag+' the skeleton is real meshes');
- await p.click('.xchip[data-layer="organs"]');
- ok(await fadeTo(p,'heart',0),tag+' organs off: the heart fades out');
+ /* one layer at a time: the skeleton alone, the organs go */
+ ok(await fadeTo(p,'heart',0),tag+' skeleton alone: the heart fades out');
  await p.screenshot({path:`${D}/t28-${tag}-B-skeleton.png`});
- await p.click('.xchip[data-layer="skeleton"]');await p.click('.xchip[data-layer="organs"]');
+ await p.click('.xchip[data-layer="organs"]');
  ok(await fadeTo(p,'skeleton',0)&&await fadeTo(p,'heart',1),tag+' skeleton off, organs back');
  await noScroll('mode B');
 

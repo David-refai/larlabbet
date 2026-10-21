@@ -10,7 +10,9 @@ const t3 = (sv: string, en: string, ar: string): T3 => ({sv, en, ar});
 
 export type LayerId = "skin" | "muscles" | "skeleton" | "organs" | "vessels" | "nerves";
 export type OrganId = "brain" | "lungs" | "heart" | "liver" | "stomach" | "intestines" | "kidneys" | "bladder";
-export type DetailId = "heart" | "lungs" | "brain";
+export type DetailId = "heart" | "lungs" | "brain" | "liver" | "stomach" | "intestines" | "kidneys" | "bladder";
+/* the detail views the 3D explorer has models for (the others are painted pictures only) */
+export const DETAILS_3D: DetailId[] = ["heart", "lungs", "brain"];
 export type Pt = [number, number];
 /* x, y, width, height */
 export type Box = [number, number, number, number];
@@ -49,19 +51,19 @@ export const ORGANS: Organ[] = [
   {id: "heart", name: t3("Hjärtat", "The heart", "القلب"), layer: "organs", detail: "heart", anchor: [214, 292], box: [176, 256, 76, 76],
     info: t3("Hjärtat är en muskel som pumpar blod runt i hela kroppen.", "The heart is a muscle that pumps blood around the whole body.", "القلب عضلة تضخّ الدم إلى الجسم كله."),
     more: t3("Hjärtat slår ungefär 100 000 gånger varje dygn.", "The heart beats about 100,000 times a day.", "ينبض القلب نحو 100000 مرة في اليوم.")},
-  {id: "liver", name: t3("Levern", "The liver", "الكبد"), layer: "organs", anchor: [168, 362], box: [134, 330, 104, 70],
+  {id: "liver", detail: "liver", name: t3("Levern", "The liver", "الكبد"), layer: "organs", anchor: [168, 362], box: [134, 330, 104, 70],
     info: t3("Levern rensar blodet och sparar näring till senare.", "The liver cleans the blood and stores nutrients for later.", "الكبد ينظّف الدم ويخزّن الغذاء لوقت لاحق."),
     more: t3("Levern är det största organet inuti kroppen.", "The liver is the largest organ inside the body.", "الكبد أكبر عضو داخل الجسم.")},
-  {id: "stomach", name: t3("Magsäcken", "The stomach", "المعدة"), layer: "organs", anchor: [240, 368], box: [200, 334, 70, 72],
+  {id: "stomach", detail: "stomach", name: t3("Magsäcken", "The stomach", "المعدة"), layer: "organs", anchor: [240, 368], box: [200, 334, 70, 72],
     info: t3("Magsäcken blandar maten med magsaft så att den bryts ner.", "The stomach mixes food with stomach juice so it breaks down.", "المعدة تخلط الطعام بالعصارة الهاضمة فيتفتّت."),
     more: t3("Magsäcken kan töjas ut som en ballong när du äter.", "The stomach can stretch like a balloon when you eat.", "تتمدّد المعدة مثل البالون عندما تأكل.")},
-  {id: "intestines", name: t3("Tarmarna", "The intestines", "الأمعاء"), layer: "organs", anchor: [200, 440], box: [140, 392, 120, 92],
+  {id: "intestines", detail: "intestines", name: t3("Tarmarna", "The intestines", "الأمعاء"), layer: "organs", anchor: [200, 440], box: [140, 392, 120, 92],
     info: t3("Tarmarna tar upp näringen ur maten till blodet.", "The intestines take the nutrients from food into the blood.", "الأمعاء تمتصّ الغذاء من الطعام إلى الدم."),
     more: t3("Tunntarmen är lika lång som en buss, ungefär 6 meter.", "The small intestine is as long as a bus, about 6 metres.", "الأمعاء الدقيقة طويلة مثل الحافلة، نحو 6 أمتار.")},
-  {id: "kidneys", name: t3("Njurarna", "The kidneys", "الكليتان"), layer: "organs", anchor: [254, 392], box: [136, 360, 128, 64],
+  {id: "kidneys", detail: "kidneys", name: t3("Njurarna", "The kidneys", "الكليتان"), layer: "organs", anchor: [254, 392], box: [136, 360, 128, 64],
     info: t3("Njurarna renar blodet och gör urin av det som ska bort.", "The kidneys clean the blood and make urine from the waste.", "الكليتان تنقّيان الدم وتصنعان البول من الفضلات."),
     more: t3("Du har två njurar. De är stora som en knytnäve.", "You have two kidneys. Each is about as big as a fist.", "لديك كليتان، كل واحدة بحجم قبضة اليد.")},
-  {id: "bladder", name: t3("Urinblåsan", "The bladder", "المثانة"), layer: "organs", anchor: [200, 478], box: [170, 452, 60, 48],
+  {id: "bladder", detail: "bladder", name: t3("Urinblåsan", "The bladder", "المثانة"), layer: "organs", anchor: [200, 478], box: [170, 452, 60, 48],
     info: t3("Urinblåsan samlar urin tills du går på toaletten.", "The bladder holds urine until you go to the toilet.", "المثانة تجمع البول حتى تذهب إلى الحمّام."),
     more: t3("Urinblåsan är en liten påse av muskler som kan töjas.", "The bladder is a small bag of muscle that can stretch.", "المثانة كيس صغير من العضلات يستطيع أن يتمدّد.")},
 ];
@@ -187,6 +189,75 @@ export const DETAILS: Record<DetailId, Detail> = {
       {id: "signaler", name: t3("Nervsignaler", "Nerve signals", "الإشارات العصبية"), tabs: ["signal"], anchor: [300, 150], label: [90, 70],
         info: t3("Hjärnan skickar signaler genom ryggmärgen ut till musklerna. Kroppen skickar också signaler tillbaka till hjärnan, till exempel när du känner något.", "The brain sends signals through the spinal cord out to the muscles. The body also sends signals back to the brain, for example when you feel something.", "يرسل الدماغ إشارات عبر الحبل الشوكي إلى العضلات. ويرسل الجسم أيضًا إشارات إلى الدماغ، مثلًا عندما تشعر بشيء.")},
     ]},
+
+  liver: {id: "liver", title: t3("Levern och gallblåsan", "The liver and the gallbladder", "الكبد والمرارة"), view: [0, 0, 512, 369], compact: [0, 0, 512, 369], flowTab: "", legend: [], flowName: t3("", "", ""),
+    tabs: [{id: OV, name: t3("Översikt", "Overview", "نظرة عامة")}],
+    parts: [
+      {id: "hlob", name: t3("Höger lob", "Right lobe", "الفص الأيمن"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("Den största delen av levern. Den ligger på kroppens högra sida, under revbenen.", "The biggest part of the liver. It lies on the right side of the body, under the ribs.", "أكبر جزء من الكبد، يقع في الجهة اليمنى من الجسم تحت الأضلاع.")},
+      {id: "vlob", name: t3("Vänster lob", "Left lobe", "الفص الأيسر"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("Den mindre delen. Den sträcker sig över mot magsäcken.", "The smaller part. It reaches over towards the stomach.", "الجزء الأصغر، يمتدّ نحو المعدة.")},
+      {id: "gallblasa", name: t3("Gallblåsa", "Gallbladder", "المرارة"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("En liten påse som sparar galla. Gallan hjälper till att bryta ner fett i maten.", "A small bag that stores bile. Bile helps to break down fat in food.", "كيس صغير يخزّن العصارة الصفراء التي تساعد على تفتيت الدهون في الطعام.")},
+      {id: "rensar", name: t3("Rensar blodet", "Cleans the blood", "ينظّف الدم"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("Allt blod från tarmarna går först genom levern. Levern tar bort gifter och sparar socker som energi till senare.", "All blood from the intestines goes through the liver first. The liver removes poisons and stores sugar as energy for later.", "كل الدم القادم من الأمعاء يمرّ أولًا بالكبد، فيزيل السموم ويخزّن السكر طاقةً لوقت لاحق.")},
+    ]},
+  stomach: {id: "stomach", title: t3("Magsäcken", "The stomach", "المعدة"), view: [0, 0, 540, 580], compact: [0, 0, 540, 580], flowTab: "", legend: [], flowName: t3("", "", ""),
+    tabs: [{id: OV, name: t3("Översikt", "Overview", "نظرة عامة")}],
+    parts: [
+      {id: "matstrupe", name: t3("Matstrupe", "Gullet (oesophagus)", "المريء"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("Ett muskelrör från munnen. Det klämmer ner maten till magsäcken, även om du står på huvudet.", "A muscle tube from the mouth. It squeezes the food down to the stomach, even if you stand on your head.", "أنبوب عضلي من الفم يدفع الطعام إلى المعدة، حتى لو وقفت على رأسك.")},
+      {id: "ovremagmun", name: t3("Övre magmunnen", "Upper opening", "الفتحة العليا"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("En ring av muskler som släpper in maten och stänger, så att magsaften inte kommer upp.", "A ring of muscle that lets the food in and closes, so the stomach juice does not come up.", "حلقة عضلية تُدخل الطعام ثم تُغلق حتى لا تصعد العصارة.")},
+      {id: "magvagg", name: t3("Muskelvägg", "Muscle wall", "الجدار العضلي"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("Väggen är full av muskler. De knådar och blandar maten som en deg.", "The wall is full of muscles. They knead and mix the food like dough.", "الجدار مليء بالعضلات التي تعجن الطعام وتخلطه مثل العجين.")},
+      {id: "magsaft", name: t3("Magsaft", "Stomach juice", "العصارة المعدية"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("En sur vätska som bryter ner maten och dödar bakterier. Ett slemlager skyddar magsäcken själv.", "A sour liquid that breaks down food and kills bacteria. A layer of mucus protects the stomach itself.", "سائل حمضي يفتّت الطعام ويقتل البكتيريا، وطبقة مخاطية تحمي المعدة نفسها.")},
+      {id: "nedremagmun", name: t3("Nedre magmunnen", "Lower opening", "الفتحة السفلى"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("Släpper ut lite mat i taget till tunntarmen när den är färdigblandad.", "Lets a little food at a time out into the small intestine when it is well mixed.", "تُخرج قليلًا من الطعام في كل مرة إلى الأمعاء الدقيقة بعد أن يُخلط جيدًا.")},
+      {id: "tolvfinger", name: t3("Tolvfingertarmen", "Duodenum", "الاثنا عشر"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("Första biten av tunntarmen. Hit kommer galla från levern och saft från bukspottkörteln.", "The first part of the small intestine. Bile from the liver and juice from the pancreas come here.", "أول جزء من الأمعاء الدقيقة، تصل إليه العصارة الصفراء من الكبد وعصارة البنكرياس.")},
+    ]},
+  intestines: {id: "intestines", title: t3("Tarmarna", "The intestines", "الأمعاء"), view: [0, 0, 531, 618], compact: [0, 0, 531, 618], flowTab: "", legend: [], flowName: t3("", "", ""),
+    tabs: [{id: OV, name: t3("Översikt", "Overview", "نظرة عامة")}],
+    parts: [
+      {id: "tunntarm", name: t3("Tunntarmen", "Small intestine", "الأمعاء الدقيقة"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("Ett långt, smalt rör som ligger hoprullat. Här tas näringen upp i blodet.", "A long, narrow tube lying coiled up. Here the nutrients are taken into the blood.", "أنبوب طويل ورفيع ملفوف، وفيه يُمتصّ الغذاء إلى الدم.")},
+      {id: "tarmludd", name: t3("Tarmludd", "Villi", "الزغابات"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("Insidan av tunntarmen är full av små utskott som en handduk. De gör ytan stor så att mer näring tas upp.", "The inside of the small intestine is full of tiny bumps, like a towel. They make the surface big so more nutrients are taken up.", "داخل الأمعاء الدقيقة مليء بنتوءات صغيرة مثل المنشفة، تكبّر السطح فيُمتصّ غذاء أكثر.")},
+      {id: "tjocktarm", name: t3("Tjocktarmen", "Large intestine", "الأمعاء الغليظة"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("Ett tjockare rör som går runt tunntarmen. Här tas vatten upp ur det som blir kvar av maten.", "A thicker tube that goes around the small intestine. Here water is taken from what is left of the food.", "أنبوب أعرض يلتفّ حول الأمعاء الدقيقة، وفيه يُمتصّ الماء مما تبقّى من الطعام.")},
+      {id: "blindtarm", name: t3("Blindtarmsbihang", "Appendix", "الزائدة الدودية"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("En liten säck där tunntarmen möter tjocktarmen. Om den blir inflammerad gör det ont i magen.", "A small pouch where the small intestine meets the large intestine. If it gets inflamed, the tummy hurts.", "كيس صغير حيث تلتقي الأمعاء الدقيقة بالغليظة، وإذا التهب يؤلم البطن.")},
+      {id: "andtarm", name: t3("Ändtarmen", "Rectum", "المستقيم"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("Sista biten. Här samlas bajset tills du går på toaletten.", "The last part. Poo is collected here until you go to the toilet.", "آخر جزء، يتجمّع فيه البراز حتى تذهب إلى الحمّام.")},
+    ]},
+  kidneys: {id: "kidneys", title: t3("Njurarna", "The kidneys", "الكليتان"), view: [0, 0, 560, 502], compact: [0, 0, 560, 502], flowTab: "", legend: [], flowName: t3("", "", ""),
+    tabs: [{id: OV, name: t3("Översikt", "Overview", "نظرة عامة")}],
+    parts: [
+      {id: "hnjure", name: t3("Höger njure", "Right kidney", "الكلية اليمنى"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("Njurarna sitter i ryggen, en på varje sida. Den högra sitter lite lägre, för levern ligger ovanför.", "The kidneys sit at the back, one on each side. The right one sits a little lower, because the liver is above it.", "الكليتان في الظهر، واحدة في كل جهة. اليمنى أخفض قليلًا لأن الكبد فوقها.")},
+      {id: "vnjure", name: t3("Vänster njure", "Left kidney", "الكلية اليسرى"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("Varje njure har miljontals små filter som silar blodet.", "Each kidney has millions of tiny filters that sieve the blood.", "في كل كلية ملايين المرشّحات الصغيرة التي تصفّي الدم.")},
+      {id: "njurartar", name: t3("Njurartär", "Renal artery", "الشريان الكلوي"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("För blod som ska renas in till njuren.", "Brings blood that needs cleaning into the kidney.", "يُدخل إلى الكلية الدم الذي يحتاج إلى تنقية.")},
+      {id: "njurven", name: t3("Njurven", "Renal vein", "الوريد الكلوي"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("För tillbaka det renade blodet till kroppen.", "Takes the cleaned blood back to the body.", "يعيد الدم المنقّى إلى الجسم.")},
+      {id: "urinledare", name: t3("Urinledare", "Ureter", "الحالب"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("Ett smalt rör från varje njure. Det för urinen ner till urinblåsan.", "A thin tube from each kidney. It carries the urine down to the bladder.", "أنبوب رفيع من كل كلية ينقل البول إلى المثانة.")},
+    ]},
+  bladder: {id: "bladder", title: t3("Urinblåsan", "The bladder", "المثانة"), view: [0, 0, 610, 606], compact: [0, 0, 610, 606], flowTab: "", legend: [], flowName: t3("", "", ""),
+    tabs: [{id: OV, name: t3("Översikt", "Overview", "نظرة عامة")}],
+    parts: [
+      {id: "b-urinledare", name: t3("Urinledare", "Ureters", "الحالبان"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("Två rör som droppar ner urin från njurarna hela tiden.", "Two tubes that drip urine down from the kidneys all the time.", "أنبوبان ينقلان البول من الكليتين طوال الوقت.")},
+      {id: "blasvagg", name: t3("Töjbar vägg", "Stretchy wall", "جدار مرن"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("Väggen är av muskler som kan töjas. När blåsan är full känner du att du behöver kissa.", "The wall is made of muscle that can stretch. When the bladder is full, you feel that you need to pee.", "الجدار من عضلات تتمدّد، وعندما تمتلئ المثانة تشعر أنك تحتاج إلى التبوّل.")},
+      {id: "slutmuskel", name: t3("Slutmuskel", "Sphincter", "العضلة العاصرة"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("En ring av muskler som håller blåsan stängd tills du bestämmer dig för att kissa.", "A ring of muscle that keeps the bladder shut until you decide to pee.", "حلقة عضلية تُبقي المثانة مغلقة حتى تقرّر أن تتبوّل.")},
+      {id: "urinror", name: t3("Urinrör", "Urethra", "الإحليل"), tabs: [OV], anchor: [0, 0], label: [0, 0],
+        info: t3("Röret där urinen kommer ut ur kroppen.", "The tube where urine leaves the body.", "الأنبوب الذي يخرج منه البول من الجسم.")},
+    ]},
 };
 
 /* the tabs and the labelled parts of a detail view, in 2D (SVG) or in 3D */
@@ -205,6 +276,52 @@ export const EX3D = {
   breatheIn: t3("Andas in", "Breathe in", "شهيق"),
   breatheOut: t3("Andas ut", "Breathe out", "زفير"),
 };
+
+/* the bones and muscles the pupil can tap on the skeleton and muscle pictures */
+export interface Bit {id: string; layer: "skeleton" | "muscles"; name: T3; info: T3}
+export const BITS: Bit[] = [
+  {id: "skalle", layer: "skeleton", name: t3("Skallen", "The skull", "الجمجمة"),
+    info: t3("Ett hårt skal av ben som skyddar hjärnan. Underkäken är det enda benet i huvudet som kan röra sig.", "A hard shell of bone that protects the brain. The lower jaw is the only bone in the head that can move.", "غلاف صلب من العظم يحمي الدماغ. الفك السفلي هو العظم الوحيد في الرأس الذي يتحرّك.")},
+  {id: "ryggrad", layer: "skeleton", name: t3("Ryggraden", "The spine", "العمود الفقري"),
+    info: t3("Många små ben, kotor, på rad. De håller dig upprätt och skyddar ryggmärgen inuti.", "Many small bones, vertebrae, in a row. They hold you upright and protect the spinal cord inside.", "عظام صغيرة كثيرة تسمّى الفقرات، مصفوفة معًا. تُبقيك منتصبًا وتحمي الحبل الشوكي في داخلها.")},
+  {id: "revben", layer: "skeleton", name: t3("Revbenen", "The ribs", "الأضلاع"),
+    info: t3("Tolv par böjda ben som en bur. De skyddar hjärtat och lungorna.", "Twelve pairs of curved bones like a cage. They protect the heart and the lungs.", "اثنا عشر زوجًا من العظام المنحنية مثل القفص، تحمي القلب والرئتين.")},
+  {id: "brostben", layer: "skeleton", name: t3("Bröstbenet", "The breastbone", "عظم القص"),
+    info: t3("Ett platt ben mitt fram på bröstet. Revbenen sitter fast i det.", "A flat bone in the middle of the chest. The ribs are joined to it.", "عظم مسطّح في وسط الصدر تتّصل به الأضلاع.")},
+  {id: "overarm", layer: "skeleton", name: t3("Överarmsbenet", "The upper arm bone", "عظم العضد"),
+    info: t3("Ett långt ben mellan axeln och armbågen.", "A long bone between the shoulder and the elbow.", "عظم طويل بين الكتف والمرفق.")},
+  {id: "underarm", layer: "skeleton", name: t3("Underarmen", "The forearm", "الساعد"),
+    info: t3("Två ben, strålbenet och armbågsbenet. De kan vrida sig runt varandra så att du kan vända handen.", "Two bones, the radius and the ulna. They can twist around each other so you can turn your hand.", "عظمان هما الكعبرة والزند، يدوران حول بعضهما فتستطيع أن تقلب يدك.")},
+  {id: "hand", layer: "skeleton", name: t3("Handen", "The hand", "اليد"),
+    info: t3("Varje hand har 27 små ben. Därför kan du skriva, knäppa knappar och plocka upp små saker.", "Each hand has 27 small bones. That is why you can write, do up buttons and pick up small things.", "في كل يد 27 عظمًا صغيرًا، ولهذا تستطيع أن تكتب وتغلق الأزرار وتلتقط الأشياء الصغيرة.")},
+  {id: "backen", layer: "skeleton", name: t3("Bäckenet", "The pelvis", "الحوض"),
+    info: t3("En stor ring av ben. Den bär överkroppen och skyddar urinblåsan.", "A big ring of bone. It carries the upper body and protects the bladder.", "حلقة كبيرة من العظم تحمل الجزء العلوي من الجسم وتحمي المثانة.")},
+  {id: "larben", layer: "skeleton", name: t3("Lårbenet", "The thigh bone", "عظم الفخذ"),
+    info: t3("Kroppens längsta och starkaste ben. Inuti finns benmärg som gör nya blodkroppar.", "The longest and strongest bone in the body. Inside is bone marrow that makes new blood cells.", "أطول عظم وأقواه في الجسم، وفي داخله نخاع يصنع خلايا دم جديدة.")},
+  {id: "knaskal", layer: "skeleton", name: t3("Knäskålen", "The kneecap", "الرضفة"),
+    info: t3("Ett litet runt ben som skyddar knäleden framifrån.", "A small round bone that protects the knee joint from the front.", "عظم صغير مستدير يحمي مفصل الركبة من الأمام.")},
+  {id: "underben", layer: "skeleton", name: t3("Underbenet", "The lower leg", "الساق"),
+    info: t3("Två ben: skenbenet fram, som du känner under huden, och det smala vadbenet bredvid.", "Two bones: the shinbone at the front, which you can feel under the skin, and the thin fibula beside it.", "عظمان: الظنبوب في الأمام وتحسّه تحت الجلد، والشظية الرفيعة بجانبه.")},
+  {id: "fot", layer: "skeleton", name: t3("Foten", "The foot", "القدم"),
+    info: t3("Foten har 26 ben som formar en båge. Bågen fjädrar när du går och hoppar.", "The foot has 26 bones that make an arch. The arch springs when you walk and jump.", "في القدم 26 عظمًا تشكّل قوسًا يعمل كالنابض عندما تمشي وتقفز.")},
+  {id: "halsmuskel", layer: "muscles", name: t3("Halsmusklerna", "The neck muscles", "عضلات الرقبة"),
+    info: t3("De håller upp huvudet och låter dig nicka och vrida det.", "They hold up your head and let you nod and turn it.", "تحمل رأسك وتجعلك تهزّه وتديره.")},
+  {id: "axelmuskel", layer: "muscles", name: t3("Axelmuskeln", "The shoulder muscle", "عضلة الكتف"),
+    info: t3("En rund muskel över axeln. Den lyfter armen ut åt sidan.", "A round muscle over the shoulder. It lifts the arm out to the side.", "عضلة مستديرة فوق الكتف ترفع الذراع إلى الجانب.")},
+  {id: "brostmuskel", layer: "muscles", name: t3("Bröstmuskeln", "The chest muscle", "عضلة الصدر"),
+    info: t3("Drar armen framåt och in mot kroppen, som när du kramar någon.", "Pulls the arm forwards and in towards the body, like when you hug someone.", "تسحب الذراع إلى الأمام ونحو الجسم، كما حين تعانق أحدًا.")},
+  {id: "biceps", layer: "muscles", name: t3("Biceps", "Biceps", "العضلة ذات الرأسين"),
+    info: t3("Böjer armen. Muskler kan bara dra, så baksidan av armen har en annan muskel, triceps, som sträcker den igen.", "Bends the arm. Muscles can only pull, so the back of the arm has another muscle, the triceps, that straightens it again.", "تثني الذراع. العضلات تسحب فقط، لذلك في خلف الذراع عضلة أخرى هي ثلاثية الرؤوس تمدّها من جديد.")},
+  {id: "underarmsmuskel", layer: "muscles", name: t3("Underarmsmusklerna", "The forearm muscles", "عضلات الساعد"),
+    info: t3("Många smala muskler. Med långa senor drar de i fingrarna när du griper.", "Many thin muscles. With long tendons they pull the fingers when you grip.", "عضلات رفيعة كثيرة تسحب الأصابع بأوتار طويلة عندما تقبض.")},
+  {id: "magmuskler", layer: "muscles", name: t3("Magmusklerna", "The tummy muscles", "عضلات البطن"),
+    info: t3("Håller dig upprätt, skyddar tarmarna och hjälper till när du hostar eller skrattar.", "Keep you upright, protect the intestines and help when you cough or laugh.", "تُبقيك منتصبًا وتحمي الأمعاء وتساعدك عندما تسعل أو تضحك.")},
+  {id: "larmuskel", layer: "muscles", name: t3("Lårmuskeln", "The thigh muscle", "عضلة الفخذ"),
+    info: t3("En av kroppens starkaste muskler. Den sträcker knät när du sparkar, hoppar och går i trappor.", "One of the strongest muscles in the body. It straightens the knee when you kick, jump and climb stairs.", "من أقوى عضلات الجسم، تمدّ الركبة عندما تركل وتقفز وتصعد الدرج.")},
+  {id: "vadmuskel", layer: "muscles", name: t3("Vadmuskeln", "The calf muscle", "عضلة الساق"),
+    info: t3("Sitter fast i hälen med hälsenan. Den lyfter dig upp på tå.", "Is fixed to the heel by the Achilles tendon. It lifts you up onto your toes.", "تتّصل بالكعب بوتر أخيل، وترفعك على أطراف أصابعك.")},
+];
+export const bitById = (id: string) => BITS.find(b => b.id === id);
 
 /* the four stages of the mockup */
 export type StageId = "body" | "inside" | "organ" | "detail";

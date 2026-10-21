@@ -195,5 +195,7 @@ function brain(tab: string, still: boolean): string {
    ], still) : ""}`;
 }
 
-export const DETAIL_ART: Record<DetailId, (tab: string, still: boolean) => string> = {heart, lungs, brain};
+/* the other organs have only their painted pictures (imageMap.ts): nothing drawn here */
+const none = () => "";
+export const DETAIL_ART: Record<DetailId, (tab: string, still: boolean) => string> = {heart, lungs, brain, liver: none, stomach: none, intestines: none, kidneys: none, bladder: none};
 export const DETAIL_DEFS = DDEFS;

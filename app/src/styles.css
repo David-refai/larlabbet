@@ -151,13 +151,13 @@ body.inles .wrap{max-width:1500px;padding-block:8px}body.inles .top{padding-bloc
 
 /* owl */
 .avatar .bob{animation:bob 3.2s ease-in-out infinite;transform-origin:60px 110px}
-.avatar .lids{transform-origin:60px 54px;transform:scaleY(0);animation:blink 4.5s infinite}
-.avatar .jaw{transform-origin:60px 70px;transition:transform .1s}
-.avatar.talking .jaw{animation:jaw .2s infinite alternate}
-.avatar .wl{transform-origin:28px 66px} .avatar .wr{transform-origin:92px 66px}
-.avatar.happy .wl{animation:flapL .35s 3 alternate} .avatar.happy .wr{animation:flapR .35s 3 alternate}
+.avatar .o-blink,.avatar .o-point{opacity:0}
+.avatar .o-blink{animation:oblink 4.5s infinite}
+.avatar.talking .o-point{opacity:1}.avatar.talking .o-base,.avatar.talking .o-blink{visibility:hidden}
+.avatar.happy .bob{animation:ohop .35s 3 alternate}
 @keyframes bob{50%{transform:translateY(-3px)}}
-@keyframes blink{0%,93%,100%{transform:scaleY(0)}96%{transform:scaleY(1)}}
+@keyframes oblink{0%,93%,100%{opacity:0}94%,98%{opacity:1}}
+@keyframes ohop{to{transform:translateY(-6px)}}
 @keyframes jaw{to{transform:translateY(3px)}}
 @keyframes flapL{to{transform:rotate(25deg)}} @keyframes flapR{to{transform:rotate(-25deg)}}
 

@@ -8,7 +8,7 @@
 import {Component, Suspense, lazy, useEffect, useLayoutEffect, useRef, useState, type ReactNode} from "react";
 import {showReact} from "./mount";
 import {T, map, trOn} from "../legacy/core.js";
-import {LAYERS, ORGANS, DETAILS, STAGES, EX3D, organById, tabsOf, partsOn, type LayerId, type OrganId, type DetailId, type T3, type StageId} from "../explorer/bodyData";
+import {LAYERS, ORGANS, DETAILS, DETAILS_3D, BITS, STAGES, EX3D, organById, bitById, tabsOf, partsOn, type LayerId, type OrganId, type DetailId, type T3, type StageId} from "../explorer/bodyData";
 import {createBodyRenderer2D} from "../explorer/imageRenderer";
 import {reducedMotion, type BodyRenderer} from "../explorer/renderer";
 import {want3D, no3D} from "../explorer/webgl";
@@ -35,6 +35,9 @@ const X = {
   iso: "Isolera", unIso: "Hela kroppen", inBody: "Visa i kroppen", wholeBody: "Hela kroppen", backTo: (o: string) => `← Tillbaka till ${o.toLowerCase()}`, hide: "Dölj", more: "Mer", detail: "Se delarna →", close: "Stäng",
   toBody: "← Till kroppen", tapPart: "Tryck på en etikett för att läsa om den delen.", play: "▶ Spela", pause: "⏸ Pausa",
   still: "Rörelserna är avstängda (minska rörelse). Prickarna visar vägen.", parts: "Delar", stages: "Steg",
+  bitT: {skeleton: "Tryck på ett ben", muscles: "Tryck på en muskel"} as Record<string, string>,
+  bitS: {skeleton: "Tryck på ett ben i bilden eller välj ett här.", muscles: "Tryck på en muskel i bilden eller välj en här."} as Record<string, string>,
+  otherLayer: "Välj Skelett eller Muskler för att trycka på ben och muskler, eller Organ för organen.",
 };
 
 /* the Swedish text and, when the translation setting is on, the translation under it */
@@ -45,8 +48,8 @@ function Tr({t}: {t: T3}) {
 
 /* what the pupil is looking at, kept while the app is open so that changing the translation
    setting (which redraws the screen) does not send them back to the start */
-type View = {layers: Set<LayerId>; sel: OrganId | null; iso: boolean; hidden: Set<OrganId>; det: DetailId | null; tab: string; part: string | null; flow: boolean; more: boolean};
-const START = (): View => ({layers: new Set(["skin"]), sel: null, iso: false, hidden: new Set(), det: null, tab: "oversikt", part: null, flow: true, more: false});
+type View = {layers: Set<LayerId>; sel: OrganId | null; iso: boolean; hidden: Set<OrganId>; det: DetailId | null; tab: string; part: string | null; flow: boolean; more: boolean; bit: string | null};
+const START = (): View => ({layers: new Set(["skin"]), sel: null, iso: false, hidden: new Set(), det: null, tab: "oversikt", part: null, flow: true, more: false, bit: null});
 let memo: View = START();
 
 function Explorer({keep}: {keep: boolean}) {
@@ -61,7 +64,8 @@ function Explorer({keep}: {keep: boolean}) {
   const [part, setPart] = useState(v0.part);
   const [flow, setFlow] = useState(v0.flow);
   const [more, setMore] = useState(v0.more);
-  memo = {layers, sel, iso, hidden, det, tab, part, flow, more};
+  const [bit, setBit] = useState(v0.bit);
+  memo = {layers, sel, iso, hidden, det, tab, part, flow, more, bit};
   const still = reducedMotion();
   const [use3d, setUse3d] = useState(() => WITH3D && want3D());
   const [compact, setCompact] = useState(false);
@@ -80,8 +84,19 @@ function Explorer({keep}: {keep: boolean}) {
     fit(); addEventListener("resize", fit);
     return () => removeEventListener("resize", fit);
   }, []);
-  const onPick = (p: {kind: "organ"; id: OrganId} | {kind: "part"; id: string}) => {
-    if (p.kind === "organ") { setSel(p.id); setMore(false); setPart(null); }
+  /* the detail view of an organ, when this stage has one (3D has models only for some) */
+  const detOf = (id: OrganId) => { const d = organById(id)!.detail; return d && (!use3d || DETAILS_3D.includes(d)) ? d : undefined; };
+  /* a tapped organ: zoom in on it and open its parts (the 3D stage selects it first) */
+  const openOrgan = (id: OrganId) => {
+    setSel(id); setMore(false); setPart(null); setBit(null);
+    if (use3d) return;
+    setIso(true);
+    const d = detOf(id);
+    if (d) { setDet(d); setTab(tabsOf(DETAILS[d], false)[0].id); setFlow(true); }
+  };
+  const onPick = (p: {kind: "organ"; id: OrganId} | {kind: "part"; id: string} | {kind: "bit"; id: string}) => {
+    if (p.kind === "organ") openOrgan(p.id);
+    else if (p.kind === "bit") setBit(x => x === p.id ? null : p.id);
     else setPart(x => x === p.id ? null : p.id);
   };
   useEffect(() => {
@@ -89,7 +104,7 @@ function Explorer({keep}: {keep: boolean}) {
     const r = createBodyRenderer2D(); R.current = r; r.mount(host.current!);
     r.onPick(onPick);
     /* the renderer gets the current view (it may take over from a failed 3D stage) */
-    r.setLayers(layers); r.select(sel); r.hide(hidden); r.isolate(iso && sel ? sel : null); r.detail(det, tab); r.setFlow(flow);
+    r.setLayers(layers); r.select(sel); r.hide(hidden); r.isolate(iso && sel ? sel : null); r.detail(det, tab); r.setFlow(flow); r.focusBit?.(bit);
     return () => { r.destroy(); R.current = null; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [use3d]);
@@ -108,36 +123,27 @@ function Explorer({keep}: {keep: boolean}) {
   useEffect(() => { R.current?.detail(det, tab); }, [det, tab]);
   useEffect(() => { R.current?.selectPart(part); }, [part, det, tab]);
   useEffect(() => { R.current?.setFlow(flow); }, [flow, det, tab]);
+  useEffect(() => { R.current?.focusBit?.(bit); }, [bit]);
 
   const organ = sel ? organById(sel)! : null, D = det ? DETAILS[det] : null;
   const skin = layers.has("skin");
   const stage: StageId = D ? "detail" : sel && !skin ? "organ" : skin ? "body" : "inside";
 
-  const goBody = () => { setDet(null); setIso(false); setSel(null); setLayers(new Set(["skin"])); };
-  const goInside = () => {
-    setDet(null); setIso(false); setSel(null);
-    setLayers(l => { const n = new Set(l); n.delete("skin"); if (n.size === 0) n.add("organs"); return n; });
-  };
-  const toggle = (id: LayerId) => setLayers(l => {
-    const n = new Set(l);
-    if (n.has(id)) n.delete(id); else n.add(id);
-    /* in 3D an inner layer switched on under the warm skin would not show: go inside (the skin turns see-through) */
-    if (use3d && id !== "skin" && n.has(id) && n.has("skin")) n.delete("skin");
-    if (id === "skin" && n.has("skin")) { setSel(null); setIso(false); }
-    if (id === "skin" && !n.has("skin") && n.size === 0) n.add("organs");
-    if (id === "organs" && !n.has("organs")) { setSel(null); setIso(false); }
-    return n;
-  });
+  const goBody = () => { setDet(null); setIso(false); setSel(null); setBit(null); setLayers(new Set(["skin"])); };
+  const goInside = () => { setDet(null); setIso(false); setSel(null); setBit(null); setLayers(new Set(["organs"])); };
+  /* one layer at a time: every picture is a whole body of its own, so they never lie on top of each other */
+  const toggle = (id: LayerId) => { setDet(null); setPart(null); setIso(false); setSel(null); setBit(null); setLayers(new Set([id])); };
   const openDetail = (id: DetailId) => { setIso(true); setDet(id); setTab(tabsOf(DETAILS[id], use3d)[0].id); setPart(null); setFlow(true); };
   /* back from an organ or a detail to the whole body (the layers stay as they are) */
-  const wholeBody = () => { setDet(null); setPart(null); setIso(false); setSel(null); };
+  const wholeBody = () => { setDet(null); setPart(null); setIso(false); setSel(null); setBit(null); };
   const stageGo = (s: StageId) => {
     if (s === "body") goBody();
     else if (s === "inside") goInside();
     else if (s === "organ" && sel) { setDet(null); setIso(true); }
-    else if (s === "detail" && organ?.detail) openDetail(organ.detail);
+    else if (s === "detail" && sel && detOf(sel)) openDetail(detOf(sel)!);
   };
-  const canStage = (s: StageId) => s === "body" || s === "inside" || (s === "organ" && !!sel) || (s === "detail" && !!organ?.detail);
+  const canStage = (s: StageId) => s === "body" || s === "inside" || (s === "organ" && !!sel) || (s === "detail" && !!sel && !!detOf(sel));
+  const B = bit ? bitById(bit) : null, bitLayer = layers.size === 1 && (layers.has("skeleton") || layers.has("muscles")) ? [...layers][0] : null;
   const pItem = D && part ? D.parts.find(p => p.id === part) : null;
   const shown = D ? partsOn(D, tab, use3d) : [];
   const note = use3d && <p className="x3note" id="x3note"><Tr t={EX3D.simplified} /></p>;
@@ -180,7 +186,7 @@ function Explorer({keep}: {keep: boolean}) {
         {tab === D.flowTab && (still ? <p className="muted xnote">{X.still}</p>
           : <button className="btn ghost" id="xplay" aria-pressed={flow} onClick={() => setFlow(f => !f)}>{flow ? X.pause : X.play}</button>)}
         {note}
-        <div className="row xbtns"><button className="btn ghost" id="xback" onClick={() => { setDet(null); setPart(null); }}>{use3d && organ ? X.backTo(organ.name.sv) : X.toBody}</button>
+        <div className="row xbtns"><button className="btn ghost" id="xback" onClick={() => use3d ? (setDet(null), setPart(null)) : wholeBody()}>{use3d && organ ? X.backTo(organ.name.sv) : X.toBody}</button>
           {use3d && <button className="btn ghost" id="xwhole" onClick={wholeBody}>{X.wholeBody}</button>}</div>
       </> : stage === "body" ? <>
         <h3>{X.bodyT}</h3><p>{X.bodyS}</p>
@@ -189,21 +195,30 @@ function Explorer({keep}: {keep: boolean}) {
         <span className="label">{LAYERS.find(l => l.id === organ.layer)!.name.sv}</span>
         <h3 id="xname">{organ.name.sv}{trOn() && <span className="trl" dir="auto">{organ.name[trOn() as "en" | "ar"]}</span>}</h3>
         <p id="xtext"><Tr t={organ.info} /></p>
-        {more && !organ.detail && <p className="xmore"><Tr t={organ.more} /></p>}
+        {more && !detOf(organ.id) && <p className="xmore"><Tr t={organ.more} /></p>}
         {note}
         <div className="row xbtns">
           <button className="btn" id="xiso" aria-pressed={iso} onClick={() => setIso(v => !v)}>{iso ? (use3d ? X.inBody : X.unIso) : X.iso}</button>
           <button className="btn ghost" id="xhide" onClick={() => { setHidden(h => new Set(h).add(organ.id)); setSel(null); setIso(false); }}>{X.hide}</button>
-          <button className="btn ghost" id="xmorebtn" aria-expanded={organ.detail ? undefined : more}
-            onClick={() => organ.detail ? openDetail(organ.detail) : setMore(m => !m)}>{organ.detail ? X.more + " →" : X.more}</button>
+          <button className="btn ghost" id="xmorebtn" aria-expanded={detOf(organ.id) ? undefined : more}
+            onClick={() => detOf(organ.id) ? openDetail(detOf(organ.id)!) : setMore(m => !m)}>{detOf(organ.id) ? X.more + " →" : X.more}</button>
           {use3d && iso && <button className="btn ghost" id="xwhole" onClick={wholeBody}>{EX3D.back.sv}</button>}
         </div>
+      </> : B ? <>
+        <span className="label">{LAYERS.find(l => l.id === B.layer)!.name.sv}</span>
+        <h3 id="xname">{B.name.sv}{trOn() && <span className="trl" dir="auto">{B.name[trOn() as "en" | "ar"]}</span>}</h3>
+        <p id="xtext"><Tr t={B.info} /></p>
+        <div className="row xbtns"><button className="btn ghost" id="xbitback" onClick={() => setBit(null)}>{X.toBody}</button></div>
+      </> : bitLayer && !use3d ? <>
+        <h3>{X.bitT[bitLayer]}</h3><p className="muted">{X.bitS[bitLayer]}</p>
+        <div className="xorgs" id="xbits">{BITS.filter(b => b.layer === bitLayer).map(b =>
+          <button key={b.id} className="xchip sm" data-bit={b.id} onClick={() => setBit(b.id)}>{b.name.sv}</button>)}</div>
       </> : <>
         <h3>{X.pickT}</h3>
         {layers.has("organs") ? <><p className="muted">{X.pickS}</p>
           <div className="xorgs">{ORGANS.filter(o => !hidden.has(o.id)).map(o =>
-            <button key={o.id} className="xchip sm" data-organ={o.id} onClick={() => { setSel(o.id); setMore(false); }}>{o.name.sv}</button>)}</div></>
-          : <p className="muted">{X.noOrgans}</p>}
+            <button key={o.id} className="xchip sm" data-organ={o.id} onClick={() => openOrgan(o.id)}>{o.name.sv}</button>)}</div></>
+          : <p className="muted">{use3d ? X.noOrgans : X.otherLayer}</p>}
         {hidden.size > 0 && <button className="btn ghost" id="xshowall" onClick={() => setHidden(new Set())}>{X.allBack}</button>}
         {innerOn && note}
       </>}

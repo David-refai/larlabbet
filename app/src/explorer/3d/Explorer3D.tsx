@@ -295,7 +295,7 @@ function Scene(p: Explorer3DProps & {resetKey: number; live: Live; onReady: () =
   const isoId = p.iso && p.sel ? p.sel : null;
   const view: CamView = useMemo(() => {
     if (p.det && D) {
-      const v = D.view(p.tab), c = partById(DETAIL_PART[p.det]).anchor.position;
+      const v = D.view(p.tab), c = partById(DETAIL_PART[p.det as keyof typeof DETAIL_PART]).anchor.position;
       return {target: new THREE.Vector3(v.target[0] + c[0], v.target[1] + c[1], v.target[2] + c[2]), dist: fitDist(v.radius, v.radius, aspect) + v.radius * .4, az: v.az ?? null, polar: v.polar ?? null};
     }
     if (isoId) {

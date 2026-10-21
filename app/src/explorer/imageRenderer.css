@@ -38,3 +38,8 @@
 @media (prefers-reduced-motion:reduce){
   .ximg .xbody .xl,.ximg .xbody .xorg .xkey,.ximg .xiso,.ximg .xdet .xhit{transition:none}
   .ximg .xdet .xbreathe,.ximg .xbody .xlabel{animation:none}}
+/* the bones and muscles: a soft yellow ring on hover, a stronger one on the tapped one */
+.ximg .xbody .xbit{cursor:pointer}
+.ximg .xbody .xbit .xhit{fill:#ffcf3a;fill-opacity:0;stroke:#f5b800;stroke-opacity:0;stroke-width:4;transition:fill-opacity .2s,stroke-opacity .2s}
+.ximg .xbody .xbit:hover .xhit,.ximg .xbody .xbit:focus-visible .xhit{fill-opacity:.12;stroke-opacity:.6}
+.ximg .xbody .xbit.sel .xhit{fill-opacity:.18;stroke-opacity:1;stroke-width:2}
