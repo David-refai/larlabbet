@@ -1,6 +1,6 @@
 const {chromium}=require(process.env.PW);const fs=require('fs');
 const fmap=Object.fromEntries(fs.readFileSync('tests/fonts/fontmap.txt','utf8').trim().split('\n').map(l=>l.split(' ')));
-(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:1000,height:1100},reducedMotion:'reduce'});
+(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:1000,height:1100},reducedMotion:'reduce'});await p.addInitScript(()=>{window.ONE_TRY=true});
 const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>m.type()==='error'&&errs.push(m.text()));
 await p.route(/jsdelivr.*d3/,r=>r.fulfill({body:fs.readFileSync('tests/vendor/d3.min.js','utf8'),contentType:'application/javascript'}));
 await p.route(/fonts\.googleapis/,r=>r.fulfill({body:fs.readFileSync('tests/fonts/fonts.css','utf8'),contentType:'text/css'}));

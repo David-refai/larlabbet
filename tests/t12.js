@@ -5,7 +5,7 @@ const R1={steps:[{say:"Tänk dig 48 godisar som ska delas lika på 8 påsar.",bo
  {say:"Räkna gånger-tabellen: 8 · 5 = 40, 8 · 6 = ?",board:[{k:"eq",s:"8 · 5 = 40"},{k:"line",from:0,to:48,step:8,marks:[40],jumps:[[0,8],[8,16],[16,24],[24,32],[32,40]]}]},
  {say:"Nästan där! Du klarar sista hoppet själv.",board:[{k:"array",rows:5,cols:8},{k:"eq",s:"8 · ? = 48",c:"g"}]}]};
 const R2={steps:[{say:"Pizza!",board:[{k:"frac",n:3,d:4},{k:"bar",parts:4,shade:3}]},{say:"Blocks and clock",board:[{k:"blocks",tens:4,ones:7},{k:"clock",h:7,m:15},{k:"note",s:"dropped: too tall"}]},{say:"bad items",board:[{k:"hack",s:"x"},{k:"eq",s:"<script>alert(1)</script> very long text that goes on"}]}]};
-(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:900,height:1100},reducedMotion:'reduce'});const errs=[];p.on('pageerror',e=>errs.push(e.message));
+(async()=>{const b=await chromium.launch();const p=await b.newPage({viewport:{width:900,height:1100},reducedMotion:'reduce'});await p.addInitScript(()=>{window.ONE_TRY=true});const errs=[];p.on('pageerror',e=>errs.push(e.message));
  await p.route(/jsdelivr.*d3/,r=>r.fulfill({body:fs.readFileSync('tests/vendor/d3.min.js','utf8'),contentType:'application/javascript'}));
  await p.route(/fonts\.googleapis/,r=>r.fulfill({body:fs.readFileSync('tests/fonts/fonts.css','utf8'),contentType:'text/css'}));
  await p.route(/fonts\.gstatic/,r=>{const f=fmap[r.request().url()];f?r.fulfill({body:fs.readFileSync(f),contentType:'font/woff2'}):r.abort()});

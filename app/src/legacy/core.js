@@ -2921,7 +2921,7 @@ function helpMeta(){Object.assign(HELP,HELPX);Object.assign(HINTS,HINTSX);LESSON
 
 /* =================== v8: placement test, mistake notebook, daily review, parents page, badges, cloud sync =================== */
 Object.assign(UI.sv,{placeTitle:"Nivåtest",placeHero:"Ett kort test först?",placeText:"Några snabba frågor, cirka 5 minuter, så vet jag vilken lektion du ska börja med. Det gör inget om du inte kan svaret.",
-  placeGo:"Starta testet",placeSkip:"Hoppa över",placeRedo:"Gör om nivåtestet",placeIntro:"Svara så gott du kan. Kan du inte, tryck på Vet inte. Det är helt okej!",dunno:"Vet inte",
+  placeGo:"Starta testet",placeSkip:"Hoppa över",placeRedo:"Gör om nivåtestet",placeIntro:"Svara så gott du kan. Kan du inte, tryck på Vet inte. Det är helt okej!",dunno:"Vet inte",tryAgain:"Inte riktigt. Titta en gång till och försök igen!",
   placeNo:"Okej, det lär vi oss snart.",placeDone:(k,n,t)=>`Klart! Du kan redan ${k} lektioner. Vi börjar med lektion ${n}: ${t}.`,placeAll:y=>`Wow, du kan redan hela årskurs ${y}! Gör dagens 5 minuter så att du inte glömmer.`,
   startLesson:n=>`Börja lektion ${n} →`,toLessons:"Till lektionerna",startHere:"Börja här",known:"Kan redan",
   dailyT:"Dagens 5 minuter",dailyS:"5 blandade frågor från det du har gjort",dailyDone:"Klar för idag ✓",dailyNeed:"Gör en lektion först",dailyIntro:"Fem snabba frågor från det du redan kan.",
@@ -2934,7 +2934,7 @@ Object.assign(UI.sv,{placeTitle:"Nivåtest",placeHero:"Ett kort test först?",pl
   pAll:"Alla lektioner",pStatus:{done:"Klar",known:"Kunde redan",started:"Påbörjad",none:"Inte påbörjad"},pLevel:["Lätt","Mellan","Svår"],pLvl:"Nivå",pStars:"Stjärnor",pHints:"Ledtrådar använda",pQs:"frågor",
   pMistakes:"i misstagsboken",fromBefore:t=>`🔁 Från en tidigare lektion: ${t}. `,remindBtn:"🔁 Påminn mig",tryLike:"Prova en liknande →",tryLikeH:"En liknande uppgift. ",sits:t=>`🧠 ”${t}” sitter nu!`,mem:{sits:"🧠 Sitter",due:"🔁 Dags att repetera",fading:"🔁 Börjar glömmas"},dueN:n=>n===1?"1 lektion att repetera i dag":`${n} lektioner att repetera i dag`,pSits:"sitter i minnet",pReview:"behöver repeteras",pFading:"börjar glömmas",pLow:"bara 1 stjärna",min:"min",savedCloud:"Framstegen sparas i ditt konto och syns på alla enheter där du är inloggad.",savedLocal:"Framstegen sparas bara i den här webbläsaren.",cloud:"Sparas i ditt konto"});
 Object.assign(UI.en,{placeTitle:"Placement test",placeHero:"A short test first?",placeText:"A few quick questions, about 5 minutes, so I know which lesson you should start with. It's fine if you don't know an answer.",
-  placeGo:"Start the test",placeSkip:"Skip",placeRedo:"Retake the placement test",placeIntro:"Answer as well as you can. If you don't know, press I don't know. That's totally fine!",dunno:"I don't know",
+  placeGo:"Start the test",placeSkip:"Skip",placeRedo:"Retake the placement test",placeIntro:"Answer as well as you can. If you don't know, press I don't know. That's totally fine!",dunno:"I don't know",tryAgain:"Not quite. Look again and have another try!",
   placeNo:"Okay, we'll learn that soon.",placeDone:(k,n,t)=>`Done! You already know ${k} lessons. We'll start with lesson ${n}: ${t}.`,placeAll:y=>`Wow, you already know all of Year ${y}! Do today's 5 minutes so you don't forget.`,
   startLesson:n=>`Start lesson ${n} →`,toLessons:"To the lessons",startHere:"Start here",known:"Already know",
   dailyT:"Today's 5 minutes",dailyS:"5 mixed questions from what you've done",dailyDone:"Done for today ✓",dailyNeed:"Do a lesson first",dailyIntro:"Five quick questions from what you already know.",
@@ -2945,7 +2945,7 @@ Object.assign(UI.en,{placeTitle:"Placement test",placeHero:"A short test first?"
   pAll:"All lessons",pStatus:{done:"Done",known:"Already knew",started:"Started",none:"Not started"},pLevel:["Easy","Medium","Hard"],pLvl:"Level",pStars:"Stars",pHints:"Hints used",pQs:"questions",
   pMistakes:"in the mistake notebook",fromBefore:t=>`🔁 From an earlier lesson: ${t}. `,remindBtn:"🔁 Remind me",tryLike:"Try a similar one →",tryLikeH:"A similar problem. ",sits:t=>`🧠 "${t}" has stuck!`,mem:{sits:"🧠 Stuck",due:"🔁 Time to review",fading:"🔁 Starting to fade"},dueN:n=>n===1?"1 lesson to review today":`${n} lessons to review today`,pSits:"stuck in memory",pReview:"needs review",pFading:"starting to fade",pLow:"only 1 star",min:"min",savedCloud:"Progress is saved in your account and shows on every device where you're signed in.",savedLocal:"Progress is saved only in this browser.",cloud:"Saved in your account"});
 Object.assign(UI.ar,{placeTitle:"اختبار تحديد المستوى",placeHero:"اختبار قصير أولًا؟",placeText:"بضعة أسئلة سريعة، حوالي 5 دقائق، لأعرف من أي درس تبدأ. لا بأس إن لم تعرف الجواب.",
-  placeGo:"ابدأ الاختبار",placeSkip:"تخطَّ",placeRedo:"أعِد اختبار المستوى",placeIntro:"أجب قدر ما تستطيع. إن لم تعرف، اضغط لا أعرف. هذا عادي تمامًا!",dunno:"لا أعرف",
+  placeGo:"ابدأ الاختبار",placeSkip:"تخطَّ",placeRedo:"أعِد اختبار المستوى",placeIntro:"أجب قدر ما تستطيع. إن لم تعرف، اضغط لا أعرف. هذا عادي تمامًا!",dunno:"لا أعرف",tryAgain:"ليس تمامًا. انظر مرة أخرى وحاول من جديد!",
   placeNo:"حسنًا، سنتعلم هذا قريبًا.",placeDone:(k,n,t)=>`انتهينا! أنت تعرف ${k} دروس. سنبدأ بالدرس ${n}: ${t}.`,placeAll:y=>`رائع، أنت تعرف كل ${UI.ar.courseY(y)}! قم بدقائق اليوم الخمس حتى لا تنسى.`,
   startLesson:n=>`ابدأ الدرس ${n} ←`,toLessons:"إلى الدروس",startHere:"ابدأ هنا",known:"تعرفه",
   dailyT:"دقائق اليوم الخمس",dailyS:"5 أسئلة منوّعة مما درسته",dailyDone:"أنجزتها اليوم ✓",dailyNeed:"أنهِ درسًا أولًا",dailyIntro:"خمسة أسئلة سريعة مما تعرفه.",
@@ -3105,10 +3105,15 @@ function poseProblem(ctx,g,o,done){
     :inp("an")+(g.signed?`<button class="btn ghost" id="sgn" aria-label="minus">±</button>`:"")}<button class="btn" id="chk">${T("check")}</button>${skip}</span>`;
   quiz.innerHTML="";const an=$("#an");if(an)setTimeout(()=>an.focus({preventScroll:true}),50);
   ctrl.onkeydown=e=>{if(e.key==="Enter"&&$("#chk"))$("#chk").click()};
+  /* a wrong answer gets one more try before the solution shows (not in exams, placement or "I don't know");
+     window.ONE_TRY = true turns it off (older tests that check the solution right after a wrong answer) */
+  const retry=(ok,el)=>{if(ok||o.exam||o.sol===false||ctx.cur.retried||window.ONE_TRY)return false;ctx.cur.retried=true;
+    talk(T("tryAgain"));if(el){el.classList.remove("shake");void el.offsetWidth;el.classList.add("shake")}return true};
   function judge(ok,shown){
     if(ctx.cur.judged)return;ctx.cur.judged=true;helpBtn.disabled=true;
     ctrl.innerHTML=`<span class="big">${ok?"✓":"✗"} ${esc(shown)}</span>`;ctx.cur.shown=shown;ctx.cur.ok=ok;
-    done(ok,ctx.cur.hinted);
+    /* right on the second try counts like right with a hint */
+    done(ok,ctx.cur.hinted||!!ctx.cur.retried);
     const nextBtn=`<button class="btn" id="nx" title="${T("keyNext")}">${o.next()}</button>`;
     if(o.exam){ctrl.innerHTML=`<span class="big">✎ ${esc(shown)}</span>`;talk(T("examSaved"));quiz.innerHTML=`<div class="row">${nextBtn}</div>`}
     else if(ok){av.classList.add("happy");talk(pick(T("right")));quiz.innerHTML=`<div class="row">${o.sol!==false?`<button class="btn ghost" id="sol">${T("showSol")}</button>`:""}${nextBtn}</div>`;
@@ -3119,18 +3124,23 @@ function poseProblem(ctx,g,o,done){
   const sk=$("#skip");if(sk)sk.onclick=()=>judge(false,T("dunno"));
   let lastIn=null;ctrl.addEventListener("focusin",e=>{if(e.target.tagName==="INPUT")lastIn=e.target});
   const sg=$("#sgn");if(sg){sg.onpointerdown=e=>e.preventDefault();sg.onclick=()=>{const a=lastIn||$("#an");a.value=/^\s*[-−]/.test(a.value)?a.value.replace(/^\s*[-−]/,""):"-"+a.value;a.focus()};}
-  if(g.kind==="choice"){ctrl.querySelectorAll(".ch").forEach(b=>b.onclick=()=>judge(+b.dataset.j===g.ans,L(g.opts[+b.dataset.j])));return}
+  if(g.kind==="choice"){ctrl.querySelectorAll(".ch").forEach(b=>b.onclick=()=>{const ok=+b.dataset.j===g.ans;
+    if(retry(ok,b)){b.disabled=true;b.classList.add("wrongpick");return}judge(ok,L(g.opts[+b.dataset.j]))});return}
   $("#chk").onclick=()=>{
     /* a written word or sentence (Svenska): case, spaces and end punctuation don't count; one letter off counts as right with a spelling note */
     if(g.kind==="text"){const nz=t=>String(t).toLowerCase().replace(/[.!?,;:”"'’]/g,"").replace(/\s+/g," ").trim(),v=nz(an.value);if(!v){toast(T("needAnswer"));return}
-      const acc=[].concat(g.ans).map(nz),near=(a,b)=>{if(Math.abs(a.length-b.length)>1)return false;let i=0,j=0,e=0;while(i<a.length&&j<b.length){if(a[i]===b[j]){i++;j++;continue}if(++e>1)return false;if(a.length>b.length)i++;else if(b.length>a.length)j++;else{i++;j++}}return e+(a.length-i)+(b.length-j)<=1};
-      const ok=acc.includes(v),almost=!ok&&v.length>4&&acc.some(a=>near(a,v));if(almost&&!o.exam)toast("✏️ "+[].concat(g.ans)[0]);judge(ok||almost,an.value.trim());return}
+      /* "write only the ending": the whole word, or the whole sentence, is right too */
+      const acc=[...[].concat(g.ans),...(g.show?[g.show]:[]),...(g.full||[])].map(nz),near=(a,b)=>{if(Math.abs(a.length-b.length)>1)return false;let i=0,j=0,e=0;while(i<a.length&&j<b.length){if(a[i]===b[j]){i++;j++;continue}if(++e>1)return false;if(a.length>b.length)i++;else if(b.length>a.length)j++;else{i++;j++}}return e+(a.length-i)+(b.length-j)<=1};
+      const ok=acc.includes(v),almost=!ok&&v.length>4&&acc.some(a=>near(a,v));if(almost&&!o.exam)toast("✏️ "+[].concat(g.ans)[0]);
+      if(retry(ok||almost,an)){an.select();return}judge(ok||almost,an.value.trim());return}
     const v=numIn(an.value),d=g.kind==="num"?0:numIn($("#ad").value);
     if(isNaN(v)||(g.kind!=="num"&&isNaN(d))||(g.kind==="frac"&&!d)){toast(T("needAnswer"));return}
     const gcd=(x,y)=>y?gcd(y,x%y):Math.abs(x);
-    if(g.kind==="frac")judge(v*g.ans[1]===g.ans[0]*d&&(!g.simplest||gcd(v,d)===1),v+"/"+d);
-    else if(g.kind==="pair")judge(g.check?g.check(v,d):v===g.ans[0]&&d===g.ans[1],`${v}${g.sep||" "}${g.sep===":"?String(d).padStart(2,"0"):d}`);
-    else judge(Math.abs(v-g.ans)<1e-6,an.value.trim())};
+    const res=g.kind==="frac"?[v*g.ans[1]===g.ans[0]*d&&(!g.simplest||gcd(v,d)===1),v+"/"+d]
+      :g.kind==="pair"?[g.check?g.check(v,d):v===g.ans[0]&&d===g.ans[1],`${v}${g.sep||" "}${g.sep===":"?String(d).padStart(2,"0"):d}`]
+      :[Math.abs(v-g.ans)<1e-6,an.value.trim()];
+    if(retry(res[0],an)){an.select();return}
+    judge(res[0],res[1])};
 }
 
 /* ---- the owl's speech for screens outside a lesson ---- */

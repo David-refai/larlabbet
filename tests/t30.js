@@ -9,17 +9,17 @@ const ok=(c,m)=>{console.log((c?'PASS ':'FAIL ')+m);if(!c)process.exitCode=1};
 const BASE=['f7m1','f7m2','f7m3','f7m4','f7m5'],MORE=['f7m6','f7m7','f7m8'],IDS=[...BASE,...MORE];
 (async()=>{const b=await chromium.launch();
 for(const [w,h,tag,rm] of [[1366,768,'laptop','no-preference'],[390,844,'phone','reduce']]){
- const p=await b.newPage({viewport:{width:w,height:h},reducedMotion:rm});p.errs=[];p.on('pageerror',e=>p.errs.push(e.message));
+ const p=await b.newPage({viewport:{width:w,height:h},reducedMotion:rm});await p.addInitScript(()=>{window.ONE_TRY=true});p.errs=[];p.on('pageerror',e=>p.errs.push(e.message));
  await p.route(/jsdelivr.*d3/,r=>r.fulfill({body:fs.readFileSync('tests/vendor/d3.min.js','utf8'),contentType:'application/javascript'}));
  await p.route(/fonts\.googleapis/,r=>r.fulfill({body:fs.readFileSync('tests/fonts/fonts.css','utf8'),contentType:'text/css'}));
  await p.route(/fonts\.gstatic/,r=>{const f=fmap[r.request().url()];f?r.fulfill({body:fs.readFileSync(f),contentType:'font/woff2'}):r.abort()});
  await p.goto('file://'+process.cwd()+'/build/test.html');await p.waitForTimeout(500);
  await p.fill('#nm','Test');await p.click('#gr button[data-g="7"]');await p.click('#go');await p.waitForTimeout(300);
 
- /* the lessons: Year 7, ord 1-8, 7-9 scenes, explanations ≤ 330 characters and translated */
+ /* the lessons: Year 7, ord 1-8, 7-9 scenes (density, f7m3, up to 18: David wanted it detailed), explanations ≤ 330 characters and translated */
  const meta=await p.evaluate(ids=>ids.map(id=>{const l=LESSONS.find(x=>x.id===id);return l?{id,ord:l.ord,n:l.steps.length,year:l.year,
    long:l.steps.filter(s=>s.say.sv.length>330).length,tr:l.steps.every(s=>s.say.en&&s.say.ar)}:{id}}),IDS);
- ok(meta.every((m,k)=>m.n>=7&&m.n<=9&&m.year===7&&m.ord===k+1&&m.long===0&&m.tr),tag+' 8 lessons, 7-9 scenes, ord 1-8, explanations ≤ 330 chars '+JSON.stringify(meta.map(m=>m.id+':'+m.n+'/'+m.ord+'/'+m.long)));
+ ok(meta.every((m,k)=>m.n>=7&&(m.n<=9||m.id==='f7m3'&&m.n<=18)&&m.year===7&&m.ord===k+1&&m.long===0&&m.tr),tag+' 8 lessons, 7-9 scenes, ord 1-8, explanations ≤ 330 chars '+JSON.stringify(meta.map(m=>m.id+':'+m.n+'/'+m.ord+'/'+m.long)));
  /* every question bank gives sane questions on every level */
  const bad=await p.evaluate(ids=>{const out=[];ids.forEach(id=>{const l=LESSONS.find(x=>x.id===id);for(let lv=0;lv<3;lv++)for(let k=0;k<60;k++){const g=l.gen(lv);
    if(!g||!g.q||!g.show||!g.qs)out.push(id+lv+' empty');else if(g.kind==='choice'&&(g.ans<0||g.opts.length!==4||new Set(g.opts).size!==4||g.opts[g.ans]!==g.show))out.push(id+lv+' opts '+g.opts.join('/'));

@@ -25,7 +25,8 @@ for(const lg of ['sv','ar']){
  let gotW=false;for(let q=0;q<8&&!(await p.$('#mapb'));q++){
   const isW=await p.evaluate(()=>/Ordkoll|اختبار كلمة/.test(document.querySelector("#say").textContent));
   if(isW){gotW=true;await p.screenshot({path:`${D}/${lg}-wordq.png`})}
-  if(await p.$('.ch'))await p.click('.ch');else{await p.fill('#an','1');await p.click('#chk')}
+  /* a wrong answer gets one more try: answer twice when needed */
+  for(let t=0;t<2&&!(await p.$('#nx'));t++){if(await p.$('.ch:not([disabled])'))await p.click('.ch:not([disabled])');else{await p.fill('#an','1');await p.click('#chk')}await p.waitForTimeout(150)}
   await p.waitForTimeout(200);if(await p.$('#nx'))await p.click('#nx');await p.waitForTimeout(250);
   for(let k=0;k<4;k++){if(await p.$('#bpop:not([hidden])')){await p.click('#bpop');await p.waitForTimeout(200)}}}
  ok(gotW,lg+' a word-check question came up');ok(!!await p.$('#mapb'),lg+' practice ends');

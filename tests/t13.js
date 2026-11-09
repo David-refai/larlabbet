@@ -2,7 +2,7 @@ const {chromium}=require(process.env.PW);const fs=require('fs');
 const fmap=Object.fromEntries(fs.readFileSync('tests/fonts/fontmap.txt','utf8').trim().split('\n').map(l=>l.split(' ')));
 const D='build/shots5';fs.mkdirSync(D,{recursive:true});
 (async()=>{const b=await chromium.launch();
-const mk=async(w,h)=>{const p=await b.newPage({viewport:{width:w,height:h},reducedMotion:'reduce'});p.errs=[];p.on('pageerror',e=>p.errs.push(e.message));
+const mk=async(w,h)=>{const p=await b.newPage({viewport:{width:w,height:h},reducedMotion:'reduce'});await p.addInitScript(()=>{window.ONE_TRY=true});p.errs=[];p.on('pageerror',e=>p.errs.push(e.message));
  await p.route(/jsdelivr.*d3/,r=>r.fulfill({body:fs.readFileSync('tests/vendor/d3.min.js','utf8'),contentType:'application/javascript'}));
  await p.route(/fonts\.googleapis/,r=>r.fulfill({body:fs.readFileSync('tests/fonts/fonts.css','utf8'),contentType:'text/css'}));
  await p.route(/fonts\.gstatic/,r=>{const f=fmap[r.request().url()];f?r.fulfill({body:fs.readFileSync(f),contentType:'font/woff2'}):r.abort()});

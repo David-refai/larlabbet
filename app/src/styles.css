@@ -446,3 +446,5 @@ body.inles .wrap{max-width:1500px;padding-block:8px}body.inles .top{padding-bloc
   .lfoot{grid-column:2;grid-row:2;flex-wrap:wrap;border-top:1px solid var(--line);padding:10px 0 0 14px;border-inline-start:1px solid var(--line);row-gap:10px}
   .lfoot .progress{order:-1;flex:1 1 100%}
   .lfoot #next{flex:1;min-width:0}}
+/* a wrong first pick: crossed out, the pupil tries another */
+.btn.ch.wrongpick{opacity:.55;text-decoration:line-through;box-shadow:0 0 0 2px var(--bad) inset}

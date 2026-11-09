@@ -44,7 +44,8 @@ const choice = (right: string, wrong: string[], show: string, q: Draw[], sol: Dr
   const opts = shuffle([right, ...wrong.slice(0, 2)]);
   return {kind: "choice", opts, ans: opts.indexOf(right), show, q, sol, hint: {say: hint, draw: []}};
 };
-const written = (ans: string[], show: string, q: Draw[], sol: Draw[], hint: T3): Problem => ({kind: "text", ans, show, q, sol, hint: {say: hint, draw: []}});
+/* full: the whole sentence, also accepted when the pupil writes more than the ending */
+const written = (ans: string[], show: string, q: Draw[], sol: Draw[], hint: T3, full: string[] = []): Problem => ({kind: "text", ans, show, full, q, sol, hint: {say: hint, draw: []}} as Problem);
 
 /* ======================= unit 1: Yasmin börjar i 4A (en och ett) ======================= */
 word("klassrum", {sv: "klassrum (ett)", m: "klassrum(met|men)?", d: t3("Rummet där en klass har lektioner.", "The room where a class has lessons.", "الغرفة التي يدرس فيها الصفّ."), ex: "Klassrummet är stort och ljust.", tr: {en: "classroom", ar: "غرفة الصفّ"}, syn: ["lektionssal"], wrong: ["kök", "badrum"], gap: ["Karin står vid tavlan längst fram i", "klassrummet", "."], gapForm: "klassrummet", form: "ett klassrum – klassrum"});
@@ -195,7 +196,7 @@ defineUnit({id: "sv4b", year: 4, ord: 2, title: t3("Leos hund Kexi", "Leo's dog 
     const hint = t3("Säg ordet högt: en " + s + ", två … Ord som slutar på -a får ofta -or.", "Say the word aloud: one " + s + ", two … Words ending in -a often get -or.", "قل الكلمة بصوت عالٍ: واحد " + s + "، اثنان … الكلمات المنتهية بـ ‎-a تأخذ غالبًا ‎-or.");
     const sol = [A.tx(`${g} ${s} → ${p}`, 400, 430, 44, "g")];
     if (write || lv === 2) { const [st, e] = plSplit(s, p);
-      return written([e, "-" + e], p, Q(t3("Skriv bara ändelsen.", "Write only the ending.", "اكتب النهاية فقط."), A.tx(`${g} ${s}`, 400, 200, 48, "k"), A.tx(`två ${st}___`, 400, 300, 56, "b")), sol, hint); }
+      return written([e, "-" + e], p, Q(t3("Skriv bara ändelsen.", "Write only the ending.", "اكتب النهاية فقط."), A.tx(`${g} ${s}`, 400, 200, 48, "k"), A.tx(`två ${st}___`, 400, 300, 56, "b")), sol, hint, [`två ${p}`]); }
     if (lv === 0) return choice(p, [w1, w2], p, Q(t3("Hur blir det i plural?", "What is the plural?", "ما صيغة الجمع؟"), A.tx(`${g} ${s}  →  två …`, 400, 250, 52, "k")), sol, hint);
     return choice(p, [w1, w2], p, Q(t3("Vilket ord passar i luckan?", "Which word fits the gap?", "أيّ كلمة تناسب الفراغ؟"), ...svLines(sent, 220, 42), qt(`(${g} ${s})`, 400, 360, 30, "k")), [...svLines(sent.replace("____", p), 420, 36, "g")], hint);
   },
@@ -263,7 +264,7 @@ defineUnit({id: "sv4c", year: 4, ord: 3, title: t3("En vanlig morgon", "An ordin
     const pool = lv === 0 ? PR4.filter(x => x[2] === "ar") : PR4, [inf, st, e, wr, sent] = pick(write || lv === 2 ? PR4 : pool), pres = st + e;
     const hint = t3("Verbet i presens slutar på -r. Är det -ar, -er eller bara -r? Säg det högt: hon " + pres + ".", "The verb in the present tense ends in -r. Is it -ar, -er or just -r? Say it aloud: hon " + pres + ".", "الفعل في المضارع ينتهي بـ ‎-r. هل هو ‎-ar أم ‎-er أم ‎-r فقط؟ قلها بصوت عالٍ: hon " + pres + ".");
     const sol = svLines(sent.replace("____", pres), 420, 38, "g");
-    if (write || lv === 2) return written([e, "-" + e], pres, Q(t3("Skriv bara ändelsen.", "Write only the ending.", "اكتب النهاية فقط."), ...svLines(sent.replace("____", st + "___"), 220, 46), qt(`(${inf})`, 400, 340, 30, "k")), sol, hint);
+    if (write || lv === 2) return written([e, "-" + e], pres, Q(t3("Skriv bara ändelsen.", "Write only the ending.", "اكتب النهاية فقط."), ...svLines(sent.replace("____", st + "___"), 220, 46), qt(`(${inf})`, 400, 340, 30, "k")), sol, hint, [sent.replace("____", pres)]);
     return choice(pres, [inf, wr], pres, Q(t3("Vilken form passar? Det händer nu.", "Which form fits? It is happening now.", "أيّ صيغة تناسب؟ يحدث ذلك الآن."), ...svLines(sent, 220, 46), qt(`(${inf})`, 400, 340, 30, "k")), sol, hint);
   },
   help: [{say: t3("Presens slutar på -r: vaknar, äter, går. Samma för jag, du, hon och vi.", "The present tense ends in -r: vaknar, äter, går. The same for I, you, she and we.", "المضارع ينتهي بـ ‎-r: ‏vaknar وäter وgår، وهو نفسه مع jag وdu وhon وvi."),
@@ -335,7 +336,7 @@ defineUnit({id: "sv4d", year: 4, ord: 4, title: t3("Utflykten till skogen", "The
     const pool = write || lv === 2 ? PT4 : lv === 0 ? PT4.filter(x => x[2] === "ade") : PT4.filter(x => x[2] !== "ade"), [inf, st, e, w1, w2, sent] = pick(pool), past = st + e;
     const hint = t3("Det hände förut. Säg verbet högt: -ade, -de eller -te? Om verbet slutar på -ar i nutid, blir det -ade.", "It happened before. Say the verb aloud: -ade, -de or -te? If the verb ends in -ar in the present, it becomes -ade.", "حدث هذا من قبل. قل الفعل بصوت عالٍ: ‎-ade أم ‎-de أم ‎-te؟ إذا كان الفعل ينتهي بـ ‎-ar في المضارع فيصبح ‎-ade.");
     const sol = svLines(sent.replace("____", past), 420, 38, "g");
-    if (write || lv === 2) return written([e, "-" + e], past, Q(t3("Det hände förut. Skriv bara ändelsen.", "It happened before. Write only the ending.", "حدث هذا من قبل. اكتب النهاية فقط."), ...svLines(sent.replace("____", st + "___"), 220, 46), qt(`(${inf})`, 400, 340, 30, "k")), sol, hint);
+    if (write || lv === 2) return written([e, "-" + e], past, Q(t3("Det hände förut. Skriv bara ändelsen.", "It happened before. Write only the ending.", "حدث هذا من قبل. اكتب النهاية فقط."), ...svLines(sent.replace("____", st + "___"), 220, 46), qt(`(${inf})`, 400, 340, 30, "k")), sol, hint, [sent.replace("____", past)]);
     return choice(past, [w1, w2], past, Q(t3("Det hände förut. Vilken form är rätt?", "It happened before. Which form is right?", "حدث هذا من قبل. أيّ صيغة صحيحة؟"), ...svLines(sent, 220, 46), qt(`(${inf})`, 400, 340, 30, "k")), sol, hint);
   },
   help: [{say: t3("Dåtid: plockade, hörde, lekte. Samma för alla personer.", "Past tense: plockade, hörde, lekte. The same for every person.", "الماضي: plockade وhörde وlekte، والصيغة واحدة لكل الأشخاص."),
