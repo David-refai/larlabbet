@@ -6,7 +6,7 @@ const ok=(c,m)=>{console.log((c?'PASS ':'FAIL ')+m);if(!c)process.exitCode=1};
 const IDS=['no4a','no4b','no4c','no4d','no4e','no4f','no4g'];
 (async()=>{const b=await chromium.launch();
 for(const [w,h,tag] of [[1280,720,'laptop'],[390,844,'phone']]){
- const p=await b.newPage({viewport:{width:w,height:h},reducedMotion:'reduce'});p.errs=[];p.on('pageerror',e=>p.errs.push(e.message));
+ const p=await b.newPage({viewport:{width:w,height:h},reducedMotion:'reduce'});await p.addInitScript(()=>{window.ONE_TRY=true});p.errs=[];p.on('pageerror',e=>p.errs.push(e.message));
  await p.route(/jsdelivr.*d3/,r=>r.fulfill({body:fs.readFileSync('tests/vendor/d3.min.js','utf8'),contentType:'application/javascript'}));
  await p.route(/fonts\.googleapis/,r=>r.fulfill({body:fs.readFileSync('tests/fonts/fonts.css','utf8'),contentType:'text/css'}));
  await p.route(/fonts\.gstatic/,r=>{const f=fmap[r.request().url()];f?r.fulfill({body:fs.readFileSync(f),contentType:'font/woff2'}):r.abort()});
