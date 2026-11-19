@@ -3453,13 +3453,13 @@ function map(){
   if(S.grade===1){screen=map;leave();hud();showLittle();return}
   screen=map;leave();revFill();hud();showMap()}
 
-function lesson(id){
+function lesson(id,at=0){
   if(!S.name||!S.grade){welcome();return}
   {const X=LESSONS.find(l=>l.id===id);if(X&&X.exam){exam(id);return}}
-  screen=()=>lesson(id);leave();
+  screen=()=>lesson(id,at);leave();
   const Ls=LESSONS.find(l=>l.id===id);wordsSvOnly=!!Ls&&Ls.subject==="swedish";if(!(S.lessons[id]||{}).seen){S.lessons[id]=Object.assign({stars:0},S.lessons[id],{seen:true});saveLocal()}
   app.innerHTML=`<div class="lesson">
-   <div class="lhead"><button class="btn ghost" id="back" style="padding:5px 16px">${T("back")}</button><h2>${L(Ls.title)}</h2></div>
+   <div class="lhead"><button class="btn ghost" id="back" style="padding:5px 16px">${T("back")}</button><h2>${L(Ls.title)}</h2>${Ls.parts?`<nav class="qparts" id="qparts">${Ls.parts.map((p,k)=>`<button class="qp" data-k="${k}" title="${esc(L(p.name))}"><span>${p.icon||""}</span><b>${esc(L(p.name))}</b></button>`).join("")}</nav>`:""}</div>
    <div class="lcard"><div class="lmain"><div class="lboard"><div class="stage" id="stage"></div><div class="ctrl" id="ctrl"></div></div>
    <div class="teacher"><div id="av">${OWL}</div>
      <div class="bubble"><span class="who">${T("teacher")}</span><p id="say" title="${T("tapToSkip")}"></p><div class="wchips" id="words" hidden></div>
@@ -3477,31 +3477,60 @@ function lesson(id){
     finish=()=>{clearInterval(typeT);say.innerHTML=esc(full).replace(/(\d[\d\u00a0 ,.:\/·×÷+−=≈<>□²-]*\d|\d)/g,'<b class="n">$1</b>')+trSpan(tr);typed=true;av.classList.remove("talking");const c=cb;cb=null;c&&c()};
     if(REDUCED){finish();return}let n=0;typeT=setInterval(()=>{n+=2;say.textContent=text.slice(0,n);if(n>=text.length)finish()},30)}
   say.onclick=()=>{if(!typed)finish()};
-  function prog(){$("#prog").innerHTML=Ls.steps.map((_,k)=>`<i class="${k<i?"done":k===i?"now":""}"></i>`).join("")+`<i class="${i>=Ls.steps.length?"now":""}"></i>`}
+  /* a lesson in parts (Snabbmatte) shows the dots of the part on screen, and marks that part in the header */
+  const partAt=k=>{let p=0;(Ls.parts||[]).forEach((q,j)=>{if(q.at<=k)p=j});return p};
+  function prog(){if(Ls.parts){const p=partAt(i),a=Ls.parts[p].at,b=p+1<Ls.parts.length?Ls.parts[p+1].at:Ls.steps.length;
+      $("#prog").innerHTML=Ls.steps.slice(a,b).map((s,j)=>`<i class="${s.drill?"qz ":""}${a+j<i?"done":a+j===i?"now":""}"></i>`).join("");
+      document.querySelectorAll("#qparts .qp").forEach((x,j)=>{x.classList.toggle("on",j===p);x.classList.toggle("ok",(qres[j]||0)>0)});return}
+    $("#prog").innerHTML=Ls.steps.map((_,k)=>`<i class="${k<i?"done":k===i?"now":""}"></i>`).join("")+`<i class="${i>=Ls.steps.length?"now":""}"></i>`}
+  const qres={};
   const lockNext=()=>{next.disabled=!(typed&&taskDone&&!busy)};
   const api={done(){if(taskDone)return;taskDone=true;taskEl.textContent="✓ "+T("great");taskEl.classList.add("ok");av.classList.add("happy");addXP(10);toast(T("great")+" +10");lockNext()}};
   active=Ls.mount($("#stage"),$("#ctrl"),api);const ctx={wb:active.wb,talk:(t,c)=>talk(t,c),helpBtn,av,cur:null};
   /* "Explain it to me": Claude gets the scene or the problem on screen by itself; the student may add a question */
-  const aiBtn=$("#ai"),inScene=()=>i<Ls.steps.length;aiShow();
+  const aiBtn=$("#ai"),inScene=()=>i<Ls.steps.length&&!Ls.steps[i].drill;aiShow();
   const aiEnv={ctx,btn:aiBtn,info:()=>inScene()?sceneInfo(Ls,i):probInfo(ctx.curL||Ls,ctx.cur),
     enter(){helpOn=true;next.hidden=prev.hidden=again.hidden=helpBtn.hidden=aiBtn.hidden=true;taskEl.hidden=true;who.textContent="✨ "+T("aiWho")},
     exit(){helpOn=false;who.textContent=T("teacher");aiShow();
       if(inScene()){next.hidden=prev.hidden=again.hidden=helpBtn.hidden=false;go(i)}
       else if(ctx.cur){helpBtn.hidden=!ctx.cur.g.hint;ctx.wb.run(probBoard(ctx.cur),true)}}};
   aiBtn.onclick=()=>{if(inScene()||ctx.cur)aiHelp(aiEnv)};
-  function go(k){i=k;const s=Ls.steps[k];taskDone=!s.task;taskEl.hidden=!s.task;taskEl.classList.remove("ok");if(s.task)taskEl.textContent=L(s.task);
+  function go(k){i=k;const s=Ls.steps[k];
+    if(Ls.parts){$("#ctrl").innerHTML="";ctx.cur=null;next.hidden=prev.hidden=again.hidden=false;helpBtn.hidden=!Ls.help}
+    if(s.drill){drillAt(k);return}
+    taskDone=!s.task;taskEl.hidden=!s.task;taskEl.classList.remove("ok");if(s.task)taskEl.textContent=L(s.task);
     $("#quiz").innerHTML="";next.disabled=true;const r=active.step(k);
     if(r&&r.then){busy=true;r.then(()=>{if(i===k){busy=false;lockNext()}})}else busy=false;
     showWords([...new Set([...termsIn([s.say&&s.say.sv],true),...(lang!=="sv"?termsIn([L(s.say)]):[])])].slice(0,4));
-    prev.disabled=k===0;prog();next.textContent=k===Ls.steps.length-1?T(Ls.gen?"toPractice":"toChallenge"):T("next");talk(LT(s.say),lockNext)}
+    prev.disabled=k===0;prog();next.textContent=k===Ls.steps.length-1?(Ls.parts?T("finish"):T(Ls.gen?"toPractice":"toChallenge")):Ls.steps[k+1].drill?T("toPractice"):T("next");talk(LT(s.say),lockNext)}
   const wl=$("#wlist");if(wl)wl.onclick=()=>wordCard(lessonWords(Ls),T("wordsT"));
-  next.onclick=()=>{if(i<Ls.steps.length-1)go(i+1);else if(Ls.gen)practice();else challenge()};
-  again.onclick=()=>go(i);prev.onclick=()=>{if(i>0&&i<Ls.steps.length)go(i-1)};
+  next.onclick=()=>{if(i<Ls.steps.length-1)go(i+1);else if(Ls.parts)partsEnd();else if(Ls.gen)practice();else challenge()};
+  document.querySelectorAll("#qparts .qp").forEach(b=>b.onclick=()=>{if(helpOn)return;active.stop();go(Ls.parts[+b.dataset.k].at)});
+  /* a drill inside a lesson in parts: a few questions on what was just shown, easy to harder (gen gets the question number), then the lesson goes on */
+  function drillAt(k){const D=Ls.steps[k].drill,N=D.n||5,p=partAt(k);let n=0,right=0;
+    active.stop();prog();taskEl.hidden=true;next.hidden=prev.hidden=again.hidden=true;$("#quiz").innerHTML="";
+    const nxt={next:()=>n<N?T("nextProblem"):k<Ls.steps.length-1?T("next"):T("finish"),onNext:()=>n<N?ask():done()};
+    function ask(){if(i!==k)return;ctx.curL=null;
+      poseProblem(ctx,D.gen(n),Object.assign({head:(n===0&&D.intro?L(D.intro)+" ":"")+T("qOf")(n+1,N),hint:true},nxt),
+        ok=>{n++;if(ok){right++;addXP(10);toast(T("great")+" +10")}})}
+    function done(){if(i!==k)return;qres[p]=Math.max(qres[p]||0,right);ctx.cur=null;$("#ctrl").innerHTML="";
+      if(k<Ls.steps.length-1)go(k+1);else partsEnd()}
+    ask()}
+  /* the end of a lesson in parts: stars from all its drills */
+  function partsEnd(){const tot=Ls.steps.reduce((a,s)=>a+(s.drill?s.drill.n||5:0),0),got=Object.values(qres).reduce((a,b)=>a+b,0),st=tot?Math.round(got*3/tot):3;
+    active.stop();i=Ls.steps.length;ctx.cur=null;$("#ctrl").innerHTML="";next.hidden=prev.hidden=again.hidden=true;taskEl.hidden=true;helpBtn.hidden=true;
+    ctx.wb.run([A.wipe(),A.tx(L(Ls.title),400,120,54,"b"),A.tx(`${got} / ${tot}`,400,280,110,"g"),A.tx(L(t3("rätt svar","right answers","إجابات صحيحة")),400,360,40)]);
+    const pv=S.lessons[id]||{};S.lessons[id]=Object.assign({},pv,{stars:Math.max(pv.stars||0,st)});save();hud();checkBadges();
+    $("#quiz").innerHTML=`<div class="row"><span class="stars" style="font-size:1.6rem">${[0,1,2].map(j=>`<span class="${j<st?"":"off"}">★</span>`).join("")}</span>
+      <button class="btn" id="mapb">${T("another")}</button><button class="btn ghost" id="rep">${T("redo")}</button></div>`;
+    av.classList.add("happy");talk(st===3?T("end3"):got?T("endSome")(got,tot):T("end0"));$("#mapb").onclick=map;$("#rep").onclick=()=>lesson(id)}
+  const back1=()=>{let j=i-1;while(j>0&&Ls.steps[j].drill)j--;go(j)};
+  again.onclick=()=>go(i);prev.onclick=()=>{if(i>0&&i<Ls.steps.length)back1()};
   $("#back").onclick=map;
   /* keyboard: the forward arrow works like Next (first press finishes the drawing), the backward arrow goes one scene back */
   /* "I don't get it": in the scenes it shows a simpler explanation, in practice a hint that draws part of the method */
   helpBtn.onclick=()=>{
-    if(i>=Ls.steps.length){hintNow(ctx);return}
+    if(i>=Ls.steps.length||Ls.steps[i].drill){hintNow(ctx);return}
     if(helpOn)return;
     /* no simpler explanation written for this lesson yet: Olle explains it (when available), else the scene is shown again */
     if(!Ls.help){const ab=$("#ai");if(ab&&!ab.hidden){ab.click();return}toast(T("helpAgain"));go(i);return}
@@ -3518,8 +3547,8 @@ function lesson(id){
       const nx=$("#nx");if(nx){nx.click();return}
       if(i>=Ls.steps.length||next.hidden)return;
       if(!typed)finish();if(busy&&active&&active.wb){active.wb.fast=true;return}if(!next.disabled)next.click()}
-    else if(e.key===bwd||e.key==="PageUp"){if(typing)return;e.preventDefault();if(i>0&&i<Ls.steps.length)go(i-1)}};
-  go(0);
+    else if(e.key===bwd||e.key==="PageUp"){if(typing)return;e.preventDefault();if(i>0&&i<Ls.steps.length&&!Ls.steps[i].drill)back1()}};
+  go(Math.min(at,Ls.steps.length-1));
 
   /* practice on the board: the student answers, then the solution is drawn by hand. Right answers raise the level, wrong ones lower it. */
   function practice(){

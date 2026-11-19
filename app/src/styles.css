@@ -448,3 +448,30 @@ body.inles .wrap{max-width:1500px;padding-block:8px}body.inles .top{padding-bloc
   .lfoot #next{flex:1;min-width:0}}
 /* a wrong first pick: crossed out, the pupil tries another */
 .btn.ch.wrongpick{opacity:.55;text-decoration:line-through;box-shadow:0 0 0 2px var(--bad) inset}
+
+/* ---------- Snabbmatte: a lesson in parts; the parts are chips in the lesson header ---------- */
+.qparts{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;flex:0 1 auto;max-width:62%}
+.qparts::-webkit-scrollbar{display:none}
+.qparts .qp{display:flex;align-items:center;gap:5px;border:0;border-radius:999px;padding:5px 11px;background:var(--bg);color:var(--ink);font:inherit;font-size:.85rem;cursor:pointer;white-space:nowrap;box-shadow:0 0 0 1.5px var(--line) inset}
+.qparts .qp span{font-size:1rem}
+.qparts .qp.on{background:var(--blue);color:#fff;box-shadow:none}
+.qparts .qp.ok:not(.on){box-shadow:0 0 0 2px var(--good,#1e9e5a) inset}
+.progress i.qz{border-radius:4px}
+@media (max-width:900px){.qparts .qp b{display:none}.qparts{max-width:55%}}
+/* the Snabbmatte page */
+.qhero{display:flex;gap:16px;align-items:center;background:linear-gradient(135deg,#fff6e0,#e9f1ff);border-radius:22px;padding:18px 22px;box-shadow:var(--shadow)}
+.qhero .qbig{font-size:3rem}
+.qhero h2{margin:0}
+.qflow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-weight:700;font-size:.92rem}
+.qflow span{background:#fff;border-radius:999px;padding:4px 12px;box-shadow:0 0 0 1.5px var(--line) inset}
+.qtopic{display:flex;flex-direction:column;gap:10px;background:var(--surface);border-radius:20px;padding:14px;box-shadow:var(--shadow)}
+.qtopic .qhead{display:flex;gap:12px;align-items:center;cursor:pointer;border:0;background:none;font:inherit;color:inherit;text-align:start;padding:0}
+.qtopic .qhead .qi{font-size:2.2rem;width:58px;height:58px;display:grid;place-items:center;border-radius:16px;background:var(--bg)}
+.qtopic .qhead h3{margin:0}
+.qtopic .qchips{display:flex;flex-wrap:wrap;gap:6px}
+.qtopic .qchips button{border:0;border-radius:999px;padding:5px 11px;background:var(--bg);font:inherit;font-size:.86rem;cursor:pointer;box-shadow:0 0 0 1.5px var(--line) inset;color:var(--ink)}
+.qtopic .qchips button:hover{background:var(--blue);color:#fff}
+.qtopic.soon{opacity:.6}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .qhero{background:linear-gradient(135deg,#3a3120,#1f2b44)}:root:not([data-theme="light"]) .qflow span{background:var(--surface)}}
+:root[data-theme="dark"] .qhero{background:linear-gradient(135deg,#3a3120,#1f2b44)}:root[data-theme="dark"] .qflow span{background:var(--surface)}
+@media (max-width:600px){.lesson .lhead:has(.qparts) h2{display:none}.qparts{max-width:none;flex:1}}

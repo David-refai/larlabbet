@@ -4,7 +4,7 @@ import {Owl} from "./Owl";
 import {Html} from "./Html";
 import {showReact} from "./mount";
 import {YearSeg} from "./YearSeg";
-import {SUBJ, subj, chapters, lessonsOf, moreOf, yearsOf, yearFor, pickYear, examsOf, ownExam, examOpen, examLeft, register} from "../content/courses";
+import {SUBJ, subj, chapters, lessonsOf, moreOf, yearsOf, yearFor, pickYear, examsOf, ownExam, examOpen, examLeft, register, QUICK, quickLesson} from "../content/courses";
 import type {Chapter, Exam} from "../content/courses";
 import {
   T, L, S, BADGES, tabNow, setTab, save, toast,
@@ -40,10 +40,12 @@ const LM = {lessons: "Lektioner", prov: "Prov", chapter: (k: number) => `Kapitel
   left: (n: number) => n === 1 ? "1 lektion kvar" : `${n} lektioner kvar`, ready: "Redo att göras", best: (b: number, t: number) => `Bäst ${b} % · ${t} ${t === 1 ? "gång" : "gånger"}`,
   locked: "Gör klart lektionerna i kapitlet först. En förälder kan låsa upp provet på föräldrasidan.", ownBy: "Ett prov som en förälder har satt ihop",
   explore: "Utforska kroppen", exploreS: "Titta inuti kroppen: muskler, skelett, organ, blodkärl och nerver. Öppna hjärtat, lungorna och hjärnan.",
-  noProv: "Inga prov för den här årskursen ännu.", noYear: (s: string) => `${s} finns inte för din årskurs ännu.`};
+  noProv: "Inga prov för den här årskursen ännu.",
+  quick: "Snabbmatte", quickT: "Snabbmatte: all matte på ett ställe", quickS: "Ett område i taget, kort och tydligt. Bra för att repetera inför ett prov, eller för en förälder som vill hjälpa till.",
+  f1: "Se hur det fungerar", f2: "Följ exemplen", f3: "Gör 5 uppgifter", f4: "Nästa del", noYear: (s: string) => `${s} finns inte för din årskurs ännu.`};
 
 /* lessons or tests; kept while the app is open */
-let mode: "les" | "prov" = "les";
+let mode: "les" | "prov" | "quick" = "les";
 
 function ExamCard({e}: {e: Exam}) {
   const open = examOpen(e), left = examLeft(e), r = S.exams && S.exams[e.id];
@@ -77,6 +79,24 @@ function ProvView() {
   </>;
 }
 
+/* Snabbmatte: every topic in one lesson; the chips jump straight to a part (for a quick look back, by a child or a parent) */
+type Part = {icon: string; name: unknown; at: number};
+function QuickView() {
+  return <>
+    <section className="qhero"><span className="qbig" aria-hidden="true">⚡</span><div className="stack" style={{gap: 6}}>
+      <h2>{LM.quickT}</h2><p className="muted" style={{margin: 0}}>{LM.quickS}</p>
+      <div className="qflow"><span>👀 {LM.f1}</span><span>✍️ {LM.f2}</span><span>🎯 {LM.f3}</span><span>➡️ {LM.f4}</span></div></div></section>
+    <div className="cards">{QUICK.map(t => { const l = quickLesson(t) as (Lesson & {parts?: Part[]}) | undefined, p = l ? S.lessons[l.id] || {} : {}, st: number = p.stars || 0;
+      return <div key={t.id} className={"qtopic" + (l ? "" : " soon")} data-q={t.id}>
+        <button className="qhead" onClick={() => l ? lesson(l.id) : toast(LM.soon)}><span className="qi" aria-hidden="true">{t.icon}</span>
+          <span className="stack" style={{gap: 2}}><h3>{t.name}</h3><span className="muted" style={{fontSize: ".88rem"}}>{t.about}</span>
+            {l ? <span className="stars">{[0, 1, 2].map(i => <span key={i} className={i < st ? "" : "off"}>★</span>)}</span> : <span className="muted"><b>🚧 {LM.soon}</b></span>}</span></button>
+        {l && l.parts && <div className="qchips">{l.parts.map((q, k) =>
+          <button key={k} data-k={k} onClick={() => lesson(l.id, q.at)}>{q.icon} {L(q.name)}</button>)}</div>}
+      </div>; })}</div>
+  </>;
+}
+
 function LessonMap() {
   if (!SUBJ.some(s => s.id === tabNow)) setTab(tabNow === "science" ? "bio" : "math");
   const sub = subj(tabNow), math = tabNow === "math";
@@ -93,9 +113,10 @@ function LessonMap() {
     <h1>{T("greet")(S.name)}</h1>
     <div className="seg modeseg" id="mode" role="group">
       <button data-m="les" aria-pressed={mode === "les"} onClick={() => { mode = "les"; map(); }}>📚 {LM.lessons}</button>
-      <button data-m="prov" aria-pressed={mode === "prov"} onClick={() => { mode = "prov"; map(); }}>📝 {LM.prov}</button></div>
+      <button data-m="prov" aria-pressed={mode === "prov"} onClick={() => { mode = "prov"; map(); }}>📝 {LM.prov}</button>
+      <button data-m="quick" aria-pressed={mode === "quick"} onClick={() => { mode = "quick"; map(); }}>⚡ {LM.quick}</button></div>
 
-    {mode === "prov" ? <ProvView /> : <>
+    {mode === "prov" ? <ProvView /> : mode === "quick" ? <QuickView /> : <>
     <div className="tabs" role="tablist">{SUBJ.map(s =>
       <button key={s.id} className={"tab" + (s.no ? " notab" : "")} role="tab" data-t={s.id} aria-selected={s.id === tabNow} onClick={() => { setTab(s.id); map(); }}>
         {s.name}{s.soon && <span className="soon">{T("soon")}</span>}</button>)}</div>

@@ -133,3 +133,15 @@ export function register(e: Exam) {
   if (k < 0) LESSONS.push(entry);
   else if (e.id.startsWith("prov-")) LESSONS[k] = entry;
 }
+
+/* ---------- Snabbmatte: one lesson per topic, all years; a topic without a lesson yet shows as coming ---------- */
+export type QTopic = {id: string; lesson?: string; name: string; icon: string; about: string};
+export const QUICK: QTopic[] = [
+  {id: "brak", lesson: "qbrak", name: "Bråk", icon: "🍕", about: "Förlänga och förkorta, plus, minus, gånger, delat och blandad form."},
+  {id: "dec", lesson: "qdec", name: "Decimaltal", icon: "🔟", about: "Tiondelar och hundradelar, de fyra räknesätten och avrundning."},
+  {id: "proc", lesson: "qproc", name: "Procent", icon: "💯", about: "Procent, bråk och decimaltal, procent av, hur många procent, ökning och minskning."},
+  {id: "prop", lesson: "qprop", name: "Förhållande och proportion", icon: "⚖️", about: "Förhållande, dela i förhållande, korsmultiplikation och skala."},
+  {id: "rot", lesson: "qrot", name: "Potenser och roten ur", icon: "√", about: "Kvadrater, kvadratrötter, potenser och tiopotenser."},
+  {id: "koord", lesson: "qkoord", name: "Koordinatsystem", icon: "📍", about: "Axlar, punkter, fyra kvadranter och avstånd."},
+];
+export const quickLesson = (t: QTopic): Lesson | undefined => t.lesson ? byId(t.lesson) : undefined;
