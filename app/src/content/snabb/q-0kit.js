@@ -14,14 +14,23 @@ export const F=(n,d,c)=>d===1||d==="1"?{k:"t",s:String(n),c}:{k:"f",n,d,c};
 export const X=(s,c)=>({k:"t",s:String(s),c});
 export const M=(w,n,d,c)=>({k:"m",w,n,d,c});
 export const fwid=(n,d,s)=>Math.max(String(n).length,String(d).length)*s*.42+s*.3;
-export const twid=(t,s)=>[...String(t)].reduce((a,ch)=>a+(ch===" "?.26:/[·,.:]/.test(ch)?.26:/[a-zåäöé]/i.test(ch)?.46:/[=+−]/.test(ch)?.56:.5),0)*s;
-const iw=(it,s)=>it.k==="f"?fwid(it.n,it.d,s):it.k==="m"?String(it.w).length*s*.62+s*.16+fwid(it.n,it.d,s):twid(it.s,s);
-export const rowW=(Ls,s)=>Ls.reduce((a,it)=>a+iw(it,s),0)+s*.3*Math.max(0,Ls.length-1);
+export const twid=(t,s)=>[...String(t)].reduce((a,ch)=>a+(ch===" "?.26:/[·,.:]/.test(ch)?.26:/[()]/.test(ch)?.34:/[a-zåäöé]/i.test(ch)?.46:/[=+−]/.test(ch)?.56:ch==="%"?.8:.5),0)*s;
+const iw=(it,s)=>it.k==="f"?fwid(it.n,it.d,s):it.k==="m"?String(it.w).length*s*.62+s*.16+fwid(it.n,it.d,s):it.k==="e"?twid(it.s,s*.6)+s*.04:it.k==="r"?s*.62+twid(it.s,s):twid(it.s,s);
+export const rowW=(Ls,s)=>Ls.reduce((a,it,i)=>a+iw(it,s)+(i&&it.k!=="e"?s*.3:0),0);
+/* E: an exponent, drawn small and raised right after the item before it. Rt: a square root with its bar over the number */
+export const E=(e,c)=>({k:"e",s:String(e),c}), Rt=(n,c)=>({k:"r",s:String(n),c});
+/* a row from text: "7^2 = 49", "10^−3", "2^?" (the ? orange), "√{49} = 7" */
+export const P=str=>{const out=[];String(str).split(/(\^(?:−?\d+|\?)|√\{[^}]*\})/).forEach(t=>{if(!t)return;
+  if(t[0]==="^")out.push(E(t.slice(1),t==="^?"?"o":undefined));else if(t.startsWith("√{"))out.push(Rt(t.slice(2,-1)));
+  /* with exponents or roots in the row, every word is its own item: short items keep the estimated widths close */
+  else if(t.trim())out.push(...(/\^|√\{/.test(str)?t.trim().split(/ +/).map(w=>X(w)):[X(t.trim())]))});return out};
 /* a row drawn from x (left); y is the fraction line. Returns the actions and where the row ends */
 export function rowAt(Ls,x,y,s,col){const out=[];let cx=x;
-  Ls.forEach((it,i)=>{if(i)cx+=s*.3;const w=iw(it,s),c=it.c||col||"k",m=cx+w/2;
+  Ls.forEach((it,i)=>{if(i&&it.k!=="e")cx+=s*.3;const w=iw(it,s),c=it.c||col||"k",m=cx+w/2;
     if(it.k==="f")out.push(...A.frac(it.n,it.d,m,y,s,c));
     else if(it.k==="m"){const ww=String(it.w).length*s*.62;out.push(A.tx(it.w,cx+ww/2,y+s*.5,s*1.4,c),...A.frac(it.n,it.d,cx+ww+s*.16+fwid(it.n,it.d,s)/2,y,s,c))}
+    else if(it.k==="e")out.push(A.tx(it.s,cx+s*.03,y+s*.36-s*.4,s*.6,c,"start"));
+    else if(it.k==="r"){const tw=twid(it.s,s);out.push(A.tx("√",cx+s*.3,y+s*.4,s*1.05,c),A.p(R.line(cx+s*.56,y-s*.48,cx+s*.62+tw+s*.04,y-s*.48,.1),c,s*.055),A.tx(it.s,cx+s*.62+tw/2,y+s*.36,s,c))}
     else out.push(A.tx(it.s,m,y+s*.36,s,c));
     cx+=w});
   return{acts:out,end:cx}}
@@ -69,3 +78,11 @@ export const qMount=def=>(stage,ctrl)=>{const wb=new WB(stage);ctrl.innerHTML=""
 export const qBoard=(title,prob,ask="?",s=66)=>{const row=[...prob,X("="),X(ask,"o")];while(rowW(row,s)>720&&s>34)s-=4;
   return[A.wipe(),A.tx(title,400,72,fitT(title,740,36),"b"),...rowC(row,400,236,s).acts]};
 export const QL=(sv,en,ar)=>({sv,en,ar});
+/* steps written as separate lines (no "=" chain), left-aligned; a small orange note above a line; the last line green */
+export function lines(rows,notes=[],o={}){let s=o.s||46;const n=rows.length,gap=o.gap||Math.round(s*2.1),y0=o.y0||Math.round(262-(n-1)*gap/2);
+  const RR=rows.map(r=>typeof r==="string"?P(r):r);while(Math.max(...RR.map(r=>rowW(r,s)))>700&&s>26)s-=2;
+  const W=Math.max(...RR.map(r=>rowW(r,s))),x0=Math.max(40,(800-W)/2),out=[];
+  RR.forEach((r,j)=>{const y=y0+j*gap,last=j===n-1,row=rowAt(r,x0,y,s,last?"g":"k");
+    if(notes[j])out.push(Object.assign(A.tx(notes[j],x0,y-s*(last?1.12:1.0),22,"o","start"),{dur:150}));
+    if(last)out.push(A.hl(x0-14,y-s*.98,row.end-x0+28,s*1.98));out.push(...row.acts)});
+  return out}
