@@ -22,9 +22,12 @@ function plane(ox,oy,u,x0,x1,y0,y1){const X=x=>ox+x*u,Y=y=>oy-y*u;let g="";
   const o=[A.p(g,GRID,1.6),A.arrow(X(x0),oy,X(x1)+22,oy,"k"),A.arrow(ox,Y(y0),ox,Y(y1)-22,"k"),quick(A.tx("x",X(x1)+24,oy+30,24,"k")),quick(A.tx("y",ox-22,Y(y1)-10,24,"k"))];
   for(let x=x0;x<=x1;x++)if(x)o.push(quick(A.tx(m(x),X(x),oy+24,17,"k")));
   for(let y=y0;y<=y1;y++)if(y)o.push(quick(A.tx(m(y),ox-9,Y(y)+6,17,"k","end")));
-  o.push(quick(A.tx("0",ox-9,oy+22,17,"k","end")));return{o,X,Y}}
+  o.push(quick(A.tx("0",ox-9,oy+22,17,"k","end")));return{o,X,Y,x1,y1}}
 /* a point with its name (the name up and to the right) */
-const dot=(pl,x,y,name,c="r",lab=true)=>{const px=pl.X(x),py=pl.Y(y);return[A.hatch(R.circ(px,py,8),c),A.p(R.circ(px,py,8),c,3),...(lab?[LT2(name,px+12,py-12,24,c,"start")]:[])]};
+const dot=(pl,x,y,name,c="r",lab=true)=>{const px=pl.X(x),py=pl.Y(y);
+  /* keep the name away from the axis names: near the top it goes below, near the right end (or next to the 0) it goes to the left */
+  const corner=x===-1&&y===-1,top=y>=pl.y1-1||corner,right=x>=pl.x1-1&&Math.abs(y)<=1||corner;
+  return[A.hatch(R.circ(px,py,8),c),A.p(R.circ(px,py,8),c,3),...(lab?[LT2(name,right?px-12:px+12,top?py+32:py-12,24,c,right?"end":"start")]:[])]};
 const Q1=()=>plane(60,450,50,0,7,0,8);                 /* first quadrant: 0..7 × 0..8 */
 const Q4=()=>plane(250,250,40,-5,5,-5,5);              /* four quadrants: −5..5 */
 /* the text column at the right of a plane: lines from y, centred at cx */
