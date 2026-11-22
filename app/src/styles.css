@@ -472,6 +472,9 @@ body.inles .wrap{max-width:1500px;padding-block:8px}body.inles .top{padding-bloc
 .qtopic .qchips button{border:0;border-radius:999px;padding:5px 11px;background:var(--bg);font:inherit;font-size:.86rem;cursor:pointer;box-shadow:0 0 0 1.5px var(--line) inset;color:var(--ink)}
 .qtopic .qchips button:hover{background:var(--blue);color:#fff}
 .qtopic.soon{opacity:.6}
+.qtopic h3 .qlv{margin-inline-start:8px;font-size:.72rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--bg);box-shadow:0 0 0 1.5px var(--line) inset;vertical-align:middle;color:var(--muted)}
+.gsec>h2{margin:10px 0 0;font-size:1.15rem}
+.modeseg{flex-wrap:wrap}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .qhero{background:linear-gradient(135deg,#3a3120,#1f2b44)}:root:not([data-theme="light"]) .qflow span{background:var(--surface)}}
 :root[data-theme="dark"] .qhero{background:linear-gradient(135deg,#3a3120,#1f2b44)}:root[data-theme="dark"] .qflow span{background:var(--surface)}
 @media (max-width:600px){.lesson .lhead:has(.qparts) h2{display:none}.qparts{max-width:none;flex:1}}

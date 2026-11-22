@@ -145,3 +145,24 @@ export const QUICK: QTopic[] = [
   {id: "koord", lesson: "qkoord", name: "Koordinatsystem", icon: "📍", about: "Axlar, punkter, fyra kvadranter och avstånd."},
 ];
 export const quickLesson = (t: QTopic): Lesson | undefined => t.lesson ? byId(t.lesson) : undefined;
+
+/* ---------- Engelsk grammatik: one lesson per topic, units in order like a grammar book; sec groups them on the page ---------- */
+export type GTopic = QTopic & {sec: string; lv: string};
+export const GRAM: GTopic[] = [
+  {sec: "Verb och tid", id: "gpres", lesson: "egpres", name: "Present", icon: "⏱️", lv: "A1–A2", about: "Am/is/are, present simple, present continuous och skillnaden mellan dem."},
+  {sec: "Verb och tid", id: "gpast", lesson: "egpast", name: "Past", icon: "⏮️", lv: "A1–B1", about: "Was/were, past simple, oregelbundna verb, past continuous och used to."},
+  {sec: "Verb och tid", id: "gperf", lesson: "egperf", name: "Perfect", icon: "🔗", lv: "A2–B2", about: "Present perfect, for och since, perfect eller past, perfect continuous och past perfect."},
+  {sec: "Verb och tid", id: "gfut", lesson: "egfut", name: "Future", icon: "⏭️", lv: "A2–B2", about: "Going to, will, present för planer, future continuous och future perfect."},
+  {sec: "Modala verb och if", id: "gmod", lesson: "egmod", name: "Modal verbs", icon: "🗝️", lv: "A1–B2", about: "Can, could, must, have to, should, may, might och modal + have done."},
+  {sec: "Modala verb och if", id: "gif", lesson: "egif", name: "If and wish", icon: "🔀", lv: "A2–B2", about: "Zero, first, second och third conditional, unless och wish."},
+  {sec: "Passiv, indirekt tal och frågor", id: "gpass", lesson: "egpass", name: "Passive", icon: "🔄", lv: "B1–B2", about: "Passiv i olika tider, by + den som gör det, have something done."},
+  {sec: "Passiv, indirekt tal och frågor", id: "grep", lesson: "egrep", name: "Reported speech", icon: "💬", lv: "B1–B2", about: "Said och told, tiden flyttas bakåt, frågor och uppmaningar."},
+  {sec: "Passiv, indirekt tal och frågor", id: "gq", lesson: "egq", name: "Questions", icon: "❓", lv: "A1–B2", about: "Ja/nej-frågor, frågeord, subjektsfrågor, question tags och indirekta frågor."},
+  {sec: "Verbmönster", id: "gverb", lesson: "egverb", name: "-ing and to", icon: "➰", lv: "A2–B2", about: "Verb + -ing, verb + to, verb + person + to och preposition + -ing."},
+  {sec: "Substantiv, artiklar och pronomen", id: "gnoun", lesson: "egnoun", name: "Nouns and articles", icon: "📦", lv: "A1–B1", about: "Plural, räknebara och oräknebara, a/an, the eller ingen artikel, some/any, much/many."},
+  {sec: "Substantiv, artiklar och pronomen", id: "gpron", lesson: "egpron", name: "Pronouns", icon: "👥", lv: "A1–B1", about: "I/me/my/mine, genitiv -'s, myself, this/that och somebody/anything."},
+  {sec: "Adjektiv, adverb och prepositioner", id: "gadj", lesson: "egadj", name: "Adjectives and adverbs", icon: "🎨", lv: "A1–B2", about: "Komparation, as ... as, adverb, too och enough, -ed och -ing."},
+  {sec: "Adjektiv, adverb och prepositioner", id: "gprep", lesson: "egprep", name: "Prepositions", icon: "📍", lv: "A1–B1", about: "In/on/at för tid och plats, rörelse, for/since/during och adjektiv + preposition."},
+  {sec: "Meningar", id: "grel", lesson: "egrel", name: "Relative clauses and linking words", icon: "🧩", lv: "A2–B2", about: "Who, which, that, whose, where och bindeord som because, although och unless."},
+  {sec: "Meningar", id: "gword", lesson: "egword", name: "Word order", icon: "🔢", lv: "A1–B1", about: "Ordföljd, adverb som always, there is/are, still/yet/already och imperativ."},
+];

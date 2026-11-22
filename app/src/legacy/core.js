@@ -223,7 +223,8 @@ class WB{
     await this.anim(Math.max(380,L/.6),tok,q=>{p.style.strokeDashoffset=L*(1-q);const pt=p.getPointAtLength(L*q);this.penAt(pt.x,pt.y,c);if(q>=1){p.style.strokeDasharray="";p.style.strokeDashoffset=""}});return}
   if(a.t==="text"){const rtl=/[؀-ۿ]/.test(a.s);let anchor=a.anchor;if(anchor==="lead")anchor=rtl?"end":"start";
     const e=this.el("text",{x:a.x,y:a.y,fill:c,"font-size":a.size,"text-anchor":anchor,"font-family":rtl?'"Aref Ruqaa","Caveat","Segoe Print","Bradley Hand",cursive':'"Caveat","Segoe Print","Bradley Hand","Comic Sans MS",cursive',"font-weight":"700",direction:rtl?"rtl":"ltr"});
-    e.textContent=a.s;if(this.fast)return;
+    /* a.spans=[{s,c}]: parts of the line in their own colour (a grammar ending, the verb form) */
+    if(a.spans)a.spans.forEach(p=>{const t=document.createElementNS(NS,"tspan");if(p.c)t.setAttribute("fill",MK[p.c]||p.c);if(p.u)t.setAttribute("text-decoration","underline");t.textContent=p.s;e.appendChild(t)});else e.textContent=a.s;if(this.fast)return;
     await this.sweep(e,tok,a.dur||Math.max(450,a.s.length*125),c,rtl,(q,bb)=>bb.y+bb.height*.72+Math.sin(q*a.s.length*5)*bb.height*.14);return}
   if(a.t==="hatch"){const e=this.el("path",{d:a.d,fill:`url(#h${a.c||"k"})`});if(this.fast)return;
     await this.sweep(e,tok,Math.min(1100,Math.max(450,e.getBBox().width*8)),c,false,(q,bb)=>bb.y+bb.height*(.5+.42*Math.sin(q*Math.max(6,bb.width/7))));return}
@@ -3131,7 +3132,7 @@ function poseProblem(ctx,g,o,done){
     if(g.kind==="text"){const nz=t=>String(t).toLowerCase().replace(/[.!?,;:”"'’]/g,"").replace(/\s+/g," ").trim(),v=nz(an.value);if(!v){toast(T("needAnswer"));return}
       /* "write only the ending": the whole word, or the whole sentence, is right too */
       const acc=[...[].concat(g.ans),...(g.show?[g.show]:[]),...(g.full||[])].map(nz),near=(a,b)=>{if(Math.abs(a.length-b.length)>1)return false;let i=0,j=0,e=0;while(i<a.length&&j<b.length){if(a[i]===b[j]){i++;j++;continue}if(++e>1)return false;if(a.length>b.length)i++;else if(b.length>a.length)j++;else{i++;j++}}return e+(a.length-i)+(b.length-j)<=1};
-      const ok=acc.includes(v),almost=!ok&&v.length>4&&acc.some(a=>near(a,v));if(almost&&!o.exam)toast("✏️ "+[].concat(g.ans)[0]);
+      const ok=acc.includes(v),almost=!ok&&!g.exact&&v.length>4&&acc.some(a=>near(a,v));if(almost&&!o.exam)toast("✏️ "+[].concat(g.ans)[0]);
       if(retry(ok||almost,an)){an.select();return}judge(ok||almost,an.value.trim());return}
     const v=numIn(an.value),d=g.kind==="num"?0:numIn($("#ad").value);
     if(isNaN(v)||(g.kind!=="num"&&isNaN(d))||(g.kind==="frac"&&!d)){toast(T("needAnswer"));return}

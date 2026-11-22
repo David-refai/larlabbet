@@ -11,8 +11,8 @@ await p.route(/fonts\.(googleapis|gstatic)/,r=>r.abort());await p.route(/jsdeliv
 await p.goto('file://'+process.cwd()+'/build/test.html');await p.waitForTimeout(700);
 await p.fill('#nm','Test');await p.click('#gr button[data-g="6"]');await p.click('#go');await p.waitForTimeout(300);
 if(await p.$('#pskip')){await p.click('#pskip');await p.waitForTimeout(200)}
-await p.click('#mode button[data-m="quick"]');await p.waitForTimeout(300);
-ok(await p.$$eval('.qtopic',e=>e.length)===6,'Snabbmatte page lists 6 topics');
+const MODE=process.env.MODE||'quick';await p.click(`#mode button[data-m="${MODE}"]`);await p.waitForTimeout(300);
+if(MODE==='quick')ok(await p.$$eval('.qtopic',e=>e.length)===6,'Snabbmatte page lists 6 topics');
 const nParts=await p.evaluate(id=>LESSONS.find(l=>l.id===id).parts.length,ID);
 ok(await p.$$eval(`.qtopic[data-q="${ID.slice(1)}"] .qchips button`,e=>e.length)===nParts,'part chips on the page');
 /* every drill question: keep the generated problem so the test can answer it */
@@ -31,10 +31,10 @@ for(let k=0;k<steps+2;k++){
   if(await p.$('#mapb'))break;
   if(await p.$('#chk, .ch')){drills++;
     for(let n=0;n<5;n++){const g=await p.evaluate(()=>{const g=window.__g;return{kind:g.kind,ans:g.ans,show:g.show}});
-      if(SHOTS&&n%2===0){await p.locator('#stage').screenshot({path:`${SHOTS}/${ID}-${String(++shot).padStart(2,'0')}-q.png`})}
+      if(SHOTS&&n%2===0){if(process.env.FULL&&shot<12)await p.screenshot({path:`${SHOTS}/${ID}-full-${shot}.png`});await p.locator('#stage').screenshot({path:`${SHOTS}/${ID}-${String(++shot).padStart(2,'0')}-q.png`})}
       if(g.kind==='choice')await p.click(`.ch[data-j="${g.ans}"]`);
       else if(g.kind==='frac'||g.kind==='pair'){await p.fill('#an',String(g.ans[0]));await p.fill('#ad',String(g.ans[1]));await p.click('#chk')}
-      else{await p.fill('#an',String(g.ans).replace('.',','));await p.click('#chk')}
+      else{await p.fill('#an',String([].concat(g.ans)[0]).replace('.',','));await p.click('#chk')}
       await p.waitForTimeout(120);qs++;
       if(!(await p.textContent('#ctrl')).includes('✓'))bad.push(JSON.stringify(g));
       if(await p.$('#sol')){await p.click('#sol');await p.waitForTimeout(60);const c=await check();if(c.length)bad.push('solution: '+c.join(', '))
