@@ -12,7 +12,7 @@ await p.goto('file://'+process.cwd()+'/build/test.html');await p.waitForTimeout(
 await p.fill('#nm','Test');await p.click('#gr button[data-g="6"]');await p.click('#go');await p.waitForTimeout(300);
 if(await p.$('#pskip')){await p.click('#pskip');await p.waitForTimeout(200)}
 const MODE=process.env.MODE||'quick';await p.click(`#mode button[data-m="${MODE}"]`);await p.waitForTimeout(300);
-if(MODE==='quick')ok(await p.$$eval('.qtopic',e=>e.length)===6,'Snabbmatte page lists 6 topics');
+if(MODE==='quick')ok(await p.$$eval('.qtopic',e=>e.length)===7,'Snabbmatte page lists 7 topics');
 const nParts=await p.evaluate(id=>LESSONS.find(l=>l.id===id).parts.length,ID);
 ok(await p.$$eval(`.qtopic[data-q="${ID.slice(1)}"] .qchips button`,e=>e.length)===nParts,'part chips on the page');
 /* every drill question: keep the generated problem so the test can answer it */

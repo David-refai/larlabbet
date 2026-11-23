@@ -142,6 +142,7 @@ export const QUICK: QTopic[] = [
   {id: "proc", lesson: "qproc", name: "Procent", icon: "💯", about: "Procent, bråk och decimaltal, procent av, hur många procent, ökning och minskning."},
   {id: "prop", lesson: "qprop", name: "Förhållande och proportion", icon: "⚖️", about: "Förhållande, dela i förhållande, korsmultiplikation och skala."},
   {id: "rot", lesson: "qrot", name: "Potenser och roten ur", icon: "√", about: "Kvadrater, kvadratrötter, potenser och tiopotenser."},
+  {id: "geo", lesson: "qgeo", name: "Geometri", icon: "📐", about: "Omkrets, area av rektangel, triangel och cirkel, radie och diameter, volym och liter."},
   {id: "koord", lesson: "qkoord", name: "Koordinatsystem", icon: "📍", about: "Axlar, punkter, fyra kvadranter och avstånd."},
 ];
 export const quickLesson = (t: QTopic): Lesson | undefined => t.lesson ? byId(t.lesson) : undefined;
